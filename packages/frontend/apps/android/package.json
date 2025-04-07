@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "build": "affine bundle",
-    "dev": "affine bundle --dev"
+    "dev": "affine bundle --dev",
+    "studio": "cap open android"
   },
   "dependencies": {
     "@affine/component": "workspace:*",

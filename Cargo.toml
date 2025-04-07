@@ -83,3 +83,7 @@ codegen-units = 1
 lto           = true
 opt-level     = 3
 strip         = "symbols"
+
+# android uniffi bindgen requires symbols
+[profile.release.package.affine_mobile_native]
+strip         = "none"
