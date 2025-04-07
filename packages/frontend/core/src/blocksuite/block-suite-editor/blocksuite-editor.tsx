@@ -16,8 +16,8 @@ import type { Store } from '@blocksuite/affine/store';
 import { Slot } from '@radix-ui/react-slot';
 import { useLiveData, useService } from '@toeverything/infra';
 import { cssVar } from '@toeverything/theme';
-import type { CSSProperties } from 'react';
-import { useEffect, useMemo, useState } from 'react';
+import type { CSSProperties, HTMLAttributes } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { DefaultOpenProperty } from '../../components/doc-properties';
 import {
@@ -26,7 +26,7 @@ import {
 } from './blocksuite-editor-container';
 import { NoPageRootError } from './no-page-error';
 
-export type EditorProps = {
+export interface EditorProps extends HTMLAttributes<HTMLDivElement> {
   page: Store;
   mode: DocMode;
   shared?: boolean;
@@ -34,9 +34,7 @@ export type EditorProps = {
   defaultOpenProperty?: DefaultOpenProperty;
   // on Editor ready
   onEditorReady?: (editor: AffineEditorContainer) => (() => void) | void;
-  style?: CSSProperties;
-  className?: string;
-};
+}
 
 const BlockSuiteEditorImpl = ({
   mode,
@@ -47,6 +45,7 @@ const BlockSuiteEditorImpl = ({
   style,
   onEditorReady,
   defaultOpenProperty,
+  ...props
 }: EditorProps) => {
   useEffect(() => {
     const disposable = page.slots.blockUpdated.subscribe(() => {
@@ -111,6 +110,7 @@ const BlockSuiteEditorImpl = ({
 
   return (
     <BlocksuiteEditorContainer
+      {...props}
       mode={mode}
       page={page}
       shared={shared}
@@ -133,6 +133,7 @@ export const BlockSuiteEditor = (props: EditorProps) => {
       fontFamily: s.fontFamily,
       customFontFamily: s.customFontFamily,
       fullWidthLayout: s.fullWidthLayout,
+      disableMiddleClickPaste: s.disableMiddleClickPaste,
     }))
   );
   const fontFamily = useMemo(() => {
@@ -169,12 +170,24 @@ export const BlockSuiteEditor = (props: EditorProps) => {
     };
   }, [props.page]);
 
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (settings.disableMiddleClickPaste && e.button === 1) {
+        e.preventDefault();
+      }
+    },
+    [settings.disableMiddleClickPaste]
+  );
+
   if (error) {
     throw error;
   }
 
   return (
-    <Slot style={{ '--affine-font-family': fontFamily } as CSSProperties}>
+    <Slot
+      style={{ '--affine-font-family': fontFamily } as CSSProperties}
+      onMouseDown={handleMouseDown}
+    >
       {isLoading ? (
         <EditorLoading />
       ) : (

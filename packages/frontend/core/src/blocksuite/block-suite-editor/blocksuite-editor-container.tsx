@@ -25,14 +25,13 @@ import type { DefaultOpenProperty } from '../../components/doc-properties';
 import { BlocksuiteDocEditor, BlocksuiteEdgelessEditor } from './lit-adaper';
 import * as styles from './styles.css';
 
-interface BlocksuiteEditorContainerProps {
+interface BlocksuiteEditorContainerProps
+  extends React.HTMLAttributes<HTMLDivElement> {
   page: Store;
   mode: DocMode;
   shared?: boolean;
   readonly?: boolean;
-  className?: string;
   defaultOpenProperty?: DefaultOpenProperty;
-  style?: React.CSSProperties;
 }
 
 export interface AffineEditorContainer extends HTMLElement {
@@ -51,7 +50,7 @@ export const BlocksuiteEditorContainer = forwardRef<
   AffineEditorContainer,
   BlocksuiteEditorContainerProps
 >(function AffineEditorContainer(
-  { page, mode, className, style, shared, readonly, defaultOpenProperty },
+  { page, mode, shared, readonly, defaultOpenProperty, ...props },
   ref
 ) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -159,15 +158,16 @@ export const BlocksuiteEditorContainer = forwardRef<
 
   return (
     <div
+      {...props}
       data-testid={`editor-${page.id}`}
       dir={enableEditorRTL ? 'rtl' : 'ltr'}
       className={clsx(
         `editor-wrapper ${mode}-mode`,
         styles.docEditorRoot,
-        className
+        props.className
       )}
       data-affine-editor-container
-      style={style}
+      style={props.style}
       ref={rootRef}
     >
       {mode === 'page' ? (

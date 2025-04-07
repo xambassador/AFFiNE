@@ -487,6 +487,36 @@ const SpellCheckSettings = () => {
   );
 };
 
+const MiddleClickPasteSettings = () => {
+  const t = useI18n();
+  const editorSettingService = useService(EditorSettingService);
+  const settings = useLiveData(editorSettingService.editorSetting.settings$);
+  const onToggleMiddleClickPaste = useCallback(
+    (checked: boolean) => {
+      editorSettingService.editorSetting.set(
+        'disableMiddleClickPaste',
+        checked
+      );
+    },
+    [editorSettingService.editorSetting]
+  );
+  return (
+    <SettingRow
+      name={t[
+        'com.affine.settings.editorSettings.general.middle-click-paste.title'
+      ]()}
+      desc={t[
+        'com.affine.settings.editorSettings.general.middle-click-paste.description'
+      ]()}
+    >
+      <Switch
+        checked={settings.disableMiddleClickPaste}
+        onChange={onToggleMiddleClickPaste}
+      />
+    </SettingRow>
+  );
+};
+
 export const General = () => {
   const t = useI18n();
 
@@ -497,6 +527,7 @@ export const General = () => {
       <CustomFontFamilySettings />
       <NewDocDefaultModeSettings />
       {BUILD_CONFIG.isElectron && <SpellCheckSettings />}
+      {environment.isLinux && <MiddleClickPasteSettings />}
       {/* // TODO(@akumatus): implement these settings
         <DeFaultCodeBlockSettings />
        */}

@@ -5168,6 +5168,14 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.editorSettings.page"](): string;
     /**
+      * `Middle click paste`
+      */
+    ["com.affine.settings.editorSettings.general.middle-click-paste.title"](): string;
+    /**
+      * `Disable default middle click paste behavior on Linux.`
+      */
+    ["com.affine.settings.editorSettings.general.middle-click-paste.description"](): string;
+    /**
       * `Display bi-directional links on the doc.`
       */
     ["com.affine.settings.editorSettings.page.display-bi-link.description"](): string;

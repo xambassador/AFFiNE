@@ -1287,6 +1287,8 @@
   "com.affine.settings.editorSettings.general.spell-check.title": "Spell check",
   "com.affine.settings.editorSettings.general.spell-check.restart-hint": "Settings changed; please restart the app. <1>Restart</1>",
   "com.affine.settings.editorSettings.page": "Page",
+  "com.affine.settings.editorSettings.general.middle-click-paste.title": "Middle click paste",
+  "com.affine.settings.editorSettings.general.middle-click-paste.description": "Disable default middle click paste behavior on Linux.",
   "com.affine.settings.editorSettings.page.display-bi-link.description": "Display bi-directional links on the doc.",
   "com.affine.settings.editorSettings.page.display-bi-link.title": "Display bi-directional links",
   "com.affine.settings.editorSettings.page.display-doc-info.description": "Display document information on the doc.",
