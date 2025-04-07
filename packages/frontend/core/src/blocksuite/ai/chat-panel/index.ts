@@ -46,6 +46,7 @@ export class ChatPanel extends SignalWatcher(
   static override styles = css`
     chat-panel {
       width: 100%;
+      user-select: text;
     }
 
     .chat-panel-container {
