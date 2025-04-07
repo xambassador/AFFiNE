@@ -25,7 +25,10 @@ type KnownFlavour =
   | 'affine:paragraph'
   | 'affine:list'
   | 'affine:code'
-  | 'affine:image';
+  | 'affine:image'
+  | 'affine:attachment'
+  | 'affine:transcription'
+  | 'affine:callout';
 
 export function parseWorkspaceDoc(doc: Doc): WorkspaceDocContent | null {
   // not a workspace doc
@@ -106,6 +109,15 @@ export function parsePageDoc(
         pushChildren(block);
         break;
       }
+      case 'affine:attachment':
+      case 'affine:transcription':
+      case 'affine:callout': {
+        // only extract text in full content mode
+        if (summaryLenNeeded === -1) {
+          pushChildren(block);
+        }
+        break;
+      }
       case 'affine:paragraph':
       case 'affine:list':
       case 'affine:code': {
@@ -120,9 +132,8 @@ export function parsePageDoc(
         } else if (summaryLenNeeded > 0) {
           content.summary += text.toString();
           summaryLenNeeded -= text.length;
-        } else {
-          break;
         }
+        break;
       }
     }
   }
