@@ -37,7 +37,7 @@
     "!src/__tests__",
     "!dist/__tests__"
   ],
-  "version": "0.19.0",
+  "version": "0.21.0",
   "devDependencies": {
     "@types/lodash.groupby": "^4",
     "@types/lodash.mergewith": "^4",
