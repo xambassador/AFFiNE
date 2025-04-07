@@ -1,4 +1,7 @@
-import { panelBaseStyle } from '@blocksuite/affine-shared/styles';
+import {
+  panelBaseStyle,
+  scrollbarStyle,
+} from '@blocksuite/affine-shared/styles';
 import {
   type ButtonPopperOptions,
   createButtonPopper,
@@ -44,8 +47,7 @@ export class EditorMenuButton extends WithDisposable(LitElement) {
           })
         );
       },
-      mainAxis: 12,
-      ignoreShift: true,
+      mainAxis: 0,
       offsetHeight: 6 * 4,
       ...this.popperOptions,
     });
@@ -111,15 +113,21 @@ export class EditorMenuButton extends WithDisposable(LitElement) {
 export class EditorMenuContent extends LitElement {
   static override styles = css`
     :host {
+      padding: 12px 0;
       display: none;
       outline: none;
-      overscroll-behavior: contain;
-      overflow-y: auto;
     }
 
-    ${panelBaseStyle(':host([data-show])')}
     :host([data-show]) {
+      display: flex;
       justify-content: center;
+    }
+
+    ${panelBaseStyle('.content-wrapper')}
+    ${scrollbarStyle('.content-wrapper')}
+    .content-wrapper {
+      overscroll-behavior: contain;
+      overflow-y: auto;
       padding: var(--content-padding, 0 6px);
     }
 
@@ -152,7 +160,7 @@ export class EditorMenuContent extends LitElement {
   `;
 
   override render() {
-    return html`<slot></slot>`;
+    return html`<div class="content-wrapper"><slot></slot></div>`;
   }
 }
 

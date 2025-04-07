@@ -42,7 +42,6 @@ export type ButtonPopperOptions = {
   crossAxis?: number;
   allowedPlacements?: Placement[];
   rootBoundary?: Rect | (() => Rect | undefined);
-  ignoreShift?: boolean;
   offsetHeight?: number;
 };
 /**
@@ -68,7 +67,6 @@ export function createButtonPopper(options: ButtonPopperOptions) {
     crossAxis,
     allowedPlacements = ['top', 'bottom'],
     rootBoundary,
-    ignoreShift,
     offsetHeight,
   } = options;
 
@@ -102,11 +100,7 @@ export function createButtonPopper(options: ButtonPopperOptions) {
         }),
       ],
     })
-      .then(({ x, y, middlewareData: data }) => {
-        if (!ignoreShift) {
-          x += data.shift?.x ?? 0;
-          y += data.shift?.y ?? 0;
-        }
+      .then(({ x, y }) => {
         Object.assign(popperElement.style, {
           position: 'absolute',
           zIndex: 1,
