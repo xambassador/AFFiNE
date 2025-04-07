@@ -35,6 +35,12 @@ export class AudioAttachmentService extends Service {
     if (!exists) {
       const entity = this.framework.createEntity(AudioAttachmentBlock, model);
       exists = this.pool.put(key, entity);
+
+      const subscription = model.deleted.subscribe(() => {
+        entity.audioMedia.stop();
+        exists?.release();
+      });
+      this.disposables.push(() => subscription.unsubscribe());
     }
     return exists;
   }
