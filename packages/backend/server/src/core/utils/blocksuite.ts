@@ -132,8 +132,9 @@ export function parsePageDoc(
         } else if (summaryLenNeeded > 0) {
           content.summary += text.toString();
           summaryLenNeeded -= text.length;
+        } else {
+          break;
         }
-        break;
       }
     }
   }
