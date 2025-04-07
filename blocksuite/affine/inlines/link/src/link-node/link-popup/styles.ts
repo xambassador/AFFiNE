@@ -98,6 +98,7 @@ export const linkPopupStyle = css`
     background-color: rgba(35, 131, 226, 0.28);
   }
 
+  ${panelBaseStyle('.popover-container')}
   .popover-container {
     z-index: var(--affine-z-index-popover);
     animation: affine-popover-fade-in 0.2s ease;
@@ -129,8 +130,8 @@ export const linkPopupStyle = css`
     pointer-events: none;
   }
 
-  ${panelBaseStyle('.affine-link-popover.create')}
   .affine-link-popover.create {
+    display: flex;
     gap: 12px;
     padding: 12px;
 
