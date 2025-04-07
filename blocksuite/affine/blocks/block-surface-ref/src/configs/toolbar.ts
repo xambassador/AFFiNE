@@ -11,7 +11,6 @@ import { CaptionIcon, CopyIcon, DeleteIcon } from '@blocksuite/icons/lit';
 import { html } from 'lit';
 
 import { SurfaceRefBlockComponent } from '../surface-ref-block';
-import { surfaceRefToBlob, writeImageBlobToClipboard } from '../utils';
 
 export const surfaceRefToolbarModuleConfig: ToolbarModuleConfig = {
   actions: [
@@ -73,37 +72,6 @@ export const surfaceRefToolbarModuleConfig: ToolbarModuleConfig = {
         return !!surfaceRefBlock.referenceModel;
       },
       actions: [
-        {
-          id: 'a.surface-ref-copy-as-image',
-          label: 'Copy as Image',
-          icon: CopyIcon(),
-          placement: ActionPlacement.More,
-          when: ctx => {
-            const surfaceRefBlock = ctx.getCurrentBlockByType(
-              SurfaceRefBlockComponent
-            );
-            if (!surfaceRefBlock) return false;
-
-            return !!surfaceRefBlock.referenceModel;
-          },
-          run: ctx => {
-            const surfaceRefBlock = ctx.getCurrentBlockByType(
-              SurfaceRefBlockComponent
-            );
-            if (!surfaceRefBlock) return;
-
-            surfaceRefToBlob(surfaceRefBlock)
-              .then(async blob => {
-                if (!blob) {
-                  toast(ctx.host, 'Failed to render surface-ref to image');
-                } else {
-                  await writeImageBlobToClipboard(blob);
-                  toast(ctx.host, 'Copied image to clipboard');
-                }
-              })
-              .catch(console.error);
-          },
-        },
         // TODO(@L-Sun): add duplicate action after refactoring root-block/edgeless
       ],
     },
