@@ -1335,7 +1335,7 @@
   "com.affine.settings.translucent-style-description": "Use transparency effect on the sidebar.",
   "com.affine.settings.meetings": "Meetings",
   "com.affine.settings.meetings.enable.title": "Enable meeting notes",
-  "com.affine.settings.meetings.enable.description": "Utilize the meeting notes and AI summarization features provided by AFFiNE.",
+  "com.affine.settings.meetings.enable.description": "Utilize the meeting notes and AI summarization features provided by AFFiNE. <1>Discuss more in the community</1>.",
   "com.affine.settings.meetings.record.header": "Meeting recording",
   "com.affine.settings.meetings.record.recording-mode": "When meeting starts",
   "com.affine.settings.meetings.record.recording-mode.description": "Choose the behavior when the meeting starts.",

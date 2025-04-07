@@ -14,7 +14,7 @@ import {
 import { useAsyncCallback } from '@affine/core/components/hooks/affine-async-hooks';
 import { MeetingSettingsService } from '@affine/core/modules/media/services/meeting-settings';
 import type { MeetingSettingsSchema } from '@affine/electron/main/shared-state-schema';
-import { useI18n } from '@affine/i18n';
+import { Trans, useI18n } from '@affine/i18n';
 import track from '@affine/track';
 import {
   ArrowRightSmallIcon,
@@ -159,7 +159,21 @@ export const MeetingsSettings = () => {
 
       <SettingRow
         name={t['com.affine.settings.meetings.enable.title']()}
-        desc={t['com.affine.settings.meetings.enable.description']()}
+        desc={
+          <Trans
+            i18nKey="com.affine.settings.meetings.enable.description"
+            components={{
+              1: (
+                <a
+                  className={styles.link}
+                  href="https://discord.com/channels/959027316334407691/1358384103925350542"
+                  target="_blank"
+                  rel="noreferrer"
+                />
+              ),
+            }}
+          />
+        }
       >
         <Switch
           checked={settings.enabled}

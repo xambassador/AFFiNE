@@ -5356,10 +5356,6 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.meetings.enable.title"](): string;
     /**
-      * `Utilize the meeting notes and AI summarization features provided by AFFiNE.`
-      */
-    ["com.affine.settings.meetings.enable.description"](): string;
-    /**
       * `Meeting recording`
       */
     ["com.affine.settings.meetings.record.header"](): string;
@@ -8533,6 +8529,12 @@ export const TypedTrans: {
     ["com.affine.settings.suggestion-2"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
         ["2"]: JSX.Element;
+    }>>;
+    /**
+      * `Utilize the meeting notes and AI summarization features provided by AFFiNE. <1>Discuss more in the community</1>.`
+      */
+    ["com.affine.settings.meetings.enable.description"]: ComponentType<TypedTransProps<Readonly<{}>, {
+        ["1"]: JSX.Element;
     }>>;
     /**
       * `If you encounter any issues, please contact our <1>customer support</1>.`

@@ -255,6 +255,9 @@ export const AFFINE_FLAGS = {
     description:
       'com.affine.settings.workspace.experimental-features.enable-meetings.description',
     configurable: !isMobile && environment.isMacOs && BUILD_CONFIG.isElectron,
+    feedbackType: 'discord',
+    feedbackLink:
+      'https://discord.com/channels/959027316334407691/1358384103925350542',
     defaultState: false,
   },
 } satisfies { [key in string]: FlagInfo };

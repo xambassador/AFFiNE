@@ -16,3 +16,7 @@ export const permissionSetting = style({
 export const noPermissionIcon = style({
   color: cssVarV2('button/error'),
 });
+
+export const link = style({
+  color: cssVarV2('text/link'),
+});
