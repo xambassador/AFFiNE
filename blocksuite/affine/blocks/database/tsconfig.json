@@ -3,17 +3,20 @@
   "compilerOptions": {
     "rootDir": "./src",
     "outDir": "./dist",
-    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo"
+    "tsBuildInfoFile": "./dist/tsconfig.tsbuildinfo",
+    "noUncheckedIndexedAccess": true
   },
   "include": ["./src"],
   "references": [
-    { "path": "../../blocks/surface" },
     { "path": "../../components" },
-    { "path": "../text" },
+    { "path": "../../inlines/preset" },
+    { "path": "../../inlines/reference" },
     { "path": "../../model" },
     { "path": "../../rich-text" },
     { "path": "../../shared" },
-    { "path": "../../widgets/edgeless-toolbar" },
+    { "path": "../../widgets/drag-handle" },
+    { "path": "../../widgets/slash-menu" },
+    { "path": "../../data-view" },
     { "path": "../../../framework/global" },
     { "path": "../../../framework/std" },
     { "path": "../../../framework/store" }

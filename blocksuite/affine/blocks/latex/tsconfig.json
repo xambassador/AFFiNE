@@ -7,13 +7,13 @@
   },
   "include": ["./src"],
   "references": [
-    { "path": "../../blocks/surface" },
+    { "path": "../note" },
     { "path": "../../components" },
-    { "path": "../text" },
+    { "path": "../../inlines/latex" },
     { "path": "../../model" },
     { "path": "../../rich-text" },
     { "path": "../../shared" },
-    { "path": "../../widgets/edgeless-toolbar" },
+    { "path": "../../widgets/slash-menu" },
     { "path": "../../../framework/global" },
     { "path": "../../../framework/std" },
     { "path": "../../../framework/store" }

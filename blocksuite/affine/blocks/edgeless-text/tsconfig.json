@@ -7,9 +7,10 @@
   },
   "include": ["./src"],
   "references": [
-    { "path": "../../blocks/surface" },
+    { "path": "../surface" },
     { "path": "../../components" },
-    { "path": "../text" },
+    { "path": "../../gfx/text" },
+    { "path": "../../inlines/preset" },
     { "path": "../../model" },
     { "path": "../../rich-text" },
     { "path": "../../shared" },
