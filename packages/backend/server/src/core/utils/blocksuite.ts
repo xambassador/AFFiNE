@@ -28,7 +28,8 @@ type KnownFlavour =
   | 'affine:image'
   | 'affine:attachment'
   | 'affine:transcription'
-  | 'affine:callout';
+  | 'affine:callout'
+  | 'affine:table';
 
 export function parseWorkspaceDoc(doc: Doc): WorkspaceDocContent | null {
   // not a workspace doc
@@ -115,6 +116,21 @@ export function parsePageDoc(
         // only extract text in full content mode
         if (summaryLenNeeded === -1) {
           pushChildren(block);
+        }
+        break;
+      }
+      case 'affine:table': {
+        // only extract text in full content mode
+        if (summaryLenNeeded === -1) {
+          const contents: string[] = [...block.keys()]
+            .map(key => {
+              if (key.startsWith('prop:cells.') && key.endsWith('.text')) {
+                return block.get(key)?.toString() ?? '';
+              }
+              return '';
+            })
+            .filter(Boolean);
+          content.summary += contents.join('|');
         }
         break;
       }
