@@ -93,7 +93,7 @@ export const AFFINE_FLAGS = {
     description:
       'com.affine.settings.workspace.experimental-features.enable-block-meta.description',
     configurable: isCanaryBuild,
-    defaultState: false,
+    defaultState: true,
   },
   enable_callout: {
     category: 'blocksuite',

@@ -375,11 +375,6 @@ function createToolbarMoreMenuConfigV2(baseUrl?: string) {
                 });
               });
               const createdAtString = i18nTime(date.toISOString(), {
-                relative: {
-                  max: [1, 'day'],
-                  accuracy: 'minute',
-                  weekday: true,
-                },
                 absolute: {
                   accuracy: 'minute',
                 },
@@ -387,6 +382,7 @@ function createToolbarMoreMenuConfigV2(baseUrl?: string) {
               const wrapperStyle = {
                 padding: '4px 8px',
                 fontSize: '12px',
+                fontWeight: '400',
               };
               return html`<div style=${styleMap(wrapperStyle)}>
                 <div>${watch(user)}</div>

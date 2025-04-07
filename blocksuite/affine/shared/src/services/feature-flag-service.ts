@@ -37,7 +37,7 @@ export class FeatureFlagService extends StoreExtension {
     enable_shape_shadow_blur: false,
     enable_mobile_keyboard_toolbar: false,
     enable_mobile_linked_doc_menu: false,
-    enable_block_meta: false,
+    enable_block_meta: true,
     enable_callout: false,
     enable_edgeless_scribbled_style: false,
   });
