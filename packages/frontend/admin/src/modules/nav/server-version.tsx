@@ -23,10 +23,10 @@ export const ServerVersion = () => {
         onClick={handleClick}
         title={`New Version ${availableUpgrade.version} Available`}
       >
-        <span className="overflow-hidden text-ellipsis">
-          New Version
+        <span className="overflow-hidden text-ellipsis space-x-1">
+          <span>New Version</span>
           <span>{availableUpgrade.version}</span>
-          Available
+          <span>Available</span>
         </span>
       </Button>
     );
