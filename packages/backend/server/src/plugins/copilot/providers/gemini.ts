@@ -9,6 +9,7 @@ import {
   FilePart,
   generateObject,
   generateText,
+  JSONParseError,
   streamText,
   TextPart,
 } from 'ai';
@@ -234,6 +235,19 @@ export class GeminiProvider
             messages: msgs,
             schema,
             abortSignal: options.signal,
+            experimental_repairText: async ({ text, error }) => {
+              if (error instanceof JSONParseError) {
+                const ret = text.trim();
+                if (ret.startsWith('```') || ret.endsWith('```')) {
+                  return ret
+                    .replace(/```[\w\s]+\n/g, '')
+                    .replace(/\n```/g, '')
+                    .trim();
+                }
+                return ret;
+              }
+              return null;
+            },
           }).then(r => ({ text: JSON.stringify(r.object) }))
         : await generateText({
             model: modelInstance,
