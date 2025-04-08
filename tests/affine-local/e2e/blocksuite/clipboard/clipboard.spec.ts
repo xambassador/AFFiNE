@@ -12,16 +12,20 @@ import {
 } from '@affine-test/kit/utils/keyboard';
 import { openHomePage } from '@affine-test/kit/utils/load-page';
 import {
+  addCodeBlock,
   clickNewPageButton,
   getBlockSuiteEditorTitle,
   type,
   waitForEditorLoad,
 } from '@affine-test/kit/utils/page-logic';
 import { setSelection } from '@affine-test/kit/utils/selection';
+import type { CodeBlockComponent } from '@blocksuite/affine-block-code';
 import type { ParagraphBlockComponent } from '@blocksuite/affine-block-paragraph';
+import type { BlockComponent } from '@blocksuite/std';
 import { expect, type Page } from '@playwright/test';
 
 const paragraphLocator = 'affine-note affine-paragraph';
+const codeBlockLocator = 'affine-note affine-code';
 
 // Helper function to create paragraph blocks with text
 async function createParagraphBlocks(page: Page, texts: string[]) {
@@ -31,32 +35,75 @@ async function createParagraphBlocks(page: Page, texts: string[]) {
   }
 }
 
-// Helper function to verify paragraph text content
-async function verifyParagraphContent(
+// Helper function to verify block text content
+async function verifyBlockContent<T extends BlockComponent>(
   page: Page,
+  selector: string,
   index: number,
   expectedText: string
 ) {
   expect(
     await page
-      .locator(paragraphLocator)
+      .locator(selector)
       .nth(index)
-      .evaluate(
-        (block: ParagraphBlockComponent, expected: string) =>
-          block.model.props.type === 'text' &&
-          block.model.props.text.toString() === expected,
-        expectedText
-      )
+      .evaluate((block: T, expected: string) => {
+        const model = block.model;
+        // Check if model has text property
+        if (!('text' in model)) return false;
+        const text = model.text;
+        // Check if text exists and has toString method
+        return text && text.toString() === expected;
+      }, expectedText)
   ).toBeTruthy();
 }
 
-// Helper function to get paragraph block ids
-async function getParagraphIds(page: Page) {
-  const paragraph = page.locator(paragraphLocator);
-  const paragraphIds = await paragraph.evaluateAll(
-    (blocks: ParagraphBlockComponent[]) => blocks.map(block => block.model.id)
+// Helper functions using the generic verifyBlockContent
+async function verifyParagraphContent(
+  page: Page,
+  index: number,
+  expectedText: string
+) {
+  await verifyBlockContent<ParagraphBlockComponent>(
+    page,
+    paragraphLocator,
+    index,
+    expectedText
   );
-  return { paragraphIds };
+}
+
+async function verifyCodeBlockContent(
+  page: Page,
+  index: number,
+  expectedText: string
+) {
+  await verifyBlockContent<CodeBlockComponent>(
+    page,
+    codeBlockLocator,
+    index,
+    expectedText
+  );
+}
+
+// Helper function to get block ids
+async function getBlockIds<T extends BlockComponent>(
+  page: Page,
+  selector: string
+) {
+  const blocks = page.locator(selector);
+  const blockIds = await blocks.evaluateAll((blocks: T[]) =>
+    blocks.map(block => block.model.id)
+  );
+  return { blockIds };
+}
+
+// Helper functions using the generic getBlockIds
+async function getParagraphIds(page: Page) {
+  return getBlockIds<ParagraphBlockComponent>(page, paragraphLocator);
+}
+
+// Helper functions using the generic getBlockIds
+async function getCodeBlockIds(page: Page) {
+  return getBlockIds<CodeBlockComponent>(page, codeBlockLocator);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -70,7 +117,7 @@ test.describe('paste in multiple blocks text selection', () => {
     const texts = ['hello world', 'hello world', 'hello world'];
     await createParagraphBlocks(page, texts);
 
-    const { paragraphIds } = await getParagraphIds(page);
+    const { blockIds: paragraphIds } = await getParagraphIds(page);
 
     /**
      * select text cross the 3 blocks:
@@ -108,7 +155,7 @@ test.describe('paste in multiple blocks text selection', () => {
      * hello world
      * hello world
      */
-    const { paragraphIds } = await getParagraphIds(page);
+    const { blockIds: paragraphIds } = await getParagraphIds(page);
 
     /**
      * select the first 2 blocks:
@@ -204,4 +251,76 @@ test('paste surface-ref block to another doc as embed-linked-doc block', async (
     '.affine-embed-linked-doc-content-title-text'
   );
   await expect(embedLinkedDocBlockTitle).toHaveText('Clipboard Test');
+});
+
+test.describe('paste to code block', () => {
+  test('should replace the selected text when pasting plain text', async ({
+    page,
+  }) => {
+    // press enter to focus on the first block of the editor
+    await pressEnter(page);
+    await addCodeBlock(page);
+    await type(page, 'hello world hello');
+    const { blockIds: codeBlockIds } = await getCodeBlockIds(page);
+    await setSelection(page, codeBlockIds[0], 6, codeBlockIds[0], 11);
+    await pasteContent(page, { 'text/plain': 'test' });
+    await verifyCodeBlockContent(page, 0, 'hello test hello');
+  });
+
+  test('should replace the selected text when pasting single snapshot', async ({
+    page,
+  }) => {
+    // Create initial test blocks
+    // add a paragraph block
+    await createParagraphBlocks(page, ['test']);
+    // add a code block
+    await pressEnter(page);
+    await addCodeBlock(page);
+    await type(page, 'hello world hello');
+
+    // select the paragraph content
+    const { blockIds: paragraphIds } = await getParagraphIds(page);
+    await setSelection(page, paragraphIds[0], 0, paragraphIds[0], 4);
+    // copy the paragraph content
+    await copyByKeyboard(page);
+
+    // select 'world' in the code block
+    const { blockIds: codeBlockIds } = await getCodeBlockIds(page);
+    await setSelection(page, codeBlockIds[0], 6, codeBlockIds[0], 11);
+
+    // paste to the code block
+    await pasteByKeyboard(page);
+    await page.waitForTimeout(100);
+
+    await verifyCodeBlockContent(page, 0, 'hello test hello');
+  });
+
+  test('should replace the selected text when pasting multiple snapshots', async ({
+    page,
+  }) => {
+    // Create initial test blocks
+    // add three paragraph blocks
+    await createParagraphBlocks(page, ['test', 'test', 'test']);
+
+    // add a code block
+    await pressEnter(page);
+    await addCodeBlock(page);
+    await type(page, 'hello world hello');
+
+    // select all paragraph content
+    const { blockIds: paragraphIds } = await getParagraphIds(page);
+    await setSelection(page, paragraphIds[0], 0, paragraphIds[2], 4);
+    // copy the paragraph content
+    await copyByKeyboard(page);
+
+    // select 'world' in the code block
+    const { blockIds: codeBlockIds } = await getCodeBlockIds(page);
+    await setSelection(page, codeBlockIds[0], 6, codeBlockIds[0], 11);
+
+    // paste to the code block
+    await pasteByKeyboard(page);
+    await page.waitForTimeout(100);
+
+    await verifyCodeBlockContent(page, 0, 'hello test\ntest\ntest hello');
+  });
 });
