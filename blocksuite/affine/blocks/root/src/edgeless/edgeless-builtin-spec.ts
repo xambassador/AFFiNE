@@ -19,6 +19,7 @@ import {
 } from '@blocksuite/affine-gfx-mindmap';
 import { NoteTool } from '@blocksuite/affine-gfx-note';
 import { ShapeTool } from '@blocksuite/affine-gfx-shape';
+import { TemplateTool } from '@blocksuite/affine-gfx-template';
 import { TextTool } from '@blocksuite/affine-gfx-text';
 import { ElementTransformManager } from '@blocksuite/std/gfx';
 import type { ExtensionType } from '@blocksuite/store';
@@ -30,7 +31,6 @@ import { SnapExtension } from './element-transform/snap-manager.js';
 import { DefaultTool } from './gfx-tool/default-tool.js';
 import { EmptyTool } from './gfx-tool/empty-tool.js';
 import { PanTool } from './gfx-tool/pan-tool.js';
-import { TemplateTool } from './gfx-tool/template-tool.js';
 import { EditPropsMiddlewareBuilder } from './middlewares/base.js';
 import { SnapOverlay } from './utils/snap-manager.js';
 

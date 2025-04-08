@@ -258,7 +258,7 @@ export const moreActions = [
               other: 'new doc',
             });
 
-            moveConnectors(model.id, cardId, edgeless.service);
+            moveConnectors(model.id, cardId, ctx.std);
 
             // Deletes selected note
             ctx.store.transact(() => {

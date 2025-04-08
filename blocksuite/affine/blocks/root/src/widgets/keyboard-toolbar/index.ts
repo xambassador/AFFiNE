@@ -10,7 +10,6 @@ import { WidgetComponent } from '@blocksuite/std';
 import { effect, signal } from '@preact/signals-core';
 import { html, nothing } from 'lit';
 
-import type { PageRootBlockComponent } from '../../page/page-root-block.js';
 import { RootBlockConfigExtension } from '../../root-config.js';
 import { defaultKeyboardToolbarConfig } from './config.js';
 
@@ -18,10 +17,7 @@ export * from './config.js';
 
 export const AFFINE_KEYBOARD_TOOLBAR_WIDGET = 'affine-keyboard-toolbar-widget';
 
-export class AffineKeyboardToolbarWidget extends WidgetComponent<
-  RootBlockModel,
-  PageRootBlockComponent
-> {
+export class AffineKeyboardToolbarWidget extends WidgetComponent<RootBlockModel> {
   private readonly _close = (blur: boolean) => {
     if (blur) {
       if (document.activeElement === this._docTitle?.inlineEditorContainer) {
