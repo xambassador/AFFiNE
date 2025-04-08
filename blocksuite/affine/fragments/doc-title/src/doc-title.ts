@@ -69,7 +69,7 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
   `;
 
   private _getOrCreateFirstPageVisibleNote() {
-    const note = this._rootModel.children.find(
+    const note = this._rootModel?.children.find(
       (child): child is NoteBlockModel =>
         matchModels(child, [NoteBlockModel]) &&
         child.props.displayMode !== NoteDisplayMode.EdgelessOnly
@@ -91,7 +91,7 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
 
       const inlineRange = this.inlineEditor?.getInlineRange();
       if (inlineRange) {
-        const rightText = this._rootModel.props.title.split(inlineRange.index);
+        const rightText = this._rootModel?.props.title.split(inlineRange.index);
         const newFirstParagraphId = this.doc.addBlock(
           'affine:paragraph',
           { text: rightText },
@@ -131,6 +131,7 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
   };
 
   private readonly _updateTitleInMeta = () => {
+    if (!this._rootModel) return;
     this.doc.workspace.meta.setDocMeta(this.doc.id, {
       title: this._rootModel.props.title.toString(),
     });
@@ -141,7 +142,7 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
   }
 
   private get _rootModel() {
-    return this.doc.root as RootBlockModel;
+    return this.doc.root as RootBlockModel | null;
   }
 
   private get _viewport() {
@@ -191,14 +192,14 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
       this._updateTitleInMeta();
       this.requestUpdate();
     };
-    this._rootModel.props.title.yText.observe(updateMetaTitle);
+    this._rootModel?.props.title.yText.observe(updateMetaTitle);
     this._disposables.add(() => {
-      this._rootModel.props.title.yText.unobserve(updateMetaTitle);
+      this._rootModel?.props.title.yText.unobserve(updateMetaTitle);
     });
   }
 
   override render() {
-    const isEmpty = !this._rootModel.props.title.length && !this._isComposing;
+    const isEmpty = !this._rootModel?.props.title.length && !this._isComposing;
 
     return html`
       <div
@@ -208,7 +209,7 @@ export class DocTitle extends WithDisposable(ShadowlessElement) {
         data-block-is-title="true"
       >
         <rich-text
-          .yText=${this._rootModel.props.title.yText}
+          .yText=${this._rootModel?.props.title.yText}
           .undoManager=${this.doc.history}
           .verticalScrollContainerGetter=${() => this._viewport}
           .readonly=${this.doc.readonly}
