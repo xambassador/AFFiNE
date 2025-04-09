@@ -21,6 +21,7 @@ export class MockCopilotProvider extends OpenAIProvider {
     'lcm-sd15-i2i',
     'clarity-upscaler',
     'imageutils/rembg',
+    'gemini-2.5-pro-exp-03-25',
   ];
 
   override readonly capabilities = [

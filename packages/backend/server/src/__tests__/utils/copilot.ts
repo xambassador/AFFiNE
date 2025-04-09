@@ -330,6 +330,149 @@ export async function listContextDocAndFiles(
   return { docs, files };
 }
 
+export async function submitAudioTranscription(
+  app: TestingApp,
+  workspaceId: string,
+  blobId: string,
+  fileName: string,
+  content: Buffer
+): Promise<{ id: string; status: string }> {
+  const res = await app
+    .POST('/graphql')
+    .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
+    .field(
+      'operations',
+      JSON.stringify({
+        query: `
+          mutation submitAudioTranscription($blob: Upload!, $blobId: String!, $workspaceId: String!) {
+            submitAudioTranscription(blob: $blob, blobId: $blobId, workspaceId: $workspaceId) {
+              id
+              status
+            }
+          }
+        `,
+        variables: {
+          blob: null,
+          blobId,
+          workspaceId,
+        },
+      })
+    )
+    .field('map', JSON.stringify({ '0': ['variables.blob'] }))
+    .attach('0', content, {
+      filename: fileName,
+      contentType: 'application/octet-stream',
+    })
+    .expect(200);
+
+  return res.body.data.submitAudioTranscription;
+}
+
+export async function retryAudioTranscription(
+  app: TestingApp,
+  workspaceId: string,
+  jobId: string
+): Promise<{ id: string; status: string }> {
+  const res = await app.gql(
+    `
+      mutation retryAudioTranscription($workspaceId: String!, $jobId: String!) {
+        retryAudioTranscription(workspaceId: $workspaceId, jobId: $jobId) {
+          id
+          status
+        }
+      }
+    `,
+    { workspaceId, jobId }
+  );
+
+  return res.retryAudioTranscription;
+}
+
+export async function claimAudioTranscription(
+  app: TestingApp,
+  jobId: string
+): Promise<{
+  id: string;
+  status: string;
+  title: string | null;
+  summary: string | null;
+  transcription:
+    | {
+        speaker: string;
+        start: number;
+        end: number;
+        transcription: string;
+      }[]
+    | null;
+}> {
+  const res = await app.gql(
+    `
+      mutation claimAudioTranscription($jobId: String!) {
+        claimAudioTranscription(jobId: $jobId) {
+          id
+          status
+          title
+          summary
+          transcription {
+            speaker
+            start
+            end
+            transcription
+          }
+        }
+      }
+    `,
+    { jobId }
+  );
+
+  return res.claimAudioTranscription;
+}
+
+export async function audioTranscription(
+  app: TestingApp,
+  workspaceId: string,
+  jobId: string
+): Promise<{
+  id: string;
+  status: string;
+  title: string | null;
+  summary: string | null;
+  transcription:
+    | {
+        speaker: string;
+        start: number;
+        end: number;
+        transcription: string;
+      }[]
+    | null;
+}> {
+  const res = await app.gql(
+    `
+      query audioTranscription($workspaceId: String!, $jobId: String!) {
+        currentUser {
+          copilot(workspaceId: $workspaceId) {
+            audioTranscription(jobId: $jobId) {
+              id
+              status
+              title
+              summary
+              transcription {
+                speaker
+                start
+                end
+                transcription
+              }
+            }
+          }
+        }
+      }
+    `,
+    { workspaceId, jobId }
+  );
+
+  return res.currentUser?.copilot?.audioTranscription;
+}
+
 export async function createCopilotMessage(
   app: TestingApp,
   sessionId: string,
