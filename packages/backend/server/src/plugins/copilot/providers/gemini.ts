@@ -237,7 +237,8 @@ export class GeminiProvider
             abortSignal: options.signal,
             experimental_repairText: async ({ text, error }) => {
               if (error instanceof JSONParseError) {
-                const ret = text.trim();
+                // strange fixed response, temporarily replace it
+                const ret = text.replaceAll(/^ny\n/g, ' ').trim();
                 if (ret.startsWith('```') || ret.endsWith('```')) {
                   return ret
                     .replace(/```[\w\s]+\n/g, '')
