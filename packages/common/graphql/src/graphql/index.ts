@@ -612,6 +612,7 @@ export const submitAudioTranscriptionMutation = {
     status
   }
 }`,
+  file: true,
 };
 
 export const claimAudioTranscriptionMutation = {

@@ -1,4 +1,4 @@
-import { encodeAudioBlobToOpus } from '@affine/core/utils/webm-encoding';
+import { encodeAudioBlobToOpusSlices } from '@affine/core/utils/webm-encoding';
 import { DebugLogger } from '@affine/debug';
 import { AiJobStatus } from '@affine/graphql';
 import track from '@affine/track';
@@ -115,17 +115,19 @@ export class AudioAttachmentBlock extends Entity<AttachmentBlockModel> {
     const job = this.framework.createEntity(AudioTranscriptionJob, {
       blobId: this.props.props.sourceId,
       blockProps: transcriptionBlockProps,
-      getAudioFile: async () => {
+      getAudioFiles: async () => {
         const buffer = await this.audioMedia.getBuffer();
         if (!buffer) {
           throw new Error('No audio buffer available');
         }
-        const encodedBuffer = await encodeAudioBlobToOpus(buffer, 64000);
-        const blob = new Blob([encodedBuffer], { type: this.props.props.type });
-        const file = new File([blob], this.props.props.name, {
-          type: this.props.props.type,
+        const slices = await encodeAudioBlobToOpusSlices(buffer, 64000);
+        const files = slices.map((slice, index) => {
+          const blob = new Blob([slice], { type: 'audio/opus' });
+          return new File([blob], this.props.props.name + `-${index}.opus`, {
+            type: 'audio/opus',
+          });
         });
-        return file;
+        return files;
       },
     });
 
