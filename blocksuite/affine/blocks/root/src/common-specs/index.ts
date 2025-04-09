@@ -43,12 +43,7 @@ import { RootBlockAdapterExtensions } from '../adapters/extension';
 import { clipboardConfigs } from '../clipboard';
 import { builtinToolbarConfig } from '../configs/toolbar';
 import { fallbackKeymap } from '../keyboard/keymap';
-import {
-  innerModalWidget,
-  linkedDocWidget,
-  modalWidget,
-  viewportOverlayWidget,
-} from './widgets';
+import { linkedDocWidget, modalWidget, viewportOverlayWidget } from './widgets';
 
 /**
  * Why do we add these extensions into CommonSpecs?
@@ -87,7 +82,6 @@ export const CommonSpecs: ExtensionType[] = [
   ...EdgelessElementViews,
   ...EdgelessElementRendererExtension,
   modalWidget,
-  innerModalWidget,
   SlashMenuExtension,
   linkedDocWidget,
   dragHandleWidget,

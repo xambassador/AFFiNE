@@ -43,10 +43,6 @@ import {
 } from './widgets/edgeless-zoom-toolbar/index.js';
 import { ZoomBarToggleButton } from './widgets/edgeless-zoom-toolbar/zoom-bar-toggle-button.js';
 import { EdgelessZoomToolbar } from './widgets/edgeless-zoom-toolbar/zoom-toolbar.js';
-import {
-  AFFINE_INNER_MODAL_WIDGET,
-  AffineInnerModalWidget,
-} from './widgets/inner-modal/inner-modal.js';
 import { effects as widgetMobileToolbarEffects } from './widgets/keyboard-toolbar/effects.js';
 import { effects as widgetLinkedDocEffects } from './widgets/linked-doc/effects.js';
 import { Loader } from './widgets/linked-doc/import-doc/loader.js';
@@ -97,7 +93,6 @@ function registerGfxEffects() {
 }
 
 function registerWidgets() {
-  customElements.define(AFFINE_INNER_MODAL_WIDGET, AffineInnerModalWidget);
   customElements.define(AFFINE_MODAL_WIDGET, AffineModalWidget);
   customElements.define(
     AFFINE_PAGE_DRAGGING_AREA_WIDGET,
@@ -185,6 +180,5 @@ declare global {
     'edgeless-zoom-toolbar': EdgelessZoomToolbar;
 
     [AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET]: AffineEdgelessZoomToolbarWidget;
-    [AFFINE_INNER_MODAL_WIDGET]: AffineInnerModalWidget;
   }
 }

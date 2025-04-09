@@ -10,7 +10,6 @@ import type { EdgelessRootBlockComponent } from './edgeless/edgeless-root-block.
 import type { PageRootBlockComponent } from './page/page-root-block.js';
 import type { AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET } from './widgets/edgeless-zoom-toolbar/index.js';
 import type { AFFINE_KEYBOARD_TOOLBAR_WIDGET } from './widgets/index.js';
-import type { AFFINE_INNER_MODAL_WIDGET } from './widgets/inner-modal/inner-modal.js';
 import type { AFFINE_LINKED_DOC_WIDGET } from './widgets/linked-doc/config.js';
 import type { AFFINE_MODAL_WIDGET } from './widgets/modal/modal.js';
 import type { AFFINE_PAGE_DRAGGING_AREA_WIDGET } from './widgets/page-dragging-area/page-dragging-area.js';
@@ -19,7 +18,6 @@ import type { AFFINE_VIEWPORT_OVERLAY_WIDGET } from './widgets/viewport-overlay/
 export type PageRootBlockWidgetName =
   | typeof AFFINE_KEYBOARD_TOOLBAR_WIDGET
   | typeof AFFINE_MODAL_WIDGET
-  | typeof AFFINE_INNER_MODAL_WIDGET
   | typeof AFFINE_SLASH_MENU_WIDGET
   | typeof AFFINE_LINKED_DOC_WIDGET
   | typeof AFFINE_PAGE_DRAGGING_AREA_WIDGET
@@ -29,7 +27,6 @@ export type PageRootBlockWidgetName =
 
 export type EdgelessRootBlockWidgetName =
   | typeof AFFINE_MODAL_WIDGET
-  | typeof AFFINE_INNER_MODAL_WIDGET
   | typeof AFFINE_SLASH_MENU_WIDGET
   | typeof AFFINE_LINKED_DOC_WIDGET
   | typeof AFFINE_DRAG_HANDLE_WIDGET

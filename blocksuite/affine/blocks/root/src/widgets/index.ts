@@ -1,5 +1,4 @@
 export { AffineEdgelessZoomToolbarWidget } from './edgeless-zoom-toolbar/index.js';
-export { AffineInnerModalWidget } from './inner-modal/inner-modal.js';
 export * from './keyboard-toolbar/index.js';
 export {
   type LinkedMenuAction,
