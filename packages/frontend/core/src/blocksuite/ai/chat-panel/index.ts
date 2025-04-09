@@ -408,7 +408,6 @@ export class ChatPanel extends SignalWatcher(
         .doc=${this.doc}
         .getSessionId=${this._getSessionId}
         .createSessionId=${this._createSessionId}
-        .createChatSessionId=${this._createSessionId}
         .chatContextValue=${this.chatContextValue}
         .updateContext=${this.updateContext}
         .updateEmbeddingProgress=${this._updateEmbeddingProgress}
