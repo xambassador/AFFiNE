@@ -5,7 +5,11 @@ import {
 } from '@blocksuite/affine/blocks/surface';
 import { fitContent } from '@blocksuite/affine/gfx/shape';
 import { createTemplateJob } from '@blocksuite/affine/gfx/template';
-import { Bound, getCommonBound } from '@blocksuite/affine/global/gfx';
+import {
+  Bound,
+  getCommonBound,
+  type XYWH,
+} from '@blocksuite/affine/global/gfx';
 import type {
   MindmapElementModel,
   ShapeElementModel,
@@ -83,7 +87,10 @@ function responseToBrainstormMindmap(
     });
     // wait for mindmap xywh update
     setTimeout(() => {
-      const frameBound = expandBound(mindmap.elementBound, PADDING);
+      const { x, y, w, h } = mindmap.elementBound;
+      const targetBound: XYWH = [x, y + h / 2 + PADDING - 15, w, h];
+      mindmap.moveTo(targetBound);
+      const frameBound = expandBound(new Bound(...targetBound), PADDING);
       addSurfaceRefBlock(host, frameBound, place);
     }, 0);
   });
@@ -107,7 +114,7 @@ function responseToMakeItReal(host: EditorHost, ctx: AIContext, place: Place) {
   const bound = getEdgelessContentBound(host);
   const x = bound ? bound.x + bound.w + PADDING * 2 : 0;
   const y = bound ? bound.y : 0;
-  const htmlBound = new Bound(x, y, width || 800, height || 600);
+  const htmlBound = new Bound(x, y + PADDING, width || 800, height || 600);
   const html = preprocessHtml(aiPanel.answer);
   host.doc.transact(() => {
     host.doc.addBlock(

@@ -100,8 +100,6 @@ export class AIProvider {
 
   static LAST_ACTION_SESSIONID = '';
 
-  static LAST_ROOT_SESSION_ID = '';
-
   static MAX_LOCAL_HISTORY = 10;
 
   private readonly actions: Partial<BlockSuitePresets.AIActions> = {};
@@ -158,10 +156,10 @@ export class AIProvider {
     id: T,
     action: (
       ...options: Parameters<BlockSuitePresets.AIActions[T]>
-    ) => ReturnType<BlockSuitePresets.AIActions[T]>
+    ) => Promise<ReturnType<BlockSuitePresets.AIActions[T]>>
   ): void {
     // @ts-expect-error TODO: maybe fix this
-    this.actions[id] = (
+    this.actions[id] = async (
       ...args: Parameters<BlockSuitePresets.AIActions[T]>
     ) => {
       const options = args[0];
@@ -176,9 +174,8 @@ export class AIProvider {
         this.actionHistory.shift();
       }
       // wrap the action with slot actions
-      const result: BlockSuitePresets.TextStream | Promise<string> = action(
-        ...args
-      );
+      const result: BlockSuitePresets.TextStream | Promise<string> =
+        await action(...args);
       const isTextStream = (
         m: BlockSuitePresets.TextStream | Promise<string>
       ): m is BlockSuitePresets.TextStream =>
@@ -315,7 +312,7 @@ export class AIProvider {
     id: T,
     action: (
       ...options: Parameters<BlockSuitePresets.AIActions[T]>
-    ) => ReturnType<BlockSuitePresets.AIActions[T]>
+    ) => Promise<ReturnType<BlockSuitePresets.AIActions[T]>>
   ): void;
 
   static provide(id: unknown, action: unknown) {
