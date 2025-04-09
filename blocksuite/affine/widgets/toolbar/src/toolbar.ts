@@ -3,6 +3,7 @@ import { EdgelessLegacySlotIdentifier } from '@blocksuite/affine-block-surface';
 import { TableSelection } from '@blocksuite/affine-block-table';
 import {
   darkToolbarStyles,
+  type EditorMenuButton,
   EditorToolbar,
   lightToolbarStyles,
 } from '@blocksuite/affine-components/toolbar';
@@ -618,7 +619,7 @@ export class AffineToolbarWidget extends WidgetComponent {
       })
     );
 
-    // Update layout when placement changing to `inner`
+    // Updates layout when placement changing to `inner`
     disposables.add(
       effect(() => {
         toolbar.dataset.placement = placement$.value;
@@ -632,6 +633,10 @@ export class AffineToolbarWidget extends WidgetComponent {
         // Hides toolbar
         if (Flag.None === value || flags.check(Flag.Hiding, value)) {
           if (toolbar.dataset.open) delete toolbar.dataset.open;
+          // Closes dropdown menus
+          toolbar
+            .querySelector<EditorMenuButton>('editor-menu-button[data-open]')
+            ?.hide();
           return;
         }
 
