@@ -1123,6 +1123,10 @@ export function useAFFiNEI18N(): {
         readonly second: string;
     }): string;
     /**
+      * `Sent`
+      */
+    ["com.affine.auth.sent"](): string;
+    /**
       * `The verification link failed to be sent, please try again later.`
       */
     ["com.affine.auth.sent.change.email.fail"](): string;
@@ -1135,7 +1139,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.auth.sent.change.password.hint"](): string;
     /**
-      * `Your password has upgraded! You can sign in AFFiNE Cloud with new password!`
+      * `Your password has been updated! You can sign in AFFiNE Cloud with new password!`
       */
     ["com.affine.auth.sent.reset.password.success.message"](): string;
     /**
