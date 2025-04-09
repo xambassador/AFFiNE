@@ -709,6 +709,10 @@ export const USER_FRIENDLY_ERRORS = {
     type: 'bad_request',
     message: () => `Transcription job not found.`,
   },
+  copilot_transcription_audio_not_provided: {
+    type: 'bad_request',
+    message: () => `Audio not provided.`,
+  },
 
   // Quota & Limit errors
   blob_quota_exceeded: {

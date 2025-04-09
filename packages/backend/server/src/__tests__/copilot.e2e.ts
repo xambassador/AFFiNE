@@ -883,34 +883,67 @@ test('should be able to transcript', async t => {
     '[{"a":"A","s":30,"e":45,"t":"Hello, everyone."},{"a":"B","s":46,"e":70,"t":"Hi, thank you for joining the meeting today."}]'
   );
 
-  const job = await submitAudioTranscription(
-    app,
-    workspaceId,
-    'blobId',
-    'test.mp3',
-    Buffer.from([1, 1])
-  );
-  t.snapshot(
-    cleanObject([job], ['id']),
-    'should submit audio transcription job'
-  );
-  t.truthy(job.id, 'should have job id');
-
-  // wait for processing
   {
-    let { status } = (await audioTranscription(app, workspaceId, job.id)) || {};
+    const job = await submitAudioTranscription(app, workspaceId, '1', '1.mp3', [
+      Buffer.from([1, 1]),
+    ]);
+    t.snapshot(
+      cleanObject([job], ['id']),
+      'should submit audio transcription job'
+    );
+    t.truthy(job.id, 'should have job id');
 
-    while (status !== 'finished') {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      ({ status } = (await audioTranscription(app, workspaceId, job.id)) || {});
+    // wait for processing
+    {
+      let { status } =
+        (await audioTranscription(app, workspaceId, job.id)) || {};
+
+      while (status !== 'finished') {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        ({ status } =
+          (await audioTranscription(app, workspaceId, job.id)) || {});
+      }
+    }
+
+    {
+      const result = await claimAudioTranscription(app, job.id);
+      t.snapshot(
+        cleanObject([result], ['id']),
+        'should claim audio transcription job'
+      );
     }
   }
 
   {
-    const result = await claimAudioTranscription(app, job.id);
+    // sliced audio
+    const job = await submitAudioTranscription(app, workspaceId, '2', '2.mp3', [
+      Buffer.from([1, 1]),
+      Buffer.from([1, 2]),
+    ]);
     t.snapshot(
-      cleanObject([result], ['id']),
-      'should claim audio transcription job'
+      cleanObject([job], ['id']),
+      'should submit audio transcription job'
     );
+    t.truthy(job.id, 'should have job id');
+
+    // wait for processing
+    {
+      let { status } =
+        (await audioTranscription(app, workspaceId, job.id)) || {};
+
+      while (status !== 'finished') {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        ({ status } =
+          (await audioTranscription(app, workspaceId, job.id)) || {});
+      }
+    }
+
+    {
+      const result = await claimAudioTranscription(app, job.id);
+      t.snapshot(
+        cleanObject([result], ['id']),
+        'should claim audio transcription job'
+      );
+    }
   }
 });

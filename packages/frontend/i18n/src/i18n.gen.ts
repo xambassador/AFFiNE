@@ -8128,6 +8128,10 @@ export function useAFFiNEI18N(): {
       */
     ["error.COPILOT_TRANSCRIPTION_JOB_NOT_FOUND"](): string;
     /**
+      * `Audio not provided.`
+      */
+    ["error.COPILOT_TRANSCRIPTION_AUDIO_NOT_PROVIDED"](): string;
+    /**
       * `You have exceeded your blob size quota.`
       */
     ["error.BLOB_QUOTA_EXCEEDED"](): string;

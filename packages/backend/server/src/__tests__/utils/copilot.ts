@@ -335,17 +335,17 @@ export async function submitAudioTranscription(
   workspaceId: string,
   blobId: string,
   fileName: string,
-  content: Buffer
+  content: Buffer[]
 ): Promise<{ id: string; status: string }> {
-  const res = await app
+  let resp = app
     .POST('/graphql')
     .set({ 'x-request-id': 'test', 'x-operation-name': 'test' })
     .field(
       'operations',
       JSON.stringify({
         query: `
-          mutation submitAudioTranscription($blob: Upload!, $blobId: String!, $workspaceId: String!) {
-            submitAudioTranscription(blob: $blob, blobId: $blobId, workspaceId: $workspaceId) {
+          mutation submitAudioTranscription($blob: Upload, $blobs: [Upload!], $blobId: String!, $workspaceId: String!) {
+            submitAudioTranscription(blob: $blob, blobs: $blobs, blobId: $blobId, workspaceId: $workspaceId) {
               id
               status
             }
@@ -353,17 +353,29 @@ export async function submitAudioTranscription(
         `,
         variables: {
           blob: null,
+          blobs: [],
           blobId,
           workspaceId,
         },
       })
     )
-    .field('map', JSON.stringify({ '0': ['variables.blob'] }))
-    .attach('0', content, {
+    .field(
+      'map',
+      JSON.stringify(
+        Array.from<any>({ length: content.length }).reduce((acc, _, idx) => {
+          acc[idx.toString()] = [`variables.blobs.${idx}`];
+          return acc;
+        }, {})
+      )
+    );
+  for (const [idx, buffer] of content.entries()) {
+    resp = resp.attach(idx.toString(), buffer, {
       filename: fileName,
       contentType: 'application/octet-stream',
-    })
-    .expect(200);
+    });
+  }
+
+  const res = await resp.expect(200);
 
   return res.body.data.submitAudioTranscription;
 }

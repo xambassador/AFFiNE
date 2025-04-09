@@ -601,9 +601,10 @@ export const getCopilotHistoriesQuery = {
 export const submitAudioTranscriptionMutation = {
   id: 'submitAudioTranscriptionMutation' as const,
   op: 'submitAudioTranscription',
-  query: `mutation submitAudioTranscription($workspaceId: String!, $blobId: String!, $blob: Upload!) {
+  query: `mutation submitAudioTranscription($workspaceId: String!, $blobId: String!, $blob: Upload, $blobs: [Upload!]) {
   submitAudioTranscription(
     blob: $blob
+    blobs: $blobs
     blobId: $blobId
     workspaceId: $workspaceId
   ) {
@@ -611,7 +612,6 @@ export const submitAudioTranscriptionMutation = {
     status
   }
 }`,
-  file: true,
 };
 
 export const claimAudioTranscriptionMutation = {

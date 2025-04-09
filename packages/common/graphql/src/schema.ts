@@ -580,6 +580,7 @@ export enum ErrorNames {
   COPILOT_QUOTA_EXCEEDED = 'COPILOT_QUOTA_EXCEEDED',
   COPILOT_SESSION_DELETED = 'COPILOT_SESSION_DELETED',
   COPILOT_SESSION_NOT_FOUND = 'COPILOT_SESSION_NOT_FOUND',
+  COPILOT_TRANSCRIPTION_AUDIO_NOT_PROVIDED = 'COPILOT_TRANSCRIPTION_AUDIO_NOT_PROVIDED',
   COPILOT_TRANSCRIPTION_JOB_EXISTS = 'COPILOT_TRANSCRIPTION_JOB_EXISTS',
   COPILOT_TRANSCRIPTION_JOB_NOT_FOUND = 'COPILOT_TRANSCRIPTION_JOB_NOT_FOUND',
   CUSTOMER_PORTAL_CREATE_FAILED = 'CUSTOMER_PORTAL_CREATE_FAILED',
@@ -1432,8 +1433,9 @@ export interface MutationSetBlobArgs {
 }
 
 export interface MutationSubmitAudioTranscriptionArgs {
-  blob: Scalars['Upload']['input'];
+  blob?: InputMaybe<Scalars['Upload']['input']>;
   blobId: Scalars['String']['input'];
+  blobs?: InputMaybe<Array<Scalars['Upload']['input']>>;
   workspaceId: Scalars['String']['input'];
 }
 
@@ -2991,7 +2993,10 @@ export type GetCopilotHistoriesQuery = {
 export type SubmitAudioTranscriptionMutationVariables = Exact<{
   workspaceId: Scalars['String']['input'];
   blobId: Scalars['String']['input'];
-  blob: Scalars['Upload']['input'];
+  blob?: InputMaybe<Scalars['Upload']['input']>;
+  blobs?: InputMaybe<
+    Array<Scalars['Upload']['input']> | Scalars['Upload']['input']
+  >;
 }>;
 
 export type SubmitAudioTranscriptionMutation = {

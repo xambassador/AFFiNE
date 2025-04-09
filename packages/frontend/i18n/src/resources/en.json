@@ -2010,6 +2010,7 @@
   "error.COPILOT_EMBEDDING_UNAVAILABLE": "Embedding feature not available, you may need to install pgvector extension to your database",
   "error.COPILOT_TRANSCRIPTION_JOB_EXISTS": "Transcription job already exists",
   "error.COPILOT_TRANSCRIPTION_JOB_NOT_FOUND": "Transcription job not found.",
+  "error.COPILOT_TRANSCRIPTION_AUDIO_NOT_PROVIDED": "Audio not provided.",
   "error.BLOB_QUOTA_EXCEEDED": "You have exceeded your blob size quota.",
   "error.STORAGE_QUOTA_EXCEEDED": "You have exceeded your storage quota.",
   "error.MEMBER_QUOTA_EXCEEDED": "You have exceeded your workspace member quota.",
