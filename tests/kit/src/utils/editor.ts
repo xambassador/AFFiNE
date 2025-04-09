@@ -5,6 +5,11 @@ import { expect, type Locator, type Page } from '@playwright/test';
 declare type _GLOBAL_ = typeof BlocksuiteEffects;
 
 const EDGELESS_TOOLBAR_WIDGET = 'edgeless-toolbar-widget';
+export const ZERO_WIDTH_SPACE = '\u200C';
+
+export function inlineEditorInnerTextToString(innerText: string): string {
+  return innerText.replace(ZERO_WIDTH_SPACE, '').trim();
+}
 
 export function locateModeSwitchButton(
   page: Page,
@@ -60,6 +65,13 @@ export function locateDocTitle(page: Page, editorIndex = 0) {
 
 export async function focusDocTitle(page: Page, editorIndex = 0) {
   await locateDocTitle(page, editorIndex).locator('.inline-editor').focus();
+}
+
+export async function assertTitle(page: Page, text: string) {
+  const title = locateDocTitle(page);
+  const inlineEditor = title.locator('.doc-title-container').first();
+  const vText = inlineEditorInnerTextToString(await inlineEditor.innerText());
+  expect(vText).toBe(text);
 }
 
 export function locateToolbar(page: Page, editorIndex = 0) {

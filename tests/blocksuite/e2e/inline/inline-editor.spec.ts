@@ -2,6 +2,13 @@ import type { InlineEditor, InlineRange } from '@blocksuite/affine/std/inline';
 import type { DeltaInsert } from '@blocksuite/affine/store';
 import { expect, type Page, test } from '@playwright/test';
 
+import { pressArrowLeft, pressEnter } from '../utils/actions/keyboard.js';
+import {
+  enterPlaygroundRoom,
+  focusRichText,
+  initEmptyParagraphState,
+} from '../utils/actions/misc.js';
+import { assertRichTextInlineDeltas } from '../utils/asserts.js';
 import { ZERO_WIDTH_SPACE } from '../utils/inline-editor.js';
 // FIXME(mirone): copy paste from framework/inline/__tests__/utils.ts
 const defaultPlaygroundURL = new URL(
@@ -1123,4 +1130,42 @@ test('triple click to select line', async ({ page }) => {
 
   await press(page, 'Backspace');
   expect(await editorA.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nabc');
+});
+
+test('caret should move correctly when inline elements are exist', async ({
+  page,
+}) => {
+  await enterPlaygroundRoom(page);
+  await initEmptyParagraphState(page);
+  await focusRichText(page, 0);
+
+  // hello 'link doc' world
+  await type(page, 'hello ');
+  await press(page, '@');
+  await type(page, 'link doc');
+  await pressEnter(page);
+  await type(page, ' world');
+
+  await pressArrowLeft(page, ' world'.length);
+  await pressArrowLeft(page); // on 'linked doc'
+  await pressArrowLeft(page); // on the left side of 'linked doc'
+  await type(page, 'test');
+
+  await assertRichTextInlineDeltas(page, [
+    {
+      insert: 'hello test',
+    },
+    {
+      attributes: {
+        reference: {
+          pageId: '3',
+          type: 'LinkedPage',
+        },
+      },
+      insert: ' ',
+    },
+    {
+      insert: ' world',
+    },
+  ]);
 });
