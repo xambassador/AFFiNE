@@ -320,7 +320,7 @@ const actions: Prompt[] = [
   {
     name: 'Transcript audio',
     action: 'Transcript audio',
-    model: 'gemini-2.5-pro-exp-03-25',
+    model: 'gemini-2.5-pro-preview-03-25',
     messages: [
       {
         role: 'system',

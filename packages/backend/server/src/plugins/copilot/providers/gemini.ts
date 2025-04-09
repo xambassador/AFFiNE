@@ -67,7 +67,7 @@ export class GeminiProvider
   override readonly models = [
     // text to text
     'gemini-2.0-flash-001',
-    'gemini-2.5-pro-exp-03-25',
+    'gemini-2.5-pro-preview-03-25',
     // embeddings
     'text-embedding-004',
   ];
