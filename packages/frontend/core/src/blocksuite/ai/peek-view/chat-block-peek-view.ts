@@ -334,6 +334,7 @@ export class AIChatBlockPeekView extends LitElement {
       const last = messages[messages.length - 1];
       if ('content' in last) {
         last.content = '';
+        last.id = '';
         last.createdAt = new Date().toISOString();
       }
       this.updateContext({ messages, status: 'loading', error: null });
