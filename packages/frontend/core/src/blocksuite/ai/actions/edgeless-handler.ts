@@ -36,6 +36,7 @@ import {
   getSelections,
 } from '../utils/selection-utils';
 import type { AffineAIPanelWidget } from '../widgets/ai-panel/ai-panel';
+import type { AINetworkSearchConfig } from '../widgets/ai-panel/type';
 import type { EdgelessCopilotWidget } from '../widgets/edgeless-copilot';
 import { actionToAnswerRenderer } from './answer-renderer';
 import { EXCLUDING_COPY_ACTIONS } from './consts';
@@ -168,7 +169,8 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
     seed?: string;
   } | void>,
   trackerOptions?: BlockSuitePresets.TrackerOptions,
-  panelInput?: string
+  panelInput?: string,
+  networkConfig?: AINetworkSearchConfig
 ) {
   const action = AIProvider.actions[id];
 
@@ -182,6 +184,7 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
       return {
         async *[Symbol.asyncIterator]() {
           const models = getCopilotSelectedElems(host);
+          const { visible, enabled } = networkConfig ?? {};
           const options = {
             ...variants,
             signal,
@@ -193,6 +196,7 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
             host,
             docId: host.doc.id,
             workspaceId: host.doc.workspace.id,
+            networkSearch: visible?.value && enabled?.value,
           } as Parameters<typeof action>[0];
 
           const content = ctx.get().content;
@@ -259,7 +263,8 @@ function actionToGeneration<T extends keyof BlockSuitePresets.AIActions>(
     attachments?: (string | Blob)[];
     seed?: string;
   } | void>,
-  trackerOptions?: BlockSuitePresets.TrackerOptions
+  trackerOptions?: BlockSuitePresets.TrackerOptions,
+  networkConfig?: AINetworkSearchConfig
 ) {
   return (host: EditorHost, ctx: AIContext) => {
     return ({
@@ -284,7 +289,8 @@ function actionToGeneration<T extends keyof BlockSuitePresets.AIActions>(
         variants,
         extract,
         trackerOptions,
-        input
+        input,
+        networkConfig
       )?.(host, ctx);
 
       if (!stream) return;
@@ -325,7 +331,8 @@ function updateEdgelessAIPanelConfig<
     id,
     variants,
     customInput,
-    trackerOptions
+    trackerOptions,
+    config.networkSearchConfig
   )(host, ctx);
   config.finishStateConfig = actionToResponse(id, host, ctx, variants);
   config.generatingStateConfig = actionToGenerating(id, generatingIcon);

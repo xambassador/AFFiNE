@@ -22,6 +22,7 @@ import {
   selectAboveBlocks,
 } from '../utils/selection-utils';
 import type { AffineAIPanelWidget } from '../widgets/ai-panel/ai-panel';
+import type { AINetworkSearchConfig } from '../widgets/ai-panel/type';
 import { actionToAnswerRenderer } from './answer-renderer';
 
 export function bindTextStream(
@@ -69,7 +70,8 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
     Parameters<BlockSuitePresets.AIActions[T]>[0],
     keyof BlockSuitePresets.AITextActionOptions
   >,
-  trackerOptions?: BlockSuitePresets.TrackerOptions
+  trackerOptions?: BlockSuitePresets.TrackerOptions,
+  networkConfig?: AINetworkSearchConfig
 ): BlockSuitePresets.TextStream | undefined {
   const action = AIProvider.actions[id];
   if (!action || typeof action !== 'function') return;
@@ -94,10 +96,11 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
       const models = selectedBlocks?.map(block => block.model);
       const control = trackerOptions?.control ?? 'format-bar';
       const where = trackerOptions?.where ?? 'ai-panel';
+      const { visible, enabled } = networkConfig ?? {};
       const options = {
         ...variants,
         attachments,
-        input: input ? `${markdown}\n${input}` : markdown,
+        input: input ? (markdown ? `${markdown}\n${input}` : input) : markdown,
         stream: true,
         host,
         models,
@@ -106,6 +109,7 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
         where,
         docId: host.doc.id,
         workspaceId: host.doc.workspace.id,
+        networkSearch: visible?.value && enabled?.value,
       } as Parameters<typeof action>[0];
       // @ts-expect-error TODO(@Peng): maybe fix this
       stream = await action(options);
@@ -122,7 +126,8 @@ function actionToGenerateAnswer<T extends keyof BlockSuitePresets.AIActions>(
     Parameters<BlockSuitePresets.AIActions[T]>[0],
     keyof BlockSuitePresets.AITextActionOptions
   >,
-  trackerOptions?: BlockSuitePresets.TrackerOptions
+  trackerOptions?: BlockSuitePresets.TrackerOptions,
+  networkConfig?: AINetworkSearchConfig
 ) {
   return ({
     input,
@@ -143,7 +148,8 @@ function actionToGenerateAnswer<T extends keyof BlockSuitePresets.AIActions>(
       input,
       signal,
       variants,
-      trackerOptions
+      trackerOptions,
+      networkConfig
     );
     if (!stream) return;
     bindTextStream(stream, { update, finish, signal });
@@ -171,7 +177,8 @@ function updateAIPanelConfig<T extends keyof BlockSuitePresets.AIActions>(
     host,
     id,
     variants,
-    trackerOptions
+    trackerOptions,
+    config.networkSearchConfig
   );
 
   const ctx = new AIContext();
