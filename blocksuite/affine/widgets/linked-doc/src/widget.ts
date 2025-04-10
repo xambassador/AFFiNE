@@ -7,7 +7,11 @@ import { FeatureFlagService } from '@blocksuite/affine-shared/services';
 import { getViewportElement } from '@blocksuite/affine-shared/utils';
 import { IS_MOBILE } from '@blocksuite/global/env';
 import type { BlockComponent } from '@blocksuite/std';
-import { BLOCK_ID_ATTR, WidgetComponent } from '@blocksuite/std';
+import {
+  BLOCK_ID_ATTR,
+  WidgetComponent,
+  WidgetViewExtension,
+} from '@blocksuite/std';
 import { GfxControllerIdentifier } from '@blocksuite/std/gfx';
 import {
   INLINE_ROOT_ATTR,
@@ -19,22 +23,18 @@ import { html, nothing } from 'lit';
 import { choose } from 'lit/directives/choose.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { literal, unsafeStatic } from 'lit/static-html.js';
 
-import type { PageRootBlockComponent } from '../../page/page-root-block.js';
-import { RootBlockConfigExtension } from '../../root-config.js';
 import {
-  type AFFINE_LINKED_DOC_WIDGET,
+  AFFINE_LINKED_DOC_WIDGET,
   getMenus,
   type LinkedDocContext,
   type LinkedWidgetConfig,
+  LinkedWidgetConfigExtension,
 } from './config.js';
 import { linkedDocWidgetStyles } from './styles.js';
-export { type LinkedWidgetConfig } from './config.js';
 
-export class AffineLinkedDocWidget extends WidgetComponent<
-  RootBlockModel,
-  PageRootBlockComponent
-> {
+export class AffineLinkedDocWidget extends WidgetComponent<RootBlockModel> {
   static override styles = linkedDocWidgetStyles;
 
   private _context: LinkedDocContext | null = null;
@@ -217,8 +217,7 @@ export class AffineLinkedDocWidget extends WidgetComponent<
         scrollContainer: getViewportElement(this.std.host) ?? window,
         scrollTopOffset: 46,
       },
-      ...this.std.getOptional(RootBlockConfigExtension.identifier)
-        ?.linkedWidget,
+      ...this.std.getOptional(LinkedWidgetConfigExtension.identifier),
     };
   }
 
@@ -315,6 +314,12 @@ export class AffineLinkedDocWidget extends WidgetComponent<
       ></blocksuite-portal>`;
   }
 }
+
+export const linkedDocWidget = WidgetViewExtension(
+  'affine:page',
+  AFFINE_LINKED_DOC_WIDGET,
+  literal`${unsafeStatic(AFFINE_LINKED_DOC_WIDGET)}`
+);
 
 declare global {
   interface HTMLElementTagNameMap {

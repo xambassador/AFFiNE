@@ -12,9 +12,9 @@ import type { Schema, Workspace } from '@blocksuite/store';
 import { html, LitElement, type PropertyValues } from 'lit';
 import { query, state } from 'lit/decorators.js';
 
-import { HtmlTransformer } from '../../../transformers/html.js';
-import { MarkdownTransformer } from '../../../transformers/markdown.js';
-import { NotionHtmlTransformer } from '../../../transformers/notion-html.js';
+import { HtmlTransformer } from '../transformers/html.js';
+import { MarkdownTransformer } from '../transformers/markdown.js';
+import { NotionHtmlTransformer } from '../transformers/notion-html.js';
 import { styles } from './styles.js';
 
 export type OnSuccessHandler = (

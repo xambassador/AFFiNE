@@ -16,7 +16,6 @@ import { property } from 'lit/decorators.js';
 import { join } from 'lit/directives/join.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import { PageRootBlockComponent } from '../../index.js';
 import type {
   LinkedDocContext,
   LinkedMenuGroup,
@@ -29,7 +28,6 @@ export const AFFINE_MOBILE_LINKED_DOC_MENU = 'affine-mobile-linked-doc-menu';
 
 @requiredProperties({
   context: PropTypes.object,
-  rootComponent: PropTypes.instanceOf(PageRootBlockComponent),
 })
 export class AffineMobileLinkedDocMenu extends SignalWatcher(
   WithDisposable(LitElement)
@@ -250,7 +248,4 @@ export class AffineMobileLinkedDocMenu extends SignalWatcher(
 
   @property({ attribute: false })
   accessor context!: LinkedDocContext;
-
-  @property({ attribute: false })
-  accessor rootComponent!: PageRootBlockComponent;
 }

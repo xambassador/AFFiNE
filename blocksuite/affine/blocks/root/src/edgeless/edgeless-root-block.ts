@@ -45,7 +45,6 @@ import { css, html } from 'lit';
 import { query } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import type { EdgelessRootBlockWidgetName } from '../types.js';
 import type { EdgelessSelectedRectWidget } from './components/rects/edgeless-selected-rect.js';
 import { EdgelessPageKeyboardManager } from './edgeless-keyboard.js';
 import type { EdgelessRootService } from './edgeless-root-service.js';
@@ -53,8 +52,7 @@ import { isCanvasElement } from './utils/query.js';
 
 export class EdgelessRootBlockComponent extends BlockComponent<
   RootBlockModel,
-  EdgelessRootService,
-  EdgelessRootBlockWidgetName
+  EdgelessRootService
 > {
   static override styles = css`
     affine-edgeless-root {

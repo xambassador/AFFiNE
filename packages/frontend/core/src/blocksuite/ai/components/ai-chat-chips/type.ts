@@ -5,8 +5,8 @@ import type {
   SearchTagMenuAction,
 } from '@affine/core/modules/search-menu/services';
 import type { Collection } from '@affine/env/filter';
-import type { LinkedMenuGroup } from '@blocksuite/affine/blocks/root';
 import type { DocMeta, Store } from '@blocksuite/affine/store';
+import type { LinkedMenuGroup } from '@blocksuite/affine/widgets/linked-doc';
 import type { Signal } from '@preact/signals-core';
 
 export type ChipState = 'candidate' | 'processing' | 'finished' | 'failed';

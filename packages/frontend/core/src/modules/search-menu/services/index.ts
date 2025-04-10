@@ -4,12 +4,12 @@ import type {
 } from '@affine/core/components/page-list';
 import { fuzzyMatch } from '@affine/core/utils/fuzzy-match';
 import { I18n } from '@affine/i18n';
+import { createSignalFromObservable } from '@blocksuite/affine/shared/utils';
+import type { DocMeta } from '@blocksuite/affine/store';
 import type {
   LinkedMenuGroup,
   LinkedMenuItem,
-} from '@blocksuite/affine/blocks/root';
-import { createSignalFromObservable } from '@blocksuite/affine/shared/utils';
-import type { DocMeta } from '@blocksuite/affine/store';
+} from '@blocksuite/affine/widgets/linked-doc';
 import { CollectionsIcon } from '@blocksuite/icons/lit';
 import { computed } from '@preact/signals-core';
 import { Service } from '@toeverything/infra';

@@ -12,14 +12,14 @@ import {
 import { DebugLogger } from '@affine/debug';
 import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
+import { openFileOrFiles } from '@blocksuite/affine/shared/utils';
+import type { Workspace } from '@blocksuite/affine/store';
 import {
   HtmlTransformer,
   MarkdownTransformer,
   NotionHtmlTransformer,
   ZipTransformer,
-} from '@blocksuite/affine/blocks/root';
-import { openFileOrFiles } from '@blocksuite/affine/shared/utils';
-import type { Workspace } from '@blocksuite/affine/store';
+} from '@blocksuite/affine/widgets/linked-doc';
 import {
   ExportToHtmlIcon,
   ExportToMarkdownIcon,

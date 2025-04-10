@@ -31,8 +31,8 @@ import {
 } from '@affine/core/modules/workspace';
 import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
-import { ZipTransformer } from '@blocksuite/affine/blocks/root';
 import type { DocMode } from '@blocksuite/affine/model';
+import { ZipTransformer } from '@blocksuite/affine/widgets/linked-doc';
 import {
   effect,
   fromPromise,

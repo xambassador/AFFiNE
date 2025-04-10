@@ -16,7 +16,11 @@ import {
   isFuzzyMatch,
   type Signal,
 } from '@blocksuite/affine-shared/utils';
-import type { BlockStdScope, EditorHost } from '@blocksuite/std';
+import {
+  type BlockStdScope,
+  ConfigExtensionFactory,
+  type EditorHost,
+} from '@blocksuite/std';
 import type { InlineRange } from '@blocksuite/std/inline';
 import type { TemplateResult } from 'lit';
 
@@ -260,3 +264,7 @@ export const LinkedWidgetUtils = {
 };
 
 export const AFFINE_LINKED_DOC_WIDGET = 'affine-linked-doc-widget';
+
+export const LinkedWidgetConfigExtension = ConfigExtensionFactory<
+  Partial<LinkedWidgetConfig>
+>('affine:widget-linked-doc');

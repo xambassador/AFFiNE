@@ -1,10 +1,8 @@
 import { ConfigExtensionFactory } from '@blocksuite/std';
 
 import type { KeyboardToolbarConfig } from './widgets/keyboard-toolbar/config.js';
-import type { LinkedWidgetConfig } from './widgets/linked-doc/index.js';
 
 export interface RootBlockConfig {
-  linkedWidget?: Partial<LinkedWidgetConfig>;
   keyboardToolbar?: Partial<KeyboardToolbarConfig>;
 }
 

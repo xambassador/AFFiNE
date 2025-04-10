@@ -55,6 +55,7 @@ import {
   openFileOrFiles,
   type Signal,
 } from '@blocksuite/affine-shared/utils';
+import type { AffineLinkedDocWidget } from '@blocksuite/affine-widget-linked-doc';
 import { viewPresets } from '@blocksuite/data-view/view-presets';
 import { assertType } from '@blocksuite/global/utils';
 import {
@@ -105,7 +106,6 @@ import { cssVarV2 } from '@toeverything/theme/v2';
 import type { TemplateResult } from 'lit';
 
 import type { PageRootBlockComponent } from '../../page/page-root-block.js';
-import type { AffineLinkedDocWidget } from '../linked-doc/index.js';
 import {
   FigmaDuotoneIcon,
   HeadingIcon,

@@ -6,7 +6,7 @@ import { sha } from '@blocksuite/global/utils';
 import type { DocSnapshot, Schema, Store, Workspace } from '@blocksuite/store';
 import { extMimeMap, getAssetName, Transformer } from '@blocksuite/store';
 
-import { download, Unzip, Zip } from '../transformers/utils.js';
+import { download, Unzip, Zip } from './utils.js';
 
 async function exportDocs(
   collection: Workspace,

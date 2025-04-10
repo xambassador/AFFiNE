@@ -25,14 +25,12 @@ import { css, html } from 'lit';
 import { query, state } from 'lit/decorators.js';
 import { type StyleInfo, styleMap } from 'lit/directives/style-map.js';
 
-import type { EdgelessRootBlockWidgetName } from '../types.js';
 import type { EdgelessRootService } from './edgeless-root-service.js';
 import { isCanvasElement } from './utils/query.js';
 
 export class EdgelessRootPreviewBlockComponent extends BlockComponent<
   RootBlockModel,
-  EdgelessRootService,
-  EdgelessRootBlockWidgetName
+  EdgelessRootService
 > {
   static override styles = css`
     affine-edgeless-root-preview {
