@@ -218,7 +218,43 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-e2e-legacy-bs-${{ matrix.shard }}
+          name: test-results-e2e-bs-${{ matrix.shard }}
+          path: ./test-results
+          if-no-files-found: ignore
+
+  e2e-blocksuite-cross-browser-test:
+    name: E2E BlockSuite Cross Browser Test
+    runs-on: ubuntu-latest
+    needs: optimize_ci
+    if: needs.optimize_ci.outputs.skip == 'false'
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2]
+        browser: ['chromium', 'firefox', 'webkit']
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: ./.github/actions/setup-node
+        with:
+          playwright-install: true
+          playwright-platform: ${{ matrix.browser }}
+          electron-install: false
+          full-cache: true
+
+      - name: Run playground build
+        run: yarn workspace @blocksuite/playground build
+
+      - name: Run playwright tests
+        env:
+          BROWSER: ${{ matrix.browser }}
+        run: yarn workspace @affine-test/blocksuite test "inline-editor.spec.ts" --forbid-only --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-e2e-bs-cross-browser-${{ matrix.browser }}-${{ matrix.shard }}
           path: ./test-results
           if-no-files-found: ignore
 
@@ -1141,6 +1177,7 @@ jobs:
       - check-yarn-binary
       - e2e-test
       - e2e-blocksuite-test
+      - e2e-blocksuite-cross-browser-test
       - e2e-mobile-test
       - unit-test
       - build-native

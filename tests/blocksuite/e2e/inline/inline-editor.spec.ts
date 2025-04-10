@@ -2,7 +2,13 @@ import type { InlineEditor, InlineRange } from '@blocksuite/affine/std/inline';
 import type { DeltaInsert } from '@blocksuite/affine/store';
 import { expect, type Page, test } from '@playwright/test';
 
-import { pressArrowLeft, pressEnter } from '../utils/actions/keyboard.js';
+import { press } from '../database/actions.js';
+import {
+  pressArrowLeft,
+  pressBackspace,
+  pressEnter,
+  type,
+} from '../utils/actions/keyboard.js';
 import {
   enterPlaygroundRoom,
   focusRichText,
@@ -14,15 +20,6 @@ import { ZERO_WIDTH_SPACE } from '../utils/inline-editor.js';
 const defaultPlaygroundURL = new URL(
   `http://localhost:${process.env.CI ? 4173 : 5173}/`
 );
-
-async function type(page: Page, content: string) {
-  await page.keyboard.type(content, { delay: 50 });
-}
-
-async function press(page: Page, content: string) {
-  await page.keyboard.press(content, { delay: 50 });
-  await page.waitForTimeout(50);
-}
 
 async function enterInlineEditorPlayground(page: Page) {
   const url = new URL('examples/inline/index.html', defaultPlaygroundURL);
@@ -158,7 +155,7 @@ async function assertSelection(
   expect(actual).toEqual({ index: rangeIndex, length: rangeLength });
 }
 
-test('basic input', async ({ page }) => {
+test('basic input', async ({ page, browserName }) => {
   await enterInlineEditorPlayground(page);
   await focusInlineRichText(page);
 
@@ -168,43 +165,43 @@ test('basic input', async ({ page }) => {
   const editorAUndo = page.getByText('undo').nth(0);
   const editorARedo = page.getByText('redo').nth(0);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abcd😃efg👨‍👨‍👧‍👦hj');
 
-  expect(await editorA.innerText()).toBe('abcd😃efg👨‍👨‍👧‍👦hj');
-  expect(await editorB.innerText()).toBe('abcd😃efg👨‍👨‍👧‍👦hj');
+  await expect(editorA).toHaveText('abcd😃efg👨‍👨‍👧‍👦hj');
+  await expect(editorB).toHaveText('abcd😃efg👨‍👨‍👧‍👦hj');
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abcd😃efg👨‍👨‍👧‍👦hj');
-  expect(await editorB.innerText()).toBe('abcd😃efg👨‍👨‍👧‍👦hj');
+  await expect(editorA).toHaveText('abcd😃efg👨‍👨‍👧‍👦hj');
+  await expect(editorB).toHaveText('abcd😃efg👨‍👨‍👧‍👦hj');
 
   await focusInlineRichText(page);
-  await press(page, 'Backspace');
-  await press(page, 'Backspace');
-  await press(page, 'Backspace');
+  await pressBackspace(page, 2); // remove j and h
+  // see https://github.com/microsoft/vscode/issues/99629#issuecomment-831565509
+  await pressBackspace(page, browserName === 'firefox' ? 5 : 1);
 
-  expect(await editorA.innerText()).toBe('abcd😃efg');
-  expect(await editorB.innerText()).toBe('abcd😃efg');
+  await expect(editorA).toHaveText('abcd😃efg');
+  await expect(editorB).toHaveText('abcd😃efg');
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe('abcd😃efg👨‍👨‍👧‍👦hj');
-  expect(await editorB.innerText()).toBe('abcd😃efg👨‍👨‍👧‍👦hj');
+  await expect(editorA).toHaveText('abcd😃efg👨‍👨‍👧‍👦hj');
+  await expect(editorB).toHaveText('abcd😃efg👨‍👨‍👧‍👦hj');
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abcd😃efg');
-  expect(await editorB.innerText()).toBe('abcd😃efg');
+  await expect(editorA).toHaveText('abcd😃efg');
+  await expect(editorB).toHaveText('abcd😃efg');
 
   await focusInlineRichText(page);
   await press(page, 'ArrowLeft');
@@ -216,8 +213,8 @@ test('basic input', async ({ page }) => {
   await press(page, 'Delete');
 
   await type(page, '🥰👨‍👨‍👧‍👦');
-  expect(await editorA.innerText()).toBe('abc🥰👨‍👨‍👧‍👦efg');
-  expect(await editorB.innerText()).toBe('abc🥰👨‍👨‍👧‍👦efg');
+  await expect(editorA).toHaveText('abc🥰👨‍👨‍👧‍👦efg');
+  await expect(editorB).toHaveText('abc🥰👨‍👨‍👧‍👦efg');
 
   await setInlineRichTextRange(page, {
     index: 3,
@@ -226,18 +223,18 @@ test('basic input', async ({ page }) => {
   await page.waitForTimeout(100);
   await press(page, 'Delete');
 
-  expect(await editorA.innerText()).toBe('abc');
-  expect(await editorA.innerText()).toBe('abc');
+  await expect(editorA).toHaveText('abc');
+  await expect(editorB).toHaveText('abc');
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe('abcd😃efg');
-  expect(await editorB.innerText()).toBe('abcd😃efg');
+  await expect(editorA).toHaveText('abcd😃efg');
+  await expect(editorB).toHaveText('abcd😃efg');
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abc');
-  expect(await editorB.innerText()).toBe('abc');
+  await expect(editorA).toHaveText('abc');
+  await expect(editorB).toHaveText('abc');
 
   await focusInlineRichText(page);
   await page.waitForTimeout(100);
@@ -247,38 +244,47 @@ test('basic input', async ({ page }) => {
 
   await page.waitForTimeout(100);
 
-  expect(await editorA.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nbbb');
-  expect(await editorB.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nbbb');
+  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
+    useInnerText: true, // for multi-line text
+  });
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe('abc');
-  expect(await editorB.innerText()).toBe('abc');
+  await expect(editorA).toHaveText('abc');
+  await expect(editorB).toHaveText('abc');
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nbbb');
-  expect(await editorB.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nbbb');
+  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
+    useInnerText: true, // for multi-line text
+  });
 
   await focusInlineRichText(page);
   await page.waitForTimeout(100);
-  await press(page, 'Backspace');
-  await press(page, 'Backspace');
-  await press(page, 'Backspace');
-  await press(page, 'Backspace');
-  await press(page, 'Backspace');
+  await pressBackspace(page, 5);
 
-  expect(await editorA.innerText()).toBe('abc');
-  expect(await editorB.innerText()).toBe('abc');
+  await expect(editorA).toHaveText('abc');
+  await expect(editorB).toHaveText('abc');
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nbbb');
-  expect(await editorB.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nbbb');
+  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
+    useInnerText: true, // for multi-line text
+  });
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abc');
+  await expect(editorA).toHaveText('abc');
+  await expect(editorB).toHaveText('abc');
 
   await focusInlineRichText(page);
   await page.waitForTimeout(100);
@@ -289,17 +295,17 @@ test('basic input', async ({ page }) => {
   await press(page, 'ArrowRight');
   await type(page, 'dd');
 
-  expect(await editorA.innerText()).toBe('abbbcdd');
-  expect(await editorB.innerText()).toBe('abbbcdd');
+  await expect(editorA).toHaveText('abbbcdd');
+  await expect(editorB).toHaveText('abbbcdd');
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe('abc');
+  await expect(editorA).toHaveText('abc');
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abbbcdd');
-  expect(await editorB.innerText()).toBe('abbbcdd');
+  await expect(editorA).toHaveText('abbbcdd');
+  await expect(editorB).toHaveText('abbbcdd');
 
   await focusInlineRichText(page);
   await page.waitForTimeout(100);
@@ -308,29 +314,42 @@ test('basic input', async ({ page }) => {
   await press(page, 'Enter');
   await press(page, 'Enter');
 
-  expect(await editorA.innerText()).toBe('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd');
-  expect(await editorB.innerText()).toBe('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd');
+  await expect(editorA).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
+    useInnerText: true, // for multi-line text
+  });
 
   await editorAUndo.click();
 
-  expect(await editorA.innerText()).toBe('abbbcdd');
-  expect(await editorB.innerText()).toBe('abbbcdd');
+  await expect(editorA).toHaveText('abbbcdd');
+  await expect(editorB).toHaveText('abbbcdd');
 
   await editorARedo.click();
 
-  expect(await editorA.innerText()).toBe('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd');
-  expect(await editorB.innerText()).toBe('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd');
+  await expect(editorA).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
+    useInnerText: true, // for multi-line text
+  });
 });
 
-test('chinese input', async ({ page }) => {
+test('chinese input', async ({ page, browserName }) => {
+  test.skip(
+    browserName !== 'chromium',
+    'CDPSession is only supported in chromium'
+  );
+
   await enterInlineEditorPlayground(page);
   await focusInlineRichText(page);
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
   const client = await page.context().newCDPSession(page);
@@ -347,8 +366,8 @@ test('chinese input', async ({ page }) => {
   await client.send('Input.insertText', {
     text: '你',
   });
-  expect(await editorA.innerText()).toBe('你');
-  expect(await editorB.innerText()).toBe('你');
+  await expect(editorA).toHaveText('你');
+  await expect(editorB).toHaveText('你');
 });
 
 test('type many times in one moment', async ({ page }) => {
@@ -377,15 +396,15 @@ test('readonly mode', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abcdefg');
 
-  expect(await editorA.innerText()).toBe('abcdefg');
-  expect(await editorB.innerText()).toBe('abcdefg');
+  await expect(editorA).toHaveText('abcdefg');
+  await expect(editorB).toHaveText('abcdefg');
 
   await page.evaluate(() => {
     const richTextA = document
@@ -402,8 +421,8 @@ test('readonly mode', async ({ page }) => {
 
   await type(page, 'aaaa');
 
-  expect(await editorA.innerText()).toBe('abcdefg');
-  expect(await editorB.innerText()).toBe('abcdefg');
+  await expect(editorA).toHaveText('abcdefg');
+  await expect(editorB).toHaveText('abcdefg');
 });
 
 test('basic styles', async ({ page }) => {
@@ -422,18 +441,18 @@ test('basic styles', async ({ page }) => {
   const editorAUndo = page.getByText('undo').nth(0);
   const editorARedo = page.getByText('redo').nth(0);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abcdefg');
 
-  expect(await editorA.innerText()).toBe('abcdefg');
-  expect(await editorB.innerText()).toBe('abcdefg');
+  await expect(editorA).toHaveText('abcdefg');
+  await expect(editorB).toHaveText('abcdefg');
 
   let delta = await getDeltaFromInlineRichText(page);
-  expect(delta).toEqual([
+  await expect(delta).toEqual([
     {
       insert: 'abcdefg',
     },
@@ -677,15 +696,15 @@ test('overlapping styles', async ({ page }) => {
   const editorAUndo = page.getByText('undo').nth(0);
   const editorARedo = page.getByText('redo').nth(0);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abcdefghijk');
 
-  expect(await editorA.innerText()).toBe('abcdefghijk');
-  expect(await editorB.innerText()).toBe('abcdefghijk');
+  await expect(editorA).toHaveText('abcdefghijk');
+  await expect(editorB).toHaveText('abcdefghijk');
 
   let delta = await getDeltaFromInlineRichText(page);
   expect(delta).toEqual([
@@ -849,15 +868,15 @@ test('input continuous spaces', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abc   def');
 
-  expect(await editorA.innerText()).toBe('abc   def');
-  expect(await editorB.innerText()).toBe('abc   def');
+  await expect(editorA).toHaveText('abc   def');
+  await expect(editorB).toHaveText('abc   def');
 
   await focusInlineRichText(page);
   await page.waitForTimeout(100);
@@ -868,8 +887,12 @@ test('input continuous spaces', async ({ page }) => {
 
   await press(page, 'Enter');
 
-  expect(await editorA.innerText()).toBe('abc  \n' + ' def');
-  expect(await editorB.innerText()).toBe('abc  \n' + ' def');
+  await expect(editorA).toHaveText('abc  \n' + ' def', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abc  \n' + ' def', {
+    useInnerText: true, // for multi-line text
+  });
 });
 
 test('select from the start of line using shift+arrow', async ({ page }) => {
@@ -879,8 +902,8 @@ test('select from the start of line using shift+arrow', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
@@ -890,8 +913,12 @@ test('select from the start of line using shift+arrow', async ({ page }) => {
   await press(page, 'Enter');
   await type(page, 'ghi');
 
-  expect(await editorA.innerText()).toBe('abc\ndef\nghi');
-  expect(await editorB.innerText()).toBe('abc\ndef\nghi');
+  await expect(editorB).toHaveText('abc\ndef\nghi', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorA).toHaveText('abc\ndef\nghi', {
+    useInnerText: true, // for multi-line text
+  });
 
   /**
    * abc
@@ -920,11 +947,11 @@ test('select from the start of line using shift+arrow', async ({ page }) => {
    */
   await press(page, 'ArrowRight');
   await assertSelection(page, 0, 1, 7);
-  await press(page, 'Backspace');
+  await pressBackspace(page);
   await page.waitForTimeout(100);
 
-  expect(await editorA.innerText()).toBe('aghi');
-  expect(await editorB.innerText()).toBe('aghi');
+  await expect(editorA).toHaveText('aghi');
+  await expect(editorB).toHaveText('aghi');
 });
 
 test('getLine', async ({ page }) => {
@@ -934,15 +961,19 @@ test('getLine', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
-  expect(await editorB.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abc\ndef\nghi');
 
-  expect(await editorA.innerText()).toBe('abc\ndef\nghi');
-  expect(await editorB.innerText()).toBe('abc\ndef\nghi');
+  await expect(editorA).toHaveText('abc\ndef\nghi', {
+    useInnerText: true, // for multi-line text
+  });
+  await expect(editorB).toHaveText('abc\ndef\nghi', {
+    useInnerText: true, // for multi-line text
+  });
 
   const [line1, offset1] = await getInlineRichTextLine(page, 0);
   const [line2, offset2] = await getInlineRichTextLine(page, 1);
@@ -1001,14 +1032,13 @@ test('embed', async ({ page }) => {
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorAEmbed = page.getByText('embed').nth(0);
-
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
 
   await page.waitForTimeout(100);
 
   await type(page, 'abcde');
 
-  expect(await editorA.innerText()).toBe('abcde');
+  await expect(editorA).toHaveText('abcde');
 
   await press(page, 'ArrowLeft');
   await page.waitForTimeout(100);
@@ -1022,7 +1052,7 @@ test('embed', async ({ page }) => {
 
   await editorAEmbed.click();
   const embedCount = await page.locator('[data-v-embed="true"]').count();
-  expect(embedCount).toBe(3);
+  await expect(embedCount).toBe(3);
 
   // try to update cursor position using arrow keys
   await assertSelection(page, 0, 1, 3);
@@ -1071,10 +1101,10 @@ test('delete embed when pressing backspace after embed', async ({ page }) => {
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorAEmbed = page.getByText('embed').nth(0);
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
   await page.waitForTimeout(100);
   await type(page, 'ab');
-  expect(await editorA.innerText()).toBe('ab');
+  await expect(editorA).toHaveText('ab');
 
   await page.keyboard.down('Shift');
   await press(page, 'ArrowLeft');
@@ -1100,7 +1130,7 @@ test('delete embed when pressing backspace after embed', async ({ page }) => {
   // use click to select right side of the embed instead of use arrow key
   await page.mouse.click(rect.x + 3, rect.y);
   await assertSelection(page, 0, 2, 0);
-  await press(page, 'Backspace');
+  await pressBackspace(page);
 
   delta = await getDeltaFromInlineRichText(page);
   expect(delta).toEqual([
@@ -1116,11 +1146,13 @@ test('triple click to select line', async ({ page }) => {
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
 
-  expect(await editorA.innerText()).toBe(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
   await page.waitForTimeout(100);
   await type(page, 'abc\nabc abc abc\nabc');
 
-  expect(await editorA.innerText()).toBe('abc\nabc abc abc\nabc');
+  await expect(editorA).toHaveText('abc\nabc abc abc\nabc', {
+    useInnerText: true, // for multi-line text
+  });
 
   const rect = await getInlineRangeIndexRect(page, [0, 10]);
   await page.mouse.click(rect.x, rect.y, {
@@ -1128,8 +1160,10 @@ test('triple click to select line', async ({ page }) => {
   });
   await assertSelection(page, 0, 4, 11);
 
-  await press(page, 'Backspace');
-  expect(await editorA.innerText()).toBe('abc\n' + ZERO_WIDTH_SPACE + '\nabc');
+  await pressBackspace(page);
+  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nabc', {
+    useInnerText: true, // for multi-line text
+  });
 });
 
 test('caret should move correctly when inline elements are exist', async ({

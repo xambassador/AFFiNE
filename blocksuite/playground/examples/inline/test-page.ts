@@ -227,6 +227,13 @@ export class CustomToolbar extends ShadowlessElement {
     }
   `;
 
+  override connectedCallback() {
+    super.connectedCallback();
+    this.addEventListener('pointerdown', e => {
+      e.preventDefault();
+    });
+  }
+
   override firstUpdated() {
     const boldButton = this.querySelector('.bold');
     const italicButton = this.querySelector('.italic');
