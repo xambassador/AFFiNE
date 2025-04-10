@@ -1,6 +1,10 @@
 import { notify } from '@affine/component';
 import { UserFriendlyError } from '@affine/error';
-import { type DocMode as GraphqlDocMode, ErrorNames } from '@affine/graphql';
+import {
+  type DocMode as GraphqlDocMode,
+  DocRole,
+  ErrorNames,
+} from '@affine/graphql';
 import { I18n, i18nTime } from '@affine/i18n';
 import track from '@affine/track';
 import {
@@ -43,6 +47,7 @@ import type { EditorSettingService } from '../../editor-setting';
 import { type JournalService, suggestJournalDate } from '../../journal';
 import { NotificationService } from '../../notification';
 import type { GuardService, MemberSearchService } from '../../permissions';
+import type { DocGrantedUsersService } from '../../permissions/services/doc-granted-users';
 import type { SearchMenuService } from '../../search-menu/services';
 
 function resolveSignal<T>(data: T | Signal<T>): T {
@@ -65,7 +70,8 @@ export class AtMenuConfigService extends Service {
     private readonly searchMenuService: SearchMenuService,
     private readonly workspaceServerService: WorkspaceServerService,
     private readonly memberSearchService: MemberSearchService,
-    private readonly guardService: GuardService
+    private readonly guardService: GuardService,
+    private readonly docGrantedUsersService: DocGrantedUsersService
   ) {
     super();
   }
@@ -433,11 +439,11 @@ export class AtMenuConfigService extends Service {
             .catch(error => {
               const err = UserFriendlyError.fromAny(error);
 
-              const canUserManage = this.guardService.can$(
-                'Workspace_Users_Manage'
-              ).signal.value;
-
               if (err.is(ErrorNames.MENTION_USER_DOC_ACCESS_DENIED)) {
+                const canUserManage = this.guardService.can$(
+                  'Doc_Users_Manage',
+                  docId
+                ).signal.value;
                 if (canUserManage) {
                   const username = name ?? 'Unknown';
                   notify.error({
@@ -449,10 +455,36 @@ export class AtMenuConfigService extends Service {
                     }),
                     action: {
                       label: 'Invite',
-                      onClick: () => {
-                        this.dialogService.open('setting', {
-                          activeTab: 'workspace:members',
-                        });
+                      onClick: async () => {
+                        try {
+                          await this.docGrantedUsersService.updateUserRole(
+                            id,
+                            DocRole.Reader
+                          );
+
+                          await notificationService.mentionUser(
+                            id,
+                            workspaceId,
+                            {
+                              id: docId,
+                              title:
+                                this.docDisplayMetaService.title$(docId).value,
+                              blockId: block.blockId,
+                              mode: mode as GraphqlDocMode,
+                            }
+                          );
+
+                          notify.success({
+                            title: I18n.t(
+                              'com.affine.editor.at-menu.invited-and-notified'
+                            ),
+                          });
+                        } catch (error) {
+                          const err = UserFriendlyError.fromAny(error);
+                          notify.error({
+                            title: I18n[`error.${err.name}`](err.data),
+                          });
+                        }
                       },
                     },
                   });

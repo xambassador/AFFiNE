@@ -7080,6 +7080,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.editor.at-menu.member-not-notified-message"](): string;
     /**
+      * `Invited and notified`
+      */
+    ["com.affine.editor.at-menu.invited-and-notified"](): string;
+    /**
       * `Access needed`
       */
     ["com.affine.editor.at-menu.access-needed"](): string;
