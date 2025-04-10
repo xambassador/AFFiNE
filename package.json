@@ -126,6 +126,8 @@
     "is-symbol": "npm:@nolyfill/is-symbol@^1",
     "is-weakref": "npm:@nolyfill/is-weakref@^1",
     "iterator.prototype": "npm:@nolyfill/iterator.prototype@^1",
+    "json-stable-stringify": "npm:@nolyfill/json-stable-stringify@^1",
+    "jsonify": "npm:@nolyfill/jsonify@^1",
     "object-is": "npm:@nolyfill/object-is@^1",
     "object-keys": "npm:@nolyfill/object-keys@^1",
     "object.assign": "npm:@nolyfill/object.assign@^1",

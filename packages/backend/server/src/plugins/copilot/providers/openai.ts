@@ -1,4 +1,15 @@
-import { APIError, BadRequestError, ClientOptions, OpenAI } from 'openai';
+import {
+  createOpenAI,
+  type OpenAIProvider as VercelOpenAIProvider,
+} from '@ai-sdk/openai';
+import {
+  AISDKError,
+  embedMany,
+  experimental_generateImage as generateImage,
+  generateObject,
+  generateText,
+  streamText,
+} from 'ai';
 
 import {
   CopilotPromptInvalid,
@@ -20,12 +31,14 @@ import {
   CopilotTextToTextProvider,
   PromptMessage,
 } from './types';
+import { chatToGPTMessage } from './utils';
 
 export const DEFAULT_DIMENSIONS = 256;
 
-const SIMPLE_IMAGE_URL_REGEX = /^(https?:\/\/|data:image\/)/;
-
-export type OpenAIConfig = ClientOptions;
+export type OpenAIConfig = {
+  apiKey: string;
+  baseUrl?: string;
+};
 
 export class OpenAIProvider
   extends CopilotProvider<OpenAIConfig>
@@ -62,8 +75,7 @@ export class OpenAIProvider
     'dall-e-3',
   ];
 
-  #existsModels: string[] = [];
-  #instance!: OpenAI;
+  #instance!: VercelOpenAIProvider;
 
   override configured(): boolean {
     return !!this.config.apiKey;
@@ -71,55 +83,9 @@ export class OpenAIProvider
 
   protected override setup() {
     super.setup();
-    this.#instance = new OpenAI(this.config);
-  }
-
-  override async isModelAvailable(model: string): Promise<boolean> {
-    const knownModels = this.models.includes(model);
-    if (knownModels) return true;
-
-    if (!this.#existsModels) {
-      try {
-        this.#existsModels = await this.#instance.models
-          .list()
-          .then(({ data }) => data.map(m => m.id));
-      } catch (e: any) {
-        this.logger.error('Failed to fetch online model list', e.stack);
-      }
-    }
-    return !!this.#existsModels?.includes(model);
-  }
-
-  protected chatToGPTMessage(
-    messages: PromptMessage[]
-  ): OpenAI.Chat.Completions.ChatCompletionMessageParam[] {
-    // filter redundant fields
-    return messages.map(({ role, content, attachments }) => {
-      content = content.trim();
-      if (Array.isArray(attachments) && attachments.length) {
-        const contents: OpenAI.Chat.Completions.ChatCompletionContentPart[] =
-          [];
-        if (content.length) {
-          contents.push({
-            type: 'text',
-            text: content,
-          });
-        }
-        contents.push(
-          ...(attachments
-            .filter(url => SIMPLE_IMAGE_URL_REGEX.test(url))
-            .map(url => ({
-              type: 'image_url',
-              image_url: { url, detail: 'high' },
-            })) as OpenAI.Chat.Completions.ChatCompletionContentPartImage[])
-        );
-        return {
-          role,
-          content: contents,
-        } as OpenAI.Chat.Completions.ChatCompletionMessageParam;
-      } else {
-        return { role, content };
-      }
+    this.#instance = createOpenAI({
+      apiKey: this.config.apiKey,
+      baseURL: this.config.baseUrl,
     });
   }
 
@@ -186,11 +152,8 @@ export class OpenAIProvider
   ) {
     if (e instanceof UserFriendlyError) {
       return e;
-    } else if (e instanceof APIError) {
-      if (
-        e instanceof BadRequestError &&
-        (e.message.includes('safety') || e.message.includes('risk'))
-      ) {
+    } else if (e instanceof AISDKError) {
+      if (e.message.includes('safety') || e.message.includes('risk')) {
         metrics.ai
           .counter('chat_text_risk_errors')
           .add(1, { model, user: options.user || undefined });
@@ -198,7 +161,7 @@ export class OpenAIProvider
 
       return new CopilotProviderSideError({
         provider: this.type,
-        kind: e.type || 'unknown',
+        kind: e.name || 'unknown',
         message: e.message,
       });
     } else {
@@ -217,26 +180,42 @@ export class OpenAIProvider
     options: CopilotChatOptions = {}
   ): Promise<string> {
     await this.checkParams({ messages, model, options });
+    console.log('messages', messages);
 
     try {
       metrics.ai.counter('chat_text_calls').add(1, { model });
-      const result = await this.#instance.chat.completions.create(
-        {
-          messages: this.chatToGPTMessage(messages),
-          model: model,
-          temperature: options.temperature || 0,
-          max_completion_tokens: options.maxTokens || 4096,
-          response_format: {
-            type: options.jsonMode ? 'json_object' : 'text',
-          },
-          user: options.user,
-        },
-        { signal: options.signal }
-      );
-      const { content } = result.choices[0].message;
-      if (!content) throw new Error('Failed to generate text');
-      return content.trim();
+
+      const [system, msgs, schema] = await chatToGPTMessage(messages);
+
+      const modelInstance = this.#instance(model, {
+        structuredOutputs: Boolean(options.jsonMode),
+        user: options.user,
+      });
+
+      const commonParams = {
+        model: modelInstance,
+        system,
+        messages: msgs,
+        temperature: options.temperature || 0,
+        maxTokens: options.maxTokens || 4096,
+        abortSignal: options.signal,
+      };
+
+      const { text } = schema
+        ? await generateObject({
+            ...commonParams,
+            schema,
+          }).then(r => ({ text: JSON.stringify(r.object) }))
+        : await generateText({
+            ...commonParams,
+            providerOptions: {
+              openai: options.user ? { user: options.user } : {},
+            },
+          });
+
+      return text.trim();
     } catch (e: any) {
+      console.log('error', e);
       metrics.ai.counter('chat_text_errors').add(1, { model });
       throw this.handleError(e, model, options);
     }
@@ -251,34 +230,30 @@ export class OpenAIProvider
 
     try {
       metrics.ai.counter('chat_text_stream_calls').add(1, { model });
-      const result = await this.#instance.chat.completions.create(
-        {
-          stream: true,
-          messages: this.chatToGPTMessage(messages),
-          model: model,
-          frequency_penalty: options.frequencyPenalty || 0,
-          presence_penalty: options.presencePenalty || 0,
-          temperature: options.temperature || 0.5,
-          max_completion_tokens: options.maxTokens || 4096,
-          response_format: {
-            type: options.jsonMode ? 'json_object' : 'text',
-          },
-          user: options.user,
-        },
-        {
-          signal: options.signal,
-        }
-      );
 
-      for await (const message of result) {
-        if (!Array.isArray(message.choices) || !message.choices.length) {
-          continue;
-        }
-        const content = message.choices[0].delta.content;
-        if (content) {
-          yield content;
+      const [system, msgs] = await chatToGPTMessage(messages);
+
+      const modelInstance = this.#instance(model, {
+        structuredOutputs: Boolean(options.jsonMode),
+        user: options.user,
+      });
+
+      const { textStream } = streamText({
+        model: modelInstance,
+        system,
+        messages: msgs,
+        frequencyPenalty: options.frequencyPenalty || 0,
+        presencePenalty: options.presencePenalty || 0,
+        temperature: options.temperature || 0,
+        maxTokens: options.maxTokens || 4096,
+        abortSignal: options.signal,
+      });
+
+      for await (const message of textStream) {
+        if (message) {
+          yield message;
           if (options.signal?.aborted) {
-            result.controller.abort();
+            await textStream.cancel();
             break;
           }
         }
@@ -301,15 +276,18 @@ export class OpenAIProvider
 
     try {
       metrics.ai.counter('generate_embedding_calls').add(1, { model });
-      const result = await this.#instance.embeddings.create({
-        model: model,
-        input: messages,
+
+      const modelInstance = this.#instance.embedding(model, {
         dimensions: options.dimensions || DEFAULT_DIMENSIONS,
         user: options.user,
       });
-      return result.data
-        .map(e => e?.embedding)
-        .filter(v => v && Array.isArray(v));
+
+      const { embeddings } = await embedMany({
+        model: modelInstance,
+        values: messages,
+      });
+
+      return embeddings.filter(v => v && Array.isArray(v));
     } catch (e: any) {
       metrics.ai.counter('generate_embedding_errors').add(1, { model });
       throw this.handleError(e, model, options);
@@ -327,18 +305,16 @@ export class OpenAIProvider
 
     try {
       metrics.ai.counter('generate_images_calls').add(1, { model });
-      const result = await this.#instance.images.generate(
-        {
-          prompt,
-          model,
-          response_format: 'url',
-          user: options.user,
-        },
-        { signal: options.signal }
-      );
 
-      return result.data
-        .map(image => image.url)
+      const modelInstance = this.#instance.image(model);
+
+      const result = await generateImage({
+        model: modelInstance,
+        prompt,
+      });
+
+      return result.images
+        .map(image => image.base64)
         .filter((v): v is string => !!v);
     } catch (e: any) {
       metrics.ai.counter('generate_images_errors').add(1, { model });

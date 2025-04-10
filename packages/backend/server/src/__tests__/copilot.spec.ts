@@ -24,7 +24,7 @@ import {
   CopilotProviderType,
   OpenAIProvider,
 } from '../plugins/copilot/providers';
-import { CitationParser } from '../plugins/copilot/providers/perplexity';
+import { CitationParser } from '../plugins/copilot/providers/utils';
 import { ChatSessionService } from '../plugins/copilot/session';
 import { CopilotStorage } from '../plugins/copilot/storage';
 import { CopilotTranscriptionService } from '../plugins/copilot/transcript';
