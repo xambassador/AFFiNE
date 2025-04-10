@@ -28,7 +28,7 @@ export class EditorUtils {
       const lines = await page.$$('page-editor .inline-editor');
       const contents = await Promise.all(lines.map(el => el.innerText()));
       content = contents
-        .map(c => c.replace(/\u200B/g, '').trim())
+        .map(c => c.replace(/[\u200B-\u200D\uFEFF]/g, '').trim())
         .filter(c => !!c)
         .join('\n');
       if (!content) {
@@ -43,7 +43,9 @@ export class EditorUtils {
     const edgelessNode = await page.waitForSelector(
       'affine-edgeless-note .edgeless-note-page-content'
     );
-    return (await edgelessNode.innerText()).replace(/\u200B/g, '').trim();
+    return (await edgelessNode.innerText())
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')
+      .trim();
   }
 
   public static async switchToEdgelessMode(page: Page) {
