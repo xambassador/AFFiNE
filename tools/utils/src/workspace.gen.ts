@@ -270,6 +270,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
       'blocksuite/affine/fragments/doc-title',
+      'blocksuite/affine/gfx/turbo-renderer',
       'blocksuite/affine/inlines/preset',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',

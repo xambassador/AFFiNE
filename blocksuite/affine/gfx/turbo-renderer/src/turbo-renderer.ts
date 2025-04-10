@@ -52,7 +52,11 @@ export const TurboRendererConfigFactory =
  * 1.  **In the block's package (e.g., `blocksuite/affine/blocks/my-block`):**
  *   a.  Add `@blocksuite/affine/gfx/turbo-renderer` as a dependency in `package.json` and create a `src/turbo` directory.
  *   b.  Implement the Layout Handler (e.g., `MyBlockLayoutHandlerExtension`) and Painter Worker (e.g., `MyBlockLayoutPainterExtension`). Refer to `ParagraphLayoutHandlerExtension` and `ParagraphLayoutPainterExtension` in `blocksuite/affine/blocks/block-paragraph` for implementation examples.
- *   c.  Export the Layout Handler and Painter Worker extensions from the block package's main `src/index.ts`.
+ *   c.  Export the Layout Handler and Painter Worker extensions from the block package's main `src/index.ts` by adding these two explicit export statements:
+ *       ```typescript
+ *       export * from './turbo/my-block-layout-handler';
+ *       export * from './turbo/my-block-painter.worker';
+ *       ```
  *   d.  Add an export mapping for the painter worker in `package.json` under the `exports` field (e.g., `"./turbo-painter": "./src/turbo/my-block-painter.worker.ts"`).
  *   e.  Add a TypeScript project reference to `blocksuite/affine/gfx/turbo-renderer` in `tsconfig.json`.
  *
