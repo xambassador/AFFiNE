@@ -791,6 +791,8 @@ jobs:
         with:
           filters: |
             changed:
+              - 'packages/backend/server/src/plugins/copilot/**'
+              - 'packages/backend/server/tests/copilot.*'
               - 'packages/frontend/core/src/blocksuite/ai/**'
               - 'tests/affine-cloud-copilot/**'
 
