@@ -3,6 +3,8 @@ import { pasteContent } from '@affine-test/kit/utils/clipboard';
 import {
   clickEdgelessModeButton,
   clickPageModeButton,
+  getCodeBlockIds,
+  getParagraphIds,
   locateEditorContainer,
 } from '@affine-test/kit/utils/editor';
 import {
@@ -82,28 +84,6 @@ async function verifyCodeBlockContent(
     index,
     expectedText
   );
-}
-
-// Helper function to get block ids
-async function getBlockIds<T extends BlockComponent>(
-  page: Page,
-  selector: string
-) {
-  const blocks = page.locator(selector);
-  const blockIds = await blocks.evaluateAll((blocks: T[]) =>
-    blocks.map(block => block.model.id)
-  );
-  return { blockIds };
-}
-
-// Helper functions using the generic getBlockIds
-async function getParagraphIds(page: Page) {
-  return getBlockIds<ParagraphBlockComponent>(page, paragraphLocator);
-}
-
-// Helper functions using the generic getBlockIds
-async function getCodeBlockIds(page: Page) {
-  return getBlockIds<CodeBlockComponent>(page, codeBlockLocator);
 }
 
 test.beforeEach(async ({ page }) => {

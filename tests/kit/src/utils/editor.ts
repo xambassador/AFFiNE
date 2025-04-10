@@ -1,5 +1,8 @@
 import type * as BlocksuiteEffects from '@blocksuite/affine/effects';
 import type { IVec, XYWH } from '@blocksuite/affine/global/gfx';
+import type { CodeBlockComponent } from '@blocksuite/affine-block-code';
+import type { ParagraphBlockComponent } from '@blocksuite/affine-block-paragraph';
+import type { BlockComponent } from '@blocksuite/std';
 import { expect, type Locator, type Page } from '@playwright/test';
 
 declare type _GLOBAL_ = typeof BlocksuiteEffects;
@@ -10,6 +13,9 @@ export const ZERO_WIDTH_SPACE = '\u200C';
 export function inlineEditorInnerTextToString(innerText: string): string {
   return innerText.replace(ZERO_WIDTH_SPACE, '').trim();
 }
+
+const PARAGRAPH_BLOCK_LOCATOR = 'affine-paragraph';
+const CODE_BLOCK_LOCATOR = 'affine-code';
 
 export function locateModeSwitchButton(
   page: Page,
@@ -474,4 +480,26 @@ export async function createEdgelessNoteBlock(
   } else {
     await clickView(page, position, editorIndex);
   }
+}
+
+// Helper function to get block ids
+export async function getBlockIds<T extends BlockComponent>(
+  page: Page,
+  selector: string
+) {
+  const blocks = page.locator(selector);
+  const blockIds = await blocks.evaluateAll((blocks: T[]) =>
+    blocks.map(block => block.model.id)
+  );
+  return { blockIds };
+}
+
+// Helper functions using the generic getBlockIds
+export async function getParagraphIds(page: Page) {
+  return getBlockIds<ParagraphBlockComponent>(page, PARAGRAPH_BLOCK_LOCATOR);
+}
+
+// Helper functions using the generic getBlockIds
+export async function getCodeBlockIds(page: Page) {
+  return getBlockIds<CodeBlockComponent>(page, CODE_BLOCK_LOCATOR);
 }

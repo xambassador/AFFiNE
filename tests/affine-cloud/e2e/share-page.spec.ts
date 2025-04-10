@@ -5,13 +5,18 @@ import {
   enableShare,
   loginUser,
 } from '@affine-test/kit/utils/cloud';
-import { clickEdgelessModeButton } from '@affine-test/kit/utils/editor';
+import {
+  clickEdgelessModeButton,
+  getParagraphIds,
+} from '@affine-test/kit/utils/editor';
 import { importImage } from '@affine-test/kit/utils/image';
+import { copyByKeyboard } from '@affine-test/kit/utils/keyboard';
 import {
   clickNewPageButton,
   getBlockSuiteEditorTitle,
   waitForEditorLoad,
 } from '@affine-test/kit/utils/page-logic';
+import { setSelection } from '@affine-test/kit/utils/selection';
 import { createLocalWorkspace } from '@affine-test/kit/utils/workspace';
 import { expect } from '@playwright/test';
 
@@ -403,5 +408,50 @@ test('Inline latex modal should be not shown in shared mode when clicking', asyn
     // the latex editor should not be shown when the doc is readonly
     const modalLocator = page2.locator('.latex-editor-container');
     await expect(modalLocator).not.toBeVisible();
+  }
+});
+
+test('share page should support copying content', async ({ page, browser }) => {
+  await page.reload();
+  await waitForEditorLoad(page);
+  await createLocalWorkspace(
+    {
+      name: 'test',
+    },
+    page
+  );
+  await enableCloudWorkspaceFromShareButton(page);
+  const title = getBlockSuiteEditorTitle(page);
+  await title.pressSequentially('TEST TITLE', {
+    delay: 50,
+  });
+  await page.keyboard.press('Enter', { delay: 50 });
+  await page.keyboard.type('Hello World');
+
+  // enable share page and copy page link
+  await enableShare(page);
+  await page.getByTestId('share-menu-copy-link-button').click();
+  await page.getByTestId('share-link-menu-copy-page').click();
+
+  // check share page is accessible and content can be copied
+  {
+    const context = await browser.newContext();
+    await skipOnboarding(context);
+    const url: string = await page.evaluate(() =>
+      navigator.clipboard.readText()
+    );
+    const page2 = await context.newPage();
+    await page2.goto(url);
+    await waitForEditorLoad(page2);
+
+    const { blockIds: paragraphIds } = await getParagraphIds(page2);
+    await setSelection(page2, paragraphIds[0], 0, paragraphIds[0], 11);
+    await copyByKeyboard(page2);
+
+    // Verify copied content
+    const copiedText = await page2.evaluate(() =>
+      navigator.clipboard.readText()
+    );
+    expect(copiedText).toContain('Hello World');
   }
 });
