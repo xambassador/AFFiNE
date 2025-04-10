@@ -71,6 +71,7 @@ export const paragraphBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher =
                 'children'
               )
               .closeNode();
+            walkerContext.skipAllChildren();
             break;
           }
           case 'heading': {

@@ -34,12 +34,6 @@ const NotionClipboardConfig = ClipboardAdapterConfigExtension({
   priority: 95,
 });
 
-const HtmlClipboardConfig = ClipboardAdapterConfigExtension({
-  mimeType: 'text/html',
-  adapter: HtmlAdapter,
-  priority: 90,
-});
-
 const imageClipboardConfigs = [
   'image/apng',
   'image/avif',
@@ -52,14 +46,20 @@ const imageClipboardConfigs = [
   return ClipboardAdapterConfigExtension({
     mimeType,
     adapter: ImageAdapter,
-    priority: 80,
+    priority: 85,
   });
 });
 
 const PlainTextClipboardConfig = ClipboardAdapterConfigExtension({
   mimeType: 'text/plain',
   adapter: MixTextAdapter,
-  priority: 70,
+  priority: 80,
+});
+
+const HtmlClipboardConfig = ClipboardAdapterConfigExtension({
+  mimeType: 'text/html',
+  adapter: HtmlAdapter,
+  priority: 75,
 });
 
 const AttachmentClipboardConfig = ClipboardAdapterConfigExtension({

@@ -323,4 +323,54 @@ test.describe('paste to code block', () => {
 
     await verifyCodeBlockContent(page, 0, 'hello test\ntest\ntest hello');
   });
+
+  test('should preserve indentation when pasting code with spaces into code block', async ({
+    page,
+  }) => {
+    await pressEnter(page);
+    await addCodeBlock(page);
+
+    // Sample code with proper indentation for text/plain
+    const plainTextCode = [
+      'const fibonacci = (n: number): number => {',
+      '  if (n <= 1) return n;',
+      '  return fibonacci(n - 1) + fibonacci(n - 2);',
+      '}',
+      'function generateSequence(length: number) {',
+      '  const sequence = [];',
+      '  for (let i = 0; i < length; i++) {',
+      '    sequence.push(fibonacci(i));',
+      '  }',
+      '  return sequence;',
+      '}',
+    ].join('\n');
+
+    const htmlCode =
+      '<div><span>const</span><span> </span><span>fibonacci</span><span> </span><span>=</span><span> (n</span><span>:</span><span> </span><span>number</span><span>)</span><span>:</span><span> </span><span>number</span><span> </span><span>=></span><span> {</span></div><div><span>  </span><span>if</span><span> (n </span><span><=</span><span> </span><span>1</span><span>) </span><span>return</span><span> n;</span></div><div><span>  </span><span>return</span><span> </span><span>fibonacci</span><span>(n </span><span>-</span><span> </span><span>1</span><span>) </span><span>+</span><span> </span><span>fibonacci</span><span>(n </span><span>-</span><span> </span><span>2</span><span>);</span></div><div><span>}</span></div><div><span>function</span><span> </span><span>generateSequence</span><span>(length</span><span>:</span><span> </span><span>number</span><span>) {</span></div><div><span>  </span><span>const</span><span> </span><span>sequence</span><span> </span><span>=</span><span> [];</span></div><div><span>  </span><span>for</span><span> (</span><span>let</span><span> i </span><span>=</span><span> </span><span>0</span><span>; i </span><span><</span><span> length; i</span><span>++</span><span>) {</span></div><div><span>    sequence.</span><span>push</span><span>(</span><span>fibonacci</span><span>(i));</span></div><div><span>  }</span></div><div><span>  </span><span>return</span><span> sequence;</span></div><div><span>}</span></div></div>';
+
+    await pasteContent(page, {
+      'text/plain': plainTextCode,
+      'text/html': htmlCode,
+    });
+    await page.waitForTimeout(100);
+
+    // Verify the pasted code maintains indentation
+    await verifyCodeBlockContent(page, 0, plainTextCode);
+  });
+
+  test('html tag should be treated as plain text when pasting', async ({
+    page,
+  }) => {
+    await pressEnter(page);
+    await addCodeBlock(page);
+
+    const textWithHtmlTags =
+      '<div><span>const</span><span> </span><span>fibonacci</span><span> </span><span>=</span><span> (n</span><span>:</span><span> </span><span>number</span><span>)</span><span>:</span><span> </span><span>number</span><span> </span><span>=></span><span> {</span></div><div><span>  </span><span>if</span><span> (n </span><span><=</span><span> </span><span>1</span><span>) </span><span>return</span><span> n;</span></div><div><span>  </span><span>return</span><span> </span><span>fibonacci</span><span>(n </span><span>-</span><span> </span><span>1</span><span>) </span><span>+</span><span> </span><span>fibonacci</span><span>(n </span><span>-</span><span> </span><span>2</span><span>);</span></div><div><span>}</span></div><div><span>function</span><span> </span><span>generateSequence</span><span>(length</span><span>:</span><span> </span><span>number</span><span>) {</span></div><div><span>  </span><span>const</span><span> </span><span>sequence</span><span> </span><span>=</span><span> [];</span></div><div><span>  </span><span>for</span><span> (</span><span>let</span><span> i </span><span>=</span><span> </span><span>0</span><span>; i </span><span><</span><span> length; i</span><span>++</span><span>) {</span></div><div><span>    sequence.</span><span>push</span><span>(</span><span>fibonacci</span><span>(i));</span></div><div><span>  }</span></div><div><span>  </span><span>return</span><span> sequence;</span></div><div><span>}</span></div></div>';
+
+    await pasteContent(page, { 'text/plain': textWithHtmlTags });
+    await page.waitForTimeout(100);
+
+    // Verify the pasted code maintains indentation
+    await verifyCodeBlockContent(page, 0, textWithHtmlTags);
+  });
 });
