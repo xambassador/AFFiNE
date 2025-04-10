@@ -353,3 +353,20 @@ test('Dropdown menus should be closed automatically when toolbar is displayed', 
   await expect(toolbar).toBeVisible();
   await expect(moreMenu).toBeHidden();
 });
+
+test('should clear selection when switching doc mode', async ({ page }) => {
+  await page.keyboard.press('Enter');
+
+  await page.keyboard.type('hello world');
+  await page.keyboard.press('Shift+ArrowLeft');
+  await page.keyboard.press('Shift+ArrowLeft');
+  await page.keyboard.press('Shift+ArrowLeft');
+
+  const toolbar = locateToolbar(page);
+
+  await expect(toolbar).toBeVisible();
+
+  await clickEdgelessModeButton(page);
+
+  await expect(toolbar).toBeHidden();
+});

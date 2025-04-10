@@ -23,6 +23,7 @@ import {
 } from '@blocksuite/affine-gfx-text';
 import { NoteBlockSchema } from '@blocksuite/affine-model';
 import {
+  AutoClearSelectionService,
   DNDAPIExtension,
   DocModeService,
   EmbedOptionService,
@@ -77,6 +78,7 @@ export const CommonSpecs: ExtensionType[] = [
   DNDAPIExtension,
   FileDropExtension,
   ToolbarRegistryExtension,
+  AutoClearSelectionService,
   ...RootBlockAdapterExtensions,
   ...clipboardConfigs,
   ...EdgelessElementViews,
