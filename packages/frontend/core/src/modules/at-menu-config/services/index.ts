@@ -376,6 +376,10 @@ export class AtMenuConfigService extends Service {
 
           close();
 
+          track.doc.editor.atMenu.mentionMember({
+            type: 'member',
+          });
+
           const inlineRange = inlineEditor.getInlineRange();
           if (!inlineRange || inlineRange.length !== 0) return;
 
@@ -440,6 +444,8 @@ export class AtMenuConfigService extends Service {
               const err = UserFriendlyError.fromAny(error);
 
               if (err.is(ErrorNames.MENTION_USER_DOC_ACCESS_DENIED)) {
+                track.doc.editor.atMenu.noAccessPrompted();
+
                 const canUserManage = this.guardService.can$(
                   'Doc_Users_Manage',
                   docId
@@ -456,6 +462,11 @@ export class AtMenuConfigService extends Service {
                     action: {
                       label: 'Invite',
                       onClick: async () => {
+                        track.$.sharePanel.$.inviteUserDocRole({
+                          control: 'member list',
+                          role: 'reader',
+                        });
+
                         try {
                           await this.docGrantedUsersService.updateUserRole(
                             id,
@@ -517,6 +528,11 @@ export class AtMenuConfigService extends Service {
       icon: UserIcon(),
       action: () => {
         close();
+
+        track.doc.editor.atMenu.mentionMember({
+          type: 'invite',
+        });
+
         this.dialogService.open('setting', {
           activeTab: 'workspace:members',
         });
