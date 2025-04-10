@@ -16,7 +16,6 @@ import { openHomePage } from '@affine-test/kit/utils/load-page';
 import {
   addCodeBlock,
   clickNewPageButton,
-  getBlockSuiteEditorTitle,
   type,
   waitForEditorLoad,
 } from '@affine-test/kit/utils/page-logic';
@@ -178,9 +177,6 @@ test.describe('paste in multiple blocks text selection', () => {
 test('paste surface-ref block to another doc as embed-linked-doc block', async ({
   page,
 }) => {
-  await openHomePage(page);
-  await clickNewPageButton(page, 'Clipboard Test');
-  await waitForEditorLoad(page);
   await clickEdgelessModeButton(page);
   const container = locateEditorContainer(page);
   await container.click();
@@ -205,21 +201,18 @@ test('paste surface-ref block to another doc as embed-linked-doc block', async (
   await insertIntoPageButton.click();
 
   await clickPageModeButton(page);
-  await page.waitForTimeout(50);
+  await waitForEditorLoad(page);
+  await container.click();
 
   // copy surface-ref block
-  const surfaceRefBlock = page.locator('.affine-surface-ref');
+  const surfaceRefBlock = page.locator('affine-surface-ref');
   await surfaceRefBlock.click();
-  await page.waitForTimeout(50);
+  await page.waitForSelector('affine-surface-ref .focused');
   await copyByKeyboard(page);
 
   // paste to another doc
-  await clickNewPageButton(page);
-  await waitForEditorLoad(page);
-  const title2 = getBlockSuiteEditorTitle(page);
-  await title2.pressSequentially('page2');
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(50);
+  await clickNewPageButton(page, 'page2');
+  await pressEnter(page);
 
   // paste the surface-ref block
   await pasteByKeyboard(page);
