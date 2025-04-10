@@ -19,7 +19,7 @@ import { debounceTime } from 'rxjs/operators';
 
 import {
   debugLog,
-  getViewportLayout,
+  getViewportLayoutTree,
   paintPlaceholder,
   syncCanvasSize,
 } from './renderer-utils';
@@ -28,7 +28,7 @@ import type {
   RendererOptions,
   RenderingState,
   TurboRendererConfig,
-  ViewportLayout,
+  ViewportLayoutTree,
   WorkerToHostMessage,
 } from './types';
 
@@ -49,7 +49,7 @@ export class ViewportTurboRendererExtension extends GfxExtension {
   public readonly canvas: HTMLCanvasElement = document.createElement('canvas');
   private readonly worker: Worker;
   private readonly disposables = new DisposableGroup();
-  private layoutCacheData: ViewportLayout | null = null;
+  private layoutCacheData: ViewportLayoutTree | null = null;
   private layoutVersion = 0;
   private bitmap: ImageBitmap | null = null;
   private viewportElement: GfxViewportElement | null = null;
@@ -172,9 +172,9 @@ export class ViewportTurboRendererExtension extends GfxExtension {
 
   get layoutCache() {
     if (this.layoutCacheData) return this.layoutCacheData;
-    const layout = getViewportLayout(this.std.host, this.viewport);
+    const layoutTree = getViewportLayoutTree(this.std.host, this.viewport);
     this.debugLog('Layout cache updated');
-    return (this.layoutCacheData = layout);
+    return (this.layoutCacheData = layoutTree);
   }
 
   async refresh() {
@@ -248,8 +248,8 @@ export class ViewportTurboRendererExtension extends GfxExtension {
         type: 'paintLayout',
         data: {
           layout,
-          width: layout.rect.w,
-          height: layout.rect.h,
+          width: layout.overallRect.w,
+          height: layout.overallRect.h,
           dpr,
           zoom: this.viewport.zoom,
           version: currentVersion,
@@ -316,17 +316,18 @@ export class ViewportTurboRendererExtension extends GfxExtension {
     if (!ctx) return;
 
     this.clearCanvas();
+
     const layoutViewCoord = this.viewport.toViewCoord(
-      layout.rect.x,
-      layout.rect.y
+      layout.overallRect.x,
+      layout.overallRect.y
     );
 
     ctx.drawImage(
       bitmap,
       layoutViewCoord[0] * window.devicePixelRatio,
       layoutViewCoord[1] * window.devicePixelRatio,
-      layout.rect.w * window.devicePixelRatio * this.viewport.zoom,
-      layout.rect.h * window.devicePixelRatio * this.viewport.zoom
+      layout.overallRect.w * window.devicePixelRatio * this.viewport.zoom,
+      layout.overallRect.h * window.devicePixelRatio * this.viewport.zoom
     );
 
     this.debugLog('Bitmap drawn to canvas');
