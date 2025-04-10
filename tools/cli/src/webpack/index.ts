@@ -414,7 +414,7 @@ export function createWorkerTargetConfig(
 
   return {
     name: entry,
-    context: pkg.path.value,
+    context: ProjectRoot.value,
     experiments: {
       topLevelAwait: true,
       outputModule: false,
@@ -541,6 +541,9 @@ export function createWorkerTargetConfig(
           {} as Record<string, string>
         )
       ),
+      new webpack.optimize.LimitChunkCountPlugin({
+        maxChunks: 1,
+      }),
       process.env.SENTRY_AUTH_TOKEN &&
         process.env.SENTRY_ORG &&
         process.env.SENTRY_PROJECT &&
