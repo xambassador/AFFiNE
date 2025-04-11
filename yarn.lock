@@ -430,6 +430,7 @@ __metadata:
     cmdk: "npm:^1.0.4"
     core-js: "npm:^3.39.0"
     dayjs: "npm:^1.11.13"
+    eventemitter2: "npm:^6.4.9"
     fake-indexeddb: "npm:^6.0.0"
     file-type: "npm:^20.0.0"
     filesize: "npm:^10.1.6"
