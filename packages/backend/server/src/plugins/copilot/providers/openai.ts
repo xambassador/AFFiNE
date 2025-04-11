@@ -180,7 +180,6 @@ export class OpenAIProvider
     options: CopilotChatOptions = {}
   ): Promise<string> {
     await this.checkParams({ messages, model, options });
-    console.log('messages', messages);
 
     try {
       metrics.ai.counter('chat_text_calls').add(1, { model });
@@ -215,7 +214,6 @@ export class OpenAIProvider
 
       return text.trim();
     } catch (e: any) {
-      console.log('error', e);
       metrics.ai.counter('chat_text_errors').add(1, { model });
       throw this.handleError(e, model, options);
     }

@@ -14,6 +14,12 @@ const SIMPLE_IMAGE_URL_REGEX = /^(https?:\/\/|data:image\/)/;
 const FORMAT_INFER_MAP: Record<string, string> = {
   pdf: 'application/pdf',
   mp3: 'audio/mpeg',
+  opus: 'audio/opus',
+  ogg: 'audio/ogg',
+  aac: 'audio/aac',
+  m4a: 'audio/aac',
+  flac: 'audio/flac',
+  ogv: 'video/ogg',
   wav: 'audio/wav',
   png: 'image/png',
   jpeg: 'image/jpeg',
@@ -57,10 +63,7 @@ export async function chatToGPTMessage(
     if (Array.isArray(attachments)) {
       const contents: (TextPart | ImagePart | FilePart)[] = [];
       if (content.length) {
-        contents.push({
-          type: 'text',
-          text: content,
-        });
+        contents.push({ type: 'text', text: content });
       }
 
       for (const url of attachments) {
@@ -69,20 +72,12 @@ export async function chatToGPTMessage(
             typeof mimetype === 'string' ? mimetype : inferMimeType(url);
           if (mimeType) {
             if (mimeType.startsWith('image/')) {
-              contents.push({
-                type: 'image',
-                image: url,
-                mimeType,
-              });
+              contents.push({ type: 'image', image: url, mimeType });
             } else {
               const data = url.startsWith('data:')
                 ? await fetch(url).then(r => r.arrayBuffer())
                 : new URL(url);
-              contents.push({
-                type: 'file' as const,
-                data,
-                mimeType,
-              });
+              contents.push({ type: 'file' as const, data, mimeType });
             }
           }
         }
