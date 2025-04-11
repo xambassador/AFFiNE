@@ -184,7 +184,7 @@ test('paste surface-ref block to another doc as embed-linked-doc block', async (
   // add a shape
   await page.keyboard.press('s');
   // click to add a shape
-  await container.click({ position: { x: 100, y: 500 } });
+  await container.click({ position: { x: 100, y: 300 } });
   await page.waitForTimeout(50);
   // add a frame
   await page.keyboard.press('f');
