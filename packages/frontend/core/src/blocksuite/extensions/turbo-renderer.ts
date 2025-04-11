@@ -1,4 +1,5 @@
 import { getWorkerUrl } from '@affine/env/worker';
+import { CodeLayoutHandlerExtension } from '@blocksuite/affine/blocks/code';
 import { ListLayoutHandlerExtension } from '@blocksuite/affine/blocks/list';
 import { NoteLayoutHandlerExtension } from '@blocksuite/affine/blocks/note';
 import { ParagraphLayoutHandlerExtension } from '@blocksuite/affine/blocks/paragraph';
@@ -17,6 +18,7 @@ export function patchTurboRendererExtension() {
     ParagraphLayoutHandlerExtension,
     ListLayoutHandlerExtension,
     NoteLayoutHandlerExtension,
+    CodeLayoutHandlerExtension,
     TurboRendererConfigFactory({
       options: {
         zoomThreshold: 1,

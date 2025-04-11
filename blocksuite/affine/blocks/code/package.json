@@ -11,6 +11,7 @@
   "license": "MIT",
   "dependencies": {
     "@blocksuite/affine-components": "workspace:*",
+    "@blocksuite/affine-gfx-turbo-renderer": "workspace:*",
     "@blocksuite/affine-inline-latex": "workspace:*",
     "@blocksuite/affine-inline-link": "workspace:*",
     "@blocksuite/affine-inline-preset": "workspace:*",
@@ -35,7 +36,8 @@
   },
   "exports": {
     ".": "./src/index.ts",
-    "./effects": "./src/effects.ts"
+    "./effects": "./src/effects.ts",
+    "./turbo-painter": "./src/turbo/code-painter.worker.ts"
   },
   "files": [
     "src",
