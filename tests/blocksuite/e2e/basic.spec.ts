@@ -394,7 +394,7 @@ test(scoped`delete emoji forward`, async ({ page }) => {
 });
 
 test(
-  scoped`ZERO_WIDTH_SPACE should be counted by one cursor position`,
+  scoped`ZERO_WIDTH_FOR_EMPTY_LINE should be counted by one cursor position`,
   async ({ page }) => {
     await enterPlaygroundRoom(page);
     await initEmptyParagraphState(page);

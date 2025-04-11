@@ -15,7 +15,7 @@ import {
   initEmptyParagraphState,
 } from '../utils/actions/misc.js';
 import { assertRichTextInlineDeltas } from '../utils/asserts.js';
-import { ZERO_WIDTH_SPACE } from '../utils/inline-editor.js';
+import { ZERO_WIDTH_FOR_EMPTY_LINE } from '../utils/inline-editor.js';
 // FIXME(mirone): copy paste from framework/inline/__tests__/utils.ts
 const defaultPlaygroundURL = new URL(
   `http://localhost:${process.env.CI ? 4173 : 5173}/`
@@ -165,8 +165,8 @@ test('basic input', async ({ page, browserName }) => {
   const editorAUndo = page.getByText('undo').nth(0);
   const editorARedo = page.getByText('redo').nth(0);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -177,8 +177,8 @@ test('basic input', async ({ page, browserName }) => {
 
   await editorAUndo.click();
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await editorARedo.click();
 
@@ -244,12 +244,18 @@ test('basic input', async ({ page, browserName }) => {
 
   await page.waitForTimeout(100);
 
-  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
-    useInnerText: true, // for multi-line text
-  });
-  await expect(editorB).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
-    useInnerText: true, // for multi-line text
-  });
+  await expect(editorA).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nbbb',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
+  await expect(editorB).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nbbb',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
 
   await editorAUndo.click();
 
@@ -258,12 +264,18 @@ test('basic input', async ({ page, browserName }) => {
 
   await editorARedo.click();
 
-  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
-    useInnerText: true, // for multi-line text
-  });
-  await expect(editorB).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
-    useInnerText: true, // for multi-line text
-  });
+  await expect(editorA).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nbbb',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
+  await expect(editorB).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nbbb',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
 
   await focusInlineRichText(page);
   await page.waitForTimeout(100);
@@ -274,12 +286,18 @@ test('basic input', async ({ page, browserName }) => {
 
   await editorAUndo.click();
 
-  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
-    useInnerText: true, // for multi-line text
-  });
-  await expect(editorB).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nbbb', {
-    useInnerText: true, // for multi-line text
-  });
+  await expect(editorA).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nbbb',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
+  await expect(editorB).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nbbb',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
 
   await editorARedo.click();
 
@@ -314,12 +332,18 @@ test('basic input', async ({ page, browserName }) => {
   await press(page, 'Enter');
   await press(page, 'Enter');
 
-  await expect(editorA).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
-    useInnerText: true, // for multi-line text
-  });
-  await expect(editorB).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
-    useInnerText: true, // for multi-line text
-  });
+  await expect(editorA).toHaveText(
+    'abbbc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\ndd',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
+  await expect(editorB).toHaveText(
+    'abbbc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\ndd',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
 
   await editorAUndo.click();
 
@@ -328,12 +352,18 @@ test('basic input', async ({ page, browserName }) => {
 
   await editorARedo.click();
 
-  await expect(editorA).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
-    useInnerText: true, // for multi-line text
-  });
-  await expect(editorB).toHaveText('abbbc\n' + ZERO_WIDTH_SPACE + '\ndd', {
-    useInnerText: true, // for multi-line text
-  });
+  await expect(editorA).toHaveText(
+    'abbbc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\ndd',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
+  await expect(editorB).toHaveText(
+    'abbbc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\ndd',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
 });
 
 test('chinese input', async ({ page, browserName }) => {
@@ -348,8 +378,8 @@ test('chinese input', async ({ page, browserName }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
   const client = await page.context().newCDPSession(page);
@@ -396,8 +426,8 @@ test('readonly mode', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -441,8 +471,8 @@ test('basic styles', async ({ page }) => {
   const editorAUndo = page.getByText('undo').nth(0);
   const editorARedo = page.getByText('redo').nth(0);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -696,8 +726,8 @@ test('overlapping styles', async ({ page }) => {
   const editorAUndo = page.getByText('undo').nth(0);
   const editorARedo = page.getByText('redo').nth(0);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -868,8 +898,8 @@ test('input continuous spaces', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -902,8 +932,8 @@ test('select from the start of line using shift+arrow', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -961,8 +991,8 @@ test('getLine', async ({ page }) => {
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorB = page.locator('[data-v-root="true"]').nth(1);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
-  await expect(editorB).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
+  await expect(editorB).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -1032,7 +1062,7 @@ test('embed', async ({ page }) => {
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorAEmbed = page.getByText('embed').nth(0);
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
 
   await page.waitForTimeout(100);
 
@@ -1101,7 +1131,7 @@ test('delete embed when pressing backspace after embed', async ({ page }) => {
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
   const editorAEmbed = page.getByText('embed').nth(0);
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
   await page.waitForTimeout(100);
   await type(page, 'ab');
   await expect(editorA).toHaveText('ab');
@@ -1146,7 +1176,7 @@ test('triple click to select line', async ({ page }) => {
 
   const editorA = page.locator('[data-v-root="true"]').nth(0);
 
-  await expect(editorA).toHaveText(ZERO_WIDTH_SPACE);
+  await expect(editorA).toHaveText(ZERO_WIDTH_FOR_EMPTY_LINE);
   await page.waitForTimeout(100);
   await type(page, 'abc\nabc abc abc\nabc');
 
@@ -1161,9 +1191,12 @@ test('triple click to select line', async ({ page }) => {
   await assertSelection(page, 0, 4, 11);
 
   await pressBackspace(page);
-  await expect(editorA).toHaveText('abc\n' + ZERO_WIDTH_SPACE + '\nabc', {
-    useInnerText: true, // for multi-line text
-  });
+  await expect(editorA).toHaveText(
+    'abc\n' + ZERO_WIDTH_FOR_EMPTY_LINE + '\nabc',
+    {
+      useInnerText: true, // for multi-line text
+    }
+  );
 });
 
 test('caret should move correctly when inline elements are exist', async ({
