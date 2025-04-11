@@ -10217,9 +10217,9 @@ __metadata:
   linkType: hard
 
 "@opentelemetry/semantic-conventions@npm:^1.22.0, @opentelemetry/semantic-conventions@npm:^1.27.0, @opentelemetry/semantic-conventions@npm:^1.28.0, @opentelemetry/semantic-conventions@npm:^1.30.0":
-  version: 1.31.0
-  resolution: "@opentelemetry/semantic-conventions@npm:1.31.0"
-  checksum: 10/04ce9dfaa70826400d64b0d90dd6e2c6c0fde5d758035c2c2d3680ae546774bc8b19fea2a329736f30031a704a5e36a8ae2e7a10659b62b90c43e10ab5042fb8
+  version: 1.32.0
+  resolution: "@opentelemetry/semantic-conventions@npm:1.32.0"
+  checksum: 10/5f0e5f36f5f808a5312f98faeb0ea099c66f531c06ab638177d2635faa8e7637c025b146342b49907d9af585963f078a2b28fde1f85437daba7a9163d9294906
   languageName: node
   linkType: hard
 
