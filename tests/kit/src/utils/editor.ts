@@ -289,7 +289,7 @@ export async function locateEdgelessToolButton(
   switch (type) {
     case 'brush':
     case 'highlighter':
-      buttonType = 'div';
+      buttonType = 'edgeless-tool-icon-button';
       break;
     case 'pen':
     case 'text':
