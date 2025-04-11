@@ -81,21 +81,10 @@ export class BookmarkCard extends SignalWatcher(
     const theme = this.bookmark.std.get(ThemeProvider).theme;
     const { LoadingIcon, EmbedCardBannerIcon } = getEmbedCardIcons(theme);
 
-    const titleIconType =
-      !icon?.split('.').pop() || icon?.split('.').pop() === 'svg'
-        ? 'svg+xml'
-        : icon?.split('.').pop();
-
     const titleIcon = this.loading
       ? LoadingIcon
       : icon
-        ? html`<object
-            type="image/${titleIconType}"
-            data=${icon}
-            draggable="false"
-          >
-            ${WebIcon16}
-          </object>`
+        ? html`<img src=${icon} alt="icon" />`
         : WebIcon16;
 
     const descriptionText = this.loading
@@ -108,9 +97,7 @@ export class BookmarkCard extends SignalWatcher(
 
     const bannerImage =
       !this.loading && image
-        ? html`<object type="image/webp" data=${image} draggable="false">
-            ${EmbedCardBannerIcon}
-          </object>`
+        ? html`<img src=${image} alt="banner" />`
         : EmbedCardBannerIcon;
 
     return html`
