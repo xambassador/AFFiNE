@@ -182,7 +182,7 @@ export class EditorUtils {
     });
 
     // Insert text inside shape
-    await page.mouse.dblclick(400, 400);
+    await page.mouse.dblclick(450, 450);
     await page.keyboard.insertText(text);
     // Prevent the shape from being dragged
     await page.mouse.click(500, 500);
