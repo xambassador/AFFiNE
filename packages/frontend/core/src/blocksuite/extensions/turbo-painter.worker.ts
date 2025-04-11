@@ -1,4 +1,5 @@
 import { CodeLayoutPainterExtension } from '@blocksuite/affine/blocks/code';
+import { ImageLayoutPainterExtension } from '@blocksuite/affine/blocks/image';
 import { ListLayoutPainterExtension } from '@blocksuite/affine/blocks/list';
 import { NoteLayoutPainterExtension } from '@blocksuite/affine/blocks/note';
 import { ParagraphLayoutPainterExtension } from '@blocksuite/affine/blocks/paragraph';
@@ -9,4 +10,5 @@ new ViewportLayoutPainter([
   ListLayoutPainterExtension,
   NoteLayoutPainterExtension,
   CodeLayoutPainterExtension,
+  ImageLayoutPainterExtension,
 ]);
