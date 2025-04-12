@@ -9,6 +9,7 @@ import {
 } from '@affine-test/kit/utils/editor';
 import {
   copyByKeyboard,
+  cutByKeyboard,
   pasteByKeyboard,
   pressEnter,
 } from '@affine-test/kit/utils/keyboard';
@@ -174,56 +175,84 @@ test.describe('paste in multiple blocks text selection', () => {
   });
 });
 
-test('paste surface-ref block to another doc as embed-linked-doc block', async ({
-  page,
-}) => {
-  await clickEdgelessModeButton(page);
-  const container = locateEditorContainer(page);
-  await container.click();
+test.describe('surface-ref block', () => {
+  async function setupSurfaceRefBlock(page: Page) {
+    await clickEdgelessModeButton(page);
+    const container = locateEditorContainer(page);
+    await container.click();
 
-  // add a shape
-  await page.keyboard.press('s');
-  // click to add a shape
-  await container.click({ position: { x: 100, y: 300 } });
-  await page.waitForTimeout(50);
-  // add a frame
-  await page.keyboard.press('f');
-  await page.waitForTimeout(50);
+    // add a shape
+    await page.keyboard.press('s');
+    await container.click({ position: { x: 100, y: 300 } });
+    await page.waitForTimeout(50);
 
-  // click on the frame title to trigger the change frame button toolbar
-  const frameTitle = page.locator('affine-frame-title');
-  await frameTitle.click();
-  await page.waitForTimeout(50);
+    // add a frame
+    await page.keyboard.press('f');
+    await page.waitForTimeout(50);
 
-  const toolbar = page.locator('affine-toolbar-widget editor-toolbar');
+    // click on the frame title to trigger the change frame button toolbar
+    const frameTitle = page.locator('affine-frame-title');
+    await frameTitle.click();
+    await page.waitForTimeout(50);
 
-  const insertIntoPageButton = toolbar.getByLabel('Insert into Page');
-  await insertIntoPageButton.click();
+    const toolbar = page.locator('affine-toolbar-widget editor-toolbar');
+    const insertIntoPageButton = toolbar.getByLabel('Insert into Page');
+    await insertIntoPageButton.click();
 
-  await clickPageModeButton(page);
-  await waitForEditorLoad(page);
-  await container.click();
+    await clickPageModeButton(page);
+    await waitForEditorLoad(page);
+    await container.click();
 
-  // copy surface-ref block
-  const surfaceRefBlock = page.locator('affine-surface-ref');
-  await surfaceRefBlock.click();
-  await page.waitForSelector('affine-surface-ref .focused');
-  await copyByKeyboard(page);
+    return { container };
+  }
 
-  // paste to another doc
-  await clickNewPageButton(page, 'page2');
-  await pressEnter(page);
+  test('paste surface-ref block to another doc as embed-linked-doc block', async ({
+    page,
+  }) => {
+    await setupSurfaceRefBlock(page);
 
-  // paste the surface-ref block
-  await pasteByKeyboard(page);
-  await page.waitForTimeout(50);
+    // copy surface-ref block
+    const surfaceRefBlock = page.locator('affine-surface-ref');
+    await surfaceRefBlock.click();
+    await page.waitForSelector('affine-surface-ref .focused');
+    await copyByKeyboard(page);
 
-  const embedLinkedDocBlock = page.locator('affine-embed-linked-doc-block');
-  await expect(embedLinkedDocBlock).toBeVisible();
-  const embedLinkedDocBlockTitle = embedLinkedDocBlock.locator(
-    '.affine-embed-linked-doc-content-title-text'
-  );
-  await expect(embedLinkedDocBlockTitle).toHaveText('Clipboard Test');
+    // paste to another doc
+    await clickNewPageButton(page, 'page2');
+    await pressEnter(page);
+
+    // paste the surface-ref block
+    await pasteByKeyboard(page);
+    await page.waitForTimeout(50);
+
+    const embedLinkedDocBlock = page.locator('affine-embed-linked-doc-block');
+    await expect(embedLinkedDocBlock).toBeVisible();
+    const embedLinkedDocBlockTitle = embedLinkedDocBlock.locator(
+      '.affine-embed-linked-doc-content-title-text'
+    );
+    await expect(embedLinkedDocBlockTitle).toHaveText('Clipboard Test');
+  });
+
+  test('cut and paste surface-ref block to same doc should remain surface-ref block', async ({
+    page,
+  }) => {
+    const { container } = await setupSurfaceRefBlock(page);
+
+    // cut surface-ref block
+    const surfaceRefBlock = page.locator('affine-surface-ref');
+    await surfaceRefBlock.click();
+    await page.waitForSelector('affine-surface-ref .focused');
+    await cutByKeyboard(page);
+
+    // focus on the editor
+    await container.click();
+
+    // paste the surface-ref block
+    await pasteByKeyboard(page);
+    await page.waitForTimeout(50);
+    await expect(surfaceRefBlock).toHaveCount(1);
+    await expect(surfaceRefBlock).toBeVisible();
+  });
 });
 
 test.describe('paste to code block', () => {
