@@ -428,8 +428,7 @@ const contentMediaToolGroup: KeyboardToolPanelGroup = {
     {
       name: 'Attachment',
       icon: AttachmentIcon(),
-      showWhen: ({ std }) =>
-        std.store.schema.flavourSchemaMap.has('affine:attachment'),
+      showWhen: () => false,
       action: async ({ std }) => {
         const [_, { selectedModels }] = std.command.exec(
           getSelectedModelsCommand
@@ -1029,8 +1028,7 @@ export const defaultKeyboardToolbarConfig: KeyboardToolbarConfig = {
     {
       name: 'Attachment',
       icon: AttachmentIcon(),
-      showWhen: ({ std }) =>
-        std.store.schema.flavourSchemaMap.has('affine:attachment'),
+      showWhen: () => false,
       action: async ({ std }) => {
         const [_, { selectedModels }] = std.command.exec(
           getSelectedModelsCommand

@@ -16,6 +16,7 @@ import {
   isFuzzyMatch,
   type Signal,
 } from '@blocksuite/affine-shared/utils';
+import { IS_MOBILE } from '@blocksuite/global/env';
 import {
   type BlockStdScope,
   ConfigExtensionFactory,
@@ -175,73 +176,77 @@ export function createNewDocMenuGroup(
     docName.slice(0, DISPLAY_NAME_LENGTH) +
     (docName.length > DISPLAY_NAME_LENGTH ? '..' : '');
 
+  const items: LinkedMenuItem[] = [
+    {
+      key: 'create',
+      name: `Create "${displayDocName}" doc`,
+      icon: NewDocIcon,
+      action: () => {
+        abort();
+        const docName = query;
+        const newDoc = createDefaultDoc(doc.workspace, {
+          title: docName,
+        });
+        insertLinkedNode({
+          inlineEditor,
+          docId: newDoc.id,
+        });
+        const telemetryService = editorHost.std.getOptional(TelemetryProvider);
+        telemetryService?.track('LinkedDocCreated', {
+          control: 'new doc',
+          module: 'inline @',
+          type: 'doc',
+          other: 'new doc',
+        });
+        telemetryService?.track('DocCreated', {
+          control: 'new doc',
+          module: 'inline @',
+          type: 'doc',
+        });
+      },
+    },
+  ];
+
+  if (!IS_MOBILE) {
+    items.push({
+      key: 'import',
+      name: 'Import',
+      icon: ImportIcon,
+      action: () => {
+        abort();
+        const onSuccess = (
+          docIds: string[],
+          options: {
+            importedCount: number;
+          }
+        ) => {
+          toast(
+            editorHost,
+            `Successfully imported ${options.importedCount} Doc${options.importedCount > 1 ? 's' : ''}.`
+          );
+          for (const docId of docIds) {
+            insertLinkedNode({
+              inlineEditor,
+              docId,
+            });
+          }
+        };
+        const onFail = (message: string) => {
+          toast(editorHost, message);
+        };
+        showImportModal({
+          collection: doc.workspace,
+          schema: doc.schema,
+          onSuccess,
+          onFail,
+        });
+      },
+    });
+  }
+
   return {
     name: 'New Doc',
-    items: [
-      {
-        key: 'create',
-        name: `Create "${displayDocName}" doc`,
-        icon: NewDocIcon,
-        action: () => {
-          abort();
-          const docName = query;
-          const newDoc = createDefaultDoc(doc.workspace, {
-            title: docName,
-          });
-          insertLinkedNode({
-            inlineEditor,
-            docId: newDoc.id,
-          });
-          const telemetryService =
-            editorHost.std.getOptional(TelemetryProvider);
-          telemetryService?.track('LinkedDocCreated', {
-            control: 'new doc',
-            module: 'inline @',
-            type: 'doc',
-            other: 'new doc',
-          });
-          telemetryService?.track('DocCreated', {
-            control: 'new doc',
-            module: 'inline @',
-            type: 'doc',
-          });
-        },
-      },
-      {
-        key: 'import',
-        name: 'Import',
-        icon: ImportIcon,
-        action: () => {
-          abort();
-          const onSuccess = (
-            docIds: string[],
-            options: {
-              importedCount: number;
-            }
-          ) => {
-            toast(
-              editorHost,
-              `Successfully imported ${options.importedCount} Doc${options.importedCount > 1 ? 's' : ''}.`
-            );
-            for (const docId of docIds) {
-              insertLinkedNode({
-                inlineEditor,
-                docId,
-              });
-            }
-          };
-          const onFail = (message: string) => {
-            toast(editorHost, message);
-          };
-          showImportModal({
-            collection: doc.workspace,
-            schema: doc.schema,
-            onSuccess,
-            onFail,
-          });
-        },
-      },
-    ],
+    items,
   };
 }
 
