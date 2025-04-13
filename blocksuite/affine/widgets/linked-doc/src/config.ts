@@ -112,6 +112,7 @@ export type LinkedDocContext = {
   std: BlockStdScope;
   inlineEditor: AffineInlineEditor;
   startRange: InlineRange;
+  startNativeRange: Range;
   triggerKey: string;
   config: LinkedWidgetConfig;
   close: () => void;

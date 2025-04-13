@@ -7,7 +7,6 @@ import {
 import { unsafeCSSVar } from '@blocksuite/affine-shared/theme';
 import {
   createKeydownObserver,
-  getCurrentNativeRange,
   getPopperPosition,
   getViewportElement,
 } from '@blocksuite/affine-shared/utils';
@@ -160,11 +159,15 @@ export class LinkedDocPopover extends SignalWatcher(
 
     // init
     this._updateLinkedDocGroup().catch(console.error);
-    this._disposables.addFromEvent(this, 'mousedown', e => {
+    this._disposables.addFromEvent(this, 'pointerdown', e => {
       // Prevent input from losing focus
       e.preventDefault();
     });
-    this._disposables.addFromEvent(window, 'mousedown', e => {
+    this._disposables.addFromEvent(this, 'mousedown', e => {
+      // Prevent input from losing focus in electron
+      e.preventDefault();
+    });
+    this._disposables.addFromEvent(window, 'pointerdown', e => {
       if (e.target === this) return;
       // We don't clear the query when clicking outside the popover
       this.context.close();
@@ -338,11 +341,8 @@ export class LinkedDocPopover extends SignalWatcher(
 
   override willUpdate() {
     if (!this.hasUpdated) {
-      const curRange = getCurrentNativeRange();
-      if (!curRange) return;
-
       const updatePosition = throttle(() => {
-        this._position = getPopperPosition(this, curRange);
+        this._position = getPopperPosition(this, this.context.startNativeRange);
       }, 10);
 
       this.disposables.addFromEvent(window, 'resize', updatePosition);

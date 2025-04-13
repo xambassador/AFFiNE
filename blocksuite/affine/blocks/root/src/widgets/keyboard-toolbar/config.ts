@@ -34,10 +34,7 @@ import {
   toggleUnderline,
 } from '@blocksuite/affine-inline-preset';
 import type { FrameBlockModel } from '@blocksuite/affine-model';
-import {
-  getInlineEditorByModel,
-  insertContent,
-} from '@blocksuite/affine-rich-text';
+import { insertContent } from '@blocksuite/affine-rich-text';
 import {
   copySelectedModelsCommand,
   deleteSelectedModelsCommand,
@@ -348,35 +345,11 @@ const pageToolGroup: KeyboardToolPanelGroup = {
         );
         if (!linkedDocWidget) return;
         assertType<AffineLinkedDocWidget>(linkedDocWidget);
-
-        const triggerKey = linkedDocWidget.config.triggerKeys[0];
-
-        std.command
-          .chain()
-          .pipe(getSelectedModelsCommand)
-          .pipe(ctx => {
-            const { selectedModels } = ctx;
-            if (!selectedModels?.length) return;
-
-            const currentModel = selectedModels[0];
-            insertContent(std, currentModel, triggerKey);
-
-            const inlineEditor = getInlineEditorByModel(std, currentModel);
-            // Wait for range to be updated
-            if (inlineEditor) {
-              const subscription = inlineEditor.slots.inlineRangeSync.subscribe(
-                () => {
-                  subscription.unsubscribe();
-                  linkedDocWidget.show({
-                    mode: 'mobile',
-                    addTriggerKey: true,
-                  });
-                  closeToolPanel();
-                }
-              );
-            }
-          })
-          .run();
+        linkedDocWidget.show({
+          mode: 'mobile',
+          addTriggerKey: true,
+        });
+        closeToolPanel();
       },
     },
   ],

@@ -43,6 +43,19 @@ export class AffineLinkedDocWidget extends WidgetComponent<RootBlockModel> {
 
   private readonly _mode$ = signal<'desktop' | 'mobile' | 'none'>('none');
 
+  private _addTriggerKey(inlineEditor: InlineEditor, triggerKey: string) {
+    const inlineRange = inlineEditor.getInlineRange();
+    if (!inlineRange) return;
+    inlineEditor.insertText(
+      { index: inlineRange.index, length: 0 },
+      triggerKey
+    );
+    inlineEditor.setInlineRange({
+      index: inlineRange.index + triggerKey.length,
+      length: 0,
+    });
+  }
+
   private _updateInputRects() {
     if (!this._context) return;
     const { inlineEditor, startRange, triggerKey } = this._context;
@@ -258,19 +271,21 @@ export class AffineLinkedDocWidget extends WidgetComponent<RootBlockModel> {
       inlineEditor = props.inlineEditor;
     }
 
-    const inlineRange = inlineEditor.getInlineRange();
-    if (!inlineRange) return;
-
     if (addTriggerKey) {
-      inlineEditor.insertText(
-        { index: inlineRange.index, length: 0 },
-        primaryTriggerKey
-      );
-      inlineEditor.setInlineRange({
-        index: inlineRange.index + primaryTriggerKey.length,
-        length: 0,
+      this._addTriggerKey(inlineEditor, primaryTriggerKey);
+      // we need to wait the range sync to get the correct startNativeRange
+      const subscription = inlineEditor.slots.inlineRangeSync.subscribe(() => {
+        this.show({ ...props, addTriggerKey: false });
+        subscription.unsubscribe();
       });
+      return;
     }
+
+    const startRange = inlineEditor.getInlineRange();
+    if (!startRange) return;
+
+    const startNativeRange = inlineEditor.getNativeRange();
+    if (!startNativeRange) return;
 
     const disposable = inlineEditor.slots.renderComplete.subscribe(() => {
       this._updateInputRects();
@@ -278,7 +293,8 @@ export class AffineLinkedDocWidget extends WidgetComponent<RootBlockModel> {
     this._context = {
       std: this.std,
       inlineEditor,
-      startRange: inlineRange,
+      startRange,
+      startNativeRange,
       triggerKey: primaryTriggerKey,
       config: this.config,
       close: () => {
