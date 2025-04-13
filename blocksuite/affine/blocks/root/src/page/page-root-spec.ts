@@ -1,4 +1,5 @@
 import { ViewportElementExtension } from '@blocksuite/affine-shared/services';
+import { IS_MOBILE } from '@blocksuite/global/env';
 import { BlockViewExtension, WidgetViewExtension } from '@blocksuite/std';
 import type { ExtensionType } from '@blocksuite/store';
 import { literal, unsafeStatic } from 'lit/static-html.js';
@@ -31,7 +32,7 @@ const PageCommonExtension: ExtensionType[] = [
 export const PageRootBlockSpec: ExtensionType[] = [
   ...PageCommonExtension,
   BlockViewExtension('affine:page', literal`affine-page-root`),
-  keyboardToolbarWidget,
+  IS_MOBILE ? [keyboardToolbarWidget] : [],
   PageClipboard,
 ].flat();
 

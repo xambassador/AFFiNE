@@ -2,6 +2,7 @@ import { getDocTitleByEditorHost } from '@blocksuite/affine-fragment-doc-title';
 import type { RootBlockModel } from '@blocksuite/affine-model';
 import {
   FeatureFlagService,
+  isVirtualKeyboardProviderWithAction,
   VirtualKeyboardProvider,
   type VirtualKeyboardProviderWithAction,
 } from '@blocksuite/affine-shared/services';
@@ -34,7 +35,10 @@ export class AffineKeyboardToolbarWidget extends WidgetComponent<RootBlockModel>
 
   private _initialInputMode: string = '';
 
-  get keyboard(): VirtualKeyboardProviderWithAction {
+  get keyboard(): VirtualKeyboardProviderWithAction & { fallback?: boolean } {
+    const provider = this.std.get(VirtualKeyboardProvider);
+    if (isVirtualKeyboardProviderWithAction(provider)) return provider;
+
     return {
       // fallback keyboard actions
       show: () => {
@@ -49,7 +53,7 @@ export class AffineKeyboardToolbarWidget extends WidgetComponent<RootBlockModel>
           rootComponent.inputMode = 'none';
         }
       },
-      ...this.std.get(VirtualKeyboardProvider),
+      ...provider,
     };
   }
 
@@ -70,10 +74,6 @@ export class AffineKeyboardToolbarWidget extends WidgetComponent<RootBlockModel>
 
     const rootComponent = this.block?.rootComponent;
     if (rootComponent) {
-      this._initialInputMode = rootComponent.inputMode;
-      this.disposables.add(() => {
-        rootComponent.inputMode = this._initialInputMode;
-      });
       this.disposables.addFromEvent(rootComponent, 'focus', () => {
         this._show$.value = true;
       });
@@ -81,14 +81,20 @@ export class AffineKeyboardToolbarWidget extends WidgetComponent<RootBlockModel>
         this._show$.value = false;
       });
 
-      this.disposables.add(
-        effect(() => {
-          // recover input mode when keyboard toolbar is hidden
-          if (!this._show$.value) {
-            rootComponent.inputMode = this._initialInputMode;
-          }
-        })
-      );
+      if (this.keyboard.fallback) {
+        this._initialInputMode = rootComponent.inputMode;
+        this.disposables.add(() => {
+          rootComponent.inputMode = this._initialInputMode;
+        });
+        this.disposables.add(
+          effect(() => {
+            // recover input mode when keyboard toolbar is hidden
+            if (!this._show$.value) {
+              rootComponent.inputMode = this._initialInputMode;
+            }
+          })
+        );
+      }
     }
 
     if (this._docTitle) {

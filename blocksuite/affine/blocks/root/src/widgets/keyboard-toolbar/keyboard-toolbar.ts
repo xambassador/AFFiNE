@@ -55,10 +55,8 @@ export class AffineKeyboardToolbar extends SignalWatcher(
   }
 
   private readonly _closeToolPanel = () => {
-    if (!this.panelOpened) return;
-
     this._currentPanelIndex$.value = -1;
-    this.keyboard.show();
+    if (!this.keyboard.visible$.peek()) this.keyboard.show();
   };
 
   private readonly _currentPanelIndex$ = signal(-1);
@@ -252,6 +250,16 @@ export class AffineKeyboardToolbar extends SignalWatcher(
         requestAnimationFrame(() => {
           this._scrollCurrentBlockIntoView();
         });
+      })
+    );
+
+    this.disposables.add(
+      effect(() => {
+        // sometime the keyboard will auto show when user click into different paragraph in Android,
+        // so we need to close the tool panel explicitly when the keyboard is visible
+        if (this.keyboard.visible$.value) {
+          this._closeToolPanel();
+        }
       })
     );
 
