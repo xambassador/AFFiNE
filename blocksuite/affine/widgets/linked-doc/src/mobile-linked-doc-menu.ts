@@ -3,10 +3,7 @@ import {
   getTextContentFromInlineRange,
 } from '@blocksuite/affine-rich-text';
 import { VirtualKeyboardProvider } from '@blocksuite/affine-shared/services';
-import {
-  createKeydownObserver,
-  getViewportElement,
-} from '@blocksuite/affine-shared/utils';
+import { getViewportElement } from '@blocksuite/affine-shared/utils';
 import { SignalWatcher, WithDisposable } from '@blocksuite/global/lit';
 import { MoreHorizontalIcon } from '@blocksuite/icons/lit';
 import { PropTypes, requiredProperties } from '@blocksuite/std';
@@ -35,8 +32,6 @@ export class AffineMobileLinkedDocMenu extends SignalWatcher(
   static override styles = mobileLinkedDocMenuStyles;
 
   private readonly _expand = new Set<string>();
-
-  private _firstActionItem: LinkedMenuItem | null = null;
 
   private readonly _linkedDocGroup$ = signal<LinkedMenuGroup[]>([]);
 
@@ -187,42 +182,14 @@ export class AffineMobileLinkedDocMenu extends SignalWatcher(
       const keydownObserverAbortController = new AbortController();
       this._disposables.add(() => keydownObserverAbortController.abort());
 
-      createKeydownObserver({
-        target: eventSource,
-        signal: keydownObserverAbortController.signal,
-        onInput: isComposition => {
-          if (isComposition) {
-            this._updateLinkedDocGroup().catch(console.error);
-          } else {
-            const subscription = inlineEditor.slots.renderComplete.subscribe(
-              () => {
-                subscription.unsubscribe();
-                this._updateLinkedDocGroup().catch(console.error);
-              }
-            );
-          }
-        },
-        onDelete: () => {
-          const subscription = inlineEditor.slots.renderComplete.subscribe(
-            () => {
-              subscription.unsubscribe();
-              const curRange = inlineEditor.getInlineRange();
-
-              if (!this.context.startRange || !curRange) return;
-
-              if (curRange.index < this.context.startRange.index) {
-                this.context.close();
-              }
-              this._updateLinkedDocGroup().catch(console.error);
-            }
-          );
-        },
-        onConfirm: () => {
-          this._firstActionItem?.action()?.catch(console.error);
-        },
-        onAbort: () => {
+      // we need use beforeinput because the event.key of keypress event usually is `Unidentified` in Android
+      this.disposables.addFromEvent(eventSource, 'beforeinput', () => {
+        const curRange = inlineEditor.getInlineRange();
+        if (curRange && curRange.index < this.context.startRange.index) {
           this.context.close();
-        },
+          return;
+        }
+        this._updateLinkedDocGroup().catch(console.error);
       });
     }
   }
@@ -236,8 +203,6 @@ export class AffineMobileLinkedDocMenu extends SignalWatcher(
     if (groups.length === 0) {
       return nothing;
     }
-
-    this._firstActionItem = resolveSignal(groups[0].items)[0];
 
     this.style.bottom = `${this.keyboard.height$.value}px`;
 
