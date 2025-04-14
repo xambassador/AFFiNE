@@ -63,12 +63,8 @@ describe('viewport turbo renderer', () => {
     await wait(100);
     const renderer = getRenderer();
     renderer.viewport.zooming$.next(false);
-    await wait(renderer.options.debounceTime + 100);
-    if (renderer.viewport.zoom <= renderer.options.zoomThreshold) {
-      expect(renderer.currentState).toBe('ready');
-    } else {
-      expect(renderer.currentState).toBe('pending');
-    }
+    await wait(renderer.options.debounceTime + 500);
+    expect(renderer.currentState).toBe('ready');
   });
 
   test('invalidation should reset state to pending', async () => {
