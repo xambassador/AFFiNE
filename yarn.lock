@@ -975,7 +975,7 @@ __metadata:
     socket.io: "npm:^4.8.1"
     stripe: "npm:^17.4.0"
     supertest: "npm:^7.0.0"
-    tldts: "npm:^6.1.68"
+    tldts: "npm:^7.0.0"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.2"
     why-is-node-running: "npm:^3.2.2"
@@ -32434,21 +32434,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tldts-core@npm:^6.1.85":
-  version: 6.1.85
-  resolution: "tldts-core@npm:6.1.85"
-  checksum: 10/4068bede7cd6b690387621e2740758ec1205c8b2ee3ce6dc9d0b9d09b7b659f6dfc6129b2e3227c363d4015d62528580d378cbf0c28e94de55f10206f67adadc
+"tldts-core@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "tldts-core@npm:7.0.0"
+  checksum: 10/ed2feed7f4bc8d24228a881914be1f058b07e1b1f3b498201a26307b5f0e5df64fce41feaffe9d53b76351ccfaea306a193d095fa21200121e112aa7669b033c
   languageName: node
   linkType: hard
 
-"tldts@npm:^6.1.68":
-  version: 6.1.85
-  resolution: "tldts@npm:6.1.85"
+"tldts@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "tldts@npm:7.0.0"
   dependencies:
-    tldts-core: "npm:^6.1.85"
+    tldts-core: "npm:^7.0.0"
   bin:
     tldts: bin/cli.js
-  checksum: 10/f3270f24ed57efcbb34364e827dc1cace9b5b95a2668051e69e21ad75df49466cfeaef47e7e9b56541ef633eff1e083a43b006b6306a9d2d24e5c36a038cb400
+  checksum: 10/bb8b86a43421d6b546879e6934338c87d014fddc74e414b393609a6b797a6a29fa72aa146f0a7972965ba47706ed7baa0ee8c1aba0bfbd748c5a842417a8e4aa
   languageName: node
   linkType: hard
 
