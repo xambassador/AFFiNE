@@ -1,3 +1,6 @@
+/**
+ * Please refer to integration-test/README.md for commands to run tests.
+ */
 import { ParagraphLayoutHandlerExtension } from '@blocksuite/affine/blocks/paragraph';
 import {
   TurboRendererConfigFactory,
@@ -7,7 +10,11 @@ import { beforeEach, describe, expect, test } from 'vitest';
 
 import { wait } from '../utils/common.js';
 import { addSampleNotes } from '../utils/doc-generator.js';
-import { createPainterWorker, setupEditor } from '../utils/setup.js';
+import {
+  createPainterWorker,
+  getRenderer,
+  setupEditor,
+} from '../utils/setup.js';
 
 describe('viewport turbo renderer', () => {
   beforeEach(async () => {
@@ -27,5 +34,35 @@ describe('viewport turbo renderer', () => {
 
     const notes = document.querySelectorAll('affine-edgeless-note');
     expect(notes.length).toBe(6);
+  });
+
+  test('should access turbo renderer instance', async () => {
+    const renderer = getRenderer();
+    expect(renderer instanceof ViewportTurboRendererExtension).toBe(true);
+    expect(renderer.canvas).toBeInstanceOf(HTMLCanvasElement);
+  });
+
+  test('initial state should be pending', async () => {
+    const renderer = getRenderer();
+    expect(renderer.currentState).toBe('pending');
+  });
+
+  test('zooming should change state to zooming', async () => {
+    const renderer = getRenderer();
+    renderer.viewport.zooming$.next(true);
+    await wait();
+    expect(renderer.currentState).toBe('zooming');
+    renderer.viewport.zooming$.next(false);
+    await wait();
+    expect(renderer.currentState).not.toBe('zooming');
+  });
+
+  test('state should become ready after rendering', async () => {
+    addSampleNotes(doc, 1);
+    await wait(100);
+    const renderer = getRenderer();
+    renderer.viewport.zooming$.next(false);
+    await wait(renderer.options.debounceTime + 1000);
+    expect(renderer.currentState).toBe('ready');
   });
 });
