@@ -375,4 +375,26 @@ test.describe('paste to code block', () => {
     // Verify the pasted code maintains indentation
     await verifyCodeBlockContent(page, 0, textWithHtmlTags);
   });
+
+  test('should not wrap line in brackets when pasting code', async ({
+    page,
+  }) => {
+    await pressEnter(page);
+    await addCodeBlock(page);
+    const plainTextCode = [
+      '  model: anthropic("claude-3-7-sonnet-20250219"),',
+      '  prompt: How many people will live in the world in 2040?',
+      '  providerOptions: {',
+      '    anthropic: {',
+      '      thinking: { type: enabled, budgetTokens: 12000 },',
+      '    } satisfies AnthropicProviderOptions,',
+      '  },',
+    ].join('\n');
+
+    await pasteContent(page, { 'text/plain': plainTextCode });
+    await page.waitForTimeout(100);
+
+    // Verify the pasted code maintains indentation
+    await verifyCodeBlockContent(page, 0, plainTextCode);
+  });
 });

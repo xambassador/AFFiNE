@@ -4091,4 +4091,55 @@ hhh
     });
     expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
   });
+
+  test('should not wrap url with angle brackets if it is not a url', async () => {
+    const markdown = 'prompt: How many people will live in the world in 2040?';
+    const sliceSnapshot: SliceSnapshot = {
+      type: 'slice',
+      content: [
+        {
+          type: 'block',
+          id: 'matchesReplaceMap[0]',
+          flavour: 'affine:note',
+          props: {
+            xywh: '[0,0,800,95]',
+            background: DefaultTheme.noteBackgrounColor,
+            index: 'a0',
+            hidden: false,
+            displayMode: NoteDisplayMode.DocAndEdgeless,
+          },
+          children: [
+            {
+              type: 'block',
+              id: 'matchesReplaceMap[1]',
+              flavour: 'affine:paragraph',
+              props: {
+                type: 'text',
+                text: {
+                  '$blocksuite:internal:text$': true,
+                  delta: [
+                    {
+                      insert:
+                        'prompt: How many people will live in the world in 2040?',
+                    },
+                  ],
+                },
+              },
+              children: [],
+            },
+          ],
+        },
+      ],
+      workspaceId: '',
+      pageId: '',
+    };
+
+    const mdAdapter = new MarkdownAdapter(createJob(), provider);
+    const rawSliceSnapshot = await mdAdapter.toSliceSnapshot({
+      file: markdown,
+      workspaceId: '',
+      pageId: '',
+    });
+    expect(nanoidReplacement(rawSliceSnapshot!)).toEqual(sliceSnapshot);
+  });
 });
