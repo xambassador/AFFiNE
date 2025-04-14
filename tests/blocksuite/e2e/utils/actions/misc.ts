@@ -151,6 +151,8 @@ export async function enterPlaygroundRoom(
         'Running frontend commit',
         // Github timeout:
         'Failed to load resource: the server responded with a status of 403',
+        // font download warning:
+        '[JavaScript Warning: "downloadable font:',
       ].some(text => message.text().startsWith(text))
     ) {
       return;

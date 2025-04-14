@@ -2,20 +2,21 @@ import type { InlineEditor, InlineRange } from '@blocksuite/affine/std/inline';
 import type { DeltaInsert } from '@blocksuite/affine/store';
 import { expect, type Page, test } from '@playwright/test';
 
-import { press } from '../database/actions.js';
+import { press } from '../../database/actions.js';
 import {
   pressArrowLeft,
   pressBackspace,
   pressEnter,
   type,
-} from '../utils/actions/keyboard.js';
+} from '../../utils/actions/keyboard.js';
 import {
   enterPlaygroundRoom,
   focusRichText,
   initEmptyParagraphState,
-} from '../utils/actions/misc.js';
-import { assertRichTextInlineDeltas } from '../utils/asserts.js';
-import { ZERO_WIDTH_FOR_EMPTY_LINE } from '../utils/inline-editor.js';
+} from '../../utils/actions/misc.js';
+import { assertRichTextInlineDeltas } from '../../utils/asserts.js';
+import { ZERO_WIDTH_FOR_EMPTY_LINE } from '../../utils/inline-editor.js';
+
 // FIXME(mirone): copy paste from framework/inline/__tests__/utils.ts
 const defaultPlaygroundURL = new URL(
   `http://localhost:${process.env.CI ? 4173 : 5173}/`

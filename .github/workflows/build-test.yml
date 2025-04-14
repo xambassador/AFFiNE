@@ -248,7 +248,7 @@ jobs:
       - name: Run playwright tests
         env:
           BROWSER: ${{ matrix.browser }}
-        run: yarn workspace @affine-test/blocksuite test "inline-editor.spec.ts" --forbid-only --shard=${{ matrix.shard }}/${{ strategy.job-total }}
+        run: yarn workspace @affine-test/blocksuite test "cross-platform/" --forbid-only --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 
       - name: Upload test results
         if: always()

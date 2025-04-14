@@ -31,7 +31,7 @@ import {
   undoByKeyboard,
   waitDefaultPageLoaded,
   waitNextFrame,
-} from './utils/actions/index.js';
+} from '../utils/actions/index.js';
 import {
   assertBlockChildrenIds,
   assertEmpty,
@@ -39,9 +39,9 @@ import {
   assertRichTexts,
   assertText,
   assertTitle,
-} from './utils/asserts.js';
-import { scoped, test } from './utils/playwright.js';
-import { getFormatBar } from './utils/query.js';
+} from '../utils/asserts.js';
+import { scoped, test } from '../utils/playwright.js';
+import { getFormatBar } from '../utils/query.js';
 
 const BASIC_DEFAULT_SNAPSHOT = 'basic test default';
 
