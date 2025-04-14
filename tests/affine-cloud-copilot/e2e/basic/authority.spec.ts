@@ -4,7 +4,8 @@ import { test } from '../base/base-test';
 
 test.describe('AIBasic/Authority', () => {
   test.beforeEach(async ({ page, utils }) => {
-    await utils.testUtils.setupTestEnvironment(page, false);
+    // Sign out
+    await utils.testUtils.setupTestEnvironment(page);
     await utils.chatPanel.openChatPanel(page);
   });
 

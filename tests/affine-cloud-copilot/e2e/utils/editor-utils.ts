@@ -238,6 +238,50 @@ export class EditorUtils {
     );
   }
 
+  public static async clearAllCollections(page: Page) {
+    while (true) {
+      const collection = await page
+        .getByTestId('explorer-collections')
+        .locator('[data-testid^="explorer-collection-"]')
+        .first();
+
+      if (!(await collection.isVisible())) {
+        break;
+      }
+
+      const collectionContent = await collection.locator('div').first();
+      await collectionContent.hover();
+      const more = await collectionContent.getByTestId(
+        'explorer-tree-node-operation-button'
+      );
+      await more.click();
+      await page.getByTestId('collection-delete-button').click();
+    }
+    await page.waitForTimeout(100);
+  }
+
+  public static async clearAllTags(page: Page) {
+    while (true) {
+      const tag = await page
+        .getByTestId('explorer-tags')
+        .locator('[data-testid^="explorer-tag-"]')
+        .first();
+
+      if (!(await tag.isVisible())) {
+        break;
+      }
+
+      const tagContent = await tag.locator('div').first();
+      await tagContent.hover();
+      const more = await tagContent.getByTestId(
+        'explorer-tree-node-operation-button'
+      );
+      await more.click();
+      await page.getByTestId('tag-delete-button').click();
+    }
+    await page.waitForTimeout(100);
+  }
+
   public static async createCollectionAndDoc(
     page: Page,
     collectionName: string,

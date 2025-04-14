@@ -1,17 +1,16 @@
-import { loginUser } from '@affine-test/kit/utils/cloud';
 import { expect } from '@playwright/test';
 
 import { test } from '../base/base-test';
 
 test.describe('AIBasic/Chat', () => {
-  test.beforeEach(async ({ page, utils }) => {
-    const user = await utils.testUtils.getUser();
-    await loginUser(page, user);
+  test.beforeEach(async ({ utils, loggedInPage: page }) => {
     await utils.testUtils.setupTestEnvironment(page);
     await utils.chatPanel.openChatPanel(page);
   });
 
-  test('should display empty state when no messages', async ({ page }) => {
+  test('should display empty state when no messages', async ({
+    loggedInPage: page,
+  }) => {
     // Verify empty state UI
     await expect(page.getByTestId('chat-panel-empty-state')).toBeVisible();
     await expect(page.getByTestId('ai-onboarding')).toBeVisible();
@@ -22,7 +21,7 @@ test.describe('AIBasic/Chat', () => {
         - AI is loading
         - AI generating
         - AI success
-    `, async ({ page, utils }) => {
+    `, async ({ loggedInPage: page, utils }) => {
     // Type and send a message
     await utils.chatPanel.makeChat(page, 'Introduce AFFiNE to me');
 
@@ -66,7 +65,10 @@ test.describe('AIBasic/Chat', () => {
     ]);
   });
 
-  test('should support stop generating', async ({ page, utils }) => {
+  test('should support stop generating', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
     await utils.chatPanel.makeChat(page, 'Introduce AFFiNE to me');
 
     // AI Generating
@@ -95,7 +97,7 @@ test.describe('AIBasic/Chat', () => {
   });
 
   test('should render ai actions inline if the answer is the last one in the list, otherwise, nest them under the "More" menu', async ({
-    page,
+    loggedInPage: page,
     utils,
   }) => {
     await utils.chatPanel.makeChat(page, 'Hello, how can you help me?');
@@ -140,7 +142,7 @@ test.describe('AIBasic/Chat', () => {
   });
 
   test('should show scroll indicator when there are many messages', async ({
-    page,
+    loggedInPage: page,
     utils,
   }) => {
     // Set window height to 100px to ensure scroll indicator appears
@@ -188,7 +190,10 @@ test.describe('AIBasic/Chat', () => {
     await expect(scrollDownIndicator).not.toBeVisible();
   });
 
-  test('should show error when request failed', async ({ page, utils }) => {
+  test('should show error when request failed', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
     // Simulate network error by disconnecting
     await page.route('**/graphql', route => route.abort('failed'));
 
@@ -199,7 +204,10 @@ test.describe('AIBasic/Chat', () => {
     await expect(page.getByTestId('action-retry-button')).toBeVisible();
   });
 
-  test('should support retrying failed messages', async ({ page, utils }) => {
+  test('should support retrying failed messages', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
     // Simulate network error by disconnecting
     await page.route('**/graphql', route => route.abort('failed'));
 
@@ -238,7 +246,10 @@ test.describe('AIBasic/Chat', () => {
     ]);
   });
 
-  test('should support retrying question', async ({ page, utils }) => {
+  test('should support retrying question', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
     await utils.chatPanel.makeChat(
       page,
       'Introduce Large Language Model in under 500 words'
@@ -282,7 +293,7 @@ test.describe('AIBasic/Chat', () => {
   });
 
   test('should support sending message with button', async ({
-    page,
+    loggedInPage: page,
     utils,
   }) => {
     await utils.chatPanel.openChatPanel(page);
@@ -300,7 +311,10 @@ test.describe('AIBasic/Chat', () => {
     ]);
   });
 
-  test('should support clearing chat', async ({ page, utils }) => {
+  test('should support clearing chat', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
     await utils.chatPanel.openChatPanel(page);
     await utils.chatPanel.makeChat(page, 'Hello');
     await utils.chatPanel.waitForHistory(page, [
@@ -317,7 +331,10 @@ test.describe('AIBasic/Chat', () => {
     await utils.chatPanel.waitForHistory(page, []);
   });
 
-  test('should support copying answer', async ({ page, utils }) => {
+  test('should support copying answer', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
     await utils.chatPanel.openChatPanel(page);
     await utils.chatPanel.makeChat(page, 'Hello');
     await utils.chatPanel.waitForHistory(page, [
