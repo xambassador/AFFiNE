@@ -195,7 +195,7 @@ export const AFFINE_FLAGS = {
     description:
       'com.affine.settings.workspace.experimental-features.enable-multiple-cloud-servers.description',
     configurable: false,
-    defaultState: isDesktopEnvironment,
+    defaultState: isDesktopEnvironment || BUILD_CONFIG.isIOS,
   },
   enable_mobile_edgeless_editing: {
     category: 'affine',
