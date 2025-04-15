@@ -127,6 +127,11 @@ export const KNOWN_CONFIG_GROUPS = [
         type: 'JSON',
         desc: 'The config passed directly to the storage provider(e.g. aws-sdk)',
       },
+      {
+        key: 'avatar.publicPath',
+        type: 'String',
+        desc: 'The public path prefix for user avatars(e.g. https://my-bucket.s3.amazonaws.com/)',
+      },
     ],
   } as ConfigGroup<'storages'>,
   {
