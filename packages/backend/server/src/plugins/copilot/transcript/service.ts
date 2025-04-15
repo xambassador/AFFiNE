@@ -66,9 +66,14 @@ export class CopilotTranscriptionService {
     });
 
     const infos: AudioBlobInfos = [];
-    for (const blob of blobs) {
+    for (const [idx, blob] of blobs.entries()) {
       const buffer = await readStream(blob.createReadStream());
-      const url = await this.storage.put(userId, workspaceId, blobId, buffer);
+      const url = await this.storage.put(
+        userId,
+        workspaceId,
+        `${blobId}-${idx}`,
+        buffer
+      );
       infos.push({ url, mimeType: blob.mimetype });
     }
 
