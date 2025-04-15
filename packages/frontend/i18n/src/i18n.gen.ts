@@ -586,6 +586,10 @@ export function useAFFiNEI18N(): {
       */
     all(): string;
     /**
+      * `current`
+      */
+    current(): string;
+    /**
       * `Automatically check for new updates periodically.`
       */
     ["com.affine.aboutAFFiNE.autoCheckUpdate.description"](): string;
