@@ -212,6 +212,28 @@ export class CopilotTranscriptionService {
     return `${hoursStr}:${minutesStr}:${secondsStr}`;
   }
 
+  private async callTranscript(url: string, mimeType: string, offset: number) {
+    const result = await this.chatWithPrompt(
+      'Transcript audio',
+      {
+        attachments: [url],
+        params: { mimetype: mimeType },
+      },
+      TranscriptionResponseSchema
+    );
+
+    const transcription = TranscriptionResponseSchema.parse(
+      JSON.parse(result)
+    ).map(t => ({
+      speaker: t.a,
+      start: this.convertTime(t.s, offset),
+      end: this.convertTime(t.e, offset),
+      transcription: t.t,
+    }));
+
+    return transcription;
+  }
+
   @OnJob('copilot.transcript.submit')
   async transcriptAudio({
     jobId,
@@ -222,28 +244,11 @@ export class CopilotTranscriptionService {
   }: Jobs['copilot.transcript.submit']) {
     try {
       const blobInfos = this.mergeInfos(infos, url, mimeType);
-      const transcriptions = [];
-      for (const [idx, { url, mimeType }] of blobInfos.entries()) {
-        const result = await this.chatWithPrompt(
-          'Transcript audio',
-          {
-            attachments: [url],
-            params: { mimetype: mimeType },
-          },
-          TranscriptionResponseSchema
-        );
-
-        const offset = idx * 10 * 60;
-        const transcription = TranscriptionResponseSchema.parse(
-          JSON.parse(result)
-        ).map(t => ({
-          speaker: t.a,
-          start: this.convertTime(t.s, offset),
-          end: this.convertTime(t.e, offset),
-          transcription: t.t,
-        }));
-        transcriptions.push(transcription);
-      }
+      const transcriptions = await Promise.all(
+        Array.from(blobInfos.entries()).map(([idx, { url, mimeType }]) =>
+          this.callTranscript(url, mimeType, idx * 10 * 60)
+        )
+      );
 
       await this.models.copilotJob.update(jobId, {
         payload: { transcription: transcriptions.flat() },
