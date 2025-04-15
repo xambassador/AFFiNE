@@ -5176,7 +5176,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.editorSettings.general.middle-click-paste.title"](): string;
     /**
-      * `Disable default middle click paste behavior on Linux.`
+      * `Enable default middle click paste behavior on Linux.`
       */
     ["com.affine.settings.editorSettings.general.middle-click-paste.description"](): string;
     /**
