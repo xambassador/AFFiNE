@@ -111,7 +111,7 @@ export const AudioPlayer = ({
           waveform={waveform || []}
           progress={progressPercentage}
           onManualSeek={handleProgressClick}
-          loading={loading}
+          loading={!waveform || waveform.length === 0}
         />
         <div className={styles.timeDisplay}>{formatTime(duration)}</div>
       </div>

@@ -27,7 +27,6 @@ const AttachmentAudioPlayer = ({ block }: { block: AudioAttachmentBlock }) => {
   const audioMedia = block.audioMedia;
   const playbackState = useLiveData(audioMedia.playbackState$);
   const stats = useLiveData(audioMedia.stats$);
-  const loading = useLiveData(audioMedia.loading$);
   const expanded = useLiveData(block.expanded$);
   const [preflightChecking, setPreflightChecking] = useState(false);
   const transcribing =
@@ -184,7 +183,7 @@ const AttachmentAudioPlayer = ({ block }: { block: AudioAttachmentBlock }) => {
     <AudioPlayer
       name={block.props.props.name}
       size={sizeEntry}
-      loading={loading}
+      loading={stats.duration === 0}
       playbackState={playbackState?.state || 'idle'}
       waveform={stats.waveform}
       seekTime={seekTime}
