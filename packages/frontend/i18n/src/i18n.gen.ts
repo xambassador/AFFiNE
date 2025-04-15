@@ -7691,6 +7691,10 @@ export function useAFFiNEI18N(): {
         readonly message: string;
     }): string;
     /**
+      * `Email service is not configured.`
+      */
+    ["error.EMAIL_SERVICE_NOT_CONFIGURED"](): string;
+    /**
       * `Query is too long, max length is {{max}}.`
       */
     ["error.QUERY_TOO_LONG"](options: {

@@ -76,7 +76,6 @@ export const KNOWN_CONFIG_GROUPS = [
     name: 'Notification',
     module: 'mailer',
     fields: [
-      'enabled',
       'SMTP.host',
       'SMTP.port',
       'SMTP.username',
