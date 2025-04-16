@@ -8691,16 +8691,16 @@ __metadata:
   linkType: hard
 
 "@nestjs/common@npm:^11.0.12":
-  version: 11.0.17
-  resolution: "@nestjs/common@npm:11.0.17"
+  version: 11.0.19
+  resolution: "@nestjs/common@npm:11.0.19"
   dependencies:
+    file-type: "npm:20.4.1"
     iterare: "npm:1.2.1"
     tslib: "npm:2.8.1"
     uid: "npm:2.0.2"
   peerDependencies:
     class-transformer: "*"
     class-validator: "*"
-    file-type: ^20.4.1
     reflect-metadata: ^0.1.12 || ^0.2.0
     rxjs: ^7.1.0
   peerDependenciesMeta:
@@ -8708,15 +8708,13 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-    file-type:
-      optional: true
-  checksum: 10/020c3ad29ec781f5670c670457105e32f8952e3cce3633bea14747376411da4935b1a4a9b9e30d91b52788c028abe2a710eb2376416d1da89044041f623ce712
+  checksum: 10/01a0f66875d98bc78dbe64065512ee6836a42a4c72ba3090ae3ded3b5637bc596c46bdb0d6ad47aa65caeb8318685a5e876697a70ea5fe6d091fd7c074bf9ba3
   languageName: node
   linkType: hard
 
 "@nestjs/core@npm:^11.0.12":
-  version: 11.0.17
-  resolution: "@nestjs/core@npm:11.0.17"
+  version: 11.0.19
+  resolution: "@nestjs/core@npm:11.0.19"
   dependencies:
     "@nuxt/opencollective": "npm:0.4.1"
     fast-safe-stringify: "npm:2.1.1"
@@ -8738,7 +8736,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10/6fe0a8190b43908ac2848b174505f386034ab63744a3f3a2c761388b22bb66adeb90ccb149ac2630426610cfa0fe320813fdfe18fd21fd9810bc36a35da6fe51
+  checksum: 10/f3c8b7d1fa10f79a6c86812d69d4a7d80d8e1d2620859aa3f5f3581e3bb4551fb4fc3eca395b48dfb8ce9987398c15c968ce7e59532e4ffe367388aed32002f1
   languageName: node
   linkType: hard
 
@@ -8799,8 +8797,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/platform-express@npm:^11.0.12":
-  version: 11.0.17
-  resolution: "@nestjs/platform-express@npm:11.0.17"
+  version: 11.0.19
+  resolution: "@nestjs/platform-express@npm:11.0.19"
   dependencies:
     cors: "npm:2.8.5"
     express: "npm:5.1.0"
@@ -8810,13 +8808,13 @@ __metadata:
   peerDependencies:
     "@nestjs/common": ^11.0.0
     "@nestjs/core": ^11.0.0
-  checksum: 10/08c871c3737845f93a980160a626b965ef11981a830e894e83276e90662a3be396ea9560586f9d6e881dacca88c199aedc9e79ddababddb81fe1c6a697ca9401
+  checksum: 10/774cd873901f5b783084198d5298364d2e555f4bdddc3989ecc4ede7263789a710179912d550d2513a370626f4a7680a60460a1b6123282729a176f9e74c114a
   languageName: node
   linkType: hard
 
 "@nestjs/platform-socket.io@npm:^11.0.12":
-  version: 11.0.17
-  resolution: "@nestjs/platform-socket.io@npm:11.0.17"
+  version: 11.0.19
+  resolution: "@nestjs/platform-socket.io@npm:11.0.19"
   dependencies:
     socket.io: "npm:4.8.1"
     tslib: "npm:2.8.1"
@@ -8824,7 +8822,7 @@ __metadata:
     "@nestjs/common": ^11.0.0
     "@nestjs/websockets": ^11.0.0
     rxjs: ^7.1.0
-  checksum: 10/37eff7308595ec94d17079bacebd06bc0470b9a40cedb6978da52933ef2084f65e9dc0ea2e4150462fb76204530d797e8469a5f66a447fc914fc81191a7b9620
+  checksum: 10/b8ff924b20741bee0bdc3867a73ae8fd893b7047a289b80a1e3a787a036da47b978056ebe974e153ca2da88999210469b6361e099cbcf2d4145e85871ec60424
   languageName: node
   linkType: hard
 
@@ -8890,8 +8888,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/websockets@npm:^11.0.12":
-  version: 11.0.17
-  resolution: "@nestjs/websockets@npm:11.0.17"
+  version: 11.0.19
+  resolution: "@nestjs/websockets@npm:11.0.19"
   dependencies:
     iterare: "npm:1.2.1"
     object-hash: "npm:3.0.0"
@@ -8905,7 +8903,7 @@ __metadata:
   peerDependenciesMeta:
     "@nestjs/platform-socket.io":
       optional: true
-  checksum: 10/f750c7878121ec1f3e9b7d33d40f51dd6ab3e4f3c1d117bf3704b0fe6e6aeae9e07b0be72bdc037b7f4d447aa8cf3c74bac1c7bbec1ca87e19e2ed0ef84c7b44
+  checksum: 10/a2434a01bb10d93701b85fb601f9fa3493276cdca1d9035ed8c203287b6f1461a979a0e1c81de4cbbecb09fbfaccd14f77d04d6ff043411e5056100fcd7b43cc
   languageName: node
   linkType: hard
 
@@ -21458,7 +21456,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-type@npm:^20.0.0":
+"file-type@npm:20.4.1, file-type@npm:^20.0.0":
   version: 20.4.1
   resolution: "file-type@npm:20.4.1"
   dependencies:
