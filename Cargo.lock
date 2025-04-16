@@ -79,6 +79,7 @@ dependencies = [
  "block2",
  "core-foundation",
  "coreaudio-rs",
+ "criterion2",
  "dispatch2",
  "libc",
  "napi",
