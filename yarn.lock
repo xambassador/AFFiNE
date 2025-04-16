@@ -8673,11 +8673,12 @@ __metadata:
   linkType: hard
 
 "@nestjs/common@npm:^11.0.12":
-  version: 11.0.19
-  resolution: "@nestjs/common@npm:11.0.19"
+  version: 11.0.20
+  resolution: "@nestjs/common@npm:11.0.20"
   dependencies:
     file-type: "npm:20.4.1"
     iterare: "npm:1.2.1"
+    load-esm: "npm:1.0.2"
     tslib: "npm:2.8.1"
     uid: "npm:2.0.2"
   peerDependencies:
@@ -8690,13 +8691,13 @@ __metadata:
       optional: true
     class-validator:
       optional: true
-  checksum: 10/01a0f66875d98bc78dbe64065512ee6836a42a4c72ba3090ae3ded3b5637bc596c46bdb0d6ad47aa65caeb8318685a5e876697a70ea5fe6d091fd7c074bf9ba3
+  checksum: 10/ab06f3d910a86351e895829773b28236dcb4a80a3eba1ed902c51dbc44db9d40f619d5f8713c5ce42518fc95633bbe9c80b1c7188ffc4fd3d5d934b561e2f495
   languageName: node
   linkType: hard
 
 "@nestjs/core@npm:^11.0.12":
-  version: 11.0.19
-  resolution: "@nestjs/core@npm:11.0.19"
+  version: 11.0.20
+  resolution: "@nestjs/core@npm:11.0.20"
   dependencies:
     "@nuxt/opencollective": "npm:0.4.1"
     fast-safe-stringify: "npm:2.1.1"
@@ -8718,7 +8719,7 @@ __metadata:
       optional: true
     "@nestjs/websockets":
       optional: true
-  checksum: 10/f3c8b7d1fa10f79a6c86812d69d4a7d80d8e1d2620859aa3f5f3581e3bb4551fb4fc3eca395b48dfb8ce9987398c15c968ce7e59532e4ffe367388aed32002f1
+  checksum: 10/0e18e6744eaa912442d43d6a8d5543bc4b7e09d350943881d76110aa53a0d26876818898d1ddb71f92d24e6f7154ab3264c6c5604c9670221a5f63552e61d431
   languageName: node
   linkType: hard
 
@@ -8779,8 +8780,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/platform-express@npm:^11.0.12":
-  version: 11.0.19
-  resolution: "@nestjs/platform-express@npm:11.0.19"
+  version: 11.0.20
+  resolution: "@nestjs/platform-express@npm:11.0.20"
   dependencies:
     cors: "npm:2.8.5"
     express: "npm:5.1.0"
@@ -8790,13 +8791,13 @@ __metadata:
   peerDependencies:
     "@nestjs/common": ^11.0.0
     "@nestjs/core": ^11.0.0
-  checksum: 10/774cd873901f5b783084198d5298364d2e555f4bdddc3989ecc4ede7263789a710179912d550d2513a370626f4a7680a60460a1b6123282729a176f9e74c114a
+  checksum: 10/307e84da314115ca8f5187c0d52dad1b12908f11b707ab3382b5a08de63b3be08e8156a3b2409782ea9e61a0a026aa768991c5c24ef271a73392a6d3b429723a
   languageName: node
   linkType: hard
 
 "@nestjs/platform-socket.io@npm:^11.0.12":
-  version: 11.0.19
-  resolution: "@nestjs/platform-socket.io@npm:11.0.19"
+  version: 11.0.20
+  resolution: "@nestjs/platform-socket.io@npm:11.0.20"
   dependencies:
     socket.io: "npm:4.8.1"
     tslib: "npm:2.8.1"
@@ -8804,7 +8805,7 @@ __metadata:
     "@nestjs/common": ^11.0.0
     "@nestjs/websockets": ^11.0.0
     rxjs: ^7.1.0
-  checksum: 10/b8ff924b20741bee0bdc3867a73ae8fd893b7047a289b80a1e3a787a036da47b978056ebe974e153ca2da88999210469b6361e099cbcf2d4145e85871ec60424
+  checksum: 10/5fb2bfb39f414ae681805844dc38a047ca6bf71e068aca3cf30110bd901bd0cc2528f6e298ff563c00c1b75b1fb179bf84d6e65ad0acc5d0a1b322cfe6321a88
   languageName: node
   linkType: hard
 
@@ -8870,8 +8871,8 @@ __metadata:
   linkType: hard
 
 "@nestjs/websockets@npm:^11.0.12":
-  version: 11.0.19
-  resolution: "@nestjs/websockets@npm:11.0.19"
+  version: 11.0.20
+  resolution: "@nestjs/websockets@npm:11.0.20"
   dependencies:
     iterare: "npm:1.2.1"
     object-hash: "npm:3.0.0"
@@ -8885,7 +8886,7 @@ __metadata:
   peerDependenciesMeta:
     "@nestjs/platform-socket.io":
       optional: true
-  checksum: 10/a2434a01bb10d93701b85fb601f9fa3493276cdca1d9035ed8c203287b6f1461a979a0e1c81de4cbbecb09fbfaccd14f77d04d6ff043411e5056100fcd7b43cc
+  checksum: 10/2e9d74d1c44b87069bb3b582a2215d1ae8134f43f5e6f5a84140cac88d2e788751386b86cc0e94f2e82cf595d57e3a27ca306f4070b7e3e4c52fc7fa4c864a7d
   languageName: node
   linkType: hard
 
@@ -24931,6 +24932,13 @@ __metadata:
     lit-element: "npm:^4.2.0"
     lit-html: "npm:^3.3.0"
   checksum: 10/442b8eabd5d1b4aee0ab34db0b67d5c07a988f30d345f4a68263275acf826816ba30937bb8d5d331dc260c2127cd8953f332dcc45edbf080d61c21291cb06330
+  languageName: node
+  linkType: hard
+
+"load-esm@npm:1.0.2":
+  version: 1.0.2
+  resolution: "load-esm@npm:1.0.2"
+  checksum: 10/1b4adb40c28c6fdbd4ca8c97942c04debddb3c93ae91413540ff5a21ca3511a651988c835cb80cad7288d1ecb869c4794b8a787ab02e09cc07ec951ad1eefcf9
   languageName: node
   linkType: hard
 
