@@ -37,6 +37,7 @@ export interface AudioMediaSyncState {
   state: AudioMediaPlaybackState;
   seekOffset: number;
   updateTime: number; // the time when the playback state is updated
+  playbackRate: number;
 }
 
 /**
@@ -75,6 +76,13 @@ export class AudioMedia extends Entity<AudioSource> {
 
     this.revalidateBuffer();
 
+    // React to playbackState$ changes to update playbackRate and media session
+    const playbackStateSub = this.playbackState$.subscribe(state => {
+      this.audioElement.playbackRate = state.playbackRate;
+      this.updateMediaSessionPositionState(this.audioElement.currentTime);
+    });
+    this.disposables.push(() => playbackStateSub.unsubscribe());
+
     this.disposables.push(() => {
       // Clean up audio resources before calling super.dispose
       try {
@@ -108,7 +116,6 @@ export class AudioMedia extends Entity<AudioSource> {
   loadError$ = new LiveData<Error | null>(null);
   waveform$ = new LiveData<number[] | null>(null);
   duration$ = new LiveData<number | null>(null);
-
   /**
    * LiveData that exposes the current playback state and data for global state synchronization
    */
@@ -116,6 +123,7 @@ export class AudioMedia extends Entity<AudioSource> {
     state: 'idle',
     seekOffset: 0,
     updateTime: 0,
+    playbackRate: 1.0,
   });
 
   stats$ = LiveData.computed(get => {
@@ -129,12 +137,15 @@ export class AudioMedia extends Entity<AudioSource> {
   private updatePlaybackState(
     state: AudioMediaPlaybackState,
     seekOffset: number,
-    updateTime = Date.now()
+    updateTime = Date.now(),
+    playbackRate?: number
   ) {
+    const prev = this.playbackState$.getValue();
     this.playbackState$.setValue({
       state,
       seekOffset,
       updateTime,
+      playbackRate: playbackRate ?? prev.playbackRate ?? 1.0,
     });
   }
 
@@ -239,11 +250,12 @@ export class AudioMedia extends Entity<AudioSource> {
     }
 
     const duration = this.audioElement.duration || 0;
+    const playbackRate = this.playbackState$.getValue().playbackRate ?? 1.0;
     if (duration > 0) {
       navigator.mediaSession.setPositionState({
         duration,
         position: seekTime,
-        playbackRate: 1.0,
+        playbackRate,
       });
     }
   }
@@ -360,7 +372,12 @@ export class AudioMedia extends Entity<AudioSource> {
     if (state.updateTime <= currentState.updateTime) {
       return;
     }
-    this.updatePlaybackState(state.state, state.seekOffset, state.updateTime);
+    this.updatePlaybackState(
+      state.state,
+      state.seekOffset,
+      state.updateTime,
+      state.playbackRate
+    );
     if (state.state !== currentState.state) {
       if (state.state === 'playing') {
         this.play(true);
@@ -371,6 +388,7 @@ export class AudioMedia extends Entity<AudioSource> {
       }
     }
     this.seekTo(state.seekOffset, true);
+    this.audioElement.playbackRate = state.playbackRate ?? 1.0;
   }
 
   /**
@@ -434,5 +452,20 @@ export class AudioMedia extends Entity<AudioSource> {
     }
 
     return waveform;
+  }
+
+  /**
+   * Set the playback rate (speed) of the audio and update the shared state
+   */
+  setPlaybackRate(rate: number) {
+    // Clamp the rate to a reasonable range (e.g., 0.5x to 4x)
+    const clamped = clamp(rate, 0.5, 4.0);
+    const prev = this.playbackState$.getValue();
+    this.updatePlaybackState(
+      prev.state,
+      this.getCurrentSeekPosition(),
+      Date.now(),
+      clamped
+    );
   }
 }

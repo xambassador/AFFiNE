@@ -58,6 +58,13 @@ const AttachmentAudioPlayer = ({ block }: { block: AudioAttachmentBlock }) => {
     [audioMedia]
   );
 
+  const handlePlaybackRateChange = useCallback(
+    (rate: number) => {
+      audioMedia?.setPlaybackRate(rate);
+    },
+    [audioMedia]
+  );
+
   const t = useI18n();
 
   const enableAi = useEnableAI();
@@ -193,6 +200,8 @@ const AttachmentAudioPlayer = ({ block }: { block: AudioAttachmentBlock }) => {
       onPause={handlePause}
       onStop={handleStop}
       onSeek={handleSeek}
+      playbackRate={playbackState?.playbackRate || 1.0}
+      onPlaybackRateChange={handlePlaybackRateChange}
       notesEntry={
         <CurrentServerScopeProvider>{notesEntry}</CurrentServerScopeProvider>
       }
