@@ -981,6 +981,7 @@
   "com.affine.payment.member.team.invite.send-invites": "Send Invites",
   "com.affine.payment.member.team.invite.link-expiration": "Link expiration",
   "com.affine.payment.member.team.invite.expiration-date": "{{number}} days",
+  "com.affine.payment.member.team.invite.expire-at": "To expire at: {{expireTime}}",
   "com.affine.payment.member.team.invite.invitation-link": "Invitation link",
   "com.affine.payment.member.team.invite.invitation-link.description": "Generate a link to invite members to your workspace",
   "com.affine.payment.member.team.invite.generate": "Generate",

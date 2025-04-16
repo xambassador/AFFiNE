@@ -3953,6 +3953,12 @@ export function useAFFiNEI18N(): {
         readonly number: string;
     }): string;
     /**
+      * `To expire at: {{expireTime}}`
+      */
+    ["com.affine.payment.member.team.invite.expire-at"](options: {
+        readonly expireTime: string;
+    }): string;
+    /**
       * `Invitation link`
       */
     ["com.affine.payment.member.team.invite.invitation-link"](): string;
