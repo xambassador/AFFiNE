@@ -86,7 +86,7 @@ export const getInlineRangeProvider: (
   };
   const inlineRange$: InlineRangeProvider['inlineRange$'] = signal(null);
 
-  editorHost.disposables.add(
+  element.disposables.add(
     selectionManager.slots.changed.subscribe(selections => {
       if (!isActiveInEditor(editorHost)) return;
 
