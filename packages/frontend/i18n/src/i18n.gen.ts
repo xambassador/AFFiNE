@@ -8138,6 +8138,10 @@ export function useAFFiNEI18N(): {
         message: string;
     }>): string;
     /**
+      * `Embedding feature is disabled, please contact the administrator to enable it in the workspace settings.`
+      */
+    ["error.COPILOT_EMBEDDING_DISABLED"](): string;
+    /**
       * `Embedding feature not available, you may need to install pgvector extension to your database`
       */
     ["error.COPILOT_EMBEDDING_UNAVAILABLE"](): string;

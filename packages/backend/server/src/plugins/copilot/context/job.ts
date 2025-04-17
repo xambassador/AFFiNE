@@ -77,6 +77,12 @@ export class CopilotContextDocJob {
     contextId?: string
   ) {
     if (!this.supportEmbedding) return;
+    const allowEmbedding = await this.models.workspace.allowEmbedding(
+      docs[0]?.workspaceId
+    );
+    if (!allowEmbedding) {
+      return;
+    }
 
     for (const { workspaceId, docId } of docs) {
       await this.queue.add('copilot.embedding.docs', {

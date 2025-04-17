@@ -21,6 +21,7 @@ import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
 import {
   BlobQuotaExceeded,
   CallMetric,
+  CopilotEmbeddingDisabled,
   CopilotEmbeddingUnavailable,
   CopilotFailedToMatchContext,
   CopilotFailedToModifyContext,
@@ -231,6 +232,7 @@ export class CopilotContextRootResolver {
     private readonly db: PrismaClient,
     private readonly ac: AccessController,
     private readonly event: EventBus,
+    private readonly models: Models,
     private readonly mutex: RequestMutex,
     private readonly chatSession: ChatSessionService,
     private readonly context: CopilotContextService
@@ -346,7 +348,10 @@ export class CopilotContextRootResolver {
       .allowLocal()
       .assert('Workspace.Copilot');
 
-    if (this.context.canEmbedding) {
+    if (
+      this.context.canEmbedding &&
+      (await this.models.workspace.allowEmbedding(workspaceId))
+    ) {
       const total = await this.db.snapshot.count({ where: { workspaceId } });
       const embedded = await this.db.snapshot.count({
         where: { workspaceId, embedding: { isNot: null } },
@@ -452,6 +457,13 @@ export class CopilotContextResolver {
     }
     const session = await this.context.get(options.contextId);
 
+    const allowEmbedding = await this.models.workspace.allowEmbedding(
+      session.workspaceId
+    );
+    if (!allowEmbedding) {
+      throw new CopilotEmbeddingDisabled();
+    }
+
     try {
       const records = await session.addCategoryRecord(
         options.type,
@@ -520,6 +532,13 @@ export class CopilotContextResolver {
       throw new TooManyRequest('Server is busy');
     }
     const session = await this.context.get(options.contextId);
+
+    const allowEmbedding = await this.models.workspace.allowEmbedding(
+      session.workspaceId
+    );
+    if (!allowEmbedding) {
+      throw new CopilotEmbeddingDisabled();
+    }
 
     try {
       const record = await session.addDocRecord(options.docId);
@@ -714,6 +733,12 @@ export class CopilotContextResolver {
       .workspace(session.workspaceId)
       .allowLocal()
       .assert('Workspace.Copilot');
+    const allowEmbedding = await this.models.workspace.allowEmbedding(
+      session.workspaceId
+    );
+    if (!allowEmbedding) {
+      return [];
+    }
 
     try {
       return await session.matchWorkspaceChunks(
