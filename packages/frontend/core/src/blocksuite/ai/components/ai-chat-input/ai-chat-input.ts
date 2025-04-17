@@ -281,12 +281,9 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
         ({ input, context, host }) => {
           if (this.host === host) {
             context && this.updateContext(context);
-            const { updateComplete, send } = this;
-            updateComplete
-              .then(() => {
-                return send(input);
-              })
-              .catch(console.error);
+            setTimeout(() => {
+              this.send(input).catch(console.error);
+            }, 0);
           }
         }
       )
