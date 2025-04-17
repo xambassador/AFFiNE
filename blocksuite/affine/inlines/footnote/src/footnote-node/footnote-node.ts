@@ -110,6 +110,10 @@ export class AffineFootnoteNode extends WithDisposable(ShadowlessElement) {
     return this.delta.attributes?.footnote;
   }
 
+  get readonly() {
+    return this.std.store.readonly;
+  }
+
   onFootnoteClick = () => {
     if (!this.footnote) {
       return;
@@ -131,6 +135,10 @@ export class AffineFootnoteNode extends WithDisposable(ShadowlessElement) {
   };
 
   private readonly _handleDocReference = (docId: string) => {
+    if (this.readonly) {
+      return;
+    }
+
     this.std
       .getOptional(PeekViewProvider)
       ?.peek({
