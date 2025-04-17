@@ -2006,6 +2006,8 @@ export interface UpdateUserSettingsInput {
 export interface UpdateWorkspaceInput {
   /** Enable AI */
   enableAi?: InputMaybe<Scalars['Boolean']['input']>;
+  /** Enable doc embedding */
+  enableDocEmbedding?: InputMaybe<Scalars['Boolean']['input']>;
   /** Enable url previous when sharing */
   enableUrlPreview?: InputMaybe<Scalars['Boolean']['input']>;
   id: Scalars['ID']['input'];
@@ -2230,6 +2232,8 @@ export interface WorkspaceType {
   doc: DocType;
   /** Enable AI */
   enableAi: Scalars['Boolean']['output'];
+  /** Enable doc embedding */
+  enableDocEmbedding: Scalars['Boolean']['output'];
   /** Enable url previous when sharing */
   enableUrlPreview: Scalars['Boolean']['output'];
   histories: Array<DocHistoryType>;
@@ -4107,6 +4111,7 @@ export type GetWorkspaceConfigQuery = {
     __typename?: 'WorkspaceType';
     enableAi: boolean;
     enableUrlPreview: boolean;
+    enableDocEmbedding: boolean;
     inviteLink: {
       __typename?: 'InviteLink';
       link: string;
@@ -4121,6 +4126,16 @@ export type SetEnableAiMutationVariables = Exact<{
 }>;
 
 export type SetEnableAiMutation = {
+  __typename?: 'Mutation';
+  updateWorkspace: { __typename?: 'WorkspaceType'; id: string };
+};
+
+export type SetEnableDocEmbeddingMutationVariables = Exact<{
+  id: Scalars['ID']['input'];
+  enableDocEmbedding: Scalars['Boolean']['input'];
+}>;
+
+export type SetEnableDocEmbeddingMutation = {
   __typename?: 'Mutation';
   updateWorkspace: { __typename?: 'WorkspaceType'; id: string };
 };
@@ -4930,6 +4945,11 @@ export type Mutations =
       name: 'setEnableAiMutation';
       variables: SetEnableAiMutationVariables;
       response: SetEnableAiMutation;
+    }
+  | {
+      name: 'setEnableDocEmbeddingMutation';
+      variables: SetEnableDocEmbeddingMutationVariables;
+      response: SetEnableDocEmbeddingMutation;
     }
   | {
       name: 'setEnableUrlPreviewMutation';
