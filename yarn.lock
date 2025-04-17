@@ -3915,8 +3915,8 @@ __metadata:
   linkType: soft
 
 "@blocksuite/icons@npm:^2.2.10":
-  version: 2.2.10
-  resolution: "@blocksuite/icons@npm:2.2.10"
+  version: 2.2.11
+  resolution: "@blocksuite/icons@npm:2.2.11"
   peerDependencies:
     "@types/react": ^18.0.25
     change-case: 4.1.2
@@ -3927,7 +3927,7 @@ __metadata:
       optional: true
     react:
       optional: true
-  checksum: 10/b3a64ec250a317c8cb570badf434eb1b4665d0c1855546f040541dafc755925f15d253044f5f8b445cabaffbed127c23a9d122e8a016ffbc5e5548711d99ed62
+  checksum: 10/71ba9dcf7d3723a821a30f86a3df155ae950343255c84b31094f78cee4a447038ef1d0d24c51b2ecbbfe3928209bb4bb17a64739a077e973db0261fd449d6f1d
   languageName: node
   linkType: hard
 
