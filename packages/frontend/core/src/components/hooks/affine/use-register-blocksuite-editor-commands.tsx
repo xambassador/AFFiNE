@@ -379,7 +379,7 @@ export function useRegisterBlocksuiteEditorCommands(
         label: '',
         icon: null,
         run() {
-          toast(t['Save']());
+          // do nothing
         },
       })
     );
