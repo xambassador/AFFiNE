@@ -4602,9 +4602,9 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.rootAppSidebar.organize.folder.add-collections"](): string;
     /**
-      * `Add docs`
+      * `New doc`
       */
-    ["com.affine.rootAppSidebar.organize.folder.add-docs"](): string;
+    ["com.affine.rootAppSidebar.organize.folder.new-doc"](): string;
     /**
       * `Add others`
       */
