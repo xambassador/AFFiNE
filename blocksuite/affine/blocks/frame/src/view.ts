@@ -7,7 +7,7 @@ import { effects } from './effects';
 import { FrameBlockSpec } from './frame-spec';
 
 export class FrameViewExtension extends ViewExtensionProvider {
-  override name = 'affine-frame';
+  override name = 'affine-frame-block';
 
   override effect(): void {
     super.effect();

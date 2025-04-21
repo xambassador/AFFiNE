@@ -253,6 +253,7 @@ export const PackageList = [
     workspaceDependencies: [
       'blocksuite/affine/blocks/note',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/inlines/latex',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
@@ -268,6 +269,7 @@ export const PackageList = [
     name: '@blocksuite/affine-block-list',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/gfx/turbo-renderer',
       'blocksuite/affine/inlines/preset',
       'blocksuite/affine/model',

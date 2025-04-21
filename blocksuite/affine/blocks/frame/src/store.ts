@@ -5,7 +5,7 @@ import {
 import { FrameBlockSchemaExtension } from '@blocksuite/affine-model';
 
 export class FrameStoreExtension extends StoreExtensionProvider {
-  override name = 'affine-frame';
+  override name = 'affine-frame-block';
 
   override setup(context: StoreExtensionContext) {
     super.setup(context);

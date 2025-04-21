@@ -7,7 +7,7 @@ import { effects } from './effects';
 import { ImageBlockSpec } from './image-spec';
 
 export class ImageViewExtension extends ViewExtensionProvider {
-  override name = 'affine-image';
+  override name = 'affine-image-block';
 
   override effect() {
     super.effect();

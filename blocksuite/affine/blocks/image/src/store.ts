@@ -14,7 +14,7 @@ const ImageStoreExtensionOptionsSchema = z.object({
 });
 
 export class ImageStoreExtension extends StoreExtensionProvider {
-  override name = 'affine-image';
+  override name = 'affine-image-block';
 
   override schema = ImageStoreExtensionOptionsSchema;
 

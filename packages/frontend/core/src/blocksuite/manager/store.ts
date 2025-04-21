@@ -9,6 +9,8 @@ import { EdgelessTextStoreExtension } from '@blocksuite/affine/blocks/edgeless-t
 import { EmbedStoreExtension } from '@blocksuite/affine/blocks/embed/store';
 import { FrameStoreExtension } from '@blocksuite/affine/blocks/frame/store';
 import { ImageStoreExtension } from '@blocksuite/affine/blocks/image/store';
+import { LatexStoreExtension } from '@blocksuite/affine/blocks/latex/store';
+import { ListStoreExtension } from '@blocksuite/affine/blocks/list/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createStoreManager() {
@@ -24,6 +26,8 @@ export function createStoreManager() {
     EmbedStoreExtension,
     FrameStoreExtension,
     ImageStoreExtension,
+    LatexStoreExtension,
+    ListStoreExtension,
   ]);
 
   return manager;
