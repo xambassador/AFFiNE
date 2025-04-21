@@ -136,6 +136,7 @@ export const PackageList = [
     workspaceDependencies: [
       'blocksuite/affine/blocks/database',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/affine/widgets/slash-menu',
@@ -150,6 +151,7 @@ export const PackageList = [
     name: '@blocksuite/affine-block-database',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/inlines/preset',
       'blocksuite/affine/inlines/reference',
       'blocksuite/affine/model',
