@@ -1,4 +1,4 @@
-use std::ffi::c_void;
+use std::{cmp::Ordering, ffi::c_void};
 
 use coreaudio::sys::kAudioHardwareBadStreamError;
 use objc2::{Encode, Encoding, RefEncode};
@@ -229,15 +229,19 @@ impl InputAndOutputAudioBufferList {
       } else {
         let len1 = mixed_samples.len();
         let len2 = processed_output.len();
-        if len1 < len2 {
-          mixed_samples.resize(len2, 0.0);
-        } else if len2 < len1 {
-          let mut padded_output = processed_output;
-          padded_output.resize(len1, 0.0);
-          for (sample1, sample2) in mixed_samples.iter_mut().zip(padded_output.iter()) {
-            *sample1 = (*sample1 + *sample2) / 2.0;
+        match len1.cmp(&len2) {
+          Ordering::Less => {
+            mixed_samples.resize(len2, 0.0);
           }
-          return Ok(mixed_samples);
+          Ordering::Greater => {
+            let mut padded_output = processed_output;
+            padded_output.resize(len1, 0.0);
+            for (sample1, sample2) in mixed_samples.iter_mut().zip(padded_output.iter()) {
+              *sample1 = (*sample1 + *sample2) / 2.0;
+            }
+            return Ok(mixed_samples);
+          }
+          _ => {}
         }
 
         for (sample1, sample2) in mixed_samples.iter_mut().zip(processed_output.iter()) {

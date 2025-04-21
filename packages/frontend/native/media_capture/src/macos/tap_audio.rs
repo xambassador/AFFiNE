@@ -316,7 +316,7 @@ impl AggregateDevice {
       AudioDeviceCreateIOProcIDWithBlock(
         &mut in_proc_id,
         self.id,
-        queue.cast(),
+        dispatch2::DispatchRetained::as_ptr(&queue).as_ptr().cast(),
         (&*in_io_block
           as *const Block<
             dyn Fn(*mut c_void, *mut c_void, *mut c_void, *mut c_void, *mut c_void) -> i32,
@@ -345,6 +345,7 @@ impl AggregateDevice {
       output_device_id: self.output_device_id,
       input_proc_id: self.input_proc_id,
       output_proc_id: self.output_proc_id,
+      queue: Some(queue),
     })
   }
 
@@ -416,6 +417,7 @@ pub struct AudioTapStream {
   output_device_id: AudioObjectID,
   input_proc_id: Option<AudioDeviceIOProcID>,
   output_proc_id: Option<AudioDeviceIOProcID>,
+  queue: Option<dispatch2::DispatchRetained<dispatch2::DispatchQueue>>,
 }
 
 impl AudioTapStream {
@@ -529,6 +531,9 @@ impl AudioTapStream {
         status
       );
     }
+
+    // destroy the queue
+    drop(self.queue.take());
 
     // Always return success to prevent errors from bubbling up to JavaScript
     // since we've made a best effort to clean up
