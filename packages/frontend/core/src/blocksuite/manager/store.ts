@@ -4,6 +4,8 @@ import { CalloutStoreExtension } from '@blocksuite/affine/blocks/callout/store';
 import { CodeStoreExtension } from '@blocksuite/affine/blocks/code/store';
 import { DataViewStoreExtension } from '@blocksuite/affine/blocks/data-view/store';
 import { DatabaseStoreExtension } from '@blocksuite/affine/blocks/database/store';
+import { DividerStoreExtension } from '@blocksuite/affine/blocks/divider/store';
+import { EdgelessTextStoreExtension } from '@blocksuite/affine/blocks/edgeless-text/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createStoreManager() {
@@ -14,6 +16,8 @@ export function createStoreManager() {
     CodeStoreExtension,
     DataViewStoreExtension,
     DatabaseStoreExtension,
+    DividerStoreExtension,
+    EdgelessTextStoreExtension,
   ]);
 
   return manager;
