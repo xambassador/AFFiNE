@@ -6,6 +6,7 @@ import { DataViewViewExtension } from '@blocksuite/affine/blocks/data-view/view'
 import { DatabaseViewExtension } from '@blocksuite/affine/blocks/database/view';
 import { DividerViewExtension } from '@blocksuite/affine/blocks/divider/view';
 import { EdgelessTextViewExtension } from '@blocksuite/affine/blocks/edgeless-text/view';
+import { EmbedViewExtension } from '@blocksuite/affine/blocks/embed/view';
 import { ViewExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createViewManager() {
@@ -18,6 +19,7 @@ export function createViewManager() {
     DatabaseViewExtension,
     DividerViewExtension,
     EdgelessTextViewExtension,
+    EmbedViewExtension,
   ]);
 
   return manager;

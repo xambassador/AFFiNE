@@ -6,6 +6,7 @@ import { DataViewStoreExtension } from '@blocksuite/affine/blocks/data-view/stor
 import { DatabaseStoreExtension } from '@blocksuite/affine/blocks/database/store';
 import { DividerStoreExtension } from '@blocksuite/affine/blocks/divider/store';
 import { EdgelessTextStoreExtension } from '@blocksuite/affine/blocks/edgeless-text/store';
+import { EmbedStoreExtension } from '@blocksuite/affine/blocks/embed/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createStoreManager() {
@@ -18,6 +19,7 @@ export function createStoreManager() {
     DatabaseStoreExtension,
     DividerStoreExtension,
     EdgelessTextStoreExtension,
+    EmbedStoreExtension,
   ]);
 
   return manager;
