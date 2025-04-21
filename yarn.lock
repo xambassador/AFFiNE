@@ -2375,6 +2375,7 @@ __metadata:
     "@blocksuite/affine-block-embed": "workspace:*"
     "@blocksuite/affine-block-surface": "workspace:*"
     "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
     "@blocksuite/affine-model": "workspace:*"
     "@blocksuite/affine-shared": "workspace:*"
     "@blocksuite/affine-widget-slash-menu": "workspace:*"
@@ -2401,6 +2402,7 @@ __metadata:
     "@blocksuite/affine-block-embed": "workspace:*"
     "@blocksuite/affine-block-surface": "workspace:*"
     "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
     "@blocksuite/affine-model": "workspace:*"
     "@blocksuite/affine-shared": "workspace:*"
     "@blocksuite/affine-widget-slash-menu": "workspace:*"
@@ -2969,7 +2971,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@blocksuite/affine-ext-loader@workspace:blocksuite/affine/ext-loader":
+"@blocksuite/affine-ext-loader@workspace:*, @blocksuite/affine-ext-loader@workspace:blocksuite/affine/ext-loader":
   version: 0.0.0-use.local
   resolution: "@blocksuite/affine-ext-loader@workspace:blocksuite/affine/ext-loader"
   dependencies:

@@ -45,6 +45,12 @@ export type ViewScope =
  *       context.register([DarkModeExt]);
  *     }
  *   }
+ *
+ *   // Override effect to run one-time initialization logic
+ *   override effect() {
+ *     // This will only run once per provider class
+ *     console.log('Initializing MyViewProvider');
+ *   }
  * }
  * ```
  */
@@ -53,6 +59,36 @@ export class ViewExtensionProvider<
 > extends BaseExtensionProvider<ViewScope, Options> {
   /** The name of the view extension provider */
   override name = 'ViewExtension';
+
+  /**
+   * Static flag to ensure effect is only run once per provider class
+   * @internal
+   */
+  static effectRunned = false;
+
+  /**
+   * Override this method to implement one-time initialization logic for the provider.
+   * This method will be called automatically during setup, but only once per provider class.
+   *
+   * @example
+   * ```ts
+   * override effect() {
+   *   super.effect();
+   *   // Register lit elements
+   *   registerLitElements();
+   * }
+   * ```
+   */
+  effect(): void {}
+
+  override setup(context: ViewExtensionContext, options?: Options) {
+    super.setup(context, options);
+    const constructer = this.constructor as typeof ViewExtensionProvider;
+    if (!constructer.effectRunned) {
+      this.effect();
+      constructer.effectRunned = true;
+    }
+  }
 }
 
 /**

@@ -78,6 +78,14 @@ class MyViewProvider extends ViewExtensionProvider<{ theme: string }> {
       context.register([DarkModeExt]);
     }
   }
+
+  // Override effect to run one-time initialization logic
+  override effect() {
+    // This will only run once per provider class
+    console.log('Initializing MyViewProvider');
+    // Register lit elements
+    this.registerLitElements();
+  }
 }
 
 // Create and use the view extension manager
@@ -87,6 +95,25 @@ manager.configure(MyViewProvider, { theme: 'dark' });
 // Get extensions for different view scopes
 const pageExtensions = manager.get('page');
 const edgelessExtensions = manager.get('edgeless');
+```
+
+### One-time Initialization with Effect
+
+View extensions support one-time initialization through the `effect` method. This method is called automatically during setup, but only once per provider class. It's useful for:
+
+- Initializing global state
+- Registering lit elements
+- Setting up shared resources
+
+```typescript
+class MyViewProvider extends ViewExtensionProvider {
+  override effect() {
+    // This will only run once, even if multiple instances are created
+    initializeGlobalState();
+    registerLitElements();
+    setupGlobalEventListeners();
+  }
+}
 ```
 
 ### Available View Scopes

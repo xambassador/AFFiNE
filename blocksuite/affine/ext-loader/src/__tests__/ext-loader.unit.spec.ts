@@ -12,6 +12,7 @@ import {
   type StoreExtensionContext,
   StoreExtensionProvider,
 } from '../store-provider';
+import { ViewExtensionManager } from '../view-manager';
 import {
   type ViewExtensionContext,
   ViewExtensionProvider,
@@ -164,4 +165,57 @@ it('should extension manager be able to be injected', () => {
   });
   const provider = container.provider();
   expect(provider.get(StoreExtensionManagerIdentifier)).toBe(manager);
+});
+
+it('should effect only run once', () => {
+  const effect1 = vi.fn();
+  const effect2 = vi.fn();
+  class ViewExt1 extends ViewExtensionProvider {
+    override name = 'ViewExt1';
+
+    override effect() {
+      super.effect();
+      effect1();
+    }
+
+    override setup(context: ViewExtensionContext) {
+      super.setup(context);
+      context.register(Ext1);
+    }
+  }
+
+  class ViewExt2 extends ViewExtensionProvider {
+    override name = 'ViewExt2';
+
+    override effect() {
+      super.effect();
+      effect2();
+    }
+
+    override setup(context: ViewExtensionContext) {
+      super.setup(context);
+      context.register(Ext2);
+    }
+  }
+
+  const manager = new ViewExtensionManager([ViewExt1]);
+
+  expect(ViewExt1.effectRunned).toBe(false);
+  expect(ViewExt2.effectRunned).toBe(false);
+
+  manager.get('page');
+
+  expect(ViewExt1.effectRunned).toBe(true);
+  expect(ViewExt2.effectRunned).toBe(false);
+
+  expect(effect1).toHaveBeenCalledTimes(1);
+  expect(effect2).toHaveBeenCalledTimes(0);
+
+  manager.get('edgeless');
+
+  expect(ViewExt1.effectRunned).toBe(true);
+  expect(ViewExt2.effectRunned).toBe(false);
+
+  expect(effect1).toHaveBeenCalledTimes(1);
+  expect(effect2).toHaveBeenCalledTimes(0);
 });
