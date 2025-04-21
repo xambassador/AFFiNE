@@ -2969,6 +2969,17 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@blocksuite/affine-ext-loader@workspace:blocksuite/affine/ext-loader":
+  version: 0.0.0-use.local
+  resolution: "@blocksuite/affine-ext-loader@workspace:blocksuite/affine/ext-loader"
+  dependencies:
+    "@blocksuite/global": "workspace:*"
+    "@blocksuite/store": "workspace:*"
+    vitest: "npm:3.1.1"
+    zod: "npm:^3.23.8"
+  languageName: unknown
+  linkType: soft
+
 "@blocksuite/affine-fragment-doc-title@workspace:*, @blocksuite/affine-fragment-doc-title@workspace:blocksuite/affine/fragments/doc-title":
   version: 0.0.0-use.local
   resolution: "@blocksuite/affine-fragment-doc-title@workspace:blocksuite/affine/fragments/doc-title"

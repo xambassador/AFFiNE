@@ -1,0 +1,62 @@
+import {
+  BaseExtensionProvider,
+  type Context,
+  type Empty,
+} from './base-provider';
+
+/**
+ * Available view scopes for view-related extensions.
+ * Defines the different types of views where extensions can be applied.
+ */
+export type ViewScope =
+  | 'page' // Standard page view
+  | 'edgeless' // Edgeless (whiteboard) view
+  | 'preview-page' // Page preview view
+  | 'preview-edgeless' // Edgeless preview view
+  | 'mobile-page' // Mobile page view
+  | 'mobile-edgeless'; // Mobile edgeless view
+
+/**
+ * A specialized extension provider for view-related functionality.
+ * Extends the base provider with view-specific scope and configuration.
+ *
+ * @typeParam Options - The type of configuration options for the view provider
+ *
+ * @example
+ * ```ts
+ * // Create a view provider with custom options
+ * class MyViewProvider extends ViewExtensionProvider<{ theme: string }> {
+ *   override name = 'MyViewProvider';
+ *
+ *   override schema = z.object({
+ *     theme: z.enum(['light', 'dark'])
+ *   });
+ *
+ *   override setup(context: ViewExtensionContext, options?: { theme: string }) {
+ *     super.setup(context, options);
+ *
+ *     context.register([CommonExt]);
+ *     if (context.scope === 'page') {
+ *       context.register([PageExt]);
+ *     } else if (context.scope === 'edgeless') {
+ *       context.register([EdgelessExt]);
+ *     }
+ *     if (options?.theme === 'dark') {
+ *       context.register([DarkModeExt]);
+ *     }
+ *   }
+ * }
+ * ```
+ */
+export class ViewExtensionProvider<
+  Options extends object = Empty,
+> extends BaseExtensionProvider<ViewScope, Options> {
+  /** The name of the view extension provider */
+  override name = 'ViewExtension';
+}
+
+/**
+ * Context type specifically for view-related extensions.
+ * Provides type safety for view extension registration and setup.
+ */
+export type ViewExtensionContext = Context<ViewScope>;
