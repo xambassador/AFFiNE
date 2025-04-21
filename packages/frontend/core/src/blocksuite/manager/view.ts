@@ -11,6 +11,8 @@ import { FrameViewExtension } from '@blocksuite/affine/blocks/frame/view';
 import { ImageViewExtension } from '@blocksuite/affine/blocks/image/view';
 import { LatexViewExtension } from '@blocksuite/affine/blocks/latex/view';
 import { ListViewExtension } from '@blocksuite/affine/blocks/list/view';
+import { NoteViewExtension } from '@blocksuite/affine/blocks/note/view';
+import { ParagraphViewExtension } from '@blocksuite/affine/blocks/paragraph/view';
 import { ViewExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createViewManager() {
@@ -28,6 +30,8 @@ export function createViewManager() {
     ImageViewExtension,
     LatexViewExtension,
     ListViewExtension,
+    NoteViewExtension,
+    ParagraphViewExtension,
   ]);
 
   return manager;

@@ -13,7 +13,9 @@ const ImageStoreExtensionOptionsSchema = z.object({
   imageProxyURL: z.string().optional(),
 });
 
-export class ImageStoreExtension extends StoreExtensionProvider {
+export class ImageStoreExtension extends StoreExtensionProvider<
+  z.infer<typeof ImageStoreExtensionOptionsSchema>
+> {
   override name = 'affine-image-block';
 
   override schema = ImageStoreExtensionOptionsSchema;

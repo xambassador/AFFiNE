@@ -11,6 +11,8 @@ import { FrameStoreExtension } from '@blocksuite/affine/blocks/frame/store';
 import { ImageStoreExtension } from '@blocksuite/affine/blocks/image/store';
 import { LatexStoreExtension } from '@blocksuite/affine/blocks/latex/store';
 import { ListStoreExtension } from '@blocksuite/affine/blocks/list/store';
+import { NoteStoreExtension } from '@blocksuite/affine/blocks/note/store';
+import { ParagraphStoreExtension } from '@blocksuite/affine/blocks/paragraph/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createStoreManager() {
@@ -28,6 +30,8 @@ export function createStoreManager() {
     ImageStoreExtension,
     LatexStoreExtension,
     ListStoreExtension,
+    NoteStoreExtension,
+    ParagraphStoreExtension,
   ]);
 
   return manager;

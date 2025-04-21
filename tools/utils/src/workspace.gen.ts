@@ -287,6 +287,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/embed',
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/fragments/doc-title',
       'blocksuite/affine/gfx/turbo-renderer',
       'blocksuite/affine/inlines/preset',
@@ -304,6 +305,7 @@ export const PackageList = [
     name: '@blocksuite/affine-block-paragraph',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/gfx/turbo-renderer',
       'blocksuite/affine/inlines/preset',
       'blocksuite/affine/model',
