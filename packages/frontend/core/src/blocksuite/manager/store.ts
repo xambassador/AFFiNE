@@ -7,6 +7,8 @@ import { DatabaseStoreExtension } from '@blocksuite/affine/blocks/database/store
 import { DividerStoreExtension } from '@blocksuite/affine/blocks/divider/store';
 import { EdgelessTextStoreExtension } from '@blocksuite/affine/blocks/edgeless-text/store';
 import { EmbedStoreExtension } from '@blocksuite/affine/blocks/embed/store';
+import { FrameStoreExtension } from '@blocksuite/affine/blocks/frame/store';
+import { ImageStoreExtension } from '@blocksuite/affine/blocks/image/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 
 export function createStoreManager() {
@@ -20,6 +22,8 @@ export function createStoreManager() {
     DividerStoreExtension,
     EdgelessTextStoreExtension,
     EmbedStoreExtension,
+    FrameStoreExtension,
+    ImageStoreExtension,
   ]);
 
   return manager;

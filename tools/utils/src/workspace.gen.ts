@@ -220,6 +220,7 @@ export const PackageList = [
     workspaceDependencies: [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/affine/widgets/edgeless-toolbar',
@@ -236,6 +237,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/note',
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/gfx/turbo-renderer',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
