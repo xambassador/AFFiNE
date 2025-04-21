@@ -1,11 +1,20 @@
-import { expect } from '@playwright/test';
+import { expect, type Page } from '@playwright/test';
 
-import { switchEditorMode } from '../utils/actions/edgeless.js';
-import { enterPlaygroundRoom, waitNextFrame } from '../utils/actions/misc.js';
-import { test } from '../utils/playwright.js';
-import { initEmbedSyncedDocState } from './utils.js';
+import { clickView } from '../utils/actions/click.js';
+import {
+  createNote,
+  getIds,
+  getSelectedBound,
+  getSelectedIds,
+  isIntersected,
+  switchEditorMode,
+} from '../utils/actions/edgeless';
+import { pressEscape } from '../utils/actions/keyboard.js';
+import { enterPlaygroundRoom, waitNextFrame } from '../utils/actions/misc';
+import { test } from '../utils/playwright';
+import { initEmbedSyncedDocState } from './utils';
 
-test.describe('Embed synced doc', () => {
+test.describe('Embed synced doc in edgeless mode', () => {
   test.beforeEach(async ({ page }) => {
     await enterPlaygroundRoom(page);
   });
@@ -18,7 +27,6 @@ test.describe('Embed synced doc', () => {
         { title: 'Page 1', content: 'hello page 1' },
       ]);
 
-      // Switch to edgeless mode
       await switchEditorMode(page);
 
       // Double click on note to enter edit status
@@ -63,4 +71,120 @@ test.describe('Embed synced doc', () => {
       );
     }
   );
+
+  test.describe('edgeless element toolbar', () => {
+    test.beforeEach(async ({ page }) => {
+      await initEmbedSyncedDocState(page, [
+        { title: 'Root Doc', content: 'hello root doc' },
+        { title: 'Page 1', content: 'hello page 1', inEdgeless: true },
+      ]);
+
+      // TODO(@L-Sun): remove this after this feature is released
+      await page.evaluate(() => {
+        const { FeatureFlagService } = window.$blocksuite.services;
+        window.editor.std
+          .get(FeatureFlagService)
+          .setFlag('enable_embed_doc_with_alias', true);
+      });
+
+      await switchEditorMode(page);
+
+      const edgelessEmbedSyncedBlock = page.locator(
+        'affine-embed-edgeless-synced-doc-block'
+      );
+      await edgelessEmbedSyncedBlock.click();
+    });
+
+    const locateToolbar = (page: Page) => {
+      return page.locator(
+        // TODO(@L-Sun): simplify this selector after that toolbar widget are disabled in preview rendering is ready
+        'affine-edgeless-root > .widgets-container affine-toolbar-widget editor-toolbar'
+      );
+    };
+
+    test('should insert embed-synced-doc into page when click "Insert into page" button', async ({
+      page,
+    }) => {
+      const embedSyncedBlock = page.locator('affine-embed-synced-doc-block');
+      const edgelessEmbedSyncedBlock = page.locator(
+        'affine-embed-edgeless-synced-doc-block'
+      );
+
+      const toolbar = locateToolbar(page);
+      const insertButton = toolbar.getByLabel('Insert to page');
+      await insertButton.click();
+
+      await expect(
+        edgelessEmbedSyncedBlock,
+        'the edgeless embed synced doc should be remained after click insert button'
+      ).toBeVisible();
+
+      await switchEditorMode(page);
+      await expect(embedSyncedBlock).toBeVisible();
+    });
+
+    test('should using all content of embed-synced-doc to duplicate as a note', async ({
+      page,
+    }) => {
+      // switch doc
+      const switchDoc = async () =>
+        page.evaluate(() => {
+          for (const [id, doc] of window.collection.docs.entries()) {
+            if (id !== window.doc.id) {
+              window.editor.doc = doc.getStore();
+              window.doc = window.editor.doc;
+              break;
+            }
+          }
+        });
+      await switchDoc();
+
+      const toolbar = locateToolbar(page);
+
+      await createNote(page, [0, 100, 100, 800], 'hello note');
+      await pressEscape(page, 3);
+      await clickView(page, [400, 150]);
+      await toolbar.getByLabel('Display in Page').click();
+
+      await switchDoc();
+
+      const edgelessEmbedSyncedBlock = page.locator(
+        'affine-embed-edgeless-synced-doc-block'
+      );
+      await edgelessEmbedSyncedBlock.click();
+      await toolbar.getByLabel('Duplicate as note').click();
+
+      const edgelessNotes = page.locator('affine-edgeless-note');
+      await expect(edgelessNotes).toHaveCount(2);
+      await expect(edgelessNotes.last()).toBeVisible();
+
+      const paragraphs = edgelessNotes
+        .last()
+        .locator('affine-paragraph [data-v-root="true"]');
+
+      await expect(paragraphs).toHaveCount(2);
+      await expect(paragraphs.first()).toHaveText('hello page 1');
+      await expect(paragraphs.last()).toHaveText('hello note');
+    });
+
+    test('should be selected and not overlay with the embed-synced-doc after duplicating as note', async ({
+      page,
+    }) => {
+      const prevIds = await getIds(page);
+
+      const embedDocBound = await getSelectedBound(page);
+
+      const toolbar = locateToolbar(page);
+      await toolbar.getByLabel('Duplicate as note').click();
+
+      const edgelessNotes = page.locator('affine-edgeless-note');
+      await expect(edgelessNotes).toHaveCount(2);
+      expect(await getSelectedIds(page)).toHaveLength(1);
+      expect(await getSelectedIds(page)).not.toContain(prevIds);
+      expect(edgelessNotes.last()).toBeVisible();
+
+      const noteBound = await getSelectedBound(page);
+      expect(isIntersected(embedDocBound, noteBound)).toBe(false);
+    });
+  });
 });

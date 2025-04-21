@@ -9,13 +9,15 @@ import type { Page } from '@playwright/test';
 /**
  * using page.evaluate to init the embed synced doc state
  * @param page - playwright page
- * @param data - the data to init the embed synced doc state
+ * @param data.title - the title of the doc
+ * @param data.content - the content of the doc
+ * @param data.inEdgeless - whether this doc is in parent doc's canvas, default is in page
  * @param option.chain - doc1 -> doc2 -> doc3 -> ..., if chain is false, doc1 will be the parent of remaining docs
  * @returns the ids of created docs
  */
 export async function initEmbedSyncedDocState(
   page: Page,
-  data: { title: string; content: string }[],
+  data: { title: string; content: string; inEdgeless?: boolean }[],
   option?: {
     chain?: boolean;
   }
@@ -92,12 +94,18 @@ export async function initEmbedSyncedDocState(
           throw new Error(`Note not found in ${docId}`);
         }
 
+        const surface = store.getModelsByFlavour('affine:surface')[0];
+        if (!surface) {
+          throw new Error(`Surface not found in ${docId}`);
+        }
+
         store.addBlock(
           'affine:embed-synced-doc',
           {
             pageId: docId,
+            xywh: '[0, 100, 370, 100]',
           } satisfies Partial<EmbedSyncedDocBlockProps>,
-          note
+          data[index].inEdgeless ? surface.id : note.id
         );
 
         prevId = docId;
