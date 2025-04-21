@@ -25,6 +25,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/surface-ref',
       'blocksuite/affine/blocks/table',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/fragments/doc-title',
       'blocksuite/affine/fragments/frame-panel',
       'blocksuite/affine/fragments/outline',

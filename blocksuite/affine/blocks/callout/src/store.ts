@@ -4,7 +4,7 @@ import {
 } from '@blocksuite/affine-ext-loader';
 import { CalloutBlockSchemaExtension } from '@blocksuite/affine-model';
 
-export default class CalloutStoreExtension extends StoreExtensionProvider {
+export class CalloutStoreExtension extends StoreExtensionProvider {
   override name = 'affine-callout-block';
 
   override setup(context: StoreExtensionContext) {

@@ -7,7 +7,7 @@ import { DatabaseBlockSchemaExtension } from '@blocksuite/affine-model';
 import { DatabaseBlockAdapterExtensions } from './adapters/extension';
 import { DatabaseSelectionExtension } from './selection';
 
-export default class DatabaseStoreExtension extends StoreExtensionProvider {
+export class DatabaseStoreExtension extends StoreExtensionProvider {
   override name = 'affine-database-block';
 
   override setup(context: StoreExtensionContext) {

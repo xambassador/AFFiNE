@@ -18,7 +18,7 @@ import {
 
 const flavour = AttachmentBlockSchema.model.flavour;
 
-export default class AttachmentViewExtension extends ViewExtensionProvider {
+export class AttachmentViewExtension extends ViewExtensionProvider {
   override name = 'affine-attachment-block';
 
   override effect() {

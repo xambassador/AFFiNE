@@ -5,7 +5,7 @@ import {
 
 import { DataViewBlockSchemaExtension } from './data-view-model';
 
-export default class DataViewStoreExtension extends StoreExtensionProvider {
+export class DataViewStoreExtension extends StoreExtensionProvider {
   override name = 'affine-data-view-block';
 
   override setup(context: StoreExtensionContext) {

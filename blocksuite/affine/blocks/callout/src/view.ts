@@ -10,7 +10,7 @@ import { CalloutKeymapExtension } from './callout-keymap';
 import { calloutSlashMenuConfig } from './configs/slash-menu';
 import { effects } from './effects';
 
-export default class CalloutViewExtension extends ViewExtensionProvider {
+export class CalloutViewExtension extends ViewExtensionProvider {
   override name = 'affine-callout-block';
 
   override effect() {

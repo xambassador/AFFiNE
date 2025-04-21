@@ -12,7 +12,7 @@ import { effects } from './effects';
 
 const flavour = BookmarkBlockSchema.model.flavour;
 
-export default class BookmarkViewExtension extends ViewExtensionProvider {
+export class BookmarkViewExtension extends ViewExtensionProvider {
   override name = 'affine-bookmark-block';
 
   override effect() {

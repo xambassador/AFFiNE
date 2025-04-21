@@ -6,7 +6,7 @@ import { AttachmentBlockSchemaExtension } from '@blocksuite/affine-model';
 
 import { AttachmentBlockNotionHtmlAdapterExtension } from './adapters/notion-html';
 
-export default class AttachmentStoreExtension extends StoreExtensionProvider {
+export class AttachmentStoreExtension extends StoreExtensionProvider {
   override name = 'affine-attachment-block';
 
   override setup(context: StoreExtensionContext) {

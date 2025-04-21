@@ -10,7 +10,7 @@ import { effects } from './effects';
 
 const flavour = DataViewBlockSchema.model.flavour;
 
-export default class DataViewViewExtension extends ViewExtensionProvider {
+export class DataViewViewExtension extends ViewExtensionProvider {
   override name = 'affine-data-view-block';
 
   override effect() {

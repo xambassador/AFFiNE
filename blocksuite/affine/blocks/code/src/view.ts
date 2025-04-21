@@ -27,7 +27,7 @@ export const codeToolbarWidget = WidgetViewExtension(
   literal`${unsafeStatic(AFFINE_CODE_TOOLBAR_WIDGET)}`
 );
 
-export default class CodeBlockViewExtension extends ViewExtensionProvider {
+export class CodeBlockViewExtension extends ViewExtensionProvider {
   override name = 'affine-code-block';
 
   override effect() {

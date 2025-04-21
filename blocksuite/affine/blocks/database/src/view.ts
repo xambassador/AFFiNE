@@ -9,7 +9,7 @@ import { literal } from 'lit/static-html.js';
 import { databaseSlashMenuConfig } from './configs/slash-menu.js';
 import { effects } from './effects';
 
-export default class DatabaseViewExtension extends ViewExtensionProvider {
+export class DatabaseViewExtension extends ViewExtensionProvider {
   override name = 'affine-database-block';
 
   override effect() {

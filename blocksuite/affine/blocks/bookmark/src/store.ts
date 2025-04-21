@@ -6,7 +6,7 @@ import { BookmarkBlockSchemaExtension } from '@blocksuite/affine-model';
 
 import { BookmarkBlockAdapterExtensions } from './adapters/extension';
 
-export default class BookmarkStoreExtension extends StoreExtensionProvider {
+export class BookmarkStoreExtension extends StoreExtensionProvider {
   override name = 'affine-bookmark-block';
 
   override setup(context: StoreExtensionContext) {
