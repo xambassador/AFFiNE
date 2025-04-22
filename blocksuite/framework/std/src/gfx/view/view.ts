@@ -6,14 +6,14 @@ import type { Extension } from '@blocksuite/store';
 
 import type { PointerEventState } from '../../event/index.js';
 import type { EditorHost } from '../../view/index.js';
+import type { GfxController } from '../index.js';
 import type {
   DragEndContext,
   DragMoveContext,
   DragStartContext,
   GfxViewTransformInterface,
   SelectedContext,
-} from '../element-transform/view-transform.js';
-import type { GfxController } from '../index.js';
+} from '../interactivity/index.js';
 import type { GfxElementGeometry, PointTestOptions } from '../model/base.js';
 import { GfxPrimitiveElementModel } from '../model/surface/element-model.js';
 import type { GfxLocalElementModel } from '../model/surface/local-element-model.js';

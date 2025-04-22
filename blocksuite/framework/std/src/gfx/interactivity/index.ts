@@ -1,0 +1,17 @@
+export { InteractivityExtension } from './extension/base.js';
+export { GfxViewEventManager } from './gfx-view-event-handler.js';
+export { InteractivityIdentifier, InteractivityManager } from './manager.js';
+export type {
+  DragExtensionInitializeContext,
+  DragInitializationOption,
+  ExtensionDragEndContext,
+  ExtensionDragMoveContext,
+  ExtensionDragStartContext,
+} from './types/drag.js';
+export type {
+  DragEndContext,
+  DragMoveContext,
+  DragStartContext,
+  GfxViewTransformInterface,
+  SelectedContext,
+} from './types/view.js';

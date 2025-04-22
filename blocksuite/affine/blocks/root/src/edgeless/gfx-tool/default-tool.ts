@@ -22,9 +22,9 @@ import {
   BaseTool,
   getTopElements,
   type GfxModel,
+  InteractivityIdentifier,
   isGfxGroupCompatibleModel,
   type PointTestOptions,
-  TransformManagerIdentifier,
 } from '@blocksuite/std/gfx';
 import { effect } from '@preact/signals-core';
 
@@ -196,8 +196,8 @@ export class DefaultTool extends BaseTool {
     return this.gfx.selection;
   }
 
-  get elementTransformMgr() {
-    return this.std.getOptional(TransformManagerIdentifier);
+  get interactivity() {
+    return this.std.getOptional(InteractivityIdentifier);
   }
 
   private get frameOverlay() {
@@ -380,9 +380,9 @@ export class DefaultTool extends BaseTool {
     }
 
     if (this.dragType === DefaultModeDragType.ContentMoving) {
-      if (this.elementTransformMgr) {
+      if (this.interactivity) {
         this.doc.captureSync();
-        this.elementTransformMgr.initializeDrag({
+        this.interactivity.initializeDrag({
           movingElements: this._toBeMoved,
           event: event.raw,
           onDragEnd: () => {
@@ -397,12 +397,12 @@ export class DefaultTool extends BaseTool {
   override click(e: PointerEventState) {
     if (this.doc.readonly) return;
 
-    if (!this.elementTransformMgr?.dispatchOnSelected(e)) {
+    if (!this.interactivity?.dispatchOnSelected(e)) {
       this.edgelessSelectionManager.clear();
       resetNativeSelection(null);
     }
 
-    this.elementTransformMgr?.dispatch('click', e);
+    this.interactivity?.dispatch('click', e);
   }
 
   override deactivate() {
@@ -424,7 +424,7 @@ export class DefaultTool extends BaseTool {
       return;
     }
 
-    this.elementTransformMgr?.dispatch('dblclick', e);
+    this.interactivity?.dispatch('dblclick', e);
   }
 
   override dragEnd() {
@@ -523,7 +523,7 @@ export class DefaultTool extends BaseTool {
   }
 
   override pointerDown(e: PointerEventState): void {
-    this.elementTransformMgr?.dispatch('pointerdown', e);
+    this.interactivity?.dispatch('pointerdown', e);
   }
 
   override pointerMove(e: PointerEventState) {
@@ -542,11 +542,11 @@ export class DefaultTool extends BaseTool {
       this.frameOverlay.clear();
     }
 
-    this.elementTransformMgr?.dispatch('pointermove', e);
+    this.interactivity?.dispatch('pointermove', e);
   }
 
   override pointerUp(e: PointerEventState) {
-    this.elementTransformMgr?.dispatch('pointerup', e);
+    this.interactivity?.dispatch('pointerup', e);
   }
 
   override tripleClick() {}

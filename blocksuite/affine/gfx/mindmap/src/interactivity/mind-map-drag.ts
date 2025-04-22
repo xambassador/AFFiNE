@@ -16,8 +16,8 @@ import {
   type ExtensionDragStartContext,
   type GfxModel,
   type GfxPrimitiveElementModel,
+  InteractivityExtension,
   isGfxGroupCompatibleModel,
-  TransformExtension,
 } from '@blocksuite/std/gfx';
 
 import type { MindMapIndicatorOverlay } from '../indicator-overlay';
@@ -43,7 +43,7 @@ type DragMindMapCtx = {
   originalMindMapBound: Bound;
 };
 
-export class MindMapDragExtension extends TransformExtension {
+export class MindMapDragExtension extends InteractivityExtension {
   static override key = 'mind-map-drag';
   /**
    * The response area of the mind map is calculated in real time.
@@ -376,78 +376,80 @@ export class MindMapDragExtension extends TransformExtension {
     };
   }
 
-  override onDragInitialize(context: DragExtensionInitializeContext) {
-    if (isSingleMindMapNode(context.elements)) {
-      const mindmap = context.elements[0].group as MindmapElementModel;
-      const mindmapNode = mindmap.getNode(context.elements[0].id)!;
-      const mindmapBound = mindmap.elementBound;
-      const isRoot = mindmapNode === mindmap.tree;
+  override mounted() {
+    this.action.onDragInitialize((context: DragExtensionInitializeContext) => {
+      if (isSingleMindMapNode(context.elements)) {
+        const mindmap = context.elements[0].group as MindmapElementModel;
+        const mindmapNode = mindmap.getNode(context.elements[0].id)!;
+        const mindmapBound = mindmap.elementBound;
+        const isRoot = mindmapNode === mindmap.tree;
 
-      mindmapBound.x -= NODE_HORIZONTAL_SPACING;
-      mindmapBound.y -= NODE_VERTICAL_SPACING * 2;
-      mindmapBound.w += NODE_HORIZONTAL_SPACING * 2;
-      mindmapBound.h += NODE_VERTICAL_SPACING * 4;
+        mindmapBound.x -= NODE_HORIZONTAL_SPACING;
+        mindmapBound.y -= NODE_VERTICAL_SPACING * 2;
+        mindmapBound.w += NODE_HORIZONTAL_SPACING * 2;
+        mindmapBound.h += NODE_VERTICAL_SPACING * 4;
 
-      this._calcDragResponseArea(mindmap);
+        this._calcDragResponseArea(mindmap);
 
-      const clearDragStatus = isRoot
-        ? mindmap.stashTree(mindmapNode)
-        : this._setupDragNodeImage(mindmapNode, context.dragStartPos);
-      const clearOpacity = this._updateNodeOpacity(mindmap, mindmapNode);
+        const clearDragStatus = isRoot
+          ? mindmap.stashTree(mindmapNode)
+          : this._setupDragNodeImage(mindmapNode, context.dragStartPos);
+        const clearOpacity = this._updateNodeOpacity(mindmap, mindmapNode);
 
-      if (!isRoot) {
-        context.elements.splice(0, 1);
+        if (!isRoot) {
+          context.elements.splice(0, 1);
+        }
+
+        const mindMapDragCtx: DragMindMapCtx = {
+          mindmap,
+          node: mindmapNode,
+          isRoot,
+          originalMindMapBound: mindmapBound,
+        };
+
+        return {
+          ...this._createManipulationHandlers(mindMapDragCtx),
+          clear() {
+            clearOpacity();
+            clearDragStatus?.();
+            if (!isRoot) {
+              context.elements.push(mindmapNode.element);
+            }
+          },
+        };
       }
 
-      const mindMapDragCtx: DragMindMapCtx = {
-        mindmap,
-        node: mindmapNode,
-        isRoot,
-        originalMindMapBound: mindmapBound,
-      };
+      const mindmapNodes = new Set<GfxModel>();
+      const mindmaps = new Set<MindmapElementModel>();
 
-      return {
-        ...this._createManipulationHandlers(mindMapDragCtx),
-        clear() {
-          clearOpacity();
-          clearDragStatus?.();
-          if (!isRoot) {
-            context.elements.push(mindmapNode.element);
-          }
-        },
-      };
-    }
+      context.elements.forEach(el => {
+        if (isMindmapNode(el)) {
+          const mindmap =
+            el.group instanceof MindmapElementModel
+              ? el.group
+              : (el as MindmapElementModel);
 
-    const mindmapNodes = new Set<GfxModel>();
-    const mindmaps = new Set<MindmapElementModel>();
+          mindmaps.add(mindmap);
+          mindmap.childElements.forEach(child => mindmapNodes.add(child));
+        } else if (isGfxGroupCompatibleModel(el)) {
+          el.descendantElements.forEach(desc => {
+            if (desc.group instanceof MindmapElementModel) {
+              mindmaps.add(desc.group);
+              desc.group.childElements.forEach(_el => mindmapNodes.add(_el));
+            }
+          });
+        }
+      });
 
-    context.elements.forEach(el => {
-      if (isMindmapNode(el)) {
-        const mindmap =
-          el.group instanceof MindmapElementModel
-            ? el.group
-            : (el as MindmapElementModel);
-
-        mindmaps.add(mindmap);
-        mindmap.childElements.forEach(child => mindmapNodes.add(child));
-      } else if (isGfxGroupCompatibleModel(el)) {
-        el.descendantElements.forEach(desc => {
-          if (desc.group instanceof MindmapElementModel) {
-            mindmaps.add(desc.group);
-            desc.group.childElements.forEach(_el => mindmapNodes.add(_el));
-          }
+      if (mindmapNodes.size > 1) {
+        mindmapNodes.forEach(node => context.elements.push(node));
+        return this._createTranslationHandlers({
+          mindmaps,
+          nodes: mindmapNodes,
         });
       }
+
+      return {};
     });
-
-    if (mindmapNodes.size > 1) {
-      mindmapNodes.forEach(node => context.elements.push(node));
-      return this._createTranslationHandlers({
-        mindmaps,
-        nodes: mindmapNodes,
-      });
-    }
-
-    return {};
   }
 }

@@ -1,0 +1,141 @@
+import { type Container, createIdentifier } from '@blocksuite/global/di';
+import { BlockSuiteError, ErrorCode } from '@blocksuite/global/exceptions';
+import { Extension } from '@blocksuite/store';
+
+import type { PointerEventState } from '../../../event/index.js';
+import type { GfxController } from '../../controller.js';
+import { GfxControllerIdentifier } from '../../identifiers.js';
+import type { SupportedEvents } from '../event.js';
+import type {
+  DragExtensionInitializeContext,
+  ExtensionDragEndContext,
+  ExtensionDragMoveContext,
+  ExtensionDragStartContext,
+} from '../types/drag.js';
+
+export const InteractivityExtensionIdentifier =
+  createIdentifier<InteractivityExtension>('interactivity-extension');
+
+export class InteractivityExtension extends Extension {
+  static key: string;
+
+  get std() {
+    return this.gfx.std;
+  }
+
+  event: Omit<InteractivityEventAPI, 'emit'> = new InteractivityEventAPI();
+
+  action: Omit<InteractivityActionAPI, 'emit'> = new InteractivityActionAPI();
+
+  constructor(protected readonly gfx: GfxController) {
+    super();
+  }
+
+  mounted() {}
+
+  /**
+   * Override this method should call `super.unmounted()`
+   */
+  unmounted() {
+    this.event.destroy();
+    this.action.destroy();
+  }
+
+  static override setup(di: Container) {
+    if (!this.key) {
+      throw new BlockSuiteError(
+        ErrorCode.ValueNotExists,
+        'key is not defined in the InteractivityExtension'
+      );
+    }
+
+    di.add(
+      this as unknown as { new (gfx: GfxController): InteractivityExtension },
+      [GfxControllerIdentifier]
+    );
+    di.addImpl(InteractivityExtensionIdentifier(this.key), provider =>
+      provider.get(this)
+    );
+  }
+}
+
+export class InteractivityEventAPI {
+  private readonly _handlersMap = new Map<
+    SupportedEvents,
+    ((evt: PointerEventState) => void)[]
+  >();
+
+  on(eventName: SupportedEvents, handler: (evt: PointerEventState) => void) {
+    const handlers = this._handlersMap.get(eventName) ?? [];
+    handlers.push(handler);
+    this._handlersMap.set(eventName, handlers);
+
+    return () => {
+      const idx = handlers.indexOf(handler);
+
+      if (idx > -1) {
+        handlers.splice(idx, 1);
+      }
+    };
+  }
+
+  emit(eventName: SupportedEvents, evt: PointerEventState) {
+    const handlers = this._handlersMap.get(eventName);
+    if (!handlers) {
+      return;
+    }
+
+    for (const handler of handlers) {
+      handler(evt);
+    }
+  }
+
+  destroy() {
+    this._handlersMap.clear();
+  }
+}
+
+type ActionContextMap = {
+  dragInitialize: {
+    context: DragExtensionInitializeContext;
+    returnType: {
+      onDragStart?: (context: ExtensionDragStartContext) => void;
+      onDragMove?: (context: ExtensionDragMoveContext) => void;
+      onDragEnd?: (context: ExtensionDragEndContext) => void;
+      clear?: () => void;
+    };
+  };
+};
+
+export class InteractivityActionAPI {
+  private readonly _handlers: Partial<{
+    dragInitialize: Parameters<InteractivityActionAPI['onDragInitialize']>[0];
+  }> = {};
+
+  onDragInitialize(
+    handler: (
+      ctx: ActionContextMap['dragInitialize']['context']
+    ) => ActionContextMap['dragInitialize']['returnType']
+  ) {
+    this._handlers['dragInitialize'] = handler;
+
+    return () => {
+      delete this._handlers['dragInitialize'];
+    };
+  }
+
+  emit<K extends keyof ActionContextMap>(
+    event: K,
+    context: ActionContextMap[K]['context']
+  ): ActionContextMap[K]['returnType'] | undefined {
+    const handler = this._handlers[event];
+
+    return handler?.(context);
+  }
+
+  destroy() {
+    for (const key in this._handlers) {
+      delete this._handlers[key as keyof typeof this._handlers];
+    }
+  }
+}

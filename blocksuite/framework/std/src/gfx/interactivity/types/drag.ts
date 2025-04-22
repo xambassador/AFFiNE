@@ -1,8 +1,8 @@
 import type { Bound } from '@blocksuite/global/gfx';
 
-import type { GfxBlockComponent } from '../../view';
-import type { GfxModel } from '../model/model';
-import type { GfxElementModelView } from '../view/view';
+import type { GfxBlockComponent } from '../../../view';
+import type { GfxModel } from '../../model/model';
+import type { GfxElementModelView } from '../../view/view';
 
 export type DragInitializationOption = {
   movingElements: GfxModel[];

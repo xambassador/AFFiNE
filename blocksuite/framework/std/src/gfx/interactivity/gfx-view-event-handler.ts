@@ -1,11 +1,11 @@
 import { Bound } from '@blocksuite/global/gfx';
 import last from 'lodash-es/last';
 
-import type { PointerEventState } from '../../../event';
-import type { GfxController } from '../..';
-import type { GfxElementModelView } from '../../view/view';
+import type { PointerEventState } from '../../event';
+import type { GfxController } from '../controller.js';
+import type { GfxElementModelView } from '../view/view.js';
 
-export class CanvasEventHandler {
+export class GfxViewEventManager {
   private _currentStackedElm: GfxElementModelView[] = [];
 
   private _callInReverseOrder(

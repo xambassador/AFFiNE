@@ -1,39 +1,36 @@
-import {
-  type Container,
-  createIdentifier,
-  type ServiceIdentifier,
-} from '@blocksuite/global/di';
+import { type ServiceIdentifier } from '@blocksuite/global/di';
 import { DisposableGroup } from '@blocksuite/global/disposable';
-import { BlockSuiteError, ErrorCode } from '@blocksuite/global/exceptions';
 import { Bound, Point } from '@blocksuite/global/gfx';
-import { Extension } from '@blocksuite/store';
 
 import type { PointerEventState } from '../../event/state/pointer.js';
-import { type GfxController } from '../controller.js';
 import { GfxExtension, GfxExtensionIdentifier } from '../extension.js';
-import { GfxControllerIdentifier } from '../identifiers.js';
 import type { GfxModel } from '../model/model.js';
-import { type SupportedEvent } from '../view/view.js';
+import type { SupportedEvents } from './event.js';
+import {
+  type InteractivityActionAPI,
+  type InteractivityEventAPI,
+  InteractivityExtensionIdentifier,
+} from './extension/base.js';
+import { GfxViewEventManager } from './gfx-view-event-handler.js';
 import type {
   DragExtensionInitializeContext,
   DragInitializationOption,
   ExtensionDragEndContext,
   ExtensionDragMoveContext,
   ExtensionDragStartContext,
-} from './drag.js';
-import { CanvasEventHandler } from './extension/canvas-event-handler.js';
+} from './types/drag.js';
 
 type ExtensionPointerHandler = Exclude<
-  SupportedEvent,
+  SupportedEvents,
   'pointerleave' | 'pointerenter'
 >;
 
-export const TransformManagerIdentifier = GfxExtensionIdentifier(
-  'element-transform-manager'
-) as ServiceIdentifier<ElementTransformManager>;
+export const InteractivityIdentifier = GfxExtensionIdentifier(
+  'interactivity-manager'
+) as ServiceIdentifier<InteractivityManager>;
 
 const CAMEL_CASE_MAP: {
-  [key in ExtensionPointerHandler]: keyof CanvasEventHandler;
+  [key in ExtensionPointerHandler]: keyof GfxViewEventManager;
 } = {
   click: 'click',
   dblclick: 'dblClick',
@@ -42,23 +39,29 @@ const CAMEL_CASE_MAP: {
   pointerup: 'pointerUp',
 };
 
-export class ElementTransformManager extends GfxExtension {
-  static override key = 'element-transform-manager';
+export class InteractivityManager extends GfxExtension {
+  static override key = 'interactivity-manager';
 
   private readonly _disposable = new DisposableGroup();
 
-  private canvasEventHandler = new CanvasEventHandler(this.gfx);
+  private canvasEventHandler = new GfxViewEventManager(this.gfx);
 
   override mounted(): void {
-    this.canvasEventHandler = new CanvasEventHandler(this.gfx);
+    this.canvasEventHandler = new GfxViewEventManager(this.gfx);
+    this.interactExtensions.forEach(ext => {
+      ext.mounted();
+    });
   }
 
   override unmounted(): void {
     this._disposable.dispose();
+    this.interactExtensions.forEach(ext => {
+      ext.unmounted();
+    });
   }
 
-  get transformExtensions() {
-    return this.std.provider.getAll(TransformExtensionIdentifier);
+  get interactExtensions() {
+    return this.std.provider.getAll(InteractivityExtensionIdentifier);
   }
 
   get keyboard() {
@@ -83,10 +86,10 @@ export class ElementTransformManager extends GfxExtension {
 
     this.canvasEventHandler[handlerName](evt);
 
-    const extension = this.transformExtensions;
+    const extensions = this.interactExtensions;
 
-    extension.forEach(ext => {
-      ext[handlerName]?.(evt);
+    extensions.forEach(ext => {
+      (ext.event as InteractivityEventAPI).emit(eventName, evt);
     });
   }
 
@@ -142,15 +145,18 @@ export class ElementTransformManager extends GfxExtension {
         ])
       ),
     };
-    const extension = this.transformExtensions;
+    const extension = this.interactExtensions;
     const activeExtensionHandlers = Array.from(
       extension.values().map(ext => {
-        return ext.onDragInitialize(context);
+        return (ext.action as InteractivityActionAPI).emit(
+          'dragInitialize',
+          context
+        );
       })
     );
 
     if (cancelledByExt) {
-      activeExtensionHandlers.forEach(handler => handler.clear?.());
+      activeExtensionHandlers.forEach(handler => handler?.clear?.());
       return;
     }
 
@@ -198,7 +204,7 @@ export class ElementTransformManager extends GfxExtension {
 
       this._safeExecute(() => {
         activeExtensionHandlers.forEach(handler =>
-          handler.onDragMove?.(moveContext)
+          handler?.onDragMove?.(moveContext)
         );
       }, 'Error while executing extension `onDragMove`');
 
@@ -231,7 +237,7 @@ export class ElementTransformManager extends GfxExtension {
 
       this._safeExecute(() => {
         activeExtensionHandlers.forEach(handler =>
-          handler.onDragEnd?.(endContext)
+          handler?.onDragEnd?.(endContext)
         );
       }, 'Error while executing extension `onDragEnd` handler');
 
@@ -249,7 +255,7 @@ export class ElementTransformManager extends GfxExtension {
       });
 
       this._safeExecute(() => {
-        activeExtensionHandlers.forEach(handler => handler.clear?.());
+        activeExtensionHandlers.forEach(handler => handler?.clear?.());
       }, 'Error while executing extension `clear` handler');
 
       options.onDragEnd?.();
@@ -274,67 +280,12 @@ export class ElementTransformManager extends GfxExtension {
 
       this._safeExecute(() => {
         activeExtensionHandlers.forEach(handler =>
-          handler.onDragStart?.(dragStartContext)
+          handler?.onDragStart?.(dragStartContext)
         );
       }, 'Error while executing extension `onDragStart` handler');
     };
 
     listenEvent();
     dragStart();
-  }
-}
-
-export const TransformExtensionIdentifier =
-  createIdentifier<TransformExtension>('element-transform-extension');
-
-export class TransformExtension extends Extension {
-  static key: string;
-
-  get std() {
-    return this.gfx.std;
-  }
-
-  constructor(protected readonly gfx: GfxController) {
-    super();
-  }
-
-  mounted() {}
-
-  unmounted() {}
-
-  click(_: PointerEventState) {}
-
-  dblClick(_: PointerEventState) {}
-
-  pointerDown(_: PointerEventState) {}
-
-  pointerMove(_: PointerEventState) {}
-
-  pointerUp(_: PointerEventState) {}
-
-  onDragInitialize(_: DragExtensionInitializeContext): {
-    onDragStart?: (context: ExtensionDragStartContext) => void;
-    onDragMove?: (context: ExtensionDragMoveContext) => void;
-    onDragEnd?: (context: ExtensionDragEndContext) => void;
-    clear?: () => void;
-  } {
-    return {};
-  }
-
-  static override setup(di: Container) {
-    if (!this.key) {
-      throw new BlockSuiteError(
-        ErrorCode.ValueNotExists,
-        'key is not defined in the TransformExtension'
-      );
-    }
-
-    di.add(
-      this as unknown as { new (gfx: GfxController): TransformExtension },
-      [GfxControllerIdentifier]
-    );
-    di.addImpl(TransformExtensionIdentifier(this.key), provider =>
-      provider.get(this)
-    );
   }
 }

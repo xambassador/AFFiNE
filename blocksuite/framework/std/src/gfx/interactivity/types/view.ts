@@ -1,8 +1,8 @@
 import type { Bound, IPoint } from '@blocksuite/global/gfx';
 
-import type { GfxBlockComponent } from '../../view';
-import type { GfxModel } from '../model/model';
-import type { GfxElementModelView } from '../view/view';
+import type { GfxBlockComponent } from '../../../view/element/gfx-block-component.js';
+import type { GfxModel } from '../../model/model.js';
+import type { GfxElementModelView } from '../../view/view.js';
 
 export type DragStartContext = {
   /**
