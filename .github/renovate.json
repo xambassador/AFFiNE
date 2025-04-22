@@ -34,6 +34,11 @@
       "matchPackageNames": ["*", "!/^@blocksuite//", "!/oxlint/"]
     },
     {
+      "groupName": "all non-major dependencies",
+      "groupSlug": "all-minor-patch",
+      "matchUpdateTypes": ["minor", "patch"]
+    },
+    {
       "groupName": "rust toolchain",
       "matchManagers": ["custom.regex"],
       "matchDepNames": ["rustc"]
