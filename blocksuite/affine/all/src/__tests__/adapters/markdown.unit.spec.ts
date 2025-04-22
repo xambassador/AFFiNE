@@ -4028,11 +4028,8 @@ hhh
     expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
   });
 
-  test('without footnote middleware', async () => {
-    const markdown =
-      'aaa[^1][^2][^3]\n\n[^1]: {"type":"url","url":"https%3A%2F%2Fwww.example.com"}\n\n[^2]: {"type":"doc","docId":"deadbeef"}\n\n[^3]: {"type":"attachment","blobId":"abcdefg","fileName":"test.txt","fileType":"text/plain"}\n';
-
-    const blockSnapshot: BlockSnapshot = {
+  describe('footnote', () => {
+    const createFootnoteBlockSnapshot = (url: string): BlockSnapshot => ({
       type: 'block',
       id: 'matchesReplaceMap[0]',
       flavour: 'affine:note',
@@ -4063,7 +4060,7 @@ hhh
                       label: '1',
                       reference: {
                         type: 'url',
-                        url: 'https://www.example.com',
+                        url,
                       },
                     },
                   },
@@ -4100,13 +4097,37 @@ hhh
           children: [],
         },
       ],
-    };
-
-    const mdAdapter = new MarkdownAdapter(createJob(), provider);
-    const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
-      file: markdown,
     });
-    expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+
+    test('with encoded url', async () => {
+      const markdown =
+        'aaa[^1][^2][^3]\n\n[^1]: {"type":"url","url":"https%3A%2F%2Fwww.example.com"}\n\n[^2]: {"type":"doc","docId":"deadbeef"}\n\n[^3]: {"type":"attachment","blobId":"abcdefg","fileName":"test.txt","fileType":"text/plain"}\n';
+
+      const blockSnapshot = createFootnoteBlockSnapshot(
+        'https://www.example.com'
+      );
+
+      const mdAdapter = new MarkdownAdapter(createJob(), provider);
+      const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
+        file: markdown,
+      });
+      expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+    });
+
+    test('with unencoded url', async () => {
+      const markdown =
+        'aaa[^1][^2][^3]\n\n[^1]: {"type":"url","url":"https://www.example.com"}\n\n[^2]: {"type":"doc","docId":"deadbeef"}\n\n[^3]: {"type":"attachment","blobId":"abcdefg","fileName":"test.txt","fileType":"text/plain"}\n';
+
+      const blockSnapshot = createFootnoteBlockSnapshot(
+        'https://www.example.com'
+      );
+
+      const mdAdapter = new MarkdownAdapter(createJob(), provider);
+      const rawBlockSnapshot = await mdAdapter.toBlockSnapshot({
+        file: markdown,
+      });
+      expect(nanoidReplacement(rawBlockSnapshot)).toEqual(blockSnapshot);
+    });
   });
 
   test('should not wrap url with angle brackets if it is not a url', async () => {
