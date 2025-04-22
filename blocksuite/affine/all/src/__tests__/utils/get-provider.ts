@@ -1,13 +1,6 @@
 import { Container } from '@blocksuite/global/di';
 
-import {
-  registerBlockSpecs,
-  registerStoreSpecs,
-} from '../../extensions/register';
 import { testStoreExtensions } from './store';
-
-registerStoreSpecs();
-registerBlockSpecs();
 
 export function getProvider() {
   const container = new Container();

@@ -1,7 +1,6 @@
 import '@toeverything/theme/style.css';
 import '@toeverything/theme/fonts.css';
 
-import { registerStoreSpecs } from '@blocksuite/affine/extensions';
 import type { DocMode } from '@blocksuite/affine/model';
 import { AffineSchemas } from '@blocksuite/affine/schemas';
 import {
@@ -24,8 +23,6 @@ import { TestAffineEditorContainer } from '../../index.js';
 import { getTestStoreManager } from '../../store.js';
 import { getTestViewManager } from '../../view.js';
 
-// FIXME: used for test import/export
-registerStoreSpecs();
 const storeManager = getTestStoreManager();
 const viewManager = getTestViewManager();
 effects();
