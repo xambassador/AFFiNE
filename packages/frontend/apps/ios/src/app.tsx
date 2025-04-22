@@ -1,3 +1,4 @@
+import { getStoreManager } from '@affine/core/blocksuite/manager/migrating-store';
 import { AffineContext } from '@affine/core/components/context';
 import { AppFallback } from '@affine/core/mobile/components/app-fallback';
 import { configureMobileModules } from '@affine/core/mobile/modules';
@@ -306,6 +307,7 @@ const frameworkProvider = framework.provider();
       collection: workspace.docCollection,
       schema: getAFFiNEWorkspaceSchema(),
       markdown,
+      extensions: getStoreManager().get('store'),
     });
     const docsService = workspace.scope.get(DocsService);
     if (docId) {

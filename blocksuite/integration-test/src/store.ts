@@ -16,25 +16,26 @@ import { ParagraphStoreExtension } from '@blocksuite/affine/blocks/paragraph/sto
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 import { MigratingStoreExtension } from '@blocksuite/affine/extensions/store';
 
-export function getTestStoreManager() {
-  const manager = new StoreExtensionManager([
-    AttachmentStoreExtension,
-    BookmarkStoreExtension,
-    CalloutStoreExtension,
-    CodeStoreExtension,
-    DataViewStoreExtension,
-    DatabaseStoreExtension,
-    DividerStoreExtension,
-    EdgelessTextStoreExtension,
-    EmbedStoreExtension,
-    FrameStoreExtension,
-    ImageStoreExtension,
-    LatexStoreExtension,
-    ListStoreExtension,
-    NoteStoreExtension,
-    ParagraphStoreExtension,
+const manager = new StoreExtensionManager([
+  AttachmentStoreExtension,
+  BookmarkStoreExtension,
+  CalloutStoreExtension,
+  CodeStoreExtension,
+  DataViewStoreExtension,
+  DatabaseStoreExtension,
+  DividerStoreExtension,
+  EdgelessTextStoreExtension,
+  EmbedStoreExtension,
+  FrameStoreExtension,
+  ImageStoreExtension,
+  LatexStoreExtension,
+  ListStoreExtension,
+  NoteStoreExtension,
+  ParagraphStoreExtension,
 
-    MigratingStoreExtension,
-  ]);
+  MigratingStoreExtension,
+]);
+
+export function getTestStoreManager() {
   return manager;
 }

@@ -10,7 +10,7 @@ import {
 } from '@blocksuite/affine-block-root';
 import { SurfaceBlockSchemaExtension } from '@blocksuite/affine-block-surface';
 import {
-  TableBlockHtmlAdapterExtension,
+  TableBlockAdapterExtensions,
   TableSelectionExtension,
 } from '@blocksuite/affine-block-table';
 import {
@@ -66,10 +66,7 @@ function getAdapterFactoryExtensions(): ExtensionType[] {
   ];
 }
 
-const defaultBlockHtmlAdapterMatchers = [
-  RootBlockHtmlAdapterExtension,
-  TableBlockHtmlAdapterExtension,
-];
+const defaultBlockHtmlAdapterMatchers = [RootBlockHtmlAdapterExtension];
 
 const defaultBlockMarkdownAdapterMatchers = [RootBlockMarkdownAdapterExtension];
 
@@ -130,6 +127,7 @@ const MigratingStoreExtensions: ExtensionType[] = [
   DatabaseSelectionExtension,
   TableSelectionExtension,
 
+  TableBlockAdapterExtensions,
   getHtmlAdapterExtensions(),
   getMarkdownAdapterExtensions(),
   getNotionHtmlAdapterExtensions(),

@@ -1,9 +1,9 @@
 import { defaultImageProxyMiddleware } from '@blocksuite/affine-block-image';
 import { NotionHtmlAdapter } from '@blocksuite/affine-shared/adapters';
-import { SpecProvider } from '@blocksuite/affine-shared/utils';
 import { Container } from '@blocksuite/global/di';
 import { sha } from '@blocksuite/global/utils';
 import {
+  type ExtensionType,
   extMimeMap,
   type Schema,
   Transformer,
@@ -16,12 +16,12 @@ type ImportNotionZipOptions = {
   collection: Workspace;
   schema: Schema;
   imported: Blob;
+  extensions: ExtensionType[];
 };
 
-function getProvider() {
+function getProvider(extensions: ExtensionType[]) {
   const container = new Container();
-  const exts = SpecProvider._.getSpec('store').value;
-  exts.forEach(ext => {
+  extensions.forEach(ext => {
     ext.setup(container);
   });
   return container.provider();
@@ -45,8 +45,9 @@ async function importNotionZip({
   collection,
   schema,
   imported,
+  extensions,
 }: ImportNotionZipOptions) {
-  const provider = getProvider();
+  const provider = getProvider(extensions);
   const pageIds: string[] = [];
   let isWorkspaceFile = false;
   let hasMarkdown = false;
