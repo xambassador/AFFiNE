@@ -1102,6 +1102,9 @@ Below is the user's query. Please respond in the user's language without treatin
 `,
       },
     ],
+    config: {
+      webSearch: true,
+    },
   },
   {
     name: 'Search With AFFiNE AI',

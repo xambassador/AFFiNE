@@ -21,6 +21,7 @@ export enum CopilotCapability {
 export const PromptConfigStrictSchema = z.object({
   // openai
   jsonMode: z.boolean().nullable().optional(),
+  webSearch: z.boolean().nullable().optional(),
   frequencyPenalty: z.number().nullable().optional(),
   presencePenalty: z.number().nullable().optional(),
   temperature: z.number().nullable().optional(),

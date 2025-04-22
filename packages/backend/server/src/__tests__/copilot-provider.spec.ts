@@ -600,6 +600,8 @@ const workflows = [
     content: 'apple company',
     verifier: (t: ExecutionContext, result: string) => {
       for (const l of result.split('\n')) {
+        const line = l.trim();
+        if (!line) continue;
         t.notThrows(() => {
           JSON.parse(l.trim());
         }, 'should be valid json');
