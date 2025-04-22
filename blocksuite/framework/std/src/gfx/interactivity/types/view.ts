@@ -1,4 +1,4 @@
-import type { Bound, IPoint } from '@blocksuite/global/gfx';
+import type { Bound, IBound, IPoint } from '@blocksuite/global/gfx';
 
 import type { GfxBlockComponent } from '../../../view/element/gfx-block-component.js';
 import type { GfxModel } from '../../model/model.js';
@@ -56,9 +56,23 @@ export type SelectedContext = {
   position: IPoint;
 
   /**
-   * If the current selection is a fallback selection, like selecting the element inside a group, the group will be selected instead
+   * If the current selection is a fallback selection.
+   *
+   * E.g., if selecting a child element inside a group, the `onSelected` method will be executed on group, and
+   * the fallback is true because the it's not the original target(the child element).
    */
   fallback: boolean;
+};
+
+export type BoxSelectionContext = {
+  box: Readonly<
+    IBound & {
+      startX: number;
+      startY: number;
+      endX: number;
+      endY: number;
+    }
+  >;
 };
 
 export type GfxViewTransformInterface = {
@@ -70,8 +84,11 @@ export type GfxViewTransformInterface = {
 
   /**
    * When the element is selected by the pointer
-   * @param context
-   * @returns
    */
   onSelected: (context: SelectedContext) => void;
+
+  /**
+   * When the element is selected by box selection, return false to prevent the default selection behavior.
+   */
+  onBoxSelected: (context: BoxSelectionContext) => boolean | void;
 };

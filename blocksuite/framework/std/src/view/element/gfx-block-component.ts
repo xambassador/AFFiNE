@@ -6,6 +6,7 @@ import { nothing } from 'lit';
 import type { BlockService } from '../../extension/index.js';
 import { GfxControllerIdentifier } from '../../gfx/identifiers.js';
 import type {
+  BoxSelectionContext,
   DragMoveContext,
   GfxViewTransformInterface,
   SelectedContext,
@@ -112,6 +113,8 @@ export abstract class GfxBlockComponent<
 
     return true;
   }
+
+  onBoxSelected(_: BoxSelectionContext) {}
 
   onRotate() {}
 
@@ -230,6 +233,8 @@ export function toGfxBlockComponent<
 
       return true;
     }
+
+    onBoxSelected(_: BoxSelectionContext) {}
 
     onRotate() {}
 

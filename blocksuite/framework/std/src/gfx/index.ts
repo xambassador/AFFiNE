@@ -16,6 +16,7 @@ export { GfxExtension, GfxExtensionIdentifier } from './extension.js';
 export { GridManager } from './grid.js';
 export { GfxControllerIdentifier } from './identifiers.js';
 export type {
+  BoxSelectionContext,
   DragEndContext,
   DragExtensionInitializeContext,
   DragInitializationOption,

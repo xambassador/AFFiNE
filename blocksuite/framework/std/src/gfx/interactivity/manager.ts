@@ -3,6 +3,7 @@ import { DisposableGroup } from '@blocksuite/global/disposable';
 import { Bound, Point } from '@blocksuite/global/gfx';
 
 import type { PointerEventState } from '../../event/state/pointer.js';
+import { getTopElements } from '../../utils/tree.js';
 import { GfxExtension, GfxExtensionIdentifier } from '../extension.js';
 import type { GfxModel } from '../model/model.js';
 import { createInteractionContext, type SupportedEvents } from './event.js';
@@ -20,6 +21,7 @@ import type {
   ExtensionDragMoveContext,
   ExtensionDragStartContext,
 } from './types/drag.js';
+import type { BoxSelectionContext } from './types/view.js';
 
 type ExtensionPointerHandler = Exclude<
   SupportedEvents,
@@ -90,7 +92,12 @@ export class InteractivityManager extends GfxExtension {
     };
   }
 
-  dispatchOnSelected(evt: PointerEventState) {
+  /**
+   * Handle element selection.
+   * @param evt The pointer event that triggered the selection.
+   * @returns True if the element was selected, false otherwise.
+   */
+  handleElementSelection(evt: PointerEventState) {
     const { raw } = evt;
     const { gfx } = this;
     const [x, y] = gfx.viewport.toModelCoordFromClientCoord([raw.x, raw.y]);
@@ -122,15 +129,30 @@ export class InteractivityManager extends GfxExtension {
     return false;
   }
 
+  handleBoxSelection(context: { box: BoxSelectionContext['box'] }) {
+    const elements = this.gfx.getElementsByBound(context.box).filter(model => {
+      const view = this.gfx.view.get(model);
+
+      if (
+        !view ||
+        view.onBoxSelected({
+          box: context.box,
+        }) === false
+      )
+        return false;
+
+      return true;
+    });
+
+    return getTopElements(elements).filter(elm => !elm.isLocked());
+  }
+
   /**
-   * Initialize drag operation for elements.
-   * Handles drag start, move and end events automatically.
+   * Initialize elements movements.
+   * It will handle drag start, move and end events automatically.
    * Note: Call this when mouse is already down.
-   *
-   * @param options
-   * @returns
    */
-  initializeDrag(options: DragInitializationOption) {
+  handleElementMove(options: DragInitializationOption) {
     let cancelledByExt = false;
 
     const context: DragExtensionInitializeContext = {
@@ -294,7 +316,7 @@ export class InteractivityManager extends GfxExtension {
     dragStart();
   }
 
-  requestElementsClone(options: RequestElementsCloneContext) {
+  requestElementClone(options: RequestElementsCloneContext) {
     const extensions = this.interactExtensions;
 
     for (let ext of extensions.values()) {

@@ -10,6 +10,7 @@ export type {
   ExtensionDragStartContext,
 } from './types/drag.js';
 export type {
+  BoxSelectionContext,
   DragEndContext,
   DragMoveContext,
   DragStartContext,

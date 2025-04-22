@@ -1,13 +1,14 @@
 import { type Container, createIdentifier } from '@blocksuite/global/di';
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import { BlockSuiteError, ErrorCode } from '@blocksuite/global/exceptions';
-import type { Bound, IVec } from '@blocksuite/global/gfx';
+import { type Bound, type IVec } from '@blocksuite/global/gfx';
 import type { Extension } from '@blocksuite/store';
 
 import type { PointerEventState } from '../../event/index.js';
 import type { EditorHost } from '../../view/index.js';
 import type { GfxController } from '../index.js';
 import type {
+  BoxSelectionContext,
   DragEndContext,
   DragMoveContext,
   DragStartContext,
@@ -220,6 +221,8 @@ export class GfxElementModelView<
       return true;
     }
   }
+
+  onBoxSelected(_: BoxSelectionContext): boolean | void {}
 
   onResize = () => {};
 
