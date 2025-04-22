@@ -101,6 +101,7 @@ __metadata:
     "@blocksuite/affine": "workspace:*"
     "@node-rs/argon2": "npm:^2.0.2"
     "@playwright/test": "npm:=1.51.1"
+    "@toeverything/infra": "workspace:*"
     express: "npm:^5.0.0"
     http-proxy-middleware: "npm:^3.0.3"
   peerDependencies:
