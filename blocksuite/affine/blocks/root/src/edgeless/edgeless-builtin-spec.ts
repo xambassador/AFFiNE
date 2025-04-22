@@ -29,6 +29,7 @@ import { EdgelessRootBlockSpec } from './edgeless-root-spec.js';
 import { DefaultTool } from './gfx-tool/default-tool.js';
 import { EmptyTool } from './gfx-tool/empty-tool.js';
 import { PanTool } from './gfx-tool/pan-tool.js';
+import { AltCloneExtension } from './interact-extensions/clone-ext.js';
 import { DblClickAddEdgelessText } from './interact-extensions/dblclick-add-edgeless-text.js';
 import { SnapExtension } from './interact-extensions/snap-manager.js';
 import { EditPropsMiddlewareBuilder } from './middlewares/base.js';
@@ -63,6 +64,7 @@ export const EdgelessBuiltInManager: ExtensionType[] = [
   ConnectionOverlay,
   MindMapIndicatorOverlay,
   SnapOverlay,
+  AltCloneExtension,
   EditPropsMiddlewareBuilder,
   EdgelessElementToolbarExtension,
 ].flat();

@@ -5,7 +5,9 @@ import { Extension } from '@blocksuite/store';
 import type { PointerEventState } from '../../../event/index.js';
 import type { GfxController } from '../../controller.js';
 import { GfxControllerIdentifier } from '../../identifiers.js';
+import type { GfxModel } from '../../model/model.js';
 import type { SupportedEvents } from '../event.js';
+import type { ExtensionElementsCloneContext } from '../types/clone.js';
 import type {
   DragExtensionInitializeContext,
   ExtensionDragEndContext,
@@ -105,11 +107,22 @@ type ActionContextMap = {
       clear?: () => void;
     };
   };
+  elementsClone: {
+    context: ExtensionElementsCloneContext;
+    returnType: Promise<
+      | {
+          elements: GfxModel[];
+        }
+      | undefined
+    >;
+  };
 };
 
 export class InteractivityActionAPI {
   private readonly _handlers: Partial<{
-    dragInitialize: Parameters<InteractivityActionAPI['onDragInitialize']>[0];
+    [K in keyof ActionContextMap]: (
+      ctx: ActionContextMap[K]['context']
+    ) => ActionContextMap[K]['returnType'];
   }> = {};
 
   onDragInitialize(
@@ -121,6 +134,18 @@ export class InteractivityActionAPI {
 
     return () => {
       delete this._handlers['dragInitialize'];
+    };
+  }
+
+  onRequestElementsClone(
+    handler: (
+      ctx: ActionContextMap['elementsClone']['context']
+    ) => ActionContextMap['elementsClone']['returnType']
+  ) {
+    this._handlers['elementsClone'] = handler;
+
+    return () => {
+      return delete this._handlers['elementsClone'];
     };
   }
 

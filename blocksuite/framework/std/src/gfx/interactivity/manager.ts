@@ -12,6 +12,7 @@ import {
   InteractivityExtensionIdentifier,
 } from './extension/base.js';
 import { GfxViewEventManager } from './gfx-view-event-handler.js';
+import type { RequestElementsCloneContext } from './types/clone.js';
 import type {
   DragExtensionInitializeContext,
   DragInitializationOption,
@@ -287,5 +288,22 @@ export class InteractivityManager extends GfxExtension {
 
     listenEvent();
     dragStart();
+  }
+
+  requestElementsClone(options: RequestElementsCloneContext) {
+    const extensions = this.interactExtensions;
+
+    for (let ext of extensions.values()) {
+      const cloneData = (ext.action as InteractivityActionAPI).emit(
+        'elementsClone',
+        options
+      );
+
+      if (cloneData) {
+        return cloneData;
+      }
+    }
+
+    return Promise.resolve(undefined);
   }
 }

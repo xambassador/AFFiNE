@@ -16,8 +16,8 @@ import {
 import { resetNativeSelection } from '@blocksuite/affine-shared/utils';
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import type { IVec } from '@blocksuite/global/gfx';
-import { Bound, getCommonBoundWithRotation, Vec } from '@blocksuite/global/gfx';
-import type { BlockComponent, PointerEventState } from '@blocksuite/std';
+import { Bound, Vec } from '@blocksuite/global/gfx';
+import type { PointerEventState } from '@blocksuite/std';
 import {
   BaseTool,
   getTopElements,
@@ -28,8 +28,6 @@ import {
 } from '@blocksuite/std/gfx';
 import { effect } from '@preact/signals-core';
 
-import { createElementsFromClipboardDataCommand } from '../clipboard/command.js';
-import { prepareCloneData } from '../utils/clone-utils.js';
 import { calPanDelta } from '../utils/panning-utils.js';
 import { isCanvasElement } from '../utils/query.js';
 import { DefaultModeDragType } from './default-tool-ext/ext.js';
@@ -170,10 +168,6 @@ export class DefaultTool extends BaseTool {
 
   enableHover = true;
 
-  private get _edgeless(): BlockComponent | null {
-    return this.std.view.getBlock(this.doc.root!.id);
-  }
-
   /**
    * Get the end position of the dragging area in the model coordinate
    */
@@ -205,22 +199,13 @@ export class DefaultTool extends BaseTool {
   }
 
   private async _cloneContent() {
-    if (!this._edgeless) return;
+    const clonedResult = await this.interactivity?.requestElementsClone({
+      elements: this._toBeMoved,
+    });
 
-    const snapshot = prepareCloneData(this._toBeMoved, this.std);
+    if (!clonedResult) return;
 
-    const bound = getCommonBoundWithRotation(this._toBeMoved);
-    const [_, { createdElementsPromise }] = this.std.command.exec(
-      createElementsFromClipboardDataCommand,
-      {
-        elementsRawData: snapshot,
-        pasteCenter: bound.center,
-      }
-    );
-    if (!createdElementsPromise) return;
-    const { canvasElements, blockModels } = await createdElementsPromise;
-
-    this._toBeMoved = [...canvasElements, ...blockModels];
+    this._toBeMoved = clonedResult.elements;
     this.edgelessSelectionManager.set({
       elements: this._toBeMoved.map(e => e.id),
       editing: false,
