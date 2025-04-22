@@ -1,8 +1,5 @@
 import { OverlayIdentifier } from '@blocksuite/affine-block-surface';
-import {
-  type FrameBlockModel,
-  MindmapElementModel,
-} from '@blocksuite/affine-model';
+import { FrameBlockModel, MindmapElementModel } from '@blocksuite/affine-model';
 import {
   type DragExtensionInitializeContext,
   getTopElements,
@@ -77,6 +74,23 @@ export class FrameHighlightManager extends InteractivityExtension {
           frameHighlightOverlay.clear();
         },
       };
+    });
+
+    this.event.on('pointermove', context => {
+      const [x, y] = this.gfx.viewport.toModelCoord(
+        context.event.x,
+        context.event.y
+      );
+      const target = this.gfx.getElementByPoint(x, y);
+
+      if (
+        target instanceof FrameBlockModel &&
+        target.externalBound?.isPointInBound([x, y])
+      ) {
+        this.frameHighlightOverlay.highlight(target);
+      } else {
+        this.frameHighlightOverlay.clear();
+      }
     });
   }
 }

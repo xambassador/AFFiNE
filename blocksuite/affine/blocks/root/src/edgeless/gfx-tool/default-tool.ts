@@ -1,8 +1,4 @@
-import {
-  type FrameOverlay,
-  isFrameBlock,
-} from '@blocksuite/affine-block-frame';
-import { OverlayIdentifier } from '@blocksuite/affine-block-surface';
+import { isFrameBlock } from '@blocksuite/affine-block-frame';
 import {
   GroupElementModel,
   MindmapElementModel,
@@ -186,10 +182,6 @@ export class DefaultTool extends BaseTool {
     return this.std.getOptional(InteractivityIdentifier);
   }
 
-  private get frameOverlay() {
-    return this.std.get(OverlayIdentifier('frame')) as FrameOverlay;
-  }
-
   private async _cloneContent() {
     const clonedResult = await this.interactivity?.requestElementsClone({
       elements: this._toBeMoved,
@@ -364,7 +356,6 @@ export class DefaultTool extends BaseTool {
     if (this.edgelessSelectionManager.editing || !this.dragging) return;
 
     this.dragging = false;
-    this.frameOverlay.clear();
     this._toBeMoved = [];
     this._clearSelectingState();
     this.dragType = DefaultModeDragType.None;
@@ -470,21 +461,6 @@ export class DefaultTool extends BaseTool {
   }
 
   override pointerMove(e: PointerEventState) {
-    const hovered = this._pick(e.x, e.y, {
-      hitThreshold: 10,
-    });
-
-    if (
-      isFrameBlock(hovered) &&
-      hovered.externalBound?.isPointInBound(
-        this.gfx.viewport.toModelCoord(e.x, e.y)
-      )
-    ) {
-      this.frameOverlay.highlight(hovered);
-    } else {
-      this.frameOverlay.clear();
-    }
-
     this.interactivity?.dispatchEvent('pointermove', e);
   }
 
