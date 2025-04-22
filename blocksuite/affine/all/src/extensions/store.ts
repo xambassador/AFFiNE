@@ -5,6 +5,10 @@ import { ImageStoreSpec } from '@blocksuite/affine-block-image';
 import { SurfaceBlockSchemaExtension } from '@blocksuite/affine-block-surface';
 import { TableSelectionExtension } from '@blocksuite/affine-block-table';
 import {
+  type StoreExtensionContext,
+  StoreExtensionProvider,
+} from '@blocksuite/affine-ext-loader';
+import {
   AttachmentBlockSchemaExtension,
   BookmarkBlockSchemaExtension,
   CalloutBlockSchemaExtension,
@@ -110,3 +114,12 @@ export const StoreExtensions: ExtensionType[] = [
   EmbedIframeConfigExtensions,
   EmbedIframeService,
 ].flat();
+
+export class MigratingStoreExtension extends StoreExtensionProvider {
+  override name = 'migrating';
+
+  override setup(context: StoreExtensionContext) {
+    super.setup(context);
+    context.register(StoreExtensions);
+  }
+}

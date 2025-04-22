@@ -2,10 +2,9 @@ import './chat-panel-messages';
 
 import type { ContextEmbedStatus } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
-import type { SpecBuilder } from '@blocksuite/affine/shared/utils';
 import type { EditorHost } from '@blocksuite/affine/std';
 import { ShadowlessElement } from '@blocksuite/affine/std';
-import type { Store } from '@blocksuite/affine/store';
+import type { ExtensionType, Store } from '@blocksuite/affine/store';
 import { HelpIcon } from '@blocksuite/icons/lit';
 import { type Signal, signal } from '@preact/signals-core';
 import { css, html, type PropertyValues } from 'lit';
@@ -208,7 +207,7 @@ export class ChatPanel extends SignalWatcher(
   accessor docDisplayConfig!: DocDisplayConfig;
 
   @property({ attribute: false })
-  accessor previewSpecBuilder!: SpecBuilder;
+  accessor extensions!: ExtensionType[];
 
   @state()
   accessor isLoading = false;
@@ -401,7 +400,7 @@ export class ChatPanel extends SignalWatcher(
         .updateContext=${this.updateContext}
         .host=${this.host}
         .isLoading=${this.isLoading}
-        .previewSpecBuilder=${this.previewSpecBuilder}
+        .extensions=${this.extensions}
       ></chat-panel-messages>
       <ai-chat-composer
         .host=${this.host}

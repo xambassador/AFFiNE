@@ -43,6 +43,18 @@ import type {
   AffineAIPanelWidgetConfig,
 } from '../widgets/ai-panel/type';
 
+export const CustomPageEditorBlockSpecs: ExtensionType[] = [
+  ...PageEditorBlockSpecs,
+  {
+    setup: di => {
+      di.override(
+        BlockViewIdentifier('affine:page'),
+        () => literal`affine-page-root`
+      );
+    },
+  },
+];
+
 const customHeadingStyles = css`
   .custom-heading {
     .h1 {
@@ -90,18 +102,6 @@ export type TextRendererOptions = {
   additionalMiddlewares?: TransformerMiddleware[];
   testId?: string;
 };
-
-export const CustomPageEditorBlockSpecs: ExtensionType[] = [
-  ...PageEditorBlockSpecs,
-  {
-    setup: di => {
-      di.override(
-        BlockViewIdentifier('affine:page'),
-        () => literal`affine-page-root`
-      );
-    },
-  },
-];
 
 // todo: refactor it for more general purpose usage instead of AI only?
 export class TextRenderer extends WithDisposable(ShadowlessElement) {

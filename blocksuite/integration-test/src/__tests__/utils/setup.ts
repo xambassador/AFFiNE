@@ -1,13 +1,7 @@
 import '@toeverything/theme/style.css';
 import '@toeverything/theme/fonts.css';
 
-import { effects as blocksEffects } from '@blocksuite/affine/effects';
-import {
-  EdgelessEditorBlockSpecs,
-  PageEditorBlockSpecs,
-  registerStoreSpecs,
-  StoreExtensions,
-} from '@blocksuite/affine/extensions';
+import { registerStoreSpecs } from '@blocksuite/affine/extensions';
 import type { DocMode } from '@blocksuite/affine/model';
 import { AffineSchemas } from '@blocksuite/affine/schemas';
 import {
@@ -27,10 +21,16 @@ import {
 
 import { effects } from '../../effects.js';
 import { TestAffineEditorContainer } from '../../index.js';
+import { getTestStoreManager } from '../../store.js';
+import { getTestViewManager } from '../../view.js';
 
+// FIXME: used for test import/export
 registerStoreSpecs();
-blocksEffects();
+const storeManager = getTestStoreManager();
+const viewManager = getTestViewManager();
 effects();
+
+const storeExtensions = storeManager.get('store');
 
 export function getRenderer() {
   return editor.std.get(
@@ -85,12 +85,12 @@ async function createEditor(
   editor.doc = doc;
   editor.mode = mode;
   editor.pageSpecs = [
-    ...PageEditorBlockSpecs,
+    ...viewManager.get('page'),
     FontConfigExtension(CommunityCanvasTextFonts),
     ...extensions,
   ];
   editor.edgelessSpecs = [
-    ...EdgelessEditorBlockSpecs,
+    ...viewManager.get('edgeless'),
     FontConfigExtension(CommunityCanvasTextFonts),
     ...extensions,
   ];
@@ -123,7 +123,7 @@ export async function setupEditor(
   extensions: ExtensionType[] = []
 ) {
   const collection = new TestWorkspace(createCollectionOptions());
-  collection.storeExtensions = StoreExtensions;
+  collection.storeExtensions = storeExtensions;
   collection.meta.initialize();
 
   window.collection = collection;

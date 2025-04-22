@@ -27,7 +27,7 @@ import { getFontConfigExtension } from '../font-config';
 import { patchPeekViewService } from '../peek-view-service';
 import { getThemeExtension } from '../theme';
 
-function getPagePreviewThemeExtension(framework: FrameworkProvider) {
+export function getPagePreviewThemeExtension(framework: FrameworkProvider) {
   class AffinePagePreviewThemeExtension
     extends LifeCycleWatcher
     implements ThemeExtension
