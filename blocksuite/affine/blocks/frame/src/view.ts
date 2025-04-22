@@ -16,12 +16,6 @@ export class FrameViewExtension extends ViewExtensionProvider {
 
   override setup(context: ViewExtensionContext): void {
     super.setup(context);
-    if (
-      context.scope === 'edgeless' ||
-      context.scope === 'preview-edgeless' ||
-      context.scope === 'mobile-edgeless'
-    ) {
-      context.register(FrameBlockSpec);
-    }
+    context.register(FrameBlockSpec);
   }
 }

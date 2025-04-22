@@ -4,11 +4,11 @@ import {
   EdgelessEditorBlockSpecs,
   PageEditorBlockSpecs,
 } from './editor-specs.js';
+import { StoreExtensions } from './legacy-store.js';
 import {
   PreviewEdgelessEditorBlockSpecs,
   PreviewPageEditorBlockSpecs,
 } from './preview-specs.js';
-import { StoreExtensions } from './store.js';
 
 export function registerStoreSpecs() {
   SpecProvider._.addSpec('store', StoreExtensions);

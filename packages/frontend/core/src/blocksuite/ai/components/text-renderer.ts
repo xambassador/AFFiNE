@@ -228,7 +228,7 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
       const schema = this.schema ?? this.host?.std.store.schema;
       let provider: ServiceProvider;
       if (this.host) {
-        provider = this.host.std.provider;
+        provider = this.host.std.store.provider;
       } else {
         const container = new Container();
         getMarkdownAdapterExtensions().forEach(ext => {

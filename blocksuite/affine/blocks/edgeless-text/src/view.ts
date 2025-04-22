@@ -17,8 +17,18 @@ export class EdgelessTextViewExtension extends ViewExtensionProvider {
 
   override setup(context: ViewExtensionContext) {
     super.setup(context);
-    context.register([
-      BlockViewExtension('affine:edgeless-text', literal`affine-edgeless-text`),
-    ]);
+    const isEdgeless =
+      context.scope === 'edgeless' ||
+      context.scope === 'preview-edgeless' ||
+      context.scope === 'mobile-edgeless';
+
+    if (isEdgeless) {
+      context.register([
+        BlockViewExtension(
+          'affine:edgeless-text',
+          literal`affine-edgeless-text`
+        ),
+      ]);
+    }
   }
 }

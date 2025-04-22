@@ -85,8 +85,8 @@ export class ViewExtensionProvider<
     super.setup(context, options);
     const constructer = this.constructor as typeof ViewExtensionProvider;
     if (!constructer.effectRunned) {
-      this.effect();
       constructer.effectRunned = true;
+      this.effect();
     }
   }
 }

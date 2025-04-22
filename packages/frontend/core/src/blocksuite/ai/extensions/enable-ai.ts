@@ -21,9 +21,7 @@ export function enableAIExtension(
   framework: FrameworkProvider,
   enableAI: boolean
 ) {
-  if (!enableAI) {
-    return;
-  }
+  if (!enableAI) return;
 
   specBuilder.replace(CodeBlockSpec, AICodeBlockSpec);
   specBuilder.replace(ImageBlockSpec, AIImageBlockSpec);

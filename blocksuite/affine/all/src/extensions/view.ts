@@ -3,7 +3,7 @@ import {
   ViewExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
 
-import { effects } from '../effects';
+import { effects } from './effects';
 import {
   MigratingEdgelessEditorBlockSpecs,
   MigratingPageEditorBlockSpecs,
