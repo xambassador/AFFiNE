@@ -259,14 +259,16 @@ export class ChatPanel extends SignalWatcher(
     this.embeddingProgress = [0, 0];
   };
 
-  protected override updated(_changedProperties: PropertyValues) {
+  protected override willUpdate(_changedProperties: PropertyValues) {
     if (_changedProperties.has('doc')) {
       this._resetPanel();
       requestAnimationFrame(async () => {
         await this._initPanel();
       });
     }
+  }
 
+  protected override updated(_changedProperties: PropertyValues) {
     if (this.chatContextValue.status === 'loading') {
       // reset the wheel triggered flag when the status is loading
       this._wheelTriggered = false;

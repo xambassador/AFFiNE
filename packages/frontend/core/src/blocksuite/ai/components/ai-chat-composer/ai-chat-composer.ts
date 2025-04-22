@@ -156,7 +156,7 @@ export class AIChatComposer extends SignalWatcher(
     );
   }
 
-  protected override updated(_changedProperties: PropertyValues) {
+  protected override willUpdate(_changedProperties: PropertyValues) {
     if (_changedProperties.has('doc')) {
       this._resetComposer();
       requestAnimationFrame(async () => {
