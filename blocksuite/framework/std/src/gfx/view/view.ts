@@ -26,6 +26,9 @@ export type EventsHandlerMap = {
   pointerleave: PointerEventState;
   pointermove: PointerEventState;
   pointerup: PointerEventState;
+  dragstart: PointerEventState;
+  dragmove: PointerEventState;
+  dragend: PointerEventState;
 };
 
 export type SupportedEvent = keyof EventsHandlerMap;
@@ -97,11 +100,24 @@ export class GfxElementModelView<
     return this.model.containsBound(bounds);
   }
 
+  /**
+   * Dispatches an event to the view.
+   * @param event
+   * @param evt
+   * @returns Whether the event view has any handlers for the event.
+   */
   dispatch<K extends keyof EventsHandlerMap>(
     event: K,
     evt: EventsHandlerMap[K]
   ) {
-    this._handlers.get(event)?.forEach(callback => callback(evt));
+    const handlers = this._handlers.get(event);
+
+    if (handlers?.length) {
+      handlers.forEach(callback => callback(evt));
+      return true;
+    }
+
+    return false;
   }
 
   getLineIntersections(start: IVec, end: IVec) {

@@ -6,14 +6,17 @@ import {
   FeatureFlagService,
   TelemetryProvider,
 } from '@blocksuite/affine-shared/services';
-import type { PointerEventState } from '@blocksuite/std';
-import { InteractivityExtension } from '@blocksuite/std/gfx';
+import {
+  type GfxInteractivityContext,
+  InteractivityExtension,
+} from '@blocksuite/std/gfx';
 
 export class DblClickAddEdgelessText extends InteractivityExtension {
   static override key = 'dbl-click-add-edgeless-text';
 
   override mounted() {
-    this.event.on('dblclick', (e: PointerEventState) => {
+    this.event.on('dblclick', (ctx: GfxInteractivityContext) => {
+      const { event: e } = ctx;
       const textFlag = this.std.store
         .get(FeatureFlagService)
         .getFlag('enable_edgeless_text');

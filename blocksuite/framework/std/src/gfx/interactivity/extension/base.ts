@@ -2,11 +2,10 @@ import { type Container, createIdentifier } from '@blocksuite/global/di';
 import { BlockSuiteError, ErrorCode } from '@blocksuite/global/exceptions';
 import { Extension } from '@blocksuite/store';
 
-import type { PointerEventState } from '../../../event/index.js';
 import type { GfxController } from '../../controller.js';
 import { GfxControllerIdentifier } from '../../identifiers.js';
 import type { GfxModel } from '../../model/model.js';
-import type { SupportedEvents } from '../event.js';
+import type { GfxInteractivityContext, SupportedEvents } from '../event.js';
 import type { ExtensionElementsCloneContext } from '../types/clone.js';
 import type {
   DragExtensionInitializeContext,
@@ -64,10 +63,13 @@ export class InteractivityExtension extends Extension {
 export class InteractivityEventAPI {
   private readonly _handlersMap = new Map<
     SupportedEvents,
-    ((evt: PointerEventState) => void)[]
+    ((evt: GfxInteractivityContext) => void)[]
   >();
 
-  on(eventName: SupportedEvents, handler: (evt: PointerEventState) => void) {
+  on(
+    eventName: SupportedEvents,
+    handler: (evt: GfxInteractivityContext) => void
+  ) {
     const handlers = this._handlersMap.get(eventName) ?? [];
     handlers.push(handler);
     this._handlersMap.set(eventName, handlers);
@@ -81,7 +83,7 @@ export class InteractivityEventAPI {
     };
   }
 
-  emit(eventName: SupportedEvents, evt: PointerEventState) {
+  emit(eventName: SupportedEvents, evt: GfxInteractivityContext) {
     const handlers = this._handlersMap.get(eventName);
     if (!handlers) {
       return;

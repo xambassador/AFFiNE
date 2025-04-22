@@ -1,3 +1,4 @@
+export type { GfxInteractivityContext } from './event.js';
 export { InteractivityExtension } from './extension/base.js';
 export { GfxViewEventManager } from './gfx-view-event-handler.js';
 export { InteractivityIdentifier, InteractivityManager } from './manager.js';

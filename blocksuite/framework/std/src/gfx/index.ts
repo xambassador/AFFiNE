@@ -24,6 +24,7 @@ export type {
   ExtensionDragEndContext,
   ExtensionDragMoveContext,
   ExtensionDragStartContext,
+  GfxInteractivityContext,
   SelectedContext,
 } from './interactivity/index.js';
 export {

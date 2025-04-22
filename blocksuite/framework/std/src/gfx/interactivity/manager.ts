@@ -5,7 +5,7 @@ import { Bound, Point } from '@blocksuite/global/gfx';
 import type { PointerEventState } from '../../event/state/pointer.js';
 import { GfxExtension, GfxExtensionIdentifier } from '../extension.js';
 import type { GfxModel } from '../model/model.js';
-import type { SupportedEvents } from './event.js';
+import { createInteractionContext, type SupportedEvents } from './event.js';
 import {
   type InteractivityActionAPI,
   type InteractivityEventAPI,
@@ -29,16 +29,6 @@ type ExtensionPointerHandler = Exclude<
 export const InteractivityIdentifier = GfxExtensionIdentifier(
   'interactivity-manager'
 ) as ServiceIdentifier<InteractivityManager>;
-
-const CAMEL_CASE_MAP: {
-  [key in ExtensionPointerHandler]: keyof GfxViewEventManager;
-} = {
-  click: 'click',
-  dblclick: 'dblClick',
-  pointerdown: 'pointerDown',
-  pointermove: 'pointerMove',
-  pointerup: 'pointerUp',
-};
 
 export class InteractivityManager extends GfxExtension {
   static override key = 'interactivity-manager';
@@ -78,20 +68,26 @@ export class InteractivityManager extends GfxExtension {
   }
 
   /**
-   * Dispatch the event to canvas elements
+   * Dispatch event to extensions and gfx view.
    * @param eventName
    * @param evt
+   * @returns
    */
-  dispatch(eventName: ExtensionPointerHandler, evt: PointerEventState) {
-    const handlerName = CAMEL_CASE_MAP[eventName];
-
-    this.canvasEventHandler[handlerName](evt);
-
+  dispatchEvent(eventName: ExtensionPointerHandler, evt: PointerEventState) {
+    const { context, preventDefaultState } = createInteractionContext(evt);
     const extensions = this.interactExtensions;
 
     extensions.forEach(ext => {
-      (ext.event as InteractivityEventAPI).emit(eventName, evt);
+      (ext.event as InteractivityEventAPI).emit(eventName, context);
     });
+
+    const handledByView =
+      this.canvasEventHandler.dispatch(eventName, evt) ?? false;
+
+    return {
+      preventDefaultState,
+      handledByView,
+    };
   }
 
   dispatchOnSelected(evt: PointerEventState) {
@@ -126,6 +122,14 @@ export class InteractivityManager extends GfxExtension {
     return false;
   }
 
+  /**
+   * Initialize drag operation for elements.
+   * Handles drag start, move and end events automatically.
+   * Note: Call this when mouse is already down.
+   *
+   * @param options
+   * @returns
+   */
   initializeDrag(options: DragInitializationOption) {
     let cancelledByExt = false;
 

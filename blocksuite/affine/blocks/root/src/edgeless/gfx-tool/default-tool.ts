@@ -2,12 +2,8 @@ import {
   type FrameOverlay,
   isFrameBlock,
 } from '@blocksuite/affine-block-frame';
+import { OverlayIdentifier } from '@blocksuite/affine-block-surface';
 import {
-  ConnectorUtils,
-  OverlayIdentifier,
-} from '@blocksuite/affine-block-surface';
-import {
-  type ConnectorElementModel,
   GroupElementModel,
   MindmapElementModel,
   NoteBlockModel,
@@ -16,7 +12,7 @@ import {
 import { resetNativeSelection } from '@blocksuite/affine-shared/utils';
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import type { IVec } from '@blocksuite/global/gfx';
-import { Bound, Vec } from '@blocksuite/global/gfx';
+import { Bound } from '@blocksuite/global/gfx';
 import type { PointerEventState } from '@blocksuite/std';
 import {
   BaseTool,
@@ -29,7 +25,6 @@ import {
 import { effect } from '@preact/signals-core';
 
 import { calPanDelta } from '../utils/panning-utils.js';
-import { isCanvasElement } from '../utils/query.js';
 import { DefaultModeDragType } from './default-tool-ext/ext.js';
 
 export class DefaultTool extends BaseTool {
@@ -58,11 +53,6 @@ export class DefaultTool extends BaseTool {
     this._accumulateDelta[1] += delta[1];
     this.gfx.viewport.applyDeltaCenter(delta[0], delta[1]);
   };
-
-  // For moving the connector label
-  private _selectedConnector: ConnectorElementModel | null = null;
-
-  private _selectedConnectorLabelBounds: Bound | null = null;
 
   private _selectionRectTransition: null | {
     w: number;
@@ -168,6 +158,8 @@ export class DefaultTool extends BaseTool {
 
   enableHover = true;
 
+  dragging = false;
+
   /**
    * Get the end position of the dragging area in the model coordinate
    */
@@ -232,20 +224,6 @@ export class DefaultTool extends BaseTool {
             editing: false,
           });
         }
-
-        if (
-          isCanvasElement(selected) &&
-          ConnectorUtils.isConnectorWithLabel(selected) &&
-          (selected as ConnectorElementModel).labelIncludesPoint(
-            this.gfx.viewport.toModelCoord(x, y)
-          )
-        ) {
-          this._selectedConnector = selected as ConnectorElementModel;
-          this._selectedConnectorLabelBounds = Bound.fromXYWH(
-            this._selectedConnector.labelXYWH!
-          );
-          return DefaultModeDragType.ConnectorLabelMoving;
-        }
       }
 
       return this.edgelessSelectionManager.editing
@@ -259,43 +237,11 @@ export class DefaultTool extends BaseTool {
           editing: false,
         });
 
-        if (
-          isCanvasElement(selected) &&
-          ConnectorUtils.isConnectorWithLabel(selected) &&
-          (selected as ConnectorElementModel).labelIncludesPoint(
-            this.gfx.viewport.toModelCoord(x, y)
-          )
-        ) {
-          this._selectedConnector = selected as ConnectorElementModel;
-          this._selectedConnectorLabelBounds = Bound.fromXYWH(
-            this._selectedConnector.labelXYWH!
-          );
-          return DefaultModeDragType.ConnectorLabelMoving;
-        }
-
         return DefaultModeDragType.ContentMoving;
       } else {
         return DefaultModeDragType.Selecting;
       }
     }
-  }
-
-  private _moveLabel(delta: IVec) {
-    const connector = this._selectedConnector;
-    let bounds = this._selectedConnectorLabelBounds;
-    if (!connector || !bounds) return;
-    bounds = bounds.clone();
-    const center = connector.getNearestPoint(
-      Vec.add(bounds.center, delta) as IVec
-    );
-    const distance = connector.getOffsetDistanceByPoint(center as IVec);
-    bounds.center = center;
-    this.gfx.updateElement(connector, {
-      labelXYWH: bounds.toXYWH(),
-      labelOffset: {
-        distance,
-      },
-    });
   }
 
   private _pick(x: number, y: number, options?: PointTestOptions) {
@@ -387,7 +333,7 @@ export class DefaultTool extends BaseTool {
       resetNativeSelection(null);
     }
 
-    this.interactivity?.dispatch('click', e);
+    this.interactivity?.dispatchEvent('click', e);
   }
 
   override deactivate() {
@@ -409,21 +355,28 @@ export class DefaultTool extends BaseTool {
       return;
     }
 
-    this.interactivity?.dispatch('dblclick', e);
+    this.interactivity?.dispatchEvent('dblclick', e);
   }
 
-  override dragEnd() {
-    if (this.edgelessSelectionManager.editing) return;
+  override dragEnd(e: PointerEventState) {
+    this.interactivity?.dispatchEvent('dragend', e);
 
+    if (this.edgelessSelectionManager.editing || !this.dragging) return;
+
+    this.dragging = false;
     this.frameOverlay.clear();
     this._toBeMoved = [];
-    this._selectedConnector = null;
-    this._selectedConnectorLabelBounds = null;
     this._clearSelectingState();
     this.dragType = DefaultModeDragType.None;
   }
 
   override dragMove(e: PointerEventState) {
+    this.interactivity?.dispatchEvent('dragmove', e);
+
+    if (!this.dragging) {
+      return;
+    }
+
     const { viewport } = this.gfx;
     switch (this.dragType) {
       case DefaultModeDragType.Selecting: {
@@ -441,12 +394,6 @@ export class DefaultTool extends BaseTool {
       case DefaultModeDragType.ContentMoving: {
         break;
       }
-      case DefaultModeDragType.ConnectorLabelMoving: {
-        const dx = this.dragLastPos[0] - this.dragStartPos[0];
-        const dy = this.dragLastPos[1] - this.dragStartPos[1];
-        this._moveLabel([dx, dy]);
-        break;
-      }
       case DefaultModeDragType.NativeEditing: {
         // TODO reset if drag out of note
         break;
@@ -456,7 +403,18 @@ export class DefaultTool extends BaseTool {
 
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   override async dragStart(e: PointerEventState) {
-    if (this.edgelessSelectionManager.editing) return;
+    const { preventDefaultState, handledByView } =
+      this.interactivity?.dispatchEvent('dragstart', e) ?? {};
+
+    if (
+      this.edgelessSelectionManager.editing ||
+      preventDefaultState ||
+      handledByView
+    )
+      return;
+
+    this.dragging = true;
+
     // Determine the drag type based on the current state and event
     let dragType = this._determineDragType(e);
 
@@ -508,7 +466,7 @@ export class DefaultTool extends BaseTool {
   }
 
   override pointerDown(e: PointerEventState): void {
-    this.interactivity?.dispatch('pointerdown', e);
+    this.interactivity?.dispatchEvent('pointerdown', e);
   }
 
   override pointerMove(e: PointerEventState) {
@@ -527,11 +485,11 @@ export class DefaultTool extends BaseTool {
       this.frameOverlay.clear();
     }
 
-    this.interactivity?.dispatch('pointermove', e);
+    this.interactivity?.dispatchEvent('pointermove', e);
   }
 
   override pointerUp(e: PointerEventState) {
-    this.interactivity?.dispatch('pointerup', e);
+    this.interactivity?.dispatchEvent('pointerup', e);
   }
 
   override tripleClick() {}
