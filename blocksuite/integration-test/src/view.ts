@@ -14,6 +14,7 @@ import { ListViewExtension } from '@blocksuite/affine/blocks/list/view';
 import { NoteViewExtension } from '@blocksuite/affine/blocks/note/view';
 import { ParagraphViewExtension } from '@blocksuite/affine/blocks/paragraph/view';
 import { SurfaceRefViewExtension } from '@blocksuite/affine/blocks/surface-ref/view';
+import { TableViewExtension } from '@blocksuite/affine/blocks/table/view';
 import { ViewExtensionManager } from '@blocksuite/affine/ext-loader';
 import { MigratingViewExtension } from '@blocksuite/affine/extensions/view';
 
@@ -37,6 +38,7 @@ export function getTestViewManager() {
     NoteViewExtension,
     ParagraphViewExtension,
     SurfaceRefViewExtension,
+    TableViewExtension,
   ]);
   return manager;
 }

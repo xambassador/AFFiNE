@@ -1,6 +1,5 @@
 import { effects as blockRootEffects } from '@blocksuite/affine-block-root/effects';
 import { effects as blockSurfaceEffects } from '@blocksuite/affine-block-surface/effects';
-import { effects as blockTableEffects } from '@blocksuite/affine-block-table/effects';
 import { BlockSelection } from '@blocksuite/affine-components/block-selection';
 import { BlockZeroWidth } from '@blocksuite/affine-components/block-zero-width';
 import { effects as componentCaptionEffects } from '@blocksuite/affine-components/caption';
@@ -61,7 +60,6 @@ export function effects() {
   inlineMentionEffects();
 
   blockSurfaceEffects();
-  blockTableEffects();
   blockRootEffects();
 
   componentCaptionEffects();

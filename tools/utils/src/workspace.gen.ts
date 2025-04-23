@@ -403,6 +403,7 @@ export const PackageList = [
     name: '@blocksuite/affine-block-table',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/inlines/preset',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',

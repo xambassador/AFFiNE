@@ -11,7 +11,6 @@ import {
   PageSurfaceBlockSpec,
   SurfaceBlockAdapterExtensions,
 } from '@blocksuite/affine-block-surface';
-import { TableBlockSpec } from '@blocksuite/affine-block-table';
 import {
   brushToMarkdownAdapterMatcher,
   brushToPlainTextAdapterMatcher,
@@ -67,7 +66,6 @@ const CommonBlockSpecs: ExtensionType[] = [
   inlinePresetExtensions,
   DocDisplayMetaService,
   EditPropsStore,
-  TableBlockSpec,
   DefaultOpenDocExtension,
   FontLoaderService,
 

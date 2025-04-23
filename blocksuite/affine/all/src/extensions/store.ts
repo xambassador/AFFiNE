@@ -10,10 +10,6 @@ import {
 } from '@blocksuite/affine-block-root';
 import { SurfaceBlockSchemaExtension } from '@blocksuite/affine-block-surface';
 import {
-  TableBlockAdapterExtensions,
-  TableSelectionExtension,
-} from '@blocksuite/affine-block-table';
-import {
   type StoreExtensionContext,
   StoreExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
@@ -27,7 +23,6 @@ import {
 } from '@blocksuite/affine-inline-preset';
 import {
   RootBlockSchemaExtension,
-  TableBlockSchemaExtension,
   TranscriptionBlockSchemaExtension,
 } from '@blocksuite/affine-model';
 import {
@@ -114,7 +109,6 @@ function getPlainTextAdapterExtensions(): ExtensionType[] {
 const MigratingStoreExtensions: ExtensionType[] = [
   RootBlockSchemaExtension,
   SurfaceBlockSchemaExtension,
-  TableBlockSchemaExtension,
   TranscriptionBlockSchemaExtension,
 
   BlockSelectionExtension,
@@ -123,9 +117,7 @@ const MigratingStoreExtensions: ExtensionType[] = [
   CursorSelectionExtension,
   HighlightSelectionExtension,
   DatabaseSelectionExtension,
-  TableSelectionExtension,
 
-  TableBlockAdapterExtensions,
   getHtmlAdapterExtensions(),
   getMarkdownAdapterExtensions(),
   getNotionHtmlAdapterExtensions(),
