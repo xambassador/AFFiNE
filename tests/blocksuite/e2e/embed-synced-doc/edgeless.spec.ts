@@ -196,7 +196,7 @@ test.describe('Embed synced doc in edgeless mode', () => {
       await expect(edgelessNotes).toHaveCount(2);
       expect(await getSelectedIds(page)).toHaveLength(1);
       expect(await getSelectedIds(page)).not.toContain(prevIds);
-      expect(edgelessNotes.last()).toBeVisible();
+      await expect(edgelessNotes.last()).toBeVisible();
 
       const noteBound = await getSelectedBound(page);
       expect(isIntersected(embedDocBound, noteBound)).toBe(false);

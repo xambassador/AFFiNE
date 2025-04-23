@@ -164,7 +164,7 @@ test('can sync svg between different browsers', async ({ page, browser }) => {
   const fileChooserPromise = page.waitForEvent('filechooser');
   await page.keyboard.press('Enter', { delay: 50 });
   const fileChooser = await fileChooserPromise;
-  fileChooser.setFiles(Path.dir(import.meta.url).join('logo.svg').value);
+  await fileChooser.setFiles(Path.dir(import.meta.url).join('logo.svg').value);
   await expect(image).toBeVisible();
 
   // the user should see the svg

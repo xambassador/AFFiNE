@@ -178,7 +178,7 @@ test('add mindmap into frame, then drag root node of mindmap out.', async ({
   // drag out
   {
     const mindmapBound = await getSelectedBound(page);
-    pressEscape(page);
+    await pressEscape(page);
     await clickView(page, [
       mindmapBound[0] + 10,
       mindmapBound[1] + 0.5 * mindmapBound[3],

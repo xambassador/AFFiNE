@@ -181,7 +181,7 @@ test('should create session correctly', async t => {
       );
     });
 
-    app.switchUser(u1);
+    await app.switchUser(u1);
     const inviteId = await inviteUser(app, id, u2.email);
     await app.login(u2);
     await acceptInviteById(app, id, inviteId, false);
@@ -329,9 +329,9 @@ test('should fork session correctly', async t => {
       );
     });
 
-    app.switchUser(u1);
+    await app.switchUser(u1);
     const inviteId = await inviteUser(app, id, u2.email);
-    app.switchUser(u2);
+    await app.switchUser(u2);
     await acceptInviteById(app, id, inviteId, false);
     await assertForkSession(id, sessionId, randomUUID(), '', async x => {
       await t.throwsAsync(
@@ -341,14 +341,14 @@ test('should fork session correctly', async t => {
       );
     });
 
-    app.switchUser(u1);
+    await app.switchUser(u1);
     const histories = await getHistories(app, { workspaceId: id });
     const latestMessageId = histories
       .find(h => h.sessionId === forkedSessionId)
       ?.messages.findLast(m => m.role === 'assistant')?.id;
     t.truthy(latestMessageId, 'should find latest message id');
 
-    app.switchUser(u2);
+    await app.switchUser(u2);
     await assertForkSession(
       id,
       forkedSessionId,
@@ -654,10 +654,10 @@ test('should reject request from different user', async t => {
 
   // should reject chat from different user
   {
-    app.switchUser(u1);
+    await app.switchUser(u1);
     const messageId = await createCopilotMessage(app, sessionId);
     {
-      app.switchUser(u2);
+      await app.switchUser(u2);
       await t.throwsAsync(
         chatWithText(app, sessionId, messageId),
         { instanceOf: Error },
@@ -723,9 +723,9 @@ test('should reject request that user have not permission', async t => {
 
   // should able to list history after user have permission
   {
-    app.switchUser(u1);
+    await app.switchUser(u1);
     const inviteId = await inviteUser(app, workspaceId, u2.email);
-    app.switchUser(u2);
+    await app.switchUser(u2);
     await acceptInviteById(app, workspaceId, inviteId, false);
 
     t.deepEqual(
@@ -753,7 +753,7 @@ test('should reject request that user have not permission', async t => {
       'should able to list history'
     );
 
-    app.switchUser(u1);
+    await app.switchUser(u1);
     t.deepEqual(
       await getHistories(app, { workspaceId }),
       [],

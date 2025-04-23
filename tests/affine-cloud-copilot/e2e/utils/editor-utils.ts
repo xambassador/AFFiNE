@@ -51,7 +51,7 @@ export class EditorUtils {
   public static async switchToEdgelessMode(page: Page) {
     const editor = await page.waitForSelector('page-editor');
     await page.getByTestId('switch-edgeless-mode-button').click();
-    editor.waitForElementState('hidden');
+    await editor.waitForElementState('hidden');
     await page.waitForSelector('edgeless-editor');
     try {
       const edgelessNotificationClose = page.getByTestId(
@@ -408,9 +408,7 @@ export class EditorUtils {
       checkCodeError: this.createAction(page, () =>
         page.getByTestId('action-check-code-error').click()
       ),
-      continueWithAi: async () => {
-        page.getByTestId('action-continue-with-ai').click();
-      },
+      continueWithAi: () => page.getByTestId('action-continue-with-ai').click(),
       continueWriting: this.createAction(page, () =>
         page.getByTestId('action-continue-writing').click()
       ),
@@ -596,9 +594,7 @@ export class EditorUtils {
       checkCodeError: this.createAction(page, () =>
         page.getByTestId('action-check-code-error').click()
       ),
-      continueWithAi: async () => {
-        page.getByTestId('action-continue-with-ai').click();
-      },
+      continueWithAi: () => page.getByTestId('action-continue-with-ai').click(),
       continueWriting: this.createAction(page, () =>
         page.getByTestId('action-continue-writing').click()
       ),
