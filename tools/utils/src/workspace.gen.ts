@@ -666,6 +666,7 @@ export const PackageList = [
     name: '@blocksuite/affine-inline-link',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/inlines/reference',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',

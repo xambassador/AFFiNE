@@ -24,6 +24,7 @@ import {
 } from '@blocksuite/affine/ext-loader';
 import { MigratingViewExtension } from '@blocksuite/affine/extensions/view';
 import { FootnoteViewExtension } from '@blocksuite/affine/inlines/footnote/view';
+import { LinkViewExtension } from '@blocksuite/affine/inlines/link/view';
 import { ToolbarModuleExtension } from '@blocksuite/affine/shared/services';
 import { BlockFlavourIdentifier } from '@blocksuite/affine/std';
 import { FrameworkProvider } from '@toeverything/infra';
@@ -168,6 +169,7 @@ const manager = new ViewExtensionManager([
   TableViewExtension,
   // Inline
   FootnoteViewExtension,
+  LinkViewExtension,
 
   MigratingAffineViewExtension,
 ]);

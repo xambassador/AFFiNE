@@ -22,6 +22,7 @@ import {
 } from '@blocksuite/affine/ext-loader';
 import { MigratingStoreExtension } from '@blocksuite/affine/extensions/store';
 import { FootnoteStoreExtension } from '@blocksuite/affine/inlines/footnote/store';
+import { LinkStoreExtension } from '@blocksuite/affine/inlines/link/store';
 
 import { AIChatBlockSchemaExtension } from '../ai/blocks/ai-chat-block/model';
 
@@ -55,6 +56,7 @@ const manager = new StoreExtensionManager([
   TableStoreExtension,
   // Inline
   FootnoteStoreExtension,
+  LinkStoreExtension,
 
   MigratingStoreExtension,
   MigratingAffineStoreExtension,

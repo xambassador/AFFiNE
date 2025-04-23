@@ -18,6 +18,7 @@ import { TableStoreExtension } from '@blocksuite/affine/blocks/table/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 import { MigratingStoreExtension } from '@blocksuite/affine/extensions/store';
 import { FootnoteStoreExtension } from '@blocksuite/affine/inlines/footnote/store';
+import { LinkStoreExtension } from '@blocksuite/affine/inlines/link/store';
 
 const manager = new StoreExtensionManager([
   AttachmentStoreExtension,
@@ -39,6 +40,7 @@ const manager = new StoreExtensionManager([
   TableStoreExtension,
 
   FootnoteStoreExtension,
+  LinkStoreExtension,
 
   MigratingStoreExtension,
 ]);

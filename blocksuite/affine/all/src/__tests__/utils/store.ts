@@ -17,6 +17,7 @@ import { SurfaceRefStoreExtension } from '@blocksuite/affine-block-surface-ref/s
 import { TableStoreExtension } from '@blocksuite/affine-block-table/store';
 import { StoreExtensionManager } from '@blocksuite/affine-ext-loader';
 import { FootnoteStoreExtension } from '@blocksuite/affine-inline-footnote/store';
+import { LinkStoreExtension } from '@blocksuite/affine-inline-link/store';
 
 import { MigratingStoreExtension } from '../../extensions/store';
 
@@ -40,6 +41,7 @@ const manager = new StoreExtensionManager([
   TableStoreExtension,
 
   FootnoteStoreExtension,
+  LinkStoreExtension,
 
   MigratingStoreExtension,
 ]);
