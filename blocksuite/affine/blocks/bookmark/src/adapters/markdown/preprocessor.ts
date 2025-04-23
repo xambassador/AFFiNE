@@ -35,20 +35,41 @@ export function footnoteUrlPreprocessor(content: string): string {
     (match, reference, jsonContent) => {
       try {
         const footnoteData = JSON.parse(jsonContent.trim());
-        // If footnoteData is not an object or doesn't have url, return original content
-        // If the url is already encoded, return original content
-        if (
-          typeof footnoteData !== 'object' ||
-          !footnoteData.url ||
-          isEncoded(footnoteData.url)
-        ) {
+        // Basic validation checks
+        if (typeof footnoteData !== 'object') {
           return match;
         }
 
-        return formatFootnoteDefinition(reference, {
+        if (!footnoteData.url) {
+          return match;
+        }
+
+        // Check if URLs are already encoded
+        const isUrlEncoded = isEncoded(footnoteData.url);
+        const hasIcon = !!footnoteData.favicon;
+        const isIconEncoded = hasIcon && isEncoded(footnoteData.favicon);
+
+        // If both URL and icon (if present) are already encoded, return original
+        if (isUrlEncoded && (!hasIcon || isIconEncoded)) {
+          return match;
+        }
+
+        // Create processed data with encoded URLs
+        const processedData = {
           ...footnoteData,
-          url: encodeURIComponent(footnoteData.url),
-        });
+          url: isUrlEncoded
+            ? footnoteData.url
+            : encodeURIComponent(footnoteData.url),
+        };
+
+        // Add encoded favicon if present
+        if (hasIcon) {
+          processedData.favicon = isIconEncoded
+            ? footnoteData.favicon
+            : encodeURIComponent(footnoteData.favicon);
+        }
+
+        return formatFootnoteDefinition(reference, processedData);
       } catch {
         // Keep original content if JSON parsing fails
         return match;

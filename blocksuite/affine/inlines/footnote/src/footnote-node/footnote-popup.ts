@@ -31,9 +31,15 @@ export class FootNotePopup extends SignalWatcher(WithDisposable(LitElement)) {
 
   private readonly _isLoading$ = signal(false);
 
-  private readonly _linkPreview$ = signal<
-    { favicon: string | undefined; title?: string } | undefined
-  >({ favicon: undefined, title: undefined });
+  private readonly _linkPreview$ = signal<{
+    favicon: string | undefined;
+    title?: string;
+    description?: string;
+  }>({
+    favicon: undefined,
+    title: undefined,
+    description: undefined,
+  });
 
   private readonly _prefixIcon$ = computed(() => {
     const referenceType = this.footnote.reference.type;
@@ -105,9 +111,29 @@ export class FootNotePopup extends SignalWatcher(WithDisposable(LitElement)) {
     this.abortController.abort();
   };
 
+  private readonly _initLinkPreviewData = () => {
+    this._linkPreview$.value = {
+      favicon: this.footnote.reference.favicon,
+      title: this.footnote.reference.title,
+      description: this.footnote.reference.description,
+    };
+  };
+
   override connectedCallback() {
     super.connectedCallback();
-    if (this.footnote.reference.type === 'url' && this.footnote.reference.url) {
+
+    this._initLinkPreviewData();
+
+    // If the reference is a url, and the url exists
+    // and the link preview data is not already set, fetch the link preview data
+    const isTitleAndDescriptionEmpty =
+      !this._linkPreview$.value?.title &&
+      !this._linkPreview$.value?.description;
+    if (
+      this.footnote.reference.type === 'url' &&
+      this.footnote.reference.url &&
+      isTitleAndDescriptionEmpty
+    ) {
       this._isLoading$.value = true;
       this.std.store
         .get(LinkPreviewerService)
@@ -116,6 +142,7 @@ export class FootNotePopup extends SignalWatcher(WithDisposable(LitElement)) {
           this._linkPreview$.value = {
             favicon: data.icon ?? undefined,
             title: data.title ?? undefined,
+            description: data.description ?? undefined,
           };
         })
         .catch(console.error)
