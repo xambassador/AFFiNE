@@ -7618,6 +7618,34 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.properties"](): string;
     /**
+      * `Calendar`
+      */
+    ["com.affine.integration.calendar.name"](): string;
+    /**
+      * `New events will be scheduled in AFFiNE’s journal`
+      */
+    ["com.affine.integration.calendar.desc"](): string;
+    /**
+      * `Subscribe`
+      */
+    ["com.affine.integration.calendar.new-subscription"](): string;
+    /**
+      * `Unsubscribe`
+      */
+    ["com.affine.integration.calendar.unsubscribe"](): string;
+    /**
+      * `Add a calendar by URL`
+      */
+    ["com.affine.integration.calendar.new-title"](): string;
+    /**
+      * `Calendar URL`
+      */
+    ["com.affine.integration.calendar.new-url-label"](): string;
+    /**
+      * `An error occurred while adding the calendar`
+      */
+    ["com.affine.integration.calendar.new-error"](): string;
+    /**
       * `Notes`
       */
     ["com.affine.audio.notes"](): string;

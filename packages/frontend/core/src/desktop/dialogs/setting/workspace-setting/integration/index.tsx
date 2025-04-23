@@ -1,6 +1,8 @@
 import { SettingHeader } from '@affine/component/setting-components';
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { useI18n } from '@affine/i18n';
-import { type ReactNode, useState } from 'react';
+import { useLiveData, useService } from '@toeverything/infra';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { SubPageProvider, useSubPageIsland } from '../../sub-page';
 import {
@@ -8,12 +10,21 @@ import {
   IntegrationCardContent,
   IntegrationCardHeader,
 } from './card';
-import { INTEGRATION_LIST } from './constants';
+import { getAllowedIntegrationList$ } from './constants';
 import { list } from './index.css';
 
 export const IntegrationSetting = () => {
   const t = useI18n();
   const [opened, setOpened] = useState<string | null>(null);
+  const featureFlagService = useService(FeatureFlagService);
+
+  const integrationList = useLiveData(
+    useMemo(
+      () => getAllowedIntegrationList$(featureFlagService),
+      [featureFlagService]
+    )
+  );
+
   return (
     <>
       <SettingHeader
@@ -27,7 +38,7 @@ export const IntegrationSetting = () => {
         }
       />
       <ul className={list}>
-        {INTEGRATION_LIST.map(item => {
+        {integrationList.map(item => {
           const title =
             typeof item.name === 'string'
               ? t[item.name]()

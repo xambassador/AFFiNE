@@ -1,4 +1,5 @@
 export {
+  CacheStorage,
   GlobalCache,
   GlobalSessionState,
   GlobalState,

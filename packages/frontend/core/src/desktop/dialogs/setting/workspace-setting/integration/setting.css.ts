@@ -5,9 +5,13 @@ export const header = style({
   display: 'flex',
   alignItems: 'center',
   gap: 8,
-  paddingBottom: 16,
-  borderBottom: '0.5px solid ' + cssVarV2.layer.insideBorder.border,
   marginBottom: 24,
+  selectors: {
+    '&[data-divider="true"]': {
+      paddingBottom: 16,
+      borderBottom: '0.5px solid ' + cssVarV2.layer.insideBorder.border,
+    },
+  },
 });
 export const headerContent = style({
   width: 0,

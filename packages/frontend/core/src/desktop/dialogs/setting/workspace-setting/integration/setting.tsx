@@ -11,14 +11,16 @@ export const IntegrationSettingHeader = ({
   name,
   desc,
   action,
+  divider = true,
 }: {
   icon: ReactNode;
   name: string;
   desc: string;
   action?: ReactNode;
+  divider?: boolean;
 }) => {
   return (
-    <header className={styles.header}>
+    <header className={styles.header} data-divider={divider}>
       <IntegrationCardIcon className={styles.headerIcon}>
         {icon}
       </IntegrationCardIcon>
