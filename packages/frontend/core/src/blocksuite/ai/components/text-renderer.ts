@@ -1,5 +1,4 @@
 import { createReactComponentFromLit } from '@affine/component';
-import { getMarkdownAdapterExtensions } from '@blocksuite/affine/adapters';
 import {
   defaultImageProxyMiddleware,
   ImageProxyService,
@@ -36,6 +35,7 @@ import { keyed } from 'lit/directives/keyed.js';
 import { literal } from 'lit/static-html.js';
 import React from 'react';
 
+import { getStoreManager } from '../../manager/migrating-store';
 import { getViewManager } from '../../manager/migrating-view';
 import { markDownToDoc } from '../../utils';
 import type {
@@ -231,9 +231,11 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
         provider = this.host.std.store.provider;
       } else {
         const container = new Container();
-        getMarkdownAdapterExtensions().forEach(ext => {
-          ext.setup(container);
-        });
+        getStoreManager()
+          .get('store')
+          .forEach(ext => {
+            ext.setup(container);
+          });
 
         provider = container.provider();
       }

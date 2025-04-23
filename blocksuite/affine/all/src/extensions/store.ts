@@ -1,124 +1,52 @@
-import { DatabaseSelectionExtension } from '@blocksuite/affine-block-database';
-import {
-  RootBlockHtmlAdapterExtension,
-  RootBlockMarkdownAdapterExtension,
-  RootBlockNotionHtmlAdapterExtension,
-} from '@blocksuite/affine-block-root';
-import { SurfaceBlockSchemaExtension } from '@blocksuite/affine-block-surface';
-import {
-  type StoreExtensionContext,
-  StoreExtensionProvider,
-} from '@blocksuite/affine-ext-loader';
-import {
-  HtmlInlineToDeltaAdapterExtensions,
-  InlineDeltaToHtmlAdapterExtensions,
-  InlineDeltaToMarkdownAdapterExtensions,
-  InlineDeltaToPlainTextAdapterExtensions,
-  MarkdownInlineToDeltaAdapterExtensions,
-  NotionHtmlInlineToDeltaAdapterExtensions,
-} from '@blocksuite/affine-inline-preset';
-import {
-  RootBlockSchemaExtension,
-  TranscriptionBlockSchemaExtension,
-} from '@blocksuite/affine-model';
-import {
-  HtmlAdapterFactoryExtension,
-  MarkdownAdapterFactoryExtension,
-  MixTextAdapterFactoryExtension,
-  NotionHtmlAdapterFactoryExtension,
-  NotionTextAdapterFactoryExtension,
-  PlainTextAdapterFactoryExtension,
-} from '@blocksuite/affine-shared/adapters';
-import { HighlightSelectionExtension } from '@blocksuite/affine-shared/selection';
-import {
-  BlockMetaService,
-  FeatureFlagService,
-  FileSizeLimitService,
-  LinkPreviewerService,
-} from '@blocksuite/affine-shared/services';
-import {
-  BlockSelectionExtension,
-  CursorSelectionExtension,
-  SurfaceSelectionExtension,
-  TextSelectionExtension,
-} from '@blocksuite/std';
-import type { ExtensionType } from '@blocksuite/store';
+import { AttachmentStoreExtension } from '@blocksuite/affine-block-attachment/store';
+import { BookmarkStoreExtension } from '@blocksuite/affine-block-bookmark/store';
+import { CalloutStoreExtension } from '@blocksuite/affine-block-callout/store';
+import { CodeStoreExtension } from '@blocksuite/affine-block-code/store';
+import { DataViewStoreExtension } from '@blocksuite/affine-block-data-view/store';
+import { DatabaseStoreExtension } from '@blocksuite/affine-block-database/store';
+import { DividerStoreExtension } from '@blocksuite/affine-block-divider/store';
+import { EdgelessTextStoreExtension } from '@blocksuite/affine-block-edgeless-text/store';
+import { EmbedStoreExtension } from '@blocksuite/affine-block-embed/store';
+import { FrameStoreExtension } from '@blocksuite/affine-block-frame/store';
+import { ImageStoreExtension } from '@blocksuite/affine-block-image/store';
+import { LatexStoreExtension } from '@blocksuite/affine-block-latex/store';
+import { ListStoreExtension } from '@blocksuite/affine-block-list/store';
+import { NoteStoreExtension } from '@blocksuite/affine-block-note/store';
+import { ParagraphStoreExtension } from '@blocksuite/affine-block-paragraph/store';
+import { SurfaceRefStoreExtension } from '@blocksuite/affine-block-surface-ref/store';
+import { TableStoreExtension } from '@blocksuite/affine-block-table/store';
+import { FootnoteStoreExtension } from '@blocksuite/affine-inline-footnote/store';
+import { LatexStoreExtension as InlineLatexStoreExtension } from '@blocksuite/affine-inline-latex/store';
+import { LinkStoreExtension } from '@blocksuite/affine-inline-link/store';
+import { ReferenceStoreExtension } from '@blocksuite/affine-inline-reference/store';
 
-function getAdapterFactoryExtensions(): ExtensionType[] {
+import { MigratingStoreExtension } from './migrating-store';
+
+export function getInternalStoreExtensions() {
   return [
-    MarkdownAdapterFactoryExtension,
-    PlainTextAdapterFactoryExtension,
-    HtmlAdapterFactoryExtension,
-    NotionTextAdapterFactoryExtension,
-    NotionHtmlAdapterFactoryExtension,
-    MixTextAdapterFactoryExtension,
+    AttachmentStoreExtension,
+    BookmarkStoreExtension,
+    CalloutStoreExtension,
+    CodeStoreExtension,
+    DataViewStoreExtension,
+    DatabaseStoreExtension,
+    DividerStoreExtension,
+    EdgelessTextStoreExtension,
+    EmbedStoreExtension,
+    FrameStoreExtension,
+    ImageStoreExtension,
+    LatexStoreExtension,
+    ListStoreExtension,
+    NoteStoreExtension,
+    ParagraphStoreExtension,
+    SurfaceRefStoreExtension,
+    TableStoreExtension,
+
+    FootnoteStoreExtension,
+    LinkStoreExtension,
+    ReferenceStoreExtension,
+    InlineLatexStoreExtension,
+
+    MigratingStoreExtension,
   ];
-}
-
-const defaultBlockHtmlAdapterMatchers = [RootBlockHtmlAdapterExtension];
-
-const defaultBlockMarkdownAdapterMatchers = [RootBlockMarkdownAdapterExtension];
-
-const defaultBlockNotionHtmlAdapterMatchers: ExtensionType[] = [
-  RootBlockNotionHtmlAdapterExtension,
-];
-
-function getHtmlAdapterExtensions(): ExtensionType[] {
-  return [
-    ...HtmlInlineToDeltaAdapterExtensions,
-    ...defaultBlockHtmlAdapterMatchers,
-    ...InlineDeltaToHtmlAdapterExtensions,
-  ];
-}
-
-function getMarkdownAdapterExtensions(): ExtensionType[] {
-  return [
-    ...MarkdownInlineToDeltaAdapterExtensions,
-    ...defaultBlockMarkdownAdapterMatchers,
-    ...InlineDeltaToMarkdownAdapterExtensions,
-  ];
-}
-
-function getNotionHtmlAdapterExtensions(): ExtensionType[] {
-  return [
-    ...NotionHtmlInlineToDeltaAdapterExtensions,
-    ...defaultBlockNotionHtmlAdapterMatchers,
-  ];
-}
-
-function getPlainTextAdapterExtensions(): ExtensionType[] {
-  return [...InlineDeltaToPlainTextAdapterExtensions];
-}
-
-const MigratingStoreExtensions: ExtensionType[] = [
-  RootBlockSchemaExtension,
-  SurfaceBlockSchemaExtension,
-  TranscriptionBlockSchemaExtension,
-
-  BlockSelectionExtension,
-  TextSelectionExtension,
-  SurfaceSelectionExtension,
-  CursorSelectionExtension,
-  HighlightSelectionExtension,
-  DatabaseSelectionExtension,
-
-  getHtmlAdapterExtensions(),
-  getMarkdownAdapterExtensions(),
-  getNotionHtmlAdapterExtensions(),
-  getPlainTextAdapterExtensions(),
-  getAdapterFactoryExtensions(),
-
-  FeatureFlagService,
-  LinkPreviewerService,
-  FileSizeLimitService,
-  BlockMetaService,
-].flat();
-
-export class MigratingStoreExtension extends StoreExtensionProvider {
-  override name = 'migrating';
-
-  override setup(context: StoreExtensionContext) {
-    super.setup(context);
-    context.register(MigratingStoreExtensions);
-  }
 }

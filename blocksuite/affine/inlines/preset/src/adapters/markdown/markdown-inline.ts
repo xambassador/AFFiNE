@@ -1,4 +1,3 @@
-import { markdownInlineMathToDeltaMatcher } from '@blocksuite/affine-inline-latex';
 import { MarkdownASTToDeltaExtension } from '@blocksuite/affine-shared/adapters';
 
 export const markdownTextToDeltaMatcher = MarkdownASTToDeltaExtension({
@@ -94,7 +93,6 @@ export const MarkdownInlineToDeltaAdapterExtensions = [
   markdownStrongToDeltaMatcher,
   markdownEmphasisToDeltaMatcher,
   markdownDeleteToDeltaMatcher,
-  markdownInlineMathToDeltaMatcher,
   markdownListToDeltaMatcher,
   markdownHtmlToDeltaMatcher,
 ];

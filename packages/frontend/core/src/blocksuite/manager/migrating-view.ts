@@ -1,30 +1,11 @@
 import { PeekViewService } from '@affine/core/modules/peek-view';
-import { AttachmentViewExtension } from '@blocksuite/affine/blocks/attachment/view';
-import { BookmarkViewExtension } from '@blocksuite/affine/blocks/bookmark/view';
-import { CalloutViewExtension } from '@blocksuite/affine/blocks/callout/view';
-import { CodeBlockViewExtension } from '@blocksuite/affine/blocks/code/view';
-import { DataViewViewExtension } from '@blocksuite/affine/blocks/data-view/view';
-import { DatabaseViewExtension } from '@blocksuite/affine/blocks/database/view';
-import { DividerViewExtension } from '@blocksuite/affine/blocks/divider/view';
-import { EdgelessTextViewExtension } from '@blocksuite/affine/blocks/edgeless-text/view';
-import { EmbedViewExtension } from '@blocksuite/affine/blocks/embed/view';
-import { FrameViewExtension } from '@blocksuite/affine/blocks/frame/view';
-import { ImageViewExtension } from '@blocksuite/affine/blocks/image/view';
-import { LatexViewExtension } from '@blocksuite/affine/blocks/latex/view';
-import { ListViewExtension } from '@blocksuite/affine/blocks/list/view';
-import { NoteViewExtension } from '@blocksuite/affine/blocks/note/view';
 import { ParagraphBlockConfigExtension } from '@blocksuite/affine/blocks/paragraph';
-import { ParagraphViewExtension } from '@blocksuite/affine/blocks/paragraph/view';
-import { SurfaceRefViewExtension } from '@blocksuite/affine/blocks/surface-ref/view';
-import { TableViewExtension } from '@blocksuite/affine/blocks/table/view';
 import {
   type ViewExtensionContext,
   ViewExtensionManager,
   ViewExtensionProvider,
 } from '@blocksuite/affine/ext-loader';
-import { MigratingViewExtension } from '@blocksuite/affine/extensions/view';
-import { FootnoteViewExtension } from '@blocksuite/affine/inlines/footnote/view';
-import { LinkViewExtension } from '@blocksuite/affine/inlines/link/view';
+import { getInternalViewExtensions } from '@blocksuite/affine/extensions/view';
 import { ToolbarModuleExtension } from '@blocksuite/affine/shared/services';
 import { BlockFlavourIdentifier } from '@blocksuite/affine/std';
 import { FrameworkProvider } from '@toeverything/infra';
@@ -147,29 +128,7 @@ class MigratingAffineViewExtension extends ViewExtensionProvider<
 }
 
 const manager = new ViewExtensionManager([
-  MigratingViewExtension,
-
-  // Block
-  AttachmentViewExtension,
-  BookmarkViewExtension,
-  CalloutViewExtension,
-  CodeBlockViewExtension,
-  DataViewViewExtension,
-  DatabaseViewExtension,
-  DividerViewExtension,
-  EdgelessTextViewExtension,
-  EmbedViewExtension,
-  FrameViewExtension,
-  ImageViewExtension,
-  LatexViewExtension,
-  ListViewExtension,
-  NoteViewExtension,
-  ParagraphViewExtension,
-  SurfaceRefViewExtension,
-  TableViewExtension,
-  // Inline
-  FootnoteViewExtension,
-  LinkViewExtension,
+  ...getInternalViewExtensions(),
 
   MigratingAffineViewExtension,
 ]);

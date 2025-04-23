@@ -1,4 +1,3 @@
-import { referenceDeltaToHtmlAdapterMatcher } from '@blocksuite/affine-inline-reference';
 import type { InlineHtmlAST } from '@blocksuite/affine-shared/adapters';
 import { InlineDeltaToHtmlAdapterExtension } from '@blocksuite/affine-shared/adapters';
 import { ThemeProvider } from '@blocksuite/affine-shared/services';
@@ -152,5 +151,4 @@ export const InlineDeltaToHtmlAdapterExtensions = [
   highlightBackgroundDeltaToHtmlAdapterMatcher,
   highlightColorDeltaToHtmlAdapterMatcher,
   inlineCodeDeltaToHtmlAdapterMatcher,
-  referenceDeltaToHtmlAdapterMatcher,
 ];

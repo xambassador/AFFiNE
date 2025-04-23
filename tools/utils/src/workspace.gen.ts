@@ -652,6 +652,7 @@ export const PackageList = [
     name: '@blocksuite/affine-inline-latex',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/inlines/reference',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
@@ -680,6 +681,7 @@ export const PackageList = [
     name: '@blocksuite/affine-inline-mention',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
@@ -710,6 +712,7 @@ export const PackageList = [
     name: '@blocksuite/affine-inline-reference',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',

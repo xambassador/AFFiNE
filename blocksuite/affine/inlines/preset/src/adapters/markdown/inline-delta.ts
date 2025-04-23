@@ -1,5 +1,3 @@
-import { latexDeltaToMarkdownAdapterMatcher } from '@blocksuite/affine-inline-latex';
-import { referenceDeltaToMarkdownAdapterMatcher } from '@blocksuite/affine-inline-reference';
 import { InlineDeltaToMarkdownAdapterExtension } from '@blocksuite/affine-shared/adapters';
 
 export const boldDeltaToMarkdownAdapterMatcher =
@@ -52,10 +50,8 @@ export const inlineCodeDeltaToMarkdownAdapterMatcher =
   });
 
 export const InlineDeltaToMarkdownAdapterExtensions = [
-  referenceDeltaToMarkdownAdapterMatcher,
   inlineCodeDeltaToMarkdownAdapterMatcher,
   boldDeltaToMarkdownAdapterMatcher,
   italicDeltaToMarkdownAdapterMatcher,
   strikeDeltaToMarkdownAdapterMatcher,
-  latexDeltaToMarkdownAdapterMatcher,
 ];
