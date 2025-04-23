@@ -214,7 +214,6 @@
     "./model": "./src/model/index.ts",
     "./sync": "./src/sync/index.ts",
     "./adapters": "./src/adapters/index.ts",
-    "./extensions": "./src/extensions/index.ts",
     "./extensions/store": "./src/extensions/store.ts",
     "./extensions/view": "./src/extensions/view.ts"
   },

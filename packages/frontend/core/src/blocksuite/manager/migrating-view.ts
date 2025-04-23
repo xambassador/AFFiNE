@@ -51,7 +51,7 @@ import { getThemeExtension } from '../extensions/theme';
 
 const optionsSchema = z.object({
   enableAI: z.boolean().optional(),
-  framework: z.instanceof(FrameworkProvider),
+  framework: z.instanceof(FrameworkProvider).optional(),
 });
 
 class MigratingAffineViewExtension extends ViewExtensionProvider<
@@ -173,8 +173,8 @@ const manager = new ViewExtensionManager([
 ]);
 
 export function getViewManager(
-  framework: FrameworkProvider,
-  enableAI: boolean
+  framework?: FrameworkProvider,
+  enableAI?: boolean
 ) {
   manager.configure(MigratingAffineViewExtension, {
     framework,

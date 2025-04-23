@@ -4,7 +4,6 @@ import {
   defaultImageProxyMiddleware,
   ImageProxyService,
 } from '@blocksuite/affine/blocks/image';
-import { PageEditorBlockSpecs } from '@blocksuite/affine/extensions';
 import { Container, type ServiceProvider } from '@blocksuite/affine/global/di';
 import { WithDisposable } from '@blocksuite/affine/global/lit';
 import { codeBlockWrapMiddleware } from '@blocksuite/affine/shared/adapters';
@@ -37,14 +36,15 @@ import { keyed } from 'lit/directives/keyed.js';
 import { literal } from 'lit/static-html.js';
 import React from 'react';
 
+import { getViewManager } from '../../manager/migrating-view';
 import { markDownToDoc } from '../../utils';
 import type {
   AffineAIPanelState,
   AffineAIPanelWidgetConfig,
 } from '../widgets/ai-panel/type';
 
-export const CustomPageEditorBlockSpecs: ExtensionType[] = [
-  ...PageEditorBlockSpecs,
+export const getCustomPageEditorBlockSpecs: () => ExtensionType[] = () => [
+  ...getViewManager().get('page'),
   {
     setup: di => {
       di.override(
@@ -316,7 +316,8 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
           html`<div class="ai-answer-text-editor affine-page-viewport">
             ${new BlockStdScope({
               store: this._doc,
-              extensions: this.options.extensions ?? CustomPageEditorBlockSpecs,
+              extensions:
+                this.options.extensions ?? getCustomPageEditorBlockSpecs(),
             }).render()}
           </div>`
         )}
