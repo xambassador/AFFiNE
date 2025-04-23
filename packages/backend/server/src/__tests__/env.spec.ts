@@ -111,7 +111,7 @@ test('should tell flavors correctly', t => {
     sync: true,
     renderer: true,
     doc: true,
-    script: false,
+    script: true,
   });
 
   process.env.SERVER_FLAVOR = 'graphql';
@@ -121,15 +121,6 @@ test('should tell flavors correctly', t => {
     renderer: false,
     doc: false,
     script: false,
-  });
-
-  process.env.SERVER_FLAVOR = 'script';
-  t.deepEqual(new Env().flavors, {
-    graphql: false,
-    sync: false,
-    renderer: false,
-    doc: false,
-    script: true,
   });
 });
 

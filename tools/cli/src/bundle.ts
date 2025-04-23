@@ -10,16 +10,12 @@ import WebpackDevServer, {
 } from 'webpack-dev-server';
 
 import { Option, PackageCommand } from './command';
-import {
-  createHTMLTargetConfig,
-  createNodeTargetConfig,
-  createWorkerTargetConfig,
-} from './webpack';
+import { createHTMLTargetConfig, createWorkerTargetConfig } from './webpack';
 
-function getBaseWorkerConfigs(pkg: Package) {
+function getBundleConfigs(pkg: Package) {
   const core = new Package('@affine/core');
 
-  return [
+  const workerConfigs = [
     createWorkerTargetConfig(
       pkg,
       core.srcPath.join(
@@ -35,9 +31,7 @@ function getBaseWorkerConfigs(pkg: Package) {
       core.srcPath.join('blocksuite/extensions/turbo-painter.worker.ts').value
     ),
   ];
-}
 
-function getBundleConfigs(pkg: Package) {
   switch (pkg.name) {
     case '@affine/admin': {
       return [createHTMLTargetConfig(pkg, pkg.srcPath.join('index.tsx').value)];
@@ -46,7 +40,6 @@ function getBundleConfigs(pkg: Package) {
     case '@affine/mobile':
     case '@affine/ios':
     case '@affine/android': {
-      const workerConfigs = getBaseWorkerConfigs(pkg);
       workerConfigs.push(
         createWorkerTargetConfig(
           pkg,
@@ -65,8 +58,6 @@ function getBundleConfigs(pkg: Package) {
       ];
     }
     case '@affine/electron-renderer': {
-      const workerConfigs = getBaseWorkerConfigs(pkg);
-
       return [
         createHTMLTargetConfig(
           pkg,
@@ -87,14 +78,10 @@ function getBundleConfigs(pkg: Package) {
         ...workerConfigs,
       ];
     }
-    case '@affine/server': {
-      return [createNodeTargetConfig(pkg, pkg.srcPath.join('index.ts').value)];
-    }
   }
 
   throw new Error(`Unsupported package: ${pkg.name}`);
 }
-
 const IN_CI = !!process.env.CI;
 const httpProxyMiddlewareLogLevel = IN_CI ? 'silent' : 'error';
 

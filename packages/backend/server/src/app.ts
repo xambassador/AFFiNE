@@ -9,7 +9,6 @@ import {
   CloudThrottlerGuard,
   Config,
   GlobalExceptionFilter,
-  URLHelper,
 } from './base';
 import { SocketIoAdapter } from './base/websocket';
 import { AuthGuard } from './core/auth';
@@ -17,7 +16,7 @@ import { serverTimingAndCache } from './middleware/timing';
 
 const OneMB = 1024 * 1024;
 
-export async function run() {
+export async function createApp() {
   const { AppModule } = await import('./app.module');
 
   const app = await NestFactory.create<NestExpressApplication>(AppModule, {
@@ -29,8 +28,7 @@ export async function run() {
 
   app.useBodyParser('raw', { limit: 100 * OneMB });
 
-  const logger = app.get(AFFiNELogger);
-  app.useLogger(logger);
+  app.useLogger(app.get(AFFiNELogger));
   const config = app.get(Config);
 
   if (config.server.path) {
@@ -59,12 +57,5 @@ export async function run() {
   const adapter = new SocketIoAdapter(app);
   app.useWebSocketAdapter(adapter);
 
-  const url = app.get(URLHelper);
-  const listeningHost = '0.0.0.0';
-
-  await app.listen(config.server.port, listeningHost);
-
-  logger.log(`AFFiNE Server is running in [${env.DEPLOYMENT_TYPE}] mode`);
-  logger.log(`Listening on http://${listeningHost}:${config.server.port}`);
-  logger.log(`And the public server should be recognized as ${url.home}`);
+  return app;
 }

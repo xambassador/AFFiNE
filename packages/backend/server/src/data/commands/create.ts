@@ -1,5 +1,5 @@
-import { appendFileSync, writeFileSync } from 'node:fs';
-import { join, parse } from 'node:path';
+import { writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { Logger } from '@nestjs/common';
@@ -45,21 +45,15 @@ export class CreateCommand extends CommandRunner {
 
     const timestamp = Date.now();
     const content = this.createScript(upperFirst(camelCase(name)) + timestamp);
-    const migrationDir = join(
-      fileURLToPath(import.meta.url),
-      '../../migrations'
-    );
     const fileName = `${timestamp}-${kebabCase(name)}.ts`;
-    const filePath = join(migrationDir, fileName);
+    const filePath = join(
+      fileURLToPath(import.meta.url),
+      '../../migrations',
+      fileName
+    );
 
     this.logger.log(`Creating ${fileName}...`);
     writeFileSync(filePath, content);
-    const indexFile = join(migrationDir, 'index.ts');
-    appendFileSync(
-      indexFile,
-      `export * from './${parse(fileName).name}';`,
-      'utf-8'
-    );
     this.logger.log(`Migration file created at ${filePath}`);
     this.logger.log('Done');
   }

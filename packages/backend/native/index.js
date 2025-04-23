@@ -1,21 +1,15 @@
-/** @type {import('.')} */
-let binding;
-try {
-  binding = require('./server-native.node');
-} catch {
-  binding =
-    process.arch === 'arm64'
-      ? require('./server-native.arm64.node')
-      : process.arch === 'arm'
-        ? require('./server-native.armv7.node')
-        : require('./server-native.x64.node');
-}
+import { createRequire } from 'node:module';
 
-module.exports.mergeUpdatesInApplyWay = binding.mergeUpdatesInApplyWay;
-module.exports.verifyChallengeResponse = binding.verifyChallengeResponse;
-module.exports.mintChallengeResponse = binding.mintChallengeResponse;
-module.exports.getMime = binding.getMime;
-module.exports.Tokenizer = binding.Tokenizer;
-module.exports.fromModelName = binding.fromModelName;
-module.exports.htmlSanitize = binding.htmlSanitize;
-module.exports.parseDoc = binding.parseDoc;
+const require = createRequire(import.meta.url);
+
+/** @type {import('.')} */
+const binding = require('./server-native.node');
+
+export const mergeUpdatesInApplyWay = binding.mergeUpdatesInApplyWay;
+export const verifyChallengeResponse = binding.verifyChallengeResponse;
+export const mintChallengeResponse = binding.mintChallengeResponse;
+export const getMime = binding.getMime;
+export const Tokenizer = binding.Tokenizer;
+export const fromModelName = binding.fromModelName;
+export const htmlSanitize = binding.htmlSanitize;
+export const parseDoc = binding.parseDoc;

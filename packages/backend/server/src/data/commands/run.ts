@@ -1,12 +1,15 @@
+import { readdirSync } from 'node:fs';
+import { join } from 'node:path';
+import { fileURLToPath, pathToFileURL } from 'node:url';
+
 import { Logger } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
 import { PrismaClient } from '@prisma/client';
 import { once } from 'lodash-es';
 import { Command, CommandRunner } from 'nest-commander';
 
-import * as migrations from '../migrations';
-
 interface Migration {
+  file: string;
   name: string;
   always?: boolean;
   up: (db: PrismaClient, injector: ModuleRef) => Promise<void>;
@@ -14,15 +17,33 @@ interface Migration {
 }
 
 export const collectMigrations = once(async () => {
-  return Object.values(migrations).map(migration => {
-    return {
-      name: migration.name,
-      // @ts-expect-error optional
-      always: migration.always,
-      up: migration.up,
-      down: migration.down,
-    };
-  }) as Migration[];
+  const folder = join(fileURLToPath(import.meta.url), '../../migrations');
+
+  const migrationFiles = readdirSync(folder)
+    .filter(desc =>
+      desc.endsWith(import.meta.url.endsWith('.ts') ? '.ts' : '.js')
+    )
+    .map(desc => join(folder, desc));
+
+  migrationFiles.sort((a, b) => a.localeCompare(b));
+
+  const migrations: Migration[] = await Promise.all(
+    migrationFiles.map(async file => {
+      return import(pathToFileURL(file).href).then(mod => {
+        const migration = mod[Object.keys(mod)[0]];
+
+        return {
+          file,
+          name: migration.name,
+          always: migration.always,
+          up: migration.up,
+          down: migration.down,
+        };
+      });
+    })
+  );
+
+  return migrations;
 });
 
 @Command({
