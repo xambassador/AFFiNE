@@ -2,30 +2,10 @@ import { createHash } from 'node:crypto';
 
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
 
-import { FileUpload, JobQueue } from '../../../base';
+import { FileUpload, JobQueue, PaginationInput } from '../../../base';
 import { Models } from '../../../models';
 import { CopilotStorage } from '../storage';
 import { readStream } from '../utils';
-
-declare global {
-  interface Events {
-    'workspace.file.embedding.finished': {
-      jobId: string;
-    };
-    'workspace.file.embedding.failed': {
-      jobId: string;
-    };
-  }
-  interface Jobs {
-    'copilot.workspace.embedding.files': {
-      userId: string;
-      workspaceId: string;
-      blobId: string;
-      fileId: string;
-      fileName: string;
-    };
-  }
-}
 
 @Injectable()
 export class CopilotWorkspaceService implements OnApplicationBootstrap {
@@ -49,6 +29,30 @@ export class CopilotWorkspaceService implements OnApplicationBootstrap {
     return this.supportEmbedding;
   }
 
+  async updateIgnoredDocs(
+    workspaceId: string,
+    add?: string[],
+    remove?: string[]
+  ) {
+    return await this.models.copilotWorkspace.updateIgnoredDocs(
+      workspaceId,
+      add,
+      remove
+    );
+  }
+
+  async listIgnoredDocs(
+    workspaceId: string,
+    pagination?: {
+      includeRead?: boolean;
+    } & PaginationInput
+  ) {
+    return await Promise.all([
+      this.models.copilotWorkspace.listIgnoredDocs(workspaceId, pagination),
+      this.models.copilotWorkspace.countIgnoredDocs(workspaceId),
+    ]);
+  }
+
   async addWorkspaceFile(
     userId: string,
     workspaceId: string,
@@ -70,6 +74,18 @@ export class CopilotWorkspaceService implements OnApplicationBootstrap {
     return await this.models.copilotWorkspace.getFile(workspaceId, fileId);
   }
 
+  async listWorkspaceFiles(
+    workspaceId: string,
+    pagination?: {
+      includeRead?: boolean;
+    } & PaginationInput
+  ) {
+    return await Promise.all([
+      this.models.copilotWorkspace.listWorkspaceFiles(workspaceId, pagination),
+      this.models.copilotWorkspace.countIgnoredDocs(workspaceId),
+    ]);
+  }
+
   async addWorkspaceFileEmbeddingQueue(
     file: Jobs['copilot.workspace.embedding.files']
   ) {
@@ -83,5 +99,12 @@ export class CopilotWorkspaceService implements OnApplicationBootstrap {
       fileId,
       fileName,
     });
+  }
+
+  async removeWorkspaceFile(workspaceId: string, fileId: string) {
+    return await this.models.copilotWorkspace.removeWorkspaceFile(
+      workspaceId,
+      fileId
+    );
   }
 }

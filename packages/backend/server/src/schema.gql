@@ -273,8 +273,8 @@ type CopilotSessionType {
 }
 
 type CopilotWorkspaceConfig {
-  files: [CopilotWorkspaceFile!]!
-  ignoredDocs: [String!]!
+  files(pagination: PaginationInput!): PaginatedCopilotWorkspaceFileType!
+  ignoredDocs(pagination: PaginationInput!): PaginatedIgnoredDocsType!
   workspaceId: String!
 }
 
@@ -285,6 +285,21 @@ type CopilotWorkspaceFile {
   mimeType: String!
   size: SafeInt!
   workspaceId: String!
+}
+
+type CopilotWorkspaceFileTypeEdge {
+  cursor: String!
+  node: CopilotWorkspaceFile!
+}
+
+type CopilotWorkspaceIgnoredDoc {
+  createdAt: DateTime!
+  docId: String!
+}
+
+type CopilotWorkspaceIgnoredDocTypeEdge {
+  cursor: String!
+  node: CopilotWorkspaceIgnoredDoc!
 }
 
 input CreateChatMessageInput {
@@ -1149,8 +1164,20 @@ type PageInfo {
   startCursor: String
 }
 
+type PaginatedCopilotWorkspaceFileType {
+  edges: [CopilotWorkspaceFileTypeEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
 type PaginatedGrantedDocUserType {
   edges: [GrantedDocUserTypeEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type PaginatedIgnoredDocsType {
+  edges: [CopilotWorkspaceIgnoredDocTypeEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
 }

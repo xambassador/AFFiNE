@@ -764,20 +764,52 @@ export const removeWorkspaceEmbeddingFilesMutation = {
 }`,
 };
 
-export const getWorkspaceEmbeddingConfigQuery = {
-  id: 'getWorkspaceEmbeddingConfigQuery' as const,
-  op: 'getWorkspaceEmbeddingConfig',
-  query: `query getWorkspaceEmbeddingConfig($workspaceId: String!) {
+export const getWorkspaceEmbeddingFilesQuery = {
+  id: 'getWorkspaceEmbeddingFilesQuery' as const,
+  op: 'getWorkspaceEmbeddingFiles',
+  query: `query getWorkspaceEmbeddingFiles($workspaceId: String!, $pagination: PaginationInput!) {
   workspace(id: $workspaceId) {
     embedding {
-      files {
-        fileId
-        fileName
-        mimeType
-        size
-        createdAt
+      files(pagination: $pagination) {
+        totalCount
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        edges {
+          node {
+            fileId
+            fileName
+            mimeType
+            size
+            createdAt
+          }
+        }
       }
-      ignoredDocs
+    }
+  }
+}`,
+};
+
+export const getWorkspaceEmbeddingIgnoredDocsQuery = {
+  id: 'getWorkspaceEmbeddingIgnoredDocsQuery' as const,
+  op: 'getWorkspaceEmbeddingIgnoredDocs',
+  query: `query getWorkspaceEmbeddingIgnoredDocs($workspaceId: String!, $pagination: PaginationInput!) {
+  workspace(id: $workspaceId) {
+    embedding {
+      ignoredDocs(pagination: $pagination) {
+        totalCount
+        pageInfo {
+          endCursor
+          hasNextPage
+        }
+        edges {
+          node {
+            docId
+            createdAt
+          }
+        }
+      }
     }
   }
 }`,

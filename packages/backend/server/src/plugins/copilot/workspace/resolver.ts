@@ -9,7 +9,6 @@ import {
   Resolver,
 } from '@nestjs/graphql';
 import type { Request } from 'express';
-import { SafeIntResolver } from 'graphql-scalars';
 import GraphQLUpload, {
   type FileUpload,
 } from 'graphql-upload/GraphQLUpload.mjs';
@@ -19,42 +18,27 @@ import {
   CopilotEmbeddingUnavailable,
   CopilotFailedToAddWorkspaceFileEmbedding,
   Mutex,
+  paginate,
+  PaginationInput,
   TooManyRequest,
   UserFriendlyError,
 } from '../../../base';
 import { CurrentUser } from '../../../core/auth';
 import { AccessController } from '../../../core/permission';
 import { WorkspaceType } from '../../../core/workspaces';
-import { CopilotWorkspaceFile, Models } from '../../../models';
 import { COPILOT_LOCKER } from '../resolver';
 import { MAX_EMBEDDABLE_SIZE } from '../types';
 import { CopilotWorkspaceService } from './service';
+import {
+  CopilotWorkspaceFileType,
+  PaginatedCopilotWorkspaceFileType,
+  PaginatedIgnoredDocsType,
+} from './types';
 
 @ObjectType('CopilotWorkspaceConfig')
 export class CopilotWorkspaceConfigType {
   @Field(() => String)
   workspaceId!: string;
-}
-
-@ObjectType('CopilotWorkspaceFile')
-export class CopilotWorkspaceFileType implements CopilotWorkspaceFile {
-  @Field(() => String)
-  workspaceId!: string;
-
-  @Field(() => String)
-  fileId!: string;
-
-  @Field(() => String)
-  fileName!: string;
-
-  @Field(() => String)
-  mimeType!: string;
-
-  @Field(() => SafeIntResolver)
-  size!: number;
-
-  @Field(() => Date)
-  createdAt!: Date;
 }
 
 /**
@@ -86,18 +70,24 @@ export class CopilotWorkspaceEmbeddingResolver {
 export class CopilotWorkspaceEmbeddingConfigResolver {
   constructor(
     private readonly ac: AccessController,
-    private readonly models: Models,
     private readonly mutex: Mutex,
     private readonly copilotWorkspace: CopilotWorkspaceService
   ) {}
 
-  @ResolveField(() => [String], {
+  @ResolveField(() => PaginatedIgnoredDocsType, {
     complexity: 2,
   })
   async ignoredDocs(
-    @Parent() config: CopilotWorkspaceConfigType
-  ): Promise<string[]> {
-    return this.models.copilotWorkspace.listIgnoredDocs(config.workspaceId);
+    @Parent() config: CopilotWorkspaceConfigType,
+    @Args('pagination', PaginationInput.decode) pagination: PaginationInput
+  ): Promise<PaginatedIgnoredDocsType> {
+    const [ignoredDocs, totalCount] =
+      await this.copilotWorkspace.listIgnoredDocs(
+        config.workspaceId,
+        pagination
+      );
+
+    return paginate(ignoredDocs, 'createdAt', pagination, totalCount);
   }
 
   @Mutation(() => Number, {
@@ -118,20 +108,26 @@ export class CopilotWorkspaceEmbeddingConfigResolver {
       .user(user.id)
       .workspace(workspaceId)
       .assert('Workspace.Settings.Update');
-    return await this.models.copilotWorkspace.updateIgnoredDocs(
+    return await this.copilotWorkspace.updateIgnoredDocs(
       workspaceId,
       add,
       remove
     );
   }
 
-  @ResolveField(() => [CopilotWorkspaceFileType], {
+  @ResolveField(() => PaginatedCopilotWorkspaceFileType, {
     complexity: 2,
   })
   async files(
-    @Parent() config: CopilotWorkspaceConfigType
-  ): Promise<CopilotWorkspaceFileType[]> {
-    return this.models.copilotWorkspace.listWorkspaceFiles(config.workspaceId);
+    @Parent() config: CopilotWorkspaceConfigType,
+    @Args('pagination', PaginationInput.decode) pagination: PaginationInput
+  ): Promise<PaginatedCopilotWorkspaceFileType> {
+    const [files, totalCount] = await this.copilotWorkspace.listWorkspaceFiles(
+      config.workspaceId,
+      pagination
+    );
+
+    return paginate(files, 'createdAt', pagination, totalCount);
   }
 
   @Mutation(() => CopilotWorkspaceFileType, {
@@ -210,9 +206,6 @@ export class CopilotWorkspaceEmbeddingConfigResolver {
       .workspace(workspaceId)
       .assert('Workspace.Settings.Update');
 
-    return await this.models.copilotWorkspace.removeWorkspaceFile(
-      workspaceId,
-      fileId
-    );
+    return await this.copilotWorkspace.removeWorkspaceFile(workspaceId, fileId);
   }
 }

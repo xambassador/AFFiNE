@@ -4,6 +4,7 @@ import { Injectable } from '@nestjs/common';
 import { Transactional } from '@nestjs-cls/transactional';
 import { Prisma } from '@prisma/client';
 
+import { PaginationInput } from '../base';
 import { BaseModel } from './base';
 import type {
   CopilotWorkspaceFile,
@@ -22,7 +23,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
   ) {
     const removed = new Set(remove);
     const ignored = await this.listIgnoredDocs(workspaceId).then(
-      r => new Set(r.filter(id => !removed.has(id)))
+      r => new Set(r.map(r => r.docId).filter(id => !removed.has(id)))
     );
     const added = add.filter(id => !ignored.has(id));
 
@@ -49,22 +50,40 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return added.length + ignored.size;
   }
 
-  async listIgnoredDocs(workspaceId: string): Promise<string[]> {
+  async listIgnoredDocs(
+    workspaceId: string,
+    options?: {
+      includeRead?: boolean;
+    } & PaginationInput
+  ): Promise<{ docId: string; createdAt: Date }[]> {
     const row = await this.db.aiWorkspaceIgnoredDocs.findMany({
       where: {
         workspaceId,
       },
       select: {
         docId: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: options?.offset,
+      take: options?.first,
+    });
+    return row;
+  }
+
+  async countIgnoredDocs(workspaceId: string): Promise<number> {
+    const count = await this.db.aiWorkspaceIgnoredDocs.count({
+      where: {
+        workspaceId,
       },
     });
-    return row.map(r => r.docId);
+    return count;
   }
 
   @Transactional()
   async checkIgnoredDocs(workspaceId: string, docIds: string[]) {
     const ignored = await this.listIgnoredDocs(workspaceId).then(
-      r => new Set(r)
+      r => new Set(r.map(r => r.docId))
     );
 
     return docIds.filter(id => ignored.has(id));
@@ -133,14 +152,29 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
   }
 
   async listWorkspaceFiles(
-    workspaceId: string
+    workspaceId: string,
+    options?: {
+      includeRead?: boolean;
+    } & PaginationInput
   ): Promise<CopilotWorkspaceFile[]> {
     const files = await this.db.aiWorkspaceFiles.findMany({
       where: {
         workspaceId,
       },
+      orderBy: { createdAt: 'desc' },
+      skip: options?.offset,
+      take: options?.first,
     });
     return files;
+  }
+
+  async countWorkspaceFiles(workspaceId: string): Promise<number> {
+    const count = await this.db.aiWorkspaceFiles.count({
+      where: {
+        workspaceId,
+      },
+    });
+    return count;
   }
 
   async matchWorkspaceFileEmbedding(

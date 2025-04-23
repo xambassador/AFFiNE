@@ -366,9 +366,17 @@ export interface CopilotSessionType {
 
 export interface CopilotWorkspaceConfig {
   __typename?: 'CopilotWorkspaceConfig';
-  files: Array<CopilotWorkspaceFile>;
-  ignoredDocs: Array<Scalars['String']['output']>;
+  files: PaginatedCopilotWorkspaceFileType;
+  ignoredDocs: PaginatedIgnoredDocsType;
   workspaceId: Scalars['String']['output'];
+}
+
+export interface CopilotWorkspaceConfigFilesArgs {
+  pagination: PaginationInput;
+}
+
+export interface CopilotWorkspaceConfigIgnoredDocsArgs {
+  pagination: PaginationInput;
 }
 
 export interface CopilotWorkspaceFile {
@@ -379,6 +387,24 @@ export interface CopilotWorkspaceFile {
   mimeType: Scalars['String']['output'];
   size: Scalars['SafeInt']['output'];
   workspaceId: Scalars['String']['output'];
+}
+
+export interface CopilotWorkspaceFileTypeEdge {
+  __typename?: 'CopilotWorkspaceFileTypeEdge';
+  cursor: Scalars['String']['output'];
+  node: CopilotWorkspaceFile;
+}
+
+export interface CopilotWorkspaceIgnoredDoc {
+  __typename?: 'CopilotWorkspaceIgnoredDoc';
+  createdAt: Scalars['DateTime']['output'];
+  docId: Scalars['String']['output'];
+}
+
+export interface CopilotWorkspaceIgnoredDocTypeEdge {
+  __typename?: 'CopilotWorkspaceIgnoredDocTypeEdge';
+  cursor: Scalars['String']['output'];
+  node: CopilotWorkspaceIgnoredDoc;
 }
 
 export interface CreateChatMessageInput {
@@ -1622,9 +1648,23 @@ export interface PageInfo {
   startCursor: Maybe<Scalars['String']['output']>;
 }
 
+export interface PaginatedCopilotWorkspaceFileType {
+  __typename?: 'PaginatedCopilotWorkspaceFileType';
+  edges: Array<CopilotWorkspaceFileTypeEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+}
+
 export interface PaginatedGrantedDocUserType {
   __typename?: 'PaginatedGrantedDocUserType';
   edges: Array<GrantedDocUserTypeEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+}
+
+export interface PaginatedIgnoredDocsType {
+  __typename?: 'PaginatedIgnoredDocsType';
+  edges: Array<CopilotWorkspaceIgnoredDocTypeEdge>;
   pageInfo: PageInfo;
   totalCount: Scalars['Int']['output'];
 }
@@ -3243,25 +3283,69 @@ export type RemoveWorkspaceEmbeddingFilesMutation = {
   removeWorkspaceEmbeddingFiles: boolean;
 };
 
-export type GetWorkspaceEmbeddingConfigQueryVariables = Exact<{
+export type GetWorkspaceEmbeddingFilesQueryVariables = Exact<{
   workspaceId: Scalars['String']['input'];
+  pagination: PaginationInput;
 }>;
 
-export type GetWorkspaceEmbeddingConfigQuery = {
+export type GetWorkspaceEmbeddingFilesQuery = {
   __typename?: 'Query';
   workspace: {
     __typename?: 'WorkspaceType';
     embedding: {
       __typename?: 'CopilotWorkspaceConfig';
-      ignoredDocs: Array<string>;
-      files: Array<{
-        __typename?: 'CopilotWorkspaceFile';
-        fileId: string;
-        fileName: string;
-        mimeType: string;
-        size: number;
-        createdAt: string;
-      }>;
+      files: {
+        __typename?: 'PaginatedCopilotWorkspaceFileType';
+        totalCount: number;
+        pageInfo: {
+          __typename?: 'PageInfo';
+          endCursor: string | null;
+          hasNextPage: boolean;
+        };
+        edges: Array<{
+          __typename?: 'CopilotWorkspaceFileTypeEdge';
+          node: {
+            __typename?: 'CopilotWorkspaceFile';
+            fileId: string;
+            fileName: string;
+            mimeType: string;
+            size: number;
+            createdAt: string;
+          };
+        }>;
+      };
+    };
+  };
+};
+
+export type GetWorkspaceEmbeddingIgnoredDocsQueryVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  pagination: PaginationInput;
+}>;
+
+export type GetWorkspaceEmbeddingIgnoredDocsQuery = {
+  __typename?: 'Query';
+  workspace: {
+    __typename?: 'WorkspaceType';
+    embedding: {
+      __typename?: 'CopilotWorkspaceConfig';
+      ignoredDocs: {
+        __typename?: 'PaginatedIgnoredDocsType';
+        totalCount: number;
+        pageInfo: {
+          __typename?: 'PageInfo';
+          endCursor: string | null;
+          hasNextPage: boolean;
+        };
+        edges: Array<{
+          __typename?: 'CopilotWorkspaceIgnoredDocTypeEdge';
+          node: {
+            __typename?: 'CopilotWorkspaceIgnoredDoc';
+            docId: string;
+            createdAt: string;
+          };
+        }>;
+      };
     };
   };
 };
@@ -4540,9 +4624,14 @@ export type Queries =
       response: GetCopilotSessionsQuery;
     }
   | {
-      name: 'getWorkspaceEmbeddingConfigQuery';
-      variables: GetWorkspaceEmbeddingConfigQueryVariables;
-      response: GetWorkspaceEmbeddingConfigQuery;
+      name: 'getWorkspaceEmbeddingFilesQuery';
+      variables: GetWorkspaceEmbeddingFilesQueryVariables;
+      response: GetWorkspaceEmbeddingFilesQuery;
+    }
+  | {
+      name: 'getWorkspaceEmbeddingIgnoredDocsQuery';
+      variables: GetWorkspaceEmbeddingIgnoredDocsQueryVariables;
+      response: GetWorkspaceEmbeddingIgnoredDocsQuery;
     }
   | {
       name: 'getDocRolePermissionsQuery';
