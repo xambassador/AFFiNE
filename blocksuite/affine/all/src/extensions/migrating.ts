@@ -24,10 +24,6 @@ import {
   mindmapToPlainTextAdapterMatcher,
 } from '@blocksuite/affine-gfx-mindmap';
 import {
-  shapeToMarkdownAdapterMatcher,
-  shapeToPlainTextAdapterMatcher,
-} from '@blocksuite/affine-gfx-shape';
-import {
   textToMarkdownAdapterMatcher,
   textToPlainTextAdapterMatcher,
 } from '@blocksuite/affine-gfx-text';
@@ -42,7 +38,6 @@ import type { ExtensionType } from '@blocksuite/store';
 
 const elementToPlainTextAdapterMatchers = [
   groupToPlainTextAdapterMatcher,
-  shapeToPlainTextAdapterMatcher,
   connectorToPlainTextAdapterMatcher,
   textToPlainTextAdapterMatcher,
   mindmapToPlainTextAdapterMatcher,
@@ -50,7 +45,6 @@ const elementToPlainTextAdapterMatchers = [
 
 const elementToMarkdownAdapterMatchers = [
   groupToMarkdownAdapterMatcher,
-  shapeToMarkdownAdapterMatcher,
   connectorToMarkdownAdapterMatcher,
   textToMarkdownAdapterMatcher,
   mindmapToMarkdownAdapterMatcher,

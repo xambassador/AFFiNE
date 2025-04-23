@@ -1,7 +1,6 @@
 import { effects as gfxConnectorEffects } from '@blocksuite/affine-gfx-connector/effects';
 import { effects as gfxGroupEffects } from '@blocksuite/affine-gfx-group/effects';
 import { effects as gfxMindmapEffects } from '@blocksuite/affine-gfx-mindmap/effects';
-import { effects as gfxShapeEffects } from '@blocksuite/affine-gfx-shape/effects';
 import { effects as gfxTemplateEffects } from '@blocksuite/affine-gfx-template/effects';
 import { effects as gfxCanvasTextEffects } from '@blocksuite/affine-gfx-text/effects';
 import { effects as widgetEdgelessToolbarEffects } from '@blocksuite/affine-widget-edgeless-toolbar/effects';
@@ -77,7 +76,6 @@ function registerRootComponents() {
 
 function registerGfxEffects() {
   gfxCanvasTextEffects();
-  gfxShapeEffects();
   gfxConnectorEffects();
   gfxMindmapEffects();
   gfxGroupEffects();

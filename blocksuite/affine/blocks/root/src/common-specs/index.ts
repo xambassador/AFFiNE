@@ -12,11 +12,6 @@ import {
   MindMapView,
 } from '@blocksuite/affine-gfx-mindmap';
 import {
-  HighlighterElementRendererExtension,
-  ShapeElementRendererExtension,
-  ShapeElementView,
-} from '@blocksuite/affine-gfx-shape';
-import {
   TextElementRendererExtension,
   TextElementView,
 } from '@blocksuite/affine-gfx-text';
@@ -56,12 +51,9 @@ const EdgelessElementViews = [
   MindMapView,
   GroupElementView,
   TextElementView,
-  ShapeElementView,
 ];
 
 export const EdgelessElementRendererExtension: ExtensionType[] = [
-  HighlighterElementRendererExtension,
-  ShapeElementRendererExtension,
   TextElementRendererExtension,
   ConnectorElementRendererExtension,
   GroupElementRendererExtension,
