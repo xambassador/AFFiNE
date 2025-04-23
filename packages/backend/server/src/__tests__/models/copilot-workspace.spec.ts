@@ -104,22 +104,18 @@ test('should manage copilot workspace ignored docs', async t => {
 
 test('should insert and search embedding', async t => {
   {
-    await t.context.copilotWorkspace.addWorkspaceFile(
-      workspace.id,
+    const { fileId } = await t.context.copilotWorkspace.addFile(workspace.id, {
+      fileName: 'file1',
+      mimeType: 'text/plain',
+      size: 1,
+    });
+    await t.context.copilotWorkspace.addFileEmbeddings(workspace.id, fileId, [
       {
-        fileName: 'file1',
-        mimeType: 'text/plain',
-
-        size: 1,
+        index: 0,
+        content: 'content',
+        embedding: Array.from({ length: 1024 }, () => 1),
       },
-      [
-        {
-          index: 0,
-          content: 'content',
-          embedding: Array.from({ length: 1024 }, () => 1),
-        },
-      ]
-    );
+    ]);
 
     {
       const ret = await t.context.copilotWorkspace.matchWorkspaceFileEmbedding(

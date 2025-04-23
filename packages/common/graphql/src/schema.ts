@@ -239,6 +239,11 @@ export interface CopilotDocType {
   status: Maybe<ContextEmbedStatus>;
 }
 
+export interface CopilotFailedToAddWorkspaceFileEmbeddingDataType {
+  __typename?: 'CopilotFailedToAddWorkspaceFileEmbeddingDataType';
+  message: Scalars['String']['output'];
+}
+
 export interface CopilotFailedToMatchContextDataType {
   __typename?: 'CopilotFailedToMatchContextDataType';
   content: Scalars['String']['output'];
@@ -357,6 +362,23 @@ export interface CopilotSessionType {
   id: Scalars['ID']['output'];
   parentSessionId: Maybe<Scalars['ID']['output']>;
   promptName: Scalars['String']['output'];
+}
+
+export interface CopilotWorkspaceConfig {
+  __typename?: 'CopilotWorkspaceConfig';
+  files: Array<CopilotWorkspaceFile>;
+  ignoredDocs: Array<Scalars['String']['output']>;
+  workspaceId: Scalars['String']['output'];
+}
+
+export interface CopilotWorkspaceFile {
+  __typename?: 'CopilotWorkspaceFile';
+  createdAt: Scalars['DateTime']['output'];
+  fileId: Scalars['String']['output'];
+  fileName: Scalars['String']['output'];
+  mimeType: Scalars['String']['output'];
+  size: Scalars['SafeInt']['output'];
+  workspaceId: Scalars['String']['output'];
 }
 
 export interface CreateChatMessageInput {
@@ -507,6 +529,7 @@ export type ErrorDataUnion =
   | BlobNotFoundDataType
   | CopilotContextFileNotSupportedDataType
   | CopilotDocNotFoundDataType
+  | CopilotFailedToAddWorkspaceFileEmbeddingDataType
   | CopilotFailedToMatchContextDataType
   | CopilotFailedToModifyContextDataType
   | CopilotInvalidContextDataType
@@ -572,6 +595,7 @@ export enum ErrorNames {
   COPILOT_DOC_NOT_FOUND = 'COPILOT_DOC_NOT_FOUND',
   COPILOT_EMBEDDING_DISABLED = 'COPILOT_EMBEDDING_DISABLED',
   COPILOT_EMBEDDING_UNAVAILABLE = 'COPILOT_EMBEDDING_UNAVAILABLE',
+  COPILOT_FAILED_TO_ADD_WORKSPACE_FILE_EMBEDDING = 'COPILOT_FAILED_TO_ADD_WORKSPACE_FILE_EMBEDDING',
   COPILOT_FAILED_TO_CREATE_MESSAGE = 'COPILOT_FAILED_TO_CREATE_MESSAGE',
   COPILOT_FAILED_TO_GENERATE_TEXT = 'COPILOT_FAILED_TO_GENERATE_TEXT',
   COPILOT_FAILED_TO_MATCH_CONTEXT = 'COPILOT_FAILED_TO_MATCH_CONTEXT',
@@ -1040,6 +1064,8 @@ export interface Mutation {
   addContextDoc: CopilotContextDoc;
   /** add a file to context */
   addContextFile: CopilotContextFile;
+  /** Update workspace embedding files */
+  addWorkspaceEmbeddingFiles: CopilotWorkspaceFile;
   addWorkspaceFeature: Scalars['Boolean']['output'];
   approveMember: Scalars['Boolean']['output'];
   /** Ban an user */
@@ -1107,6 +1133,8 @@ export interface Mutation {
   removeContextDoc: Scalars['Boolean']['output'];
   /** remove a file from context */
   removeContextFile: Scalars['Boolean']['output'];
+  /** Remove workspace embedding files */
+  removeWorkspaceEmbeddingFiles: Scalars['Boolean']['output'];
   removeWorkspaceFeature: Scalars['Boolean']['output'];
   resumeSubscription: SubscriptionType;
   retryAudioTranscription: Maybe<TranscriptionResultType>;
@@ -1142,6 +1170,8 @@ export interface Mutation {
   updateUserFeatures: Array<FeatureType>;
   /** Update workspace */
   updateWorkspace: WorkspaceType;
+  /** Update ignored docs */
+  updateWorkspaceEmbeddingIgnoredDocs: Scalars['Int']['output'];
   /** Upload user avatar */
   uploadAvatar: UserType;
   verifyEmail: Scalars['Boolean']['output'];
@@ -1169,6 +1199,11 @@ export interface MutationAddContextDocArgs {
 export interface MutationAddContextFileArgs {
   content: Scalars['Upload']['input'];
   options: AddContextFileInput;
+}
+
+export interface MutationAddWorkspaceEmbeddingFilesArgs {
+  blob: Scalars['Upload']['input'];
+  workspaceId: Scalars['String']['input'];
 }
 
 export interface MutationAddWorkspaceFeatureArgs {
@@ -1364,6 +1399,11 @@ export interface MutationRemoveContextFileArgs {
   options: RemoveContextFileInput;
 }
 
+export interface MutationRemoveWorkspaceEmbeddingFilesArgs {
+  fileId: Scalars['String']['input'];
+  workspaceId: Scalars['String']['input'];
+}
+
 export interface MutationRemoveWorkspaceFeatureArgs {
   feature: FeatureType;
   workspaceId: Scalars['String']['input'];
@@ -1492,6 +1532,12 @@ export interface MutationUpdateUserFeaturesArgs {
 
 export interface MutationUpdateWorkspaceArgs {
   input: UpdateWorkspaceInput;
+}
+
+export interface MutationUpdateWorkspaceEmbeddingIgnoredDocsArgs {
+  add?: InputMaybe<Array<Scalars['String']['input']>>;
+  remove?: InputMaybe<Array<Scalars['String']['input']>>;
+  workspaceId: Scalars['String']['input'];
 }
 
 export interface MutationUploadAvatarArgs {
@@ -2232,6 +2278,7 @@ export interface WorkspaceType {
   createdAt: Scalars['DateTime']['output'];
   /** Get get with given id */
   doc: DocType;
+  embedding: CopilotWorkspaceConfig;
   /** Enable AI */
   enableAi: Scalars['Boolean']['output'];
   /** Enable doc embedding */
@@ -3167,6 +3214,71 @@ export type GetCopilotSessionsQuery = {
       }>;
     };
   } | null;
+};
+
+export type AddWorkspaceEmbeddingFilesMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  blob: Scalars['Upload']['input'];
+}>;
+
+export type AddWorkspaceEmbeddingFilesMutation = {
+  __typename?: 'Mutation';
+  addWorkspaceEmbeddingFiles: {
+    __typename?: 'CopilotWorkspaceFile';
+    fileId: string;
+    fileName: string;
+    mimeType: string;
+    size: number;
+    createdAt: string;
+  };
+};
+
+export type RemoveWorkspaceEmbeddingFilesMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  fileId: Scalars['String']['input'];
+}>;
+
+export type RemoveWorkspaceEmbeddingFilesMutation = {
+  __typename?: 'Mutation';
+  removeWorkspaceEmbeddingFiles: boolean;
+};
+
+export type GetWorkspaceEmbeddingConfigQueryVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+}>;
+
+export type GetWorkspaceEmbeddingConfigQuery = {
+  __typename?: 'Query';
+  workspace: {
+    __typename?: 'WorkspaceType';
+    embedding: {
+      __typename?: 'CopilotWorkspaceConfig';
+      ignoredDocs: Array<string>;
+      files: Array<{
+        __typename?: 'CopilotWorkspaceFile';
+        fileId: string;
+        fileName: string;
+        mimeType: string;
+        size: number;
+        createdAt: string;
+      }>;
+    };
+  };
+};
+
+export type UpdateWorkspaceEmbeddingIgnoredDocsMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  add?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >;
+  remove?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >;
+}>;
+
+export type UpdateWorkspaceEmbeddingIgnoredDocsMutation = {
+  __typename?: 'Mutation';
+  updateWorkspaceEmbeddingIgnoredDocs: number;
 };
 
 export type CreateCheckoutSessionMutationVariables = Exact<{
@@ -4428,6 +4540,11 @@ export type Queries =
       response: GetCopilotSessionsQuery;
     }
   | {
+      name: 'getWorkspaceEmbeddingConfigQuery';
+      variables: GetWorkspaceEmbeddingConfigQueryVariables;
+      response: GetWorkspaceEmbeddingConfigQuery;
+    }
+  | {
       name: 'getDocRolePermissionsQuery';
       variables: GetDocRolePermissionsQueryVariables;
       response: GetDocRolePermissionsQuery;
@@ -4783,6 +4900,21 @@ export type Mutations =
       name: 'updateCopilotSessionMutation';
       variables: UpdateCopilotSessionMutationVariables;
       response: UpdateCopilotSessionMutation;
+    }
+  | {
+      name: 'addWorkspaceEmbeddingFilesMutation';
+      variables: AddWorkspaceEmbeddingFilesMutationVariables;
+      response: AddWorkspaceEmbeddingFilesMutation;
+    }
+  | {
+      name: 'removeWorkspaceEmbeddingFilesMutation';
+      variables: RemoveWorkspaceEmbeddingFilesMutationVariables;
+      response: RemoveWorkspaceEmbeddingFilesMutation;
+    }
+  | {
+      name: 'updateWorkspaceEmbeddingIgnoredDocsMutation';
+      variables: UpdateWorkspaceEmbeddingIgnoredDocsMutationVariables;
+      response: UpdateWorkspaceEmbeddingIgnoredDocsMutation;
     }
   | {
       name: 'createCheckoutSessionMutation';

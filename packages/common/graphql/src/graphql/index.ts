@@ -741,6 +741,60 @@ export const getCopilotSessionsQuery = {
 }`,
 };
 
+export const addWorkspaceEmbeddingFilesMutation = {
+  id: 'addWorkspaceEmbeddingFilesMutation' as const,
+  op: 'addWorkspaceEmbeddingFiles',
+  query: `mutation addWorkspaceEmbeddingFiles($workspaceId: String!, $blob: Upload!) {
+  addWorkspaceEmbeddingFiles(workspaceId: $workspaceId, blob: $blob) {
+    fileId
+    fileName
+    mimeType
+    size
+    createdAt
+  }
+}`,
+  file: true,
+};
+
+export const removeWorkspaceEmbeddingFilesMutation = {
+  id: 'removeWorkspaceEmbeddingFilesMutation' as const,
+  op: 'removeWorkspaceEmbeddingFiles',
+  query: `mutation removeWorkspaceEmbeddingFiles($workspaceId: String!, $fileId: String!) {
+  removeWorkspaceEmbeddingFiles(workspaceId: $workspaceId, fileId: $fileId)
+}`,
+};
+
+export const getWorkspaceEmbeddingConfigQuery = {
+  id: 'getWorkspaceEmbeddingConfigQuery' as const,
+  op: 'getWorkspaceEmbeddingConfig',
+  query: `query getWorkspaceEmbeddingConfig($workspaceId: String!) {
+  workspace(id: $workspaceId) {
+    embedding {
+      files {
+        fileId
+        fileName
+        mimeType
+        size
+        createdAt
+      }
+      ignoredDocs
+    }
+  }
+}`,
+};
+
+export const updateWorkspaceEmbeddingIgnoredDocsMutation = {
+  id: 'updateWorkspaceEmbeddingIgnoredDocsMutation' as const,
+  op: 'updateWorkspaceEmbeddingIgnoredDocs',
+  query: `mutation updateWorkspaceEmbeddingIgnoredDocs($workspaceId: String!, $add: [String!], $remove: [String!]) {
+  updateWorkspaceEmbeddingIgnoredDocs(
+    workspaceId: $workspaceId
+    add: $add
+    remove: $remove
+  )
+}`,
+};
+
 export const createCheckoutSessionMutation = {
   id: 'createCheckoutSessionMutation' as const,
   op: 'createCheckoutSession',

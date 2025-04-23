@@ -5,9 +5,10 @@ import { Transactional } from '@nestjs-cls/transactional';
 import { Prisma } from '@prisma/client';
 
 import { BaseModel } from './base';
-import {
-  type CopilotWorkspaceFile,
-  type Embedding,
+import type {
+  CopilotWorkspaceFile,
+  CopilotWorkspaceFileMetadata,
+  Embedding,
   FileChunkSimilarity,
 } from './common';
 
@@ -95,24 +96,40 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return Prisma.join(groups.map(row => Prisma.sql`(${Prisma.join(row)})`));
   }
 
-  @Transactional()
-  async addWorkspaceFile(
+  async addFile(
     workspaceId: string,
-    file: Pick<CopilotWorkspaceFile, 'fileName' | 'mimeType' | 'size'>,
-    embeddings: Embedding[]
-  ): Promise<string> {
+    file: CopilotWorkspaceFileMetadata
+  ): Promise<CopilotWorkspaceFile> {
     const fileId = randomUUID();
-    await this.db.aiWorkspaceFiles.create({
+    const row = await this.db.aiWorkspaceFiles.create({
       data: { ...file, workspaceId, fileId },
     });
 
+    return row;
+  }
+
+  async getFile(workspaceId: string, fileId: string) {
+    const file = await this.db.aiWorkspaceFiles.findFirst({
+      where: {
+        workspaceId,
+        fileId,
+      },
+    });
+    return file;
+  }
+
+  @Transactional()
+  async addFileEmbeddings(
+    workspaceId: string,
+    fileId: string,
+    embeddings: Embedding[]
+  ) {
     const values = this.processEmbeddings(workspaceId, fileId, embeddings);
     await this.db.$executeRaw`
-        INSERT INTO "ai_workspace_file_embeddings"
-        ("workspace_id", "file_id", "chunk", "content", "embedding") VALUES ${values}
-        ON CONFLICT (workspace_id, file_id, chunk) DO NOTHING;
-    `;
-    return fileId;
+          INSERT INTO "ai_workspace_file_embeddings"
+          ("workspace_id", "file_id", "chunk", "content", "embedding") VALUES ${values}
+          ON CONFLICT (workspace_id, file_id, chunk) DO NOTHING;
+      `;
   }
 
   async listWorkspaceFiles(
@@ -152,5 +169,6 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
         fileId,
       },
     });
+    return true;
   }
 }

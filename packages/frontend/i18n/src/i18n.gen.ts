@@ -8194,6 +8194,12 @@ export function useAFFiNEI18N(): {
       */
     ["error.COPILOT_TRANSCRIPTION_AUDIO_NOT_PROVIDED"](): string;
     /**
+      * `Failed to add workspace file embedding: {{message}}`
+      */
+    ["error.COPILOT_FAILED_TO_ADD_WORKSPACE_FILE_EMBEDDING"](options: {
+        readonly message: string;
+    }): string;
+    /**
       * `You have exceeded your blob size quota.`
       */
     ["error.BLOB_QUOTA_EXCEEDED"](): string;

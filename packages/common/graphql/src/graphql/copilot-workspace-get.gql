@@ -1,0 +1,14 @@
+query getWorkspaceEmbeddingConfig($workspaceId: String!) {
+  workspace(id: $workspaceId) {
+    embedding {
+      files {
+        fileId
+        fileName
+        mimeType
+        size
+        createdAt
+      }
+      ignoredDocs
+    }
+  }
+}

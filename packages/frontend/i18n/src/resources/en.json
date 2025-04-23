@@ -2027,6 +2027,7 @@
   "error.COPILOT_TRANSCRIPTION_JOB_EXISTS": "Transcription job already exists",
   "error.COPILOT_TRANSCRIPTION_JOB_NOT_FOUND": "Transcription job not found.",
   "error.COPILOT_TRANSCRIPTION_AUDIO_NOT_PROVIDED": "Audio not provided.",
+  "error.COPILOT_FAILED_TO_ADD_WORKSPACE_FILE_EMBEDDING": "Failed to add workspace file embedding: {{message}}",
   "error.BLOB_QUOTA_EXCEEDED": "You have exceeded your blob size quota.",
   "error.STORAGE_QUOTA_EXCEEDED": "You have exceeded your storage quota.",
   "error.MEMBER_QUOTA_EXCEEDED": "You have exceeded your workspace member quota.",
