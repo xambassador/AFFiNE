@@ -3464,6 +3464,7 @@ __metadata:
   resolution: "@blocksuite/affine-inline-preset@workspace:blocksuite/affine/inlines/preset"
   dependencies:
     "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
     "@blocksuite/affine-inline-footnote": "workspace:*"
     "@blocksuite/affine-inline-latex": "workspace:*"
     "@blocksuite/affine-inline-link": "workspace:*"

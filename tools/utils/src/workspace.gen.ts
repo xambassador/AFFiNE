@@ -694,6 +694,7 @@ export const PackageList = [
     name: '@blocksuite/affine-inline-preset',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/inlines/footnote',
       'blocksuite/affine/inlines/latex',
       'blocksuite/affine/inlines/link',

@@ -18,6 +18,7 @@ import { TableStoreExtension } from '@blocksuite/affine-block-table/store';
 import { FootnoteStoreExtension } from '@blocksuite/affine-inline-footnote/store';
 import { LatexStoreExtension as InlineLatexStoreExtension } from '@blocksuite/affine-inline-latex/store';
 import { LinkStoreExtension } from '@blocksuite/affine-inline-link/store';
+import { InlinePresetStoreExtension } from '@blocksuite/affine-inline-preset/store';
 import { ReferenceStoreExtension } from '@blocksuite/affine-inline-reference/store';
 
 import { MigratingStoreExtension } from './migrating-store';
@@ -46,6 +47,7 @@ export function getInternalStoreExtensions() {
     LinkStoreExtension,
     ReferenceStoreExtension,
     InlineLatexStoreExtension,
+    InlinePresetStoreExtension,
 
     MigratingStoreExtension,
   ];

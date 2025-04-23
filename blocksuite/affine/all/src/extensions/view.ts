@@ -19,6 +19,7 @@ import { FootnoteViewExtension } from '@blocksuite/affine-inline-footnote/view';
 import { LatexViewExtension as InlineLatexViewExtension } from '@blocksuite/affine-inline-latex/view';
 import { LinkViewExtension } from '@blocksuite/affine-inline-link/view';
 import { MentionViewExtension } from '@blocksuite/affine-inline-mention/view';
+import { InlinePresetViewExtension } from '@blocksuite/affine-inline-preset/view';
 import { ReferenceViewExtension } from '@blocksuite/affine-inline-reference/view';
 
 import { MigratingViewExtension } from './migrating-view';
@@ -52,5 +53,6 @@ export function getInternalViewExtensions() {
     ReferenceViewExtension,
     InlineLatexViewExtension,
     MentionViewExtension,
+    InlinePresetViewExtension,
   ];
 }

@@ -10,13 +10,6 @@ import {
   StoreExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
 import {
-  HtmlInlineToDeltaAdapterExtensions,
-  InlineDeltaToHtmlAdapterExtensions,
-  InlineDeltaToMarkdownAdapterExtensions,
-  MarkdownInlineToDeltaAdapterExtensions,
-  NotionHtmlInlineToDeltaAdapterExtensions,
-} from '@blocksuite/affine-inline-preset';
-import {
   RootBlockSchemaExtension,
   TranscriptionBlockSchemaExtension,
 } from '@blocksuite/affine-model';
@@ -63,26 +56,15 @@ const defaultBlockNotionHtmlAdapterMatchers: ExtensionType[] = [
 ];
 
 function getHtmlAdapterExtensions(): ExtensionType[] {
-  return [
-    ...HtmlInlineToDeltaAdapterExtensions,
-    ...defaultBlockHtmlAdapterMatchers,
-    ...InlineDeltaToHtmlAdapterExtensions,
-  ];
+  return [...defaultBlockHtmlAdapterMatchers];
 }
 
 function getMarkdownAdapterExtensions(): ExtensionType[] {
-  return [
-    ...MarkdownInlineToDeltaAdapterExtensions,
-    ...defaultBlockMarkdownAdapterMatchers,
-    ...InlineDeltaToMarkdownAdapterExtensions,
-  ];
+  return [...defaultBlockMarkdownAdapterMatchers];
 }
 
 function getNotionHtmlAdapterExtensions(): ExtensionType[] {
-  return [
-    ...NotionHtmlInlineToDeltaAdapterExtensions,
-    ...defaultBlockNotionHtmlAdapterMatchers,
-  ];
+  return [...defaultBlockNotionHtmlAdapterMatchers];
 }
 
 const MigratingStoreExtensions: ExtensionType[] = [
