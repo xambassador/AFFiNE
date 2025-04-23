@@ -364,13 +364,16 @@ export function notifyDocCreated(std: BlockStdScope, doc: Store) {
     message: 'You can click undo to recovery block content',
     accent: 'info',
     duration: 10 * 1000,
-    action: {
-      label: 'Undo',
-      onClick: () => {
-        doc.undo();
-        clear();
+    actions: [
+      {
+        key: 'undo',
+        label: 'Undo',
+        onClick: () => {
+          doc.undo();
+          clear();
+        },
       },
-    },
+    ],
     abort: abortController.signal,
     onClose: clear,
   });

@@ -41,7 +41,6 @@ import { html } from 'lit';
 import { keyed } from 'lit/directives/keyed.js';
 
 import { changeNoteDisplayMode } from '../commands';
-import * as styles from '../components/view-in-page-notify.css';
 import { NoteConfigExtension } from '../config';
 
 const trackBaseProps = {
@@ -550,22 +549,18 @@ function setDisplayMode(
     message: `${data.message} Find it in the TOC for quick navigation.`,
     accent: 'success',
     duration: 5 * 1000,
-    footer: html`<div class=${styles.viewInPageNotifyFooter}>
-      <button
-        class=${styles.viewInPageNotifyFooterButton}
-        @click=${undo}
-        data-testid="undo-display-in-page"
-      >
-        Undo
-      </button>
-      <button
-        class=${styles.viewInPageNotifyFooterButton}
-        @click=${viewInToc}
-        data-testid="view-in-toc"
-      >
-        View in Toc
-      </button>
-    </div>`,
+    actions: [
+      {
+        key: 'undo-display-in-page',
+        label: 'Undo',
+        onClick: () => undo(),
+      },
+      {
+        key: 'view-in-toc',
+        label: 'View in Toc',
+        onClick: () => viewInToc(),
+      },
+    ],
     abort: abortController.signal,
     onClose: () => {
       clear();

@@ -35,13 +35,16 @@ function notify(std: BlockStdScope, title: string, message: string) {
     message,
     accent: 'info',
     duration: 10 * 1000,
-    action: {
-      label: 'Undo',
-      onClick: () => {
-        doc.undo();
-        clear();
+    actions: [
+      {
+        key: 'undo',
+        label: 'Undo',
+        onClick: () => {
+          doc.undo();
+          clear();
+        },
       },
-    },
+    ],
     abort: abortController.signal,
     onClose: clear,
   });
