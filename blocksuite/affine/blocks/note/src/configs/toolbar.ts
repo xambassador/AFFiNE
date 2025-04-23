@@ -31,10 +31,7 @@ import {
   LinkedPageIcon,
   ScissorsIcon,
 } from '@blocksuite/icons/lit';
-import {
-  BlockFlavourIdentifier,
-  EditorLifeCycleExtension,
-} from '@blocksuite/std';
+import { BlockFlavourIdentifier } from '@blocksuite/std';
 import type { ExtensionType } from '@blocksuite/store';
 import { computed } from '@preact/signals-core';
 import { html } from 'lit';
@@ -504,34 +501,6 @@ function setDisplayMode(
     ctx.selection.clear();
   }
 
-  const abortController = new AbortController();
-  const clear = () => {
-    ctx.history.off('stack-item-added', addHandler);
-    ctx.history.off('stack-item-popped', popHandler);
-    disposable.unsubscribe();
-  };
-  const closeNotify = () => {
-    abortController.abort();
-    clear();
-  };
-
-  const addHandler = ctx.history.on('stack-item-added', closeNotify);
-  const popHandler = ctx.history.on('stack-item-popped', closeNotify);
-  const disposable = ctx.std
-    .get(EditorLifeCycleExtension)
-    .slots.unmounted.subscribe(closeNotify);
-
-  const undo = () => {
-    ctx.store.undo();
-    closeNotify();
-  };
-
-  const viewInToc = () => {
-    const sidebar = ctx.std.getOptional(SidebarExtensionIdentifier);
-    sidebar?.open('outline');
-    closeNotify();
-  };
-
   const data =
     newMode === NoteDisplayMode.EdgelessOnly
       ? {
@@ -544,27 +513,21 @@ function setDisplayMode(
         };
 
   const notification = ctx.std.getOptional(NotificationProvider);
-  notification?.notify({
+  notification?.notifyWithUndoAction({
     title: data.title,
     message: `${data.message} Find it in the TOC for quick navigation.`,
     accent: 'success',
     duration: 5 * 1000,
     actions: [
       {
-        key: 'undo-display-in-page',
-        label: 'Undo',
-        onClick: () => undo(),
-      },
-      {
         key: 'view-in-toc',
         label: 'View in Toc',
-        onClick: () => viewInToc(),
+        onClick: () => {
+          const sidebar = ctx.std.getOptional(SidebarExtensionIdentifier);
+          sidebar?.open('outline');
+        },
       },
     ],
-    abort: abortController.signal,
-    onClose: () => {
-      clear();
-    },
   });
 
   ctx.track('NoteDisplayModeChanged', {

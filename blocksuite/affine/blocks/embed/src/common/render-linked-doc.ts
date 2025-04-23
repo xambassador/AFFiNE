@@ -11,7 +11,7 @@ import {
 import { EMBED_CARD_HEIGHT } from '@blocksuite/affine-shared/consts';
 import { NotificationProvider } from '@blocksuite/affine-shared/services';
 import { matchModels } from '@blocksuite/affine-shared/utils';
-import { BlockStdScope, EditorLifeCycleExtension } from '@blocksuite/std';
+import { BlockStdScope } from '@blocksuite/std';
 import {
   type BlockModel,
   type BlockSnapshot,
@@ -337,45 +337,12 @@ export function promptDocTitle(std: BlockStdScope, autofill?: string) {
   });
 }
 
-export function notifyDocCreated(std: BlockStdScope, doc: Store) {
-  const notification = std.getOptional(NotificationProvider);
-  if (!notification) return;
-
-  const abortController = new AbortController();
-  const clear = () => {
-    doc.history.off('stack-item-added', addHandler);
-    doc.history.off('stack-item-popped', popHandler);
-    disposable.unsubscribe();
-  };
-  const closeNotify = () => {
-    abortController.abort();
-    clear();
-  };
-
-  // edit or undo or switch doc, close notify toast
-  const addHandler = doc.history.on('stack-item-added', closeNotify);
-  const popHandler = doc.history.on('stack-item-popped', closeNotify);
-  const disposable = std
-    .get(EditorLifeCycleExtension)
-    .slots.unmounted.subscribe(closeNotify);
-
-  notification.notify({
+export function notifyDocCreated(std: BlockStdScope) {
+  std.getOptional(NotificationProvider)?.notifyWithUndoAction({
     title: 'Linked doc created',
     message: 'You can click undo to recovery block content',
     accent: 'info',
     duration: 10 * 1000,
-    actions: [
-      {
-        key: 'undo',
-        label: 'Undo',
-        onClick: () => {
-          doc.undo();
-          clear();
-        },
-      },
-    ],
-    abort: abortController.signal,
-    onClose: clear,
   });
 }
 

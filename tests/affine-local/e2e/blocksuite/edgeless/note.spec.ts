@@ -252,7 +252,7 @@ test.describe('edgeless note element toolbar', () => {
     await waitForEditorLoad(page);
     await expect(notes).toHaveCount(1);
 
-    const undoButton = page.getByTestId('undo-display-in-page');
+    const undoButton = page.getByTestId('notification-card-undo');
     const viewTocButton = page.getByTestId('view-in-toc');
 
     await clickEdgelessModeButton(page);
