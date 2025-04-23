@@ -16,11 +16,13 @@ import { type Framework } from '@toeverything/infra';
 import { DesktopApiService } from '../desktop-api';
 import { ElectronGlobalCache, ElectronGlobalState } from './impls/electron';
 import {
+  IDBGlobalState,
   LocalStorageGlobalCache,
   LocalStorageGlobalState,
   SessionStorageGlobalSessionState,
 } from './impls/storage';
 import {
+  CacheStorage,
   GlobalCache,
   GlobalSessionState,
   GlobalState,
@@ -43,11 +45,13 @@ export const configureStorageModule = (framework: Framework) => {
 export function configureLocalStorageStateStorageImpls(framework: Framework) {
   framework.impl(GlobalCache, LocalStorageGlobalCache);
   framework.impl(GlobalState, LocalStorageGlobalState);
+  framework.impl(CacheStorage, IDBGlobalState);
 }
 
 export function configureElectronStateStorageImpls(framework: Framework) {
   framework.impl(GlobalCache, ElectronGlobalCache, [DesktopApiService]);
   framework.impl(GlobalState, ElectronGlobalState, [DesktopApiService]);
+  framework.impl(CacheStorage, IDBGlobalState);
 }
 
 export function configureCommonGlobalStorageImpls(framework: Framework) {
