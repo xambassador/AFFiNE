@@ -15,6 +15,7 @@ import { NoteStoreExtension } from '@blocksuite/affine-block-note/store';
 import { ParagraphStoreExtension } from '@blocksuite/affine-block-paragraph/store';
 import { SurfaceRefStoreExtension } from '@blocksuite/affine-block-surface-ref/store';
 import { TableStoreExtension } from '@blocksuite/affine-block-table/store';
+import { BrushStoreExtension } from '@blocksuite/affine-gfx-brush/store';
 import { FootnoteStoreExtension } from '@blocksuite/affine-inline-footnote/store';
 import { LatexStoreExtension as InlineLatexStoreExtension } from '@blocksuite/affine-inline-latex/store';
 import { LinkStoreExtension } from '@blocksuite/affine-inline-link/store';
@@ -48,6 +49,8 @@ export function getInternalStoreExtensions() {
     ReferenceStoreExtension,
     InlineLatexStoreExtension,
     InlinePresetStoreExtension,
+
+    BrushStoreExtension,
 
     MigratingStoreExtension,
   ];

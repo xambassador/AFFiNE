@@ -1,8 +1,6 @@
 import { frameQuickTool } from '@blocksuite/affine-block-frame';
-import { penSeniorTool } from '@blocksuite/affine-gfx-brush';
 import { connectorQuickTool } from '@blocksuite/affine-gfx-connector';
 import { mindMapSeniorTool } from '@blocksuite/affine-gfx-mindmap';
-import { noteSeniorTool } from '@blocksuite/affine-gfx-note';
 import { shapeSeniorTool } from '@blocksuite/affine-gfx-shape';
 import { templateSeniorTool } from '@blocksuite/affine-gfx-template';
 import { QuickToolExtension } from '@blocksuite/affine-widget-edgeless-toolbar';
@@ -36,8 +34,6 @@ export const quickTools = [
 ];
 
 export const seniorTools = [
-  noteSeniorTool,
-  penSeniorTool,
   shapeSeniorTool,
   mindMapSeniorTool,
   templateSeniorTool,

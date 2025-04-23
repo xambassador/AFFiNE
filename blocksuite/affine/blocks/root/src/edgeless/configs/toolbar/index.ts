@@ -1,9 +1,5 @@
 import { edgelessTextToolbarExtension } from '@blocksuite/affine-block-edgeless-text';
 import { frameToolbarExtension } from '@blocksuite/affine-block-frame';
-import {
-  brushToolbarExtension,
-  highlighterToolbarExtension,
-} from '@blocksuite/affine-gfx-brush';
 import { connectorToolbarExtension } from '@blocksuite/affine-gfx-connector';
 import { groupToolbarExtension } from '@blocksuite/affine-gfx-group';
 import {
@@ -22,10 +18,6 @@ export const EdgelessElementToolbarExtension: ExtensionType[] = [
   frameToolbarExtension,
 
   groupToolbarExtension,
-
-  brushToolbarExtension,
-
-  highlighterToolbarExtension,
 
   connectorToolbarExtension,
 

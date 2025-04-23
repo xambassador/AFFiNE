@@ -1,5 +1,4 @@
 import { FileDropExtension } from '@blocksuite/affine-components/drop-indicator';
-import { BrushElementRendererExtension } from '@blocksuite/affine-gfx-brush';
 import {
   ConnectorElementRendererExtension,
   ConnectorElementView,
@@ -61,7 +60,6 @@ const EdgelessElementViews = [
 ];
 
 export const EdgelessElementRendererExtension: ExtensionType[] = [
-  BrushElementRendererExtension,
   HighlighterElementRendererExtension,
   ShapeElementRendererExtension,
   TextElementRendererExtension,

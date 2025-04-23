@@ -4,11 +4,7 @@ import {
   PresentTool,
 } from '@blocksuite/affine-block-frame';
 import { ConnectionOverlay } from '@blocksuite/affine-block-surface';
-import {
-  BrushTool,
-  EraserTool,
-  HighlighterTool,
-} from '@blocksuite/affine-gfx-brush';
+import type * as BrushEffect from '@blocksuite/affine-gfx-brush';
 import {
   ConnectorFilter,
   ConnectorTool,
@@ -17,7 +13,7 @@ import {
   MindMapDragExtension,
   MindMapIndicatorOverlay,
 } from '@blocksuite/affine-gfx-mindmap';
-import { NoteTool } from '@blocksuite/affine-gfx-note';
+import type * as NoteEffect from '@blocksuite/affine-gfx-note';
 import { ShapeTool } from '@blocksuite/affine-gfx-shape';
 import { TemplateTool } from '@blocksuite/affine-gfx-template';
 import { TextTool } from '@blocksuite/affine-gfx-text';
@@ -35,20 +31,18 @@ import { SnapExtension } from './interact-extensions/snap-manager.js';
 import { EditPropsMiddlewareBuilder } from './middlewares/base.js';
 import { SnapOverlay } from './utils/snap-manager.js';
 
+declare type _GLOBAL_ = typeof NoteEffect | typeof BrushEffect;
+
 export const EdgelessToolExtension: ExtensionType[] = [
   DefaultTool,
   PanTool,
-  EraserTool,
   TextTool,
   ShapeTool,
-  NoteTool,
-  BrushTool,
   ConnectorTool,
   TemplateTool,
   EmptyTool,
   FrameTool,
   PresentTool,
-  HighlighterTool,
 ];
 
 export const EdgelessEditExtensions: ExtensionType[] = [

@@ -1,8 +1,6 @@
-import { effects as gfxBrushEffects } from '@blocksuite/affine-gfx-brush/effects';
 import { effects as gfxConnectorEffects } from '@blocksuite/affine-gfx-connector/effects';
 import { effects as gfxGroupEffects } from '@blocksuite/affine-gfx-group/effects';
 import { effects as gfxMindmapEffects } from '@blocksuite/affine-gfx-mindmap/effects';
-import { effects as gfxNoteEffects } from '@blocksuite/affine-gfx-note/effects';
 import { effects as gfxShapeEffects } from '@blocksuite/affine-gfx-shape/effects';
 import { effects as gfxTemplateEffects } from '@blocksuite/affine-gfx-template/effects';
 import { effects as gfxCanvasTextEffects } from '@blocksuite/affine-gfx-text/effects';
@@ -80,11 +78,9 @@ function registerRootComponents() {
 function registerGfxEffects() {
   gfxCanvasTextEffects();
   gfxShapeEffects();
-  gfxNoteEffects();
   gfxConnectorEffects();
   gfxMindmapEffects();
   gfxGroupEffects();
-  gfxBrushEffects();
   gfxTemplateEffects();
 }
 

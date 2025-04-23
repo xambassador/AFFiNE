@@ -12,10 +12,6 @@ import {
   SurfaceBlockAdapterExtensions,
 } from '@blocksuite/affine-block-surface';
 import {
-  brushToMarkdownAdapterMatcher,
-  brushToPlainTextAdapterMatcher,
-} from '@blocksuite/affine-gfx-brush';
-import {
   connectorToMarkdownAdapterMatcher,
   connectorToPlainTextAdapterMatcher,
 } from '@blocksuite/affine-gfx-connector';
@@ -48,7 +44,6 @@ const elementToPlainTextAdapterMatchers = [
   groupToPlainTextAdapterMatcher,
   shapeToPlainTextAdapterMatcher,
   connectorToPlainTextAdapterMatcher,
-  brushToPlainTextAdapterMatcher,
   textToPlainTextAdapterMatcher,
   mindmapToPlainTextAdapterMatcher,
 ];
@@ -57,7 +52,6 @@ const elementToMarkdownAdapterMatchers = [
   groupToMarkdownAdapterMatcher,
   shapeToMarkdownAdapterMatcher,
   connectorToMarkdownAdapterMatcher,
-  brushToMarkdownAdapterMatcher,
   textToMarkdownAdapterMatcher,
   mindmapToMarkdownAdapterMatcher,
 ];

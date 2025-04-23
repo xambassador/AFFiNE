@@ -15,6 +15,8 @@ import { NoteViewExtension } from '@blocksuite/affine-block-note/view';
 import { ParagraphViewExtension } from '@blocksuite/affine-block-paragraph/view';
 import { SurfaceRefViewExtension } from '@blocksuite/affine-block-surface-ref/view';
 import { TableViewExtension } from '@blocksuite/affine-block-table/view';
+import { BrushViewExtension } from '@blocksuite/affine-gfx-brush/view';
+import { NoteViewExtension as GfxNoteViewExtension } from '@blocksuite/affine-gfx-note/view';
 import { FootnoteViewExtension } from '@blocksuite/affine-inline-footnote/view';
 import { LatexViewExtension as InlineLatexViewExtension } from '@blocksuite/affine-inline-latex/view';
 import { LinkViewExtension } from '@blocksuite/affine-inline-link/view';
@@ -26,6 +28,12 @@ import { MigratingViewExtension } from './migrating-view';
 
 export function getInternalViewExtensions() {
   return [
+    GfxNoteViewExtension,
+    BrushViewExtension,
+    // shape
+    // mind
+    // template
+
     MigratingViewExtension,
 
     // Block
