@@ -1,8 +1,4 @@
-import { CodeMarkdownPreprocessorExtension } from '@blocksuite/affine-block-code';
 import { DatabaseSelectionExtension } from '@blocksuite/affine-block-database';
-import { EmbedIframeConfigExtensions } from '@blocksuite/affine-block-embed';
-import { ImageStoreSpec } from '@blocksuite/affine-block-image';
-import { LatexMarkdownPreprocessorExtension } from '@blocksuite/affine-block-latex';
 import {
   RootBlockHtmlAdapterExtension,
   RootBlockMarkdownAdapterExtension,
@@ -36,7 +32,6 @@ import {
 import { HighlightSelectionExtension } from '@blocksuite/affine-shared/selection';
 import {
   BlockMetaService,
-  EmbedIframeService,
   FeatureFlagService,
   FileSizeLimitService,
   LinkPreviewerService,
@@ -64,16 +59,9 @@ const defaultBlockHtmlAdapterMatchers = [RootBlockHtmlAdapterExtension];
 
 const defaultBlockMarkdownAdapterMatchers = [RootBlockMarkdownAdapterExtension];
 
-const defaultMarkdownPreprocessors = [
-  LatexMarkdownPreprocessorExtension,
-  CodeMarkdownPreprocessorExtension,
-];
-
 const defaultBlockNotionHtmlAdapterMatchers: ExtensionType[] = [
   RootBlockNotionHtmlAdapterExtension,
 ];
-
-const defaultBlockPlainTextAdapterMatchers: ExtensionType[] = [];
 
 function getHtmlAdapterExtensions(): ExtensionType[] {
   return [
@@ -88,7 +76,6 @@ function getMarkdownAdapterExtensions(): ExtensionType[] {
     ...MarkdownInlineToDeltaAdapterExtensions,
     ...defaultBlockMarkdownAdapterMatchers,
     ...InlineDeltaToMarkdownAdapterExtensions,
-    ...defaultMarkdownPreprocessors,
   ];
 }
 
@@ -100,10 +87,7 @@ function getNotionHtmlAdapterExtensions(): ExtensionType[] {
 }
 
 function getPlainTextAdapterExtensions(): ExtensionType[] {
-  return [
-    ...defaultBlockPlainTextAdapterMatchers,
-    ...InlineDeltaToPlainTextAdapterExtensions,
-  ];
+  return [...InlineDeltaToPlainTextAdapterExtensions];
 }
 
 const MigratingStoreExtensions: ExtensionType[] = [
@@ -127,10 +111,7 @@ const MigratingStoreExtensions: ExtensionType[] = [
   FeatureFlagService,
   LinkPreviewerService,
   FileSizeLimitService,
-  ImageStoreSpec,
   BlockMetaService,
-  EmbedIframeConfigExtensions,
-  EmbedIframeService,
 ].flat();
 
 export class MigratingStoreExtension extends StoreExtensionProvider {
