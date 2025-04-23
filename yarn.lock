@@ -122,6 +122,7 @@ __metadata:
     "@napi-rs/simple-git": "npm:^0.1.19"
     "@perfsee/webpack": "npm:^1.13.0"
     "@sentry/webpack-plugin": "npm:^3.0.0"
+    "@swc/core": "npm:^1.10.1"
     "@tailwindcss/postcss": "npm:^4.0.0"
     "@types/lodash-es": "npm:^4.17.12"
     "@types/mime-types": "npm:^2.1.4"
@@ -139,6 +140,7 @@ __metadata:
     lodash-es: "npm:^4.17.21"
     mime-types: "npm:^3.0.0"
     mini-css-extract-plugin: "npm:^2.9.2"
+    node-loader: "npm:^2.1.0"
     postcss: "npm:^8.4.49"
     postcss-loader: "npm:^8.1.1"
     prettier: "npm:^3.4.2"
@@ -416,7 +418,6 @@ __metadata:
     "@radix-ui/react-slot": "npm:^1.1.1"
     "@radix-ui/react-toolbar": "npm:^1.1.1"
     "@sentry/react": "npm:^9.2.0"
-    "@swc/core": "npm:^1.10.1"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.1.0"
     "@toeverything/infra": "workspace:*"
@@ -14286,7 +14287,6 @@ __metadata:
     "@affine/templates": "workspace:*"
     "@emotion/react": "npm:^11.14.0"
     "@preact/signals-core": "npm:^1.8.0"
-    "@swc/core": "npm:^1.10.1"
     "@testing-library/dom": "npm:^10.4.0"
     "@testing-library/react": "npm:^16.1.0"
     "@types/react": "npm:^19.0.1"
@@ -25145,7 +25145,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"loader-utils@npm:^2.0.0":
+"loader-utils@npm:^2.0.0, loader-utils@npm:^2.0.3":
   version: 2.0.4
   resolution: "loader-utils@npm:2.0.4"
   dependencies:
@@ -27404,6 +27404,17 @@ __metadata:
   version: 0.4.0
   resolution: "node-int64@npm:0.4.0"
   checksum: 10/b7afc2b65e56f7035b1a2eec57ae0fbdee7d742b1cdcd0f4387562b6527a011ab1cbe9f64cc8b3cca61e3297c9637c8bf61cec2e6b8d3a711d4b5267dfafbe02
+  languageName: node
+  linkType: hard
+
+"node-loader@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "node-loader@npm:2.1.0"
+  dependencies:
+    loader-utils: "npm:^2.0.3"
+  peerDependencies:
+    webpack: ^5.0.0
+  checksum: 10/d2f20b1e0f946055fcbbf365c3927ffecfff9aee3b5cc2d71e45229ca27010267d3d6fdea04dcb7c0bc7ce9b87878105b8c1d15c05065c813b5c8ec5ef1fb4d1
   languageName: node
   linkType: hard
 
