@@ -27,7 +27,6 @@ import {
 } from '@blocksuite/affine-inline-preset';
 import {
   RootBlockSchemaExtension,
-  SurfaceRefBlockSchemaExtension,
   TableBlockSchemaExtension,
   TranscriptionBlockSchemaExtension,
 } from '@blocksuite/affine-model';
@@ -115,7 +114,6 @@ function getPlainTextAdapterExtensions(): ExtensionType[] {
 const MigratingStoreExtensions: ExtensionType[] = [
   RootBlockSchemaExtension,
   SurfaceBlockSchemaExtension,
-  SurfaceRefBlockSchemaExtension,
   TableBlockSchemaExtension,
   TranscriptionBlockSchemaExtension,
 

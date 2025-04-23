@@ -13,6 +13,7 @@ import { LatexStoreExtension } from '@blocksuite/affine/blocks/latex/store';
 import { ListStoreExtension } from '@blocksuite/affine/blocks/list/store';
 import { NoteStoreExtension } from '@blocksuite/affine/blocks/note/store';
 import { ParagraphStoreExtension } from '@blocksuite/affine/blocks/paragraph/store';
+import { SurfaceRefStoreExtension } from '@blocksuite/affine/blocks/surface-ref/store';
 import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 import { MigratingStoreExtension } from '@blocksuite/affine/extensions/store';
 
@@ -32,6 +33,7 @@ const manager = new StoreExtensionManager([
   ListStoreExtension,
   NoteStoreExtension,
   ParagraphStoreExtension,
+  SurfaceRefStoreExtension,
 
   MigratingStoreExtension,
 ]);

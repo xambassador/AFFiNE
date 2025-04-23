@@ -11,10 +11,6 @@ import {
   PageSurfaceBlockSpec,
   SurfaceBlockAdapterExtensions,
 } from '@blocksuite/affine-block-surface';
-import {
-  EdgelessSurfaceRefBlockSpec,
-  PageSurfaceRefBlockSpec,
-} from '@blocksuite/affine-block-surface-ref';
 import { TableBlockSpec } from '@blocksuite/affine-block-table';
 import {
   brushToMarkdownAdapterMatcher,
@@ -82,7 +78,6 @@ const CommonBlockSpecs: ExtensionType[] = [
 const PageFirstPartyBlockSpecs: ExtensionType[] = [
   CommonBlockSpecs,
   PageSurfaceBlockSpec,
-  PageSurfaceRefBlockSpec,
 
   ...SurfaceBlockAdapterExtensions,
 ].flat();
@@ -90,7 +85,6 @@ const PageFirstPartyBlockSpecs: ExtensionType[] = [
 const EdgelessFirstPartyBlockSpecs: ExtensionType[] = [
   CommonBlockSpecs,
   EdgelessSurfaceBlockSpec,
-  EdgelessSurfaceRefBlockSpec,
 
   ...EdgelessSurfaceBlockAdapterExtensions,
 ].flat();

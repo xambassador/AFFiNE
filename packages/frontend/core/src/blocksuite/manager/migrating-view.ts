@@ -15,6 +15,7 @@ import { ListViewExtension } from '@blocksuite/affine/blocks/list/view';
 import { NoteViewExtension } from '@blocksuite/affine/blocks/note/view';
 import { ParagraphBlockConfigExtension } from '@blocksuite/affine/blocks/paragraph';
 import { ParagraphViewExtension } from '@blocksuite/affine/blocks/paragraph/view';
+import { SurfaceRefViewExtension } from '@blocksuite/affine/blocks/surface-ref/view';
 import {
   type ViewExtensionContext,
   ViewExtensionManager,
@@ -160,6 +161,7 @@ const manager = new ViewExtensionManager([
   ListViewExtension,
   NoteViewExtension,
   ParagraphViewExtension,
+  SurfaceRefViewExtension,
 
   MigratingAffineViewExtension,
 ]);

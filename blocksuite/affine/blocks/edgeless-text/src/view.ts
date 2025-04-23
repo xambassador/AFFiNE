@@ -17,10 +17,7 @@ export class EdgelessTextViewExtension extends ViewExtensionProvider {
 
   override setup(context: ViewExtensionContext) {
     super.setup(context);
-    const isEdgeless =
-      context.scope === 'edgeless' ||
-      context.scope === 'preview-edgeless' ||
-      context.scope === 'mobile-edgeless';
+    const isEdgeless = this.isEdgeless(context.scope);
 
     if (isEdgeless) {
       context.register([

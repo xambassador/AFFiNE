@@ -13,12 +13,14 @@ import { LatexViewExtension } from '@blocksuite/affine/blocks/latex/view';
 import { ListViewExtension } from '@blocksuite/affine/blocks/list/view';
 import { NoteViewExtension } from '@blocksuite/affine/blocks/note/view';
 import { ParagraphViewExtension } from '@blocksuite/affine/blocks/paragraph/view';
+import { SurfaceRefViewExtension } from '@blocksuite/affine/blocks/surface-ref/view';
 import { ViewExtensionManager } from '@blocksuite/affine/ext-loader';
 import { MigratingViewExtension } from '@blocksuite/affine/extensions/view';
 
 export function getTestViewManager() {
   const manager = new ViewExtensionManager([
     MigratingViewExtension,
+
     AttachmentViewExtension,
     BookmarkViewExtension,
     CalloutViewExtension,
@@ -34,6 +36,7 @@ export function getTestViewManager() {
     ListViewExtension,
     NoteViewExtension,
     ParagraphViewExtension,
+    SurfaceRefViewExtension,
   ]);
   return manager;
 }
