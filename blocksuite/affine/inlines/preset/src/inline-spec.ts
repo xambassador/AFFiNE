@@ -1,4 +1,3 @@
-import { inlineFootnoteExtensions } from '@blocksuite/affine-inline-footnote';
 import { inlineLatexExtensions } from '@blocksuite/affine-inline-latex';
 import { inlineLinkExtensions } from '@blocksuite/affine-inline-link';
 import { inlineMentionExtensions } from '@blocksuite/affine-inline-mention';
@@ -109,6 +108,5 @@ export const InlineSpecExtensions: ExtensionType[] = [
   ...inlineLinkExtensions,
   ...inlineReferenceExtensions,
   ...inlineLatexExtensions,
-  ...inlineFootnoteExtensions,
   ...inlineMentionExtensions,
 ];

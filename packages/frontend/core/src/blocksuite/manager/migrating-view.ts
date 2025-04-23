@@ -23,6 +23,7 @@ import {
   ViewExtensionProvider,
 } from '@blocksuite/affine/ext-loader';
 import { MigratingViewExtension } from '@blocksuite/affine/extensions/view';
+import { FootnoteViewExtension } from '@blocksuite/affine/inlines/footnote/view';
 import { ToolbarModuleExtension } from '@blocksuite/affine/shared/services';
 import { BlockFlavourIdentifier } from '@blocksuite/affine/std';
 import { FrameworkProvider } from '@toeverything/infra';
@@ -147,6 +148,7 @@ class MigratingAffineViewExtension extends ViewExtensionProvider<
 const manager = new ViewExtensionManager([
   MigratingViewExtension,
 
+  // Block
   AttachmentViewExtension,
   BookmarkViewExtension,
   CalloutViewExtension,
@@ -164,6 +166,8 @@ const manager = new ViewExtensionManager([
   ParagraphViewExtension,
   SurfaceRefViewExtension,
   TableViewExtension,
+  // Inline
+  FootnoteViewExtension,
 
   MigratingAffineViewExtension,
 ]);

@@ -17,11 +17,13 @@ import { SurfaceRefViewExtension } from '@blocksuite/affine/blocks/surface-ref/v
 import { TableViewExtension } from '@blocksuite/affine/blocks/table/view';
 import { ViewExtensionManager } from '@blocksuite/affine/ext-loader';
 import { MigratingViewExtension } from '@blocksuite/affine/extensions/view';
+import { FootnoteViewExtension } from '@blocksuite/affine/inlines/footnote/view';
 
 export function getTestViewManager() {
   const manager = new ViewExtensionManager([
     MigratingViewExtension,
 
+    // Block
     AttachmentViewExtension,
     BookmarkViewExtension,
     CalloutViewExtension,
@@ -39,6 +41,9 @@ export function getTestViewManager() {
     ParagraphViewExtension,
     SurfaceRefViewExtension,
     TableViewExtension,
+
+    // Inline
+    FootnoteViewExtension,
   ]);
   return manager;
 }

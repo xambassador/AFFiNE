@@ -1,4 +1,3 @@
-import { footnoteReferenceDeltaToMarkdownAdapterMatcher } from '@blocksuite/affine-inline-footnote';
 import { latexDeltaToMarkdownAdapterMatcher } from '@blocksuite/affine-inline-latex';
 import { linkDeltaToMarkdownAdapterMatcher } from '@blocksuite/affine-inline-link';
 import { referenceDeltaToMarkdownAdapterMatcher } from '@blocksuite/affine-inline-reference';
@@ -61,5 +60,4 @@ export const InlineDeltaToMarkdownAdapterExtensions = [
   italicDeltaToMarkdownAdapterMatcher,
   strikeDeltaToMarkdownAdapterMatcher,
   latexDeltaToMarkdownAdapterMatcher,
-  footnoteReferenceDeltaToMarkdownAdapterMatcher,
 ];

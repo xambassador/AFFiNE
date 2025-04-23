@@ -21,6 +21,7 @@ import {
   StoreExtensionProvider,
 } from '@blocksuite/affine/ext-loader';
 import { MigratingStoreExtension } from '@blocksuite/affine/extensions/store';
+import { FootnoteStoreExtension } from '@blocksuite/affine/inlines/footnote/store';
 
 import { AIChatBlockSchemaExtension } from '../ai/blocks/ai-chat-block/model';
 
@@ -34,6 +35,7 @@ class MigratingAffineStoreExtension extends StoreExtensionProvider {
 }
 
 const manager = new StoreExtensionManager([
+  // Block
   AttachmentStoreExtension,
   BookmarkStoreExtension,
   CalloutStoreExtension,
@@ -51,6 +53,8 @@ const manager = new StoreExtensionManager([
   ParagraphStoreExtension,
   SurfaceRefStoreExtension,
   TableStoreExtension,
+  // Inline
+  FootnoteStoreExtension,
 
   MigratingStoreExtension,
   MigratingAffineStoreExtension,

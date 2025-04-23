@@ -51,6 +51,7 @@ import {
   textToMarkdownAdapterMatcher,
   textToPlainTextAdapterMatcher,
 } from '@blocksuite/affine-gfx-text';
+import { FootNoteInlineSpecExtension } from '@blocksuite/affine-inline-footnote';
 import { inlinePresetExtensions } from '@blocksuite/affine-inline-preset';
 import {
   DefaultOpenDocExtension,
@@ -79,6 +80,7 @@ const elementToMarkdownAdapterMatchers = [
 ];
 
 export const CommonBlockSpecs: ExtensionType[] = [
+  FootNoteInlineSpecExtension,
   inlinePresetExtensions,
   DocDisplayMetaService,
   EditPropsStore,
