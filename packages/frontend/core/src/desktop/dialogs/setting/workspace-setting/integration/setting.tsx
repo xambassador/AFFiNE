@@ -3,7 +3,33 @@ import { DoneIcon } from '@blocksuite/icons/rc';
 import clsx from 'clsx';
 import type { HTMLAttributes, ReactNode } from 'react';
 
+import { IntegrationCardIcon } from './card';
 import * as styles from './setting.css';
+
+export const IntegrationSettingHeader = ({
+  icon,
+  name,
+  desc,
+  action,
+}: {
+  icon: ReactNode;
+  name: string;
+  desc: string;
+  action?: ReactNode;
+}) => {
+  return (
+    <header className={styles.header}>
+      <IntegrationCardIcon className={styles.headerIcon}>
+        {icon}
+      </IntegrationCardIcon>
+      <div className={styles.headerContent}>
+        <h1 className={styles.headerTitle}>{name}</h1>
+        <p className={styles.headerCaption}>{desc}</p>
+      </div>
+      {action}
+    </header>
+  );
+};
 
 // universal
 export interface IntegrationSettingItemProps

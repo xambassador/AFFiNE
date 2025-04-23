@@ -1,4 +1,4 @@
-import { Button, Modal } from '@affine/component';
+import { Button } from '@affine/component';
 import { type TagLike, TagsInlineEditor } from '@affine/core/components/tags';
 import {
   IntegrationService,
@@ -7,46 +7,80 @@ import {
 import type { ReadwiseConfig } from '@affine/core/modules/integration/type';
 import { TagService } from '@affine/core/modules/tag';
 import { useI18n } from '@affine/i18n';
+import { PlusIcon } from '@blocksuite/icons/rc';
 import { LiveData, useLiveData, useService } from '@toeverything/infra';
-import { useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useMemo, useState } from 'react';
 
-import { IntegrationCardIcon } from '../card';
 import {
+  IntegrationSettingHeader,
   IntegrationSettingItem,
   IntegrationSettingTextRadioGroup,
   type IntegrationSettingTextRadioGroupItem,
   IntegrationSettingToggle,
 } from '../setting';
-import * as styles from './setting-dialog.css';
+import { ReadwiseConnectButton } from './connect';
+import { ReadwiseDisconnectButton } from './connected';
+import { ImportDialog } from './import-dialog';
+import * as styles from './setting-panel.css';
 import { readwiseTrack } from './track';
 
-export const SettingDialog = ({
-  onClose,
-  onImport,
-}: {
-  onClose: () => void;
-  onImport: () => void;
-}) => {
+export const ReadwiseSettingPanel = () => {
+  const readwise = useService(IntegrationService).readwise;
+  const settings = useLiveData(readwise.settings$);
+  const token = settings?.token;
+
+  return token ? <ReadwiseConnectedSetting /> : <ReadwiseNotConnectedSetting />;
+};
+
+const ReadwiseSettingHeader = ({ action }: { action?: ReactNode }) => {
   const t = useI18n();
+
   return (
-    <Modal
-      open
-      onOpenChange={onClose}
-      contentOptions={{ className: styles.dialog }}
-    >
-      <header className={styles.header}>
-        <IntegrationCardIcon className={styles.headerIcon}>
-          <IntegrationTypeIcon type="readwise" />
-        </IntegrationCardIcon>
-        <div>
-          <h1 className={styles.headerTitle}>
-            {t['com.affine.integration.readwise.name']()}
-          </h1>
-          <p className={styles.headerCaption}>
-            {t['com.affine.integration.readwise.setting.caption']()}
-          </p>
-        </div>
-      </header>
+    <IntegrationSettingHeader
+      icon={<IntegrationTypeIcon type="readwise" />}
+      name={t['com.affine.integration.readwise.name']()}
+      desc={t['com.affine.integration.readwise.desc']()}
+      action={action}
+    />
+  );
+};
+
+const ReadwiseNotConnectedSetting = () => {
+  const readwise = useService(IntegrationService).readwise;
+
+  const handleConnectSuccess = useCallback(
+    (token: string) => {
+      readwise.connect(token);
+    },
+    [readwise]
+  );
+
+  return (
+    <div>
+      <ReadwiseSettingHeader />
+      <ReadwiseConnectButton
+        onSuccess={handleConnectSuccess}
+        className={styles.connectButton}
+        prefix={<PlusIcon />}
+        size="large"
+      />
+    </div>
+  );
+};
+const ReadwiseConnectedSetting = () => {
+  const [openImportDialog, setOpenImportDialog] = useState(false);
+
+  const onImport = useCallback(() => {
+    setOpenImportDialog(true);
+  }, []);
+
+  const closeImportDialog = useCallback(() => {
+    setOpenImportDialog(false);
+  }, []);
+
+  return (
+    <div>
+      <ReadwiseSettingHeader action={<ReadwiseDisconnectButton />} />
       <ul className={styles.settings}>
         <TagsSetting />
         <Divider />
@@ -56,7 +90,8 @@ export const SettingDialog = ({
         <Divider />
         <StartImport onImport={onImport} />
       </ul>
-    </Modal>
+      {openImportDialog && <ImportDialog onClose={closeImportDialog} />}
+    </div>
   );
 };
 

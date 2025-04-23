@@ -6,36 +6,14 @@ export const dialog = style({
   maxWidth: 'calc(100vw - 32px)',
 });
 
-export const header = style({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  paddingBottom: 16,
-  borderBottom: '0.5px solid ' + cssVarV2.layer.insideBorder.border,
-});
-export const headerIcon = style({
-  width: 40,
-  height: 40,
-  fontSize: 30,
-  borderRadius: 5,
-});
-export const headerTitle = style({
-  fontSize: 15,
-  lineHeight: '24px',
-  fontWeight: 500,
-  color: cssVarV2.text.primary,
-});
-export const headerCaption = style({
-  fontSize: 12,
-  lineHeight: '20px',
-  fontWeight: 400,
+export const connectButton = style({
+  width: '100%',
   color: cssVarV2.text.secondary,
 });
 
 export const settings = style({
   display: 'flex',
   flexDirection: 'column',
-  marginTop: 16,
   gap: 8,
   alignItems: 'stretch',
 });

@@ -269,6 +269,13 @@ export const AFFINE_FLAGS = {
     configurable: isCanaryBuild,
     defaultState: isCanaryBuild,
   },
+  enable_setting_subpage_animation: {
+    category: 'affine',
+    displayName: 'Enable Setting Subpage Animation',
+    description: 'Apply animation for setting subpage open/close',
+    configurable: isCanaryBuild,
+    defaultState: false,
+  },
 } satisfies { [key in string]: FlagInfo };
 
 // oxlint-disable-next-line no-redeclare
