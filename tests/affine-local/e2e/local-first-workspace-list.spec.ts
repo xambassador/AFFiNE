@@ -17,12 +17,7 @@ test('just one item in the workspace list at first', async ({
   await waitForEditorLoad(page);
   const workspaceName = page.getByTestId('workspace-name');
   await workspaceName.click();
-  expect(
-    page
-      .locator('div')
-      .filter({ hasText: 'AFFiNE TestLocal WorkspaceAvailable Offline' })
-      .nth(3)
-  ).not.toBeNull();
+  await expect(page.getByTestId('workspace-card')).toHaveCount(1);
   const currentWorkspace = await workspace.current();
 
   expect(currentWorkspace.meta.flavour).toContain('local');

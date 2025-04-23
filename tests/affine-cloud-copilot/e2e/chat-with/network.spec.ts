@@ -70,7 +70,7 @@ test.describe('AIChatWith/Network', () => {
       20000
     );
     const { message } = await utils.chatPanel.getLatestAssistantMessage(page);
-    expect(await message.locator('affine-footnote-node').count()).toBe(0);
+    await expect(message.locator('affine-footnote-node')).toHaveCount(0);
   });
 
   test('should disable network search when chating with image', async ({

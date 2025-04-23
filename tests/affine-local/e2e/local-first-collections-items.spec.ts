@@ -87,9 +87,9 @@ test('Show collections items in sidebar', async ({ page }) => {
   const deletePage = page.getByText('Move to trash');
   await deletePage.click();
   await page.getByTestId('confirm-modal-confirm').click();
-  expect(
-    await first.locator('[data-testid^="navigation-panel-doc-"]').count()
-  ).toBe(0);
+  await expect(
+    first.locator('[data-testid^="navigation-panel-doc-"]')
+  ).toHaveCount(0);
   // position is a workaround for the hover issue when empty collection status's height > 26px (will cause scroll)
   await first.hover({ position: { x: 10, y: 10 } });
   await first
@@ -100,7 +100,7 @@ test('Show collections items in sidebar', async ({ page }) => {
   await page.waitForTimeout(50);
   await expect(items).toHaveCount(0);
   await createAndPinCollection(page);
-  expect(await items.count()).toBe(1);
+  await expect(items).toHaveCount(1);
   await clickSideBarAllPageButton(page);
   await createLocalWorkspace(
     {
@@ -109,7 +109,7 @@ test('Show collections items in sidebar', async ({ page }) => {
     page
   );
   await waitForEditorLoad(page);
-  expect(await items.count()).toBe(0);
+  await expect(items).toHaveCount(0);
   await clickSideBarCurrentWorkspaceBanner(page);
   await page.getByTestId('workspace-card').nth(0).click();
 });
@@ -122,7 +122,7 @@ test('edit collection', async ({ page }) => {
   const items = collections.locator(
     '[data-testid^="navigation-panel-collection-"]'
   );
-  expect(await items.count()).toBe(1);
+  await expect(items).toHaveCount(1);
   const first = items.first();
   await first.hover();
   await first
@@ -144,7 +144,7 @@ test('edit collection and change filter date', async ({ page }) => {
   const items = collections.locator(
     '[data-testid^="navigation-panel-collection-"]'
   );
-  expect(await items.count()).toBe(1);
+  await expect(items).toHaveCount(1);
   const first = items.first();
   await first.hover();
   await first
@@ -184,6 +184,6 @@ test('add collection from sidebar', async ({ page }) => {
   const items = collections.locator(
     '[data-testid^="navigation-panel-collection-"]'
   );
-  expect(await items.count()).toBe(1);
+  await expect(items).toHaveCount(1);
   await expect(nullCollection).not.toBeVisible();
 });
