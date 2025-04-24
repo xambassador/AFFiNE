@@ -1,11 +1,11 @@
 import { createReactComponentFromLit } from '@affine/component';
-import {
-  defaultImageProxyMiddleware,
-  ImageProxyService,
-} from '@blocksuite/affine/blocks/image';
 import { Container, type ServiceProvider } from '@blocksuite/affine/global/di';
 import { WithDisposable } from '@blocksuite/affine/global/lit';
-import { codeBlockWrapMiddleware } from '@blocksuite/affine/shared/adapters';
+import {
+  codeBlockWrapMiddleware,
+  defaultImageProxyMiddleware,
+  ImageProxyService,
+} from '@blocksuite/affine/shared/adapters';
 import {
   LinkPreviewerService,
   ThemeProvider,

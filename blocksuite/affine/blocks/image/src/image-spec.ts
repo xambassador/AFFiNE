@@ -6,7 +6,6 @@ import { literal } from 'lit/static-html.js';
 
 import { imageSlashMenuConfig } from './configs/slash-menu';
 import { createBuiltinToolbarConfigExtension } from './configs/toolbar';
-import { ImageProxyService } from './image-proxy-service';
 import { ImageDropOption } from './image-service';
 
 const flavour = ImageBlockSchema.model.flavour;
@@ -26,5 +25,3 @@ export const ImageBlockSpec: ExtensionType[] = [
   createBuiltinToolbarConfigExtension(flavour),
   SlashMenuConfigExtension(flavour, imageSlashMenuConfig),
 ].flat();
-
-export const ImageStoreSpec: ExtensionType[] = [ImageProxyService];

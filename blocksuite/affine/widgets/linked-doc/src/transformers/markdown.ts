@@ -1,5 +1,5 @@
-import { defaultImageProxyMiddleware } from '@blocksuite/affine-block-image';
 import {
+  defaultImageProxyMiddleware,
   docLinkBaseURLMiddleware,
   fileNameMiddleware,
   MarkdownAdapter,

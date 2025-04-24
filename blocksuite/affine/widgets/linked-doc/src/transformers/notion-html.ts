@@ -1,5 +1,7 @@
-import { defaultImageProxyMiddleware } from '@blocksuite/affine-block-image';
-import { NotionHtmlAdapter } from '@blocksuite/affine-shared/adapters';
+import {
+  defaultImageProxyMiddleware,
+  NotionHtmlAdapter,
+} from '@blocksuite/affine-shared/adapters';
 import { Container } from '@blocksuite/global/di';
 import { sha } from '@blocksuite/global/utils';
 import {

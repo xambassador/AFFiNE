@@ -1,4 +1,4 @@
-import { defaultImageProxyMiddleware } from '@blocksuite/affine-block-image';
+import { defaultImageProxyMiddleware } from '@blocksuite/affine-shared/adapters';
 import {
   Schema,
   Transformer,

@@ -1,5 +1,5 @@
-import { defaultImageProxyMiddleware } from '@blocksuite/affine/blocks/image';
 import { deleteTextCommand } from '@blocksuite/affine/inlines/preset';
+import { defaultImageProxyMiddleware } from '@blocksuite/affine/shared/adapters';
 import { isInsideEdgelessEditor } from '@blocksuite/affine/shared/utils';
 import {
   type BlockComponent,

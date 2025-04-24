@@ -14,6 +14,7 @@ import {
 } from '@blocksuite/affine-model';
 import {
   HtmlAdapterFactoryExtension,
+  ImageProxyService,
   MarkdownAdapterFactoryExtension,
   MixTextAdapterFactoryExtension,
   NotionHtmlAdapterFactoryExtension,
@@ -83,9 +84,12 @@ const MigratingStoreExtensions: ExtensionType[] = [
   getAdapterFactoryExtensions(),
 
   FeatureFlagService,
+  BlockMetaService,
+
+  // TODO(@mirone): maybe merge these services into a file setting service
   LinkPreviewerService,
   FileSizeLimitService,
-  BlockMetaService,
+  ImageProxyService,
 ].flat();
 
 export class MigratingStoreExtension extends StoreExtensionProvider {

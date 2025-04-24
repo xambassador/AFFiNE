@@ -1,7 +1,7 @@
 import { WorkspaceImpl } from '@affine/core/modules/workspace/impls/workspace';
-import { defaultImageProxyMiddleware } from '@blocksuite/affine/blocks/image';
 import type { ServiceProvider } from '@blocksuite/affine/global/di';
 import {
+  defaultImageProxyMiddleware,
   embedSyncedDocMiddleware,
   MarkdownAdapter,
   MixTextAdapter,

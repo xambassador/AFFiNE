@@ -16,7 +16,6 @@ import '@shoelace-style/shoelace/dist/themes/light.css';
 import '@shoelace-style/shoelace/dist/themes/dark.css';
 import './left-side-panel.js';
 
-import { defaultImageProxyMiddleware } from '@blocksuite/affine/blocks/image';
 import { ExportManager } from '@blocksuite/affine/blocks/surface';
 import { toast } from '@blocksuite/affine/components/toast';
 import { StoreExtensionManagerIdentifier } from '@blocksuite/affine/ext-loader';
@@ -27,6 +26,7 @@ import {
 import type { SerializedXYWH } from '@blocksuite/affine/global/gfx';
 import { ColorScheme, type DocMode } from '@blocksuite/affine/model';
 import {
+  defaultImageProxyMiddleware,
   docLinkBaseURLMiddleware,
   HtmlAdapterFactoryIdentifier,
   MarkdownAdapterFactoryIdentifier,
