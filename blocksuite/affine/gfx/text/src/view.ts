@@ -3,9 +3,11 @@ import {
   ViewExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
 
+import { DblClickAddEdgelessText } from './dblclick-add-edgeless-text';
 import { effects } from './effects';
 import { TextElementRendererExtension } from './element-renderer';
 import { TextElementView } from './element-view';
+import { TextTool } from './tool';
 import { textToolbarExtension } from './toolbar';
 
 export class TextViewExtension extends ViewExtensionProvider {
@@ -21,7 +23,9 @@ export class TextViewExtension extends ViewExtensionProvider {
     context.register(TextElementView);
     context.register(TextElementRendererExtension);
     if (this.isEdgeless(context.scope)) {
+      context.register(TextTool);
       context.register(textToolbarExtension);
+      context.register(DblClickAddEdgelessText);
     }
   }
 }

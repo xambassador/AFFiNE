@@ -1,8 +1,4 @@
 import {
-  addText,
-  insertEdgelessTextCommand,
-} from '@blocksuite/affine-gfx-text';
-import {
   FeatureFlagService,
   TelemetryProvider,
 } from '@blocksuite/affine-shared/services';
@@ -10,6 +6,9 @@ import {
   type GfxInteractivityContext,
   InteractivityExtension,
 } from '@blocksuite/std/gfx';
+
+import { insertEdgelessTextCommand } from './commands';
+import { addText } from './edgeless-text-editor';
 
 export class DblClickAddEdgelessText extends InteractivityExtension {
   static override key = 'dbl-click-add-edgeless-text';
