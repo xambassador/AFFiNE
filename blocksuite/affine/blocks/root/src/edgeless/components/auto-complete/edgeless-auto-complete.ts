@@ -27,6 +27,7 @@ import {
   ShapeElementModel,
   shapeMethods,
 } from '@blocksuite/affine-model';
+import { ToolbarRegistryIdentifier } from '@blocksuite/affine-shared/services';
 import { handleNativeRangeAtPoint } from '@blocksuite/affine-shared/utils';
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import type { Bound, IVec } from '@blocksuite/global/gfx';
@@ -211,6 +212,8 @@ export class EdgelessAutoComplete extends WithDisposable(LitElement) {
           point,
           otherSideId ? [otherSideId] : []
         );
+
+        this.std.get(ToolbarRegistryIdentifier).flags.hide();
       }
     });
 
@@ -221,6 +224,8 @@ export class EdgelessAutoComplete extends WithDisposable(LitElement) {
         this.gfx.selection.clear();
         this._createAutoCompletePanel(e, connector);
       }
+
+      this.std.get(ToolbarRegistryIdentifier).flags.show();
 
       this._isMoving = false;
       this.connectionOverlay.clear();
