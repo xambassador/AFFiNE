@@ -10,16 +10,14 @@ const AffineAvatarIcon = AiIcon({
 
 export class AssistantAvatar extends ShadowlessElement {
   static override styles = css`
-    .assistant-avatar {
+    chat-assistant-avatar {
       display: inline-flex;
       align-items: center;
       gap: 8px;
     }
   `;
   protected override render() {
-    return html`<span class="assistant-avatar"
-      >${AffineAvatarIcon} AFFiNE AI</span
-    >`;
+    return html`${AffineAvatarIcon} AFFiNE AI`;
   }
 }
 
