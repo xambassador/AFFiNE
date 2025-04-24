@@ -364,6 +364,7 @@ export const PackageList = [
     name: '@blocksuite/affine-block-surface',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',

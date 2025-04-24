@@ -4,7 +4,6 @@ import {
   RootBlockMarkdownAdapterExtension,
   RootBlockNotionHtmlAdapterExtension,
 } from '@blocksuite/affine-block-root';
-import { SurfaceBlockSchemaExtension } from '@blocksuite/affine-block-surface';
 import {
   type StoreExtensionContext,
   StoreExtensionProvider,
@@ -69,7 +68,6 @@ function getNotionHtmlAdapterExtensions(): ExtensionType[] {
 
 const MigratingStoreExtensions: ExtensionType[] = [
   RootBlockSchemaExtension,
-  SurfaceBlockSchemaExtension,
   TranscriptionBlockSchemaExtension,
 
   BlockSelectionExtension,

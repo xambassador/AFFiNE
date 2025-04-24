@@ -6,13 +6,6 @@ import {
   ReadOnlyClipboard,
 } from '@blocksuite/affine-block-root';
 import {
-  EdgelessSurfaceBlockAdapterExtensions,
-  EdgelessSurfaceBlockSpec,
-  PageSurfaceBlockSpec,
-  SurfaceBlockAdapterExtensions,
-} from '@blocksuite/affine-block-surface';
-import { inlinePresetExtensions } from '@blocksuite/affine-inline-preset';
-import {
   DefaultOpenDocExtension,
   DocDisplayMetaService,
   EditPropsStore,
@@ -21,45 +14,30 @@ import {
 import type { ExtensionType } from '@blocksuite/store';
 
 const CommonBlockSpecs: ExtensionType[] = [
-  inlinePresetExtensions,
   DocDisplayMetaService,
   EditPropsStore,
   DefaultOpenDocExtension,
   FontLoaderService,
 ].flat();
 
-const PageFirstPartyBlockSpecs: ExtensionType[] = [
-  CommonBlockSpecs,
-  PageSurfaceBlockSpec,
-
-  ...SurfaceBlockAdapterExtensions,
-].flat();
-
-const EdgelessFirstPartyBlockSpecs: ExtensionType[] = [
-  CommonBlockSpecs,
-  EdgelessSurfaceBlockSpec,
-
-  ...EdgelessSurfaceBlockAdapterExtensions,
-].flat();
-
 export const MigratingEdgelessEditorBlockSpecs: ExtensionType[] = [
   EdgelessBuiltInSpecs,
-  EdgelessFirstPartyBlockSpecs,
+  CommonBlockSpecs,
 ].flat();
 
 export const MigratingPageEditorBlockSpecs: ExtensionType[] = [
   PageRootBlockSpec,
-  PageFirstPartyBlockSpecs,
+  CommonBlockSpecs,
 ].flat();
 
 export const MigratingPreviewEdgelessEditorBlockSpecs: ExtensionType[] = [
   PreviewEdgelessRootBlockSpec,
-  EdgelessFirstPartyBlockSpecs,
+  CommonBlockSpecs,
   ReadOnlyClipboard,
 ].flat();
 
 export const MigratingPreviewPageEditorBlockSpecs: ExtensionType[] = [
   PreviewPageRootBlockSpec,
-  PageFirstPartyBlockSpecs,
+  CommonBlockSpecs,
   ReadOnlyClipboard,
 ].flat();

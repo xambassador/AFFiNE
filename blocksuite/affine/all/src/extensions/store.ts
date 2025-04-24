@@ -13,6 +13,7 @@ import { LatexStoreExtension } from '@blocksuite/affine-block-latex/store';
 import { ListStoreExtension } from '@blocksuite/affine-block-list/store';
 import { NoteStoreExtension } from '@blocksuite/affine-block-note/store';
 import { ParagraphStoreExtension } from '@blocksuite/affine-block-paragraph/store';
+import { SurfaceStoreExtension } from '@blocksuite/affine-block-surface/store';
 import { SurfaceRefStoreExtension } from '@blocksuite/affine-block-surface-ref/store';
 import { TableStoreExtension } from '@blocksuite/affine-block-table/store';
 import { BrushStoreExtension } from '@blocksuite/affine-gfx-brush/store';
@@ -48,6 +49,7 @@ export function getInternalStoreExtensions() {
     ParagraphStoreExtension,
     SurfaceRefStoreExtension,
     TableStoreExtension,
+    SurfaceStoreExtension,
 
     FootnoteStoreExtension,
     LinkStoreExtension,
