@@ -6,7 +6,6 @@ import {
 } from '@blocksuite/affine-gfx-connector';
 import type * as NoteEffect from '@blocksuite/affine-gfx-note';
 import type * as ShapeEffect from '@blocksuite/affine-gfx-shape';
-import { TemplateTool } from '@blocksuite/affine-gfx-template';
 import { TextTool } from '@blocksuite/affine-gfx-text';
 import { InteractivityManager } from '@blocksuite/std/gfx';
 import type { ExtensionType } from '@blocksuite/store';
@@ -32,7 +31,6 @@ export const EdgelessToolExtension: ExtensionType[] = [
   PanTool,
   TextTool,
   ConnectorTool,
-  TemplateTool,
   EmptyTool,
 ];
 

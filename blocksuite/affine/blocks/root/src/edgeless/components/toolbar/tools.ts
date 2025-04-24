@@ -1,5 +1,4 @@
 import { connectorQuickTool } from '@blocksuite/affine-gfx-connector';
-import { templateSeniorTool } from '@blocksuite/affine-gfx-template';
 import { QuickToolExtension } from '@blocksuite/affine-widget-edgeless-toolbar';
 import { html } from 'lit';
 
@@ -25,5 +24,3 @@ const linkQuickTool = QuickToolExtension('link', ({ block, gfx }) => {
 });
 
 export const quickTools = [defaultQuickTool, connectorQuickTool, linkQuickTool];
-
-export const seniorTools = [templateSeniorTool];
