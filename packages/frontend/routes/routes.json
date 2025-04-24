@@ -5,6 +5,8 @@
     "admin": {
       "route": "admin",
       "children": {
+        "auth": "auth",
+        "setup": "setup",
         "accounts": "accounts",
         "ai": "ai",
         "settings": {
