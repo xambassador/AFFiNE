@@ -548,6 +548,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/image',
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/gfx/connector',
       'blocksuite/affine/gfx/shape',
       'blocksuite/affine/gfx/text',

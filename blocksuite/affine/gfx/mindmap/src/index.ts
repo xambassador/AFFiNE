@@ -5,4 +5,4 @@ export * from './interactivity';
 export * from './toolbar/config';
 export * from './toolbar/senior-tool';
 export * from './utils';
-export * from './view';
+export * from './view/index';

@@ -4,10 +4,6 @@ import {
   ConnectorFilter,
   ConnectorTool,
 } from '@blocksuite/affine-gfx-connector';
-import {
-  MindMapDragExtension,
-  MindMapIndicatorOverlay,
-} from '@blocksuite/affine-gfx-mindmap';
 import type * as NoteEffect from '@blocksuite/affine-gfx-note';
 import type * as ShapeEffect from '@blocksuite/affine-gfx-shape';
 import { TemplateTool } from '@blocksuite/affine-gfx-template';
@@ -44,13 +40,11 @@ export const EdgelessEditExtensions: ExtensionType[] = [
   InteractivityManager,
   ConnectorFilter,
   SnapExtension,
-  MindMapDragExtension,
   DblClickAddEdgelessText,
 ];
 
 export const EdgelessBuiltInManager: ExtensionType[] = [
   ConnectionOverlay,
-  MindMapIndicatorOverlay,
   SnapOverlay,
   AltCloneExtension,
   EditPropsMiddlewareBuilder,

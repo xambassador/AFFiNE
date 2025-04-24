@@ -10,7 +10,7 @@ import {
 } from './element-renderer';
 import { ShapeElementView } from './element-view';
 import { ShapeTool } from './shape-tool';
-import { shapeSeniorTool } from './toolbar';
+import { shapeSeniorTool, shapeToolbarExtension } from './toolbar';
 
 export class ShapeViewExtension extends ViewExtensionProvider {
   override name = 'affine-shape-gfx';
@@ -22,10 +22,13 @@ export class ShapeViewExtension extends ViewExtensionProvider {
 
   override setup(context: ViewExtensionContext) {
     super.setup(context);
-    context.register(HighlighterElementRendererExtension);
-    context.register(ShapeElementRendererExtension);
-    context.register(ShapeElementView);
-    context.register(ShapeTool);
-    context.register(shapeSeniorTool);
+    if (this.isEdgeless(context.scope)) {
+      context.register(HighlighterElementRendererExtension);
+      context.register(ShapeElementRendererExtension);
+      context.register(ShapeElementView);
+      context.register(ShapeTool);
+      context.register(shapeSeniorTool);
+      context.register(shapeToolbarExtension);
+    }
   }
 }

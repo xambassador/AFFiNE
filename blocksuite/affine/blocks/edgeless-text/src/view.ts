@@ -5,6 +5,7 @@ import {
 import { BlockViewExtension } from '@blocksuite/std';
 import { literal } from 'lit/static-html.js';
 
+import { edgelessTextToolbarExtension } from './edgeless-toolbar';
 import { effects } from './effects';
 
 export class EdgelessTextViewExtension extends ViewExtensionProvider {
@@ -26,6 +27,7 @@ export class EdgelessTextViewExtension extends ViewExtensionProvider {
           literal`affine-edgeless-text`
         ),
       ]);
+      context.register(edgelessTextToolbarExtension);
     }
   }
 }

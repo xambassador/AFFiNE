@@ -3,10 +3,12 @@ import {
   ViewExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
 
+import { frameQuickTool } from './edgeless-toolbar';
 import { effects } from './effects';
 import { FrameHighlightManager } from './frame-highlight-manager';
 import { FrameBlockSpec } from './frame-spec';
 import { FrameTool } from './frame-tool';
+import { frameToolbarExtension } from './frame-toolbar';
 import { PresentTool } from './preset-tool';
 
 export class FrameViewExtension extends ViewExtensionProvider {
@@ -24,6 +26,8 @@ export class FrameViewExtension extends ViewExtensionProvider {
       context.register(FrameHighlightManager);
       context.register(FrameTool);
       context.register(PresentTool);
+      context.register(frameQuickTool);
+      context.register(frameToolbarExtension);
     }
   }
 }

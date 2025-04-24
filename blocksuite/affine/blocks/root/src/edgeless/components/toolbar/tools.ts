@@ -1,6 +1,4 @@
-import { frameQuickTool } from '@blocksuite/affine-block-frame';
 import { connectorQuickTool } from '@blocksuite/affine-gfx-connector';
-import { mindMapSeniorTool } from '@blocksuite/affine-gfx-mindmap';
 import { templateSeniorTool } from '@blocksuite/affine-gfx-template';
 import { QuickToolExtension } from '@blocksuite/affine-widget-edgeless-toolbar';
 import { html } from 'lit';
@@ -9,6 +7,7 @@ import { buildLinkDenseMenu } from './link/link-dense-menu.js';
 
 const defaultQuickTool = QuickToolExtension('default', ({ block }) => {
   return {
+    priority: 100,
     type: 'default',
     content: html`<edgeless-default-tool-button
       .edgeless=${block}
@@ -25,11 +24,6 @@ const linkQuickTool = QuickToolExtension('link', ({ block, gfx }) => {
   };
 });
 
-export const quickTools = [
-  defaultQuickTool,
-  frameQuickTool,
-  connectorQuickTool,
-  linkQuickTool,
-];
+export const quickTools = [defaultQuickTool, connectorQuickTool, linkQuickTool];
 
-export const seniorTools = [mindMapSeniorTool, templateSeniorTool];
+export const seniorTools = [templateSeniorTool];

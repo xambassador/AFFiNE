@@ -8,10 +8,6 @@ import {
   GroupElementView,
 } from '@blocksuite/affine-gfx-group';
 import {
-  MindmapElementRendererExtension,
-  MindMapView,
-} from '@blocksuite/affine-gfx-mindmap';
-import {
   TextElementRendererExtension,
   TextElementView,
 } from '@blocksuite/affine-gfx-text';
@@ -48,7 +44,6 @@ import { viewportOverlayWidget } from './widgets';
  */
 const EdgelessElementViews = [
   ConnectorElementView,
-  MindMapView,
   GroupElementView,
   TextElementView,
 ];
@@ -57,7 +52,6 @@ export const EdgelessElementRendererExtension: ExtensionType[] = [
   TextElementRendererExtension,
   ConnectorElementRendererExtension,
   GroupElementRendererExtension,
-  MindmapElementRendererExtension,
 ];
 
 export const CommonSpecs: ExtensionType[] = [
