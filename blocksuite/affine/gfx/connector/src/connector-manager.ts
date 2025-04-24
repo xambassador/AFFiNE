@@ -1,3 +1,4 @@
+import { AStarRunner, Overlay } from '@blocksuite/affine-block-surface';
 import {
   type BrushElementModel,
   type Connection,
@@ -34,9 +35,6 @@ import type {
 } from '@blocksuite/std/gfx';
 import { effect } from '@preact/signals-core';
 import last from 'lodash-es/last';
-
-import { Overlay } from '../renderer/overlay.js';
-import { AStarRunner } from '../utils/a-star.js';
 
 export type Connectable = Exclude<
   GfxModel,
@@ -850,7 +848,6 @@ function renderRect(
   ctx.restore();
 }
 
-// TODO(@mirone): move to connector package
 export class ConnectionOverlay extends Overlay {
   static override overlayName = 'connection';
 

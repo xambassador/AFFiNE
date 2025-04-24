@@ -9,8 +9,8 @@ import { BlockSchemaExtension, defineBlockSchema } from '@blocksuite/store';
 import * as Y from 'yjs';
 
 import { elementsCtorMap } from './element-model/index.js';
+import { surfaceMiddlewareIdentifier } from './extensions/surface-middleware.js';
 import { SurfaceBlockTransformer } from './surface-transformer.js';
-import { connectorWatcher } from './watchers/connector.js';
 import { groupRelationWatcher } from './watchers/group.js';
 
 export const SurfaceBlockSchema = defineBlockSchema({
@@ -39,15 +39,19 @@ export const SurfaceBlockSchema = defineBlockSchema({
 export const SurfaceBlockSchemaExtension =
   BlockSchemaExtension(SurfaceBlockSchema);
 
-export type SurfaceMiddleware = (surface: SurfaceBlockModel) => () => void;
-
 export class SurfaceBlockModel extends BaseSurfaceModel {
   private readonly _disposables: DisposableGroup = new DisposableGroup();
 
   override _init() {
     this._extendElement(elementsCtorMap);
     super._init();
-    [connectorWatcher(this), groupRelationWatcher(this)].forEach(disposable =>
+    this.doc.provider
+      .getAll(surfaceMiddlewareIdentifier)
+      .forEach(({ middleware }) => {
+        this._disposables.add(middleware(this));
+      });
+
+    [groupRelationWatcher(this)].forEach(disposable =>
       this._disposables.add(disposable)
     );
   }

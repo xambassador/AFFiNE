@@ -3,6 +3,7 @@ import {
   ViewExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
 
+import { ConnectionOverlay } from './connector-manager';
 import { ConnectorTool } from './connector-tool';
 import { effects } from './effects';
 import { ConnectorFilter } from './element-transform';
@@ -24,6 +25,7 @@ export class ConnectorViewExtension extends ViewExtensionProvider {
       context.register(ConnectorFilter);
       context.register(connectorQuickTool);
       context.register(connectorToolbarExtension);
+      context.register(ConnectionOverlay);
     }
   }
 }

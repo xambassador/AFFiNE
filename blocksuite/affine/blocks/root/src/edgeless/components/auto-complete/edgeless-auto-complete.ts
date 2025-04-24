@@ -1,7 +1,5 @@
 import {
   CanvasElementType,
-  type ConnectionOverlay,
-  ConnectorPathGenerator,
   EdgelessCRUDIdentifier,
   getSurfaceBlock,
   getSurfaceComponent,
@@ -10,6 +8,10 @@ import {
   OverlayIdentifier,
   type RoughCanvas,
 } from '@blocksuite/affine-block-surface';
+import {
+  type ConnectionOverlay,
+  ConnectorPathGenerator,
+} from '@blocksuite/affine-gfx-connector';
 import { mountShapeTextEditor } from '@blocksuite/affine-gfx-shape';
 import type {
   Connection,

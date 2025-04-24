@@ -1,5 +1,6 @@
 import { SurfaceGroupLikeModel } from '../element-model/base.js';
-import type { SurfaceBlockModel, SurfaceMiddleware } from '../surface-model.js';
+import type { SurfaceMiddleware } from '../extensions/surface-middleware.js';
+import type { SurfaceBlockModel } from '../surface-model.js';
 
 export const groupRelationWatcher: SurfaceMiddleware = (
   surface: SurfaceBlockModel

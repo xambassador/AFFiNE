@@ -1,8 +1,12 @@
+import {
+  type SurfaceBlockModel,
+  type SurfaceMiddleware,
+  surfaceMiddlewareExtension,
+} from '@blocksuite/affine-block-surface';
 import type { ConnectorElementModel } from '@blocksuite/affine-model';
 import type { GfxModel } from '@blocksuite/std/gfx';
 
-import { ConnectorPathGenerator } from '../managers/connector-manager.js';
-import type { SurfaceBlockModel, SurfaceMiddleware } from '../surface-model.js';
+import { ConnectorPathGenerator } from './connector-manager';
 
 export const connectorWatcher: SurfaceMiddleware = (
   surface: SurfaceBlockModel
@@ -86,3 +90,8 @@ export const connectorWatcher: SurfaceMiddleware = (
     disposables.forEach(d => d.unsubscribe());
   };
 };
+
+export const connectorWatcherExtension = surfaceMiddlewareExtension(
+  'connector-watcher',
+  connectorWatcher
+);

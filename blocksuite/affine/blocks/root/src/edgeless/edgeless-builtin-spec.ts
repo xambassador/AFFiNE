@@ -1,4 +1,3 @@
-import { ConnectionOverlay } from '@blocksuite/affine-block-surface';
 import type * as BrushEffect from '@blocksuite/affine-gfx-brush';
 import type * as NoteEffect from '@blocksuite/affine-gfx-note';
 import type * as ShapeEffect from '@blocksuite/affine-gfx-shape';
@@ -36,7 +35,6 @@ export const EdgelessEditExtensions: ExtensionType[] = [
 ];
 
 export const EdgelessBuiltInManager: ExtensionType[] = [
-  ConnectionOverlay,
   SnapOverlay,
   AltCloneExtension,
   EditPropsMiddlewareBuilder,

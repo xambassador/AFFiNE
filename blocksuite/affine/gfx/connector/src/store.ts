@@ -7,6 +7,7 @@ import {
   connectorToMarkdownAdapterMatcher,
   connectorToPlainTextAdapterMatcher,
 } from './adapter';
+import { connectorWatcherExtension } from './connector-watcher';
 
 export class ConnectorStoreExtension extends StoreExtensionProvider {
   override name = 'affine-connector-gfx';
@@ -15,5 +16,6 @@ export class ConnectorStoreExtension extends StoreExtensionProvider {
     super.setup(context);
     context.register(connectorToPlainTextAdapterMatcher);
     context.register(connectorToMarkdownAdapterMatcher);
+    context.register(connectorWatcherExtension);
   }
 }
