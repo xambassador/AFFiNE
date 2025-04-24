@@ -49,22 +49,36 @@ describe('viewport turbo renderer', () => {
     expect(renderer.state$.value).toBe('pending');
   });
 
-  test('zooming should change state to zooming', async () => {
+  test('zooming should change internal state and populate optimized block ids', async () => {
     const renderer = getRenderer();
+    addSampleNotes(doc, 1);
+    await wait();
+    expect(renderer.optimizedBlockIds.length).toBe(0);
+
     renderer.viewport.zooming$.next(true);
     await wait();
+
     expect(renderer.state$.value).toBe('zooming');
-    renderer.viewport.zooming$.next(false);
+
+    const canUseCache = renderer.canUseBitmapCache();
+    expect(canUseCache).toBe(false);
+
+    await renderer.refresh();
     await wait();
+    expect(renderer.optimizedBlockIds.length).toBe(1);
+
+    renderer.viewport.zooming$.next(false);
+    await wait(renderer.options.debounceTime + 100);
+
     expect(renderer.state$.value).not.toBe('zooming');
+    expect(renderer.optimizedBlockIds.length).toBe(0);
   });
 
   test('state transitions between pending and ready', async () => {
     const renderer = getRenderer();
 
-    // Initial state should be pending after adding content
     addSampleNotes(doc, 1);
-    await wait(100); // Short wait for initial processing
+    await wait();
     expect(renderer.state$.value).toBe('pending');
 
     // Ensure zooming is off and wait for debounce + buffer
@@ -99,11 +113,11 @@ describe('viewport turbo renderer', () => {
     const renderer = getRenderer();
     addSampleNotes(doc, 1);
     await wait();
-    expect(renderer.layoutCacheData).toBeNull(); // Check internal state before access
+    expect(renderer.layoutCacheData).toBeNull();
 
-    const _cache = renderer.layoutCache; // Access getter to populate cache
+    const _cache = renderer.layoutCache;
     noop(_cache);
-    expect(renderer.layoutCacheData).not.toBeNull(); // Check internal state after access
-    expect(renderer.layoutCache?.roots.length).toBeGreaterThan(0); // Check public getter result
+    expect(renderer.layoutCacheData).not.toBeNull();
+    expect(renderer.layoutCache?.roots.length).toBeGreaterThan(0);
   });
 });
