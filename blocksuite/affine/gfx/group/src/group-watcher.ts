@@ -1,8 +1,11 @@
-import { SurfaceGroupLikeModel } from '../element-model/base.js';
-import type { SurfaceMiddleware } from '../extensions/surface-middleware.js';
-import type { SurfaceBlockModel } from '../surface-model.js';
+import {
+  type SurfaceBlockModel,
+  SurfaceGroupLikeModel,
+  type SurfaceMiddleware,
+  surfaceMiddlewareExtension,
+} from '@blocksuite/affine-block-surface';
 
-export const groupRelationWatcher: SurfaceMiddleware = (
+const groupRelationWatcher: SurfaceMiddleware = (
   surface: SurfaceBlockModel
 ) => {
   const disposables = [
@@ -26,3 +29,8 @@ export const groupRelationWatcher: SurfaceMiddleware = (
     disposables.forEach(d => d.unsubscribe());
   };
 };
+
+export const groupRelationWatcherExtension = surfaceMiddlewareExtension(
+  'group-relation-watcher',
+  groupRelationWatcher
+);

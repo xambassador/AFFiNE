@@ -11,7 +11,6 @@ import * as Y from 'yjs';
 import { elementsCtorMap } from './element-model/index.js';
 import { surfaceMiddlewareIdentifier } from './extensions/surface-middleware.js';
 import { SurfaceBlockTransformer } from './surface-transformer.js';
-import { groupRelationWatcher } from './watchers/group.js';
 
 export const SurfaceBlockSchema = defineBlockSchema({
   flavour: 'affine:surface',
@@ -50,10 +49,6 @@ export class SurfaceBlockModel extends BaseSurfaceModel {
       .forEach(({ middleware }) => {
         this._disposables.add(middleware(this));
       });
-
-    [groupRelationWatcher(this)].forEach(disposable =>
-      this._disposables.add(disposable)
-    );
   }
 
   getConnectors(id: string) {

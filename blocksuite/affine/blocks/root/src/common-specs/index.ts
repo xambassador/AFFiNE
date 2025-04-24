@@ -1,13 +1,5 @@
 import { FileDropExtension } from '@blocksuite/affine-components/drop-indicator';
 import {
-  ConnectorElementRendererExtension,
-  ConnectorElementView,
-} from '@blocksuite/affine-gfx-connector';
-import {
-  GroupElementRendererExtension,
-  GroupElementView,
-} from '@blocksuite/affine-gfx-group';
-import {
   TextElementRendererExtension,
   TextElementView,
 } from '@blocksuite/affine-gfx-text';
@@ -42,16 +34,10 @@ import { viewportOverlayWidget } from './widgets';
  * Because in some cases we need to create edgeless elements in page mode.
  * And these view may contain some logic when elements initialize.
  */
-const EdgelessElementViews = [
-  ConnectorElementView,
-  GroupElementView,
-  TextElementView,
-];
+const EdgelessElementViews = [TextElementView];
 
 export const EdgelessElementRendererExtension: ExtensionType[] = [
   TextElementRendererExtension,
-  ConnectorElementRendererExtension,
-  GroupElementRendererExtension,
 ];
 
 export const CommonSpecs: ExtensionType[] = [

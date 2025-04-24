@@ -1,4 +1,3 @@
-import { effects as gfxGroupEffects } from '@blocksuite/affine-gfx-group/effects';
 import { effects as gfxCanvasTextEffects } from '@blocksuite/affine-gfx-text/effects';
 import { effects as widgetEdgelessToolbarEffects } from '@blocksuite/affine-widget-edgeless-toolbar/effects';
 import { effects as widgetMobileToolbarEffects } from '@blocksuite/affine-widget-keyboard-toolbar/effects';
@@ -73,7 +72,6 @@ function registerRootComponents() {
 
 function registerGfxEffects() {
   gfxCanvasTextEffects();
-  gfxGroupEffects();
 }
 
 function registerWidgets() {
