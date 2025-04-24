@@ -343,7 +343,6 @@ export const PackageList = [
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',
-      'blocksuite/affine/widgets/drag-handle',
       'blocksuite/affine/widgets/edgeless-auto-connect',
       'blocksuite/affine/widgets/edgeless-toolbar',
       'blocksuite/affine/widgets/frame-title',

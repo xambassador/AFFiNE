@@ -30,6 +30,7 @@ import { LinkViewExtension } from '@blocksuite/affine-inline-link/view';
 import { MentionViewExtension } from '@blocksuite/affine-inline-mention/view';
 import { InlinePresetViewExtension } from '@blocksuite/affine-inline-preset/view';
 import { ReferenceViewExtension } from '@blocksuite/affine-inline-reference/view';
+import { DragHandleViewExtension } from '@blocksuite/affine-widget-drag-handle/view';
 
 import { MigratingViewExtension } from './migrating-view';
 
@@ -72,6 +73,9 @@ export function getInternalViewExtensions() {
     InlineLatexViewExtension,
     MentionViewExtension,
     InlinePresetViewExtension,
+
+    // Widget
+    DragHandleViewExtension,
 
     MigratingViewExtension,
   ];

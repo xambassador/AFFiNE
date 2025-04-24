@@ -29,7 +29,6 @@ import { effects as fragmentDocTitleEffects } from '@blocksuite/affine-fragment-
 import { effects as fragmentFramePanelEffects } from '@blocksuite/affine-fragment-frame-panel/effects';
 import { effects as fragmentOutlineEffects } from '@blocksuite/affine-fragment-outline/effects';
 import { effects as richTextEffects } from '@blocksuite/affine-rich-text/effects';
-import { effects as widgetDragHandleEffects } from '@blocksuite/affine-widget-drag-handle/effects';
 import { effects as widgetEdgelessAutoConnectEffects } from '@blocksuite/affine-widget-edgeless-auto-connect/effects';
 import { effects as widgetFrameTitleEffects } from '@blocksuite/affine-widget-frame-title/effects';
 import { effects as widgetRemoteSelectionEffects } from '@blocksuite/affine-widget-remote-selection/effects';
@@ -71,7 +70,6 @@ export function effects() {
   widgetScrollAnchoringEffects();
   widgetFrameTitleEffects();
   widgetRemoteSelectionEffects();
-  widgetDragHandleEffects();
   widgetEdgelessAutoConnectEffects();
   widgetSlashMenuEffects();
   widgetToolbarEffects();

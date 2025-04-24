@@ -30,7 +30,6 @@
     { "path": "../../model" },
     { "path": "../../rich-text" },
     { "path": "../../shared" },
-    { "path": "../../widgets/drag-handle" },
     { "path": "../../widgets/edgeless-auto-connect" },
     { "path": "../../widgets/edgeless-toolbar" },
     { "path": "../../widgets/frame-title" },

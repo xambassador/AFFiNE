@@ -10,7 +10,6 @@ import {
   ToolbarModuleExtension,
   ToolbarRegistryExtension,
 } from '@blocksuite/affine-shared/services';
-import { dragHandleWidget } from '@blocksuite/affine-widget-drag-handle';
 import { linkedDocWidget } from '@blocksuite/affine-widget-linked-doc';
 import { docRemoteSelectionWidget } from '@blocksuite/affine-widget-remote-selection';
 import { scrollAnchoringWidget } from '@blocksuite/affine-widget-scroll-anchoring';
@@ -39,7 +38,6 @@ export const CommonSpecs: ExtensionType[] = [
   ...clipboardConfigs,
   SlashMenuExtension,
   linkedDocWidget,
-  dragHandleWidget,
   docRemoteSelectionWidget,
   viewportOverlayWidget,
   scrollAnchoringWidget,

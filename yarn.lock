@@ -2844,7 +2844,6 @@ __metadata:
     "@blocksuite/affine-model": "workspace:*"
     "@blocksuite/affine-rich-text": "workspace:*"
     "@blocksuite/affine-shared": "workspace:*"
-    "@blocksuite/affine-widget-drag-handle": "workspace:*"
     "@blocksuite/affine-widget-edgeless-auto-connect": "workspace:*"
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*"
     "@blocksuite/affine-widget-frame-title": "workspace:*"
