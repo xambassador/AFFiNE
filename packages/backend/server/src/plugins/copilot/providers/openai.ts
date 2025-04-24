@@ -77,6 +77,7 @@ export class OpenAIProvider
     'text-moderation-stable',
     // text to image
     'dall-e-3',
+    'gpt-image-1',
   ];
 
   #instance!: VercelOpenAIProvider;
