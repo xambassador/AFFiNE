@@ -22,6 +22,7 @@ import { MindmapViewExtension } from '@blocksuite/affine-gfx-mindmap/view';
 import { NoteViewExtension as GfxNoteViewExtension } from '@blocksuite/affine-gfx-note/view';
 import { ShapeViewExtension } from '@blocksuite/affine-gfx-shape/view';
 import { TemplateViewExtension } from '@blocksuite/affine-gfx-template/view';
+import { TextViewExtension } from '@blocksuite/affine-gfx-text/view';
 import { FootnoteViewExtension } from '@blocksuite/affine-inline-footnote/view';
 import { LatexViewExtension as InlineLatexViewExtension } from '@blocksuite/affine-inline-latex/view';
 import { LinkViewExtension } from '@blocksuite/affine-inline-link/view';
@@ -40,6 +41,7 @@ export function getInternalViewExtensions() {
     MindmapViewExtension,
     ConnectorViewExtension,
     GroupViewExtension,
+    TextViewExtension,
     TemplateViewExtension,
 
     // Block

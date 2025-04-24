@@ -14,7 +14,14 @@ export class GroupElementView extends GfxElementModelView<GroupElementModel> {
 
   private _initDblClickToEdit(): void {
     this.on('dblclick', () => {
-      const edgeless = this.std.view.getBlock(this.std.store.root!.id);
+      const rootId = this.std.store.root?.id;
+      if (!rootId) {
+        console.error(
+          'GroupElementView: rootId is not found when dblclick to edit'
+        );
+        return;
+      }
+      const edgeless = this.std.view.getBlock(rootId);
 
       if (edgeless && !this.model.isLocked()) {
         mountGroupTitleEditor(this.model, edgeless);

@@ -1,4 +1,3 @@
-import { effects as gfxCanvasTextEffects } from '@blocksuite/affine-gfx-text/effects';
 import { effects as widgetEdgelessToolbarEffects } from '@blocksuite/affine-widget-edgeless-toolbar/effects';
 import { effects as widgetMobileToolbarEffects } from '@blocksuite/affine-widget-keyboard-toolbar/effects';
 import { effects as widgetLinkedDocEffects } from '@blocksuite/affine-widget-linked-doc/effects';
@@ -54,7 +53,6 @@ export function effects() {
 
   // Register components by category
   registerRootComponents();
-  registerGfxEffects();
   registerWidgets();
   registerEdgelessToolbarComponents();
   registerMiscComponents();
@@ -68,10 +66,6 @@ function registerRootComponents() {
     'affine-edgeless-root-preview',
     EdgelessRootPreviewBlockComponent
   );
-}
-
-function registerGfxEffects() {
-  gfxCanvasTextEffects();
 }
 
 function registerWidgets() {

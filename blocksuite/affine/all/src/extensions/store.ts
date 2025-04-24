@@ -20,6 +20,7 @@ import { ConnectorStoreExtension } from '@blocksuite/affine-gfx-connector/store'
 import { GroupStoreExtension } from '@blocksuite/affine-gfx-group/store';
 import { MindmapStoreExtension } from '@blocksuite/affine-gfx-mindmap/store';
 import { ShapeStoreExtension } from '@blocksuite/affine-gfx-shape/store';
+import { TextStoreExtension } from '@blocksuite/affine-gfx-text/store';
 import { FootnoteStoreExtension } from '@blocksuite/affine-inline-footnote/store';
 import { LatexStoreExtension as InlineLatexStoreExtension } from '@blocksuite/affine-inline-latex/store';
 import { LinkStoreExtension } from '@blocksuite/affine-inline-link/store';
@@ -59,6 +60,7 @@ export function getInternalStoreExtensions() {
     MindmapStoreExtension,
     ConnectorStoreExtension,
     GroupStoreExtension,
+    TextStoreExtension,
 
     MigratingStoreExtension,
   ];

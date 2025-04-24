@@ -1,8 +1,4 @@
 import { FileDropExtension } from '@blocksuite/affine-components/drop-indicator';
-import {
-  TextElementRendererExtension,
-  TextElementView,
-} from '@blocksuite/affine-gfx-text';
 import { NoteBlockSchema } from '@blocksuite/affine-model';
 import {
   AutoClearSelectionService,
@@ -29,17 +25,6 @@ import { builtinToolbarConfig } from '../configs/toolbar';
 import { fallbackKeymap } from '../keyboard/keymap';
 import { viewportOverlayWidget } from './widgets';
 
-/**
- * Why do we add these extensions into CommonSpecs?
- * Because in some cases we need to create edgeless elements in page mode.
- * And these view may contain some logic when elements initialize.
- */
-const EdgelessElementViews = [TextElementView];
-
-export const EdgelessElementRendererExtension: ExtensionType[] = [
-  TextElementRendererExtension,
-];
-
 export const CommonSpecs: ExtensionType[] = [
   FlavourExtension('affine:page'),
   DocModeService,
@@ -52,8 +37,6 @@ export const CommonSpecs: ExtensionType[] = [
   AutoClearSelectionService,
   ...RootBlockAdapterExtensions,
   ...clipboardConfigs,
-  ...EdgelessElementViews,
-  ...EdgelessElementRendererExtension,
   SlashMenuExtension,
   linkedDocWidget,
   dragHandleWidget,
