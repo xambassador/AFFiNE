@@ -31,6 +31,7 @@ import { MAX_EMBEDDABLE_SIZE } from '../types';
 import { CopilotWorkspaceService } from './service';
 import {
   CopilotWorkspaceFileType,
+  CopilotWorkspaceIgnoredDocType,
   PaginatedCopilotWorkspaceFileType,
   PaginatedIgnoredDocsType,
 } from './types';
@@ -90,6 +91,18 @@ export class CopilotWorkspaceEmbeddingConfigResolver {
     return paginate(ignoredDocs, 'createdAt', pagination, totalCount);
   }
 
+  @ResolveField(() => [CopilotWorkspaceIgnoredDocType], {
+    complexity: 2,
+  })
+  async allIgnoredDocs(
+    @Parent() config: CopilotWorkspaceConfigType
+  ): Promise<CopilotWorkspaceIgnoredDocType[]> {
+    const [ignoredDocs] = await this.copilotWorkspace.listIgnoredDocs(
+      config.workspaceId
+    );
+
+    return ignoredDocs;
+  }
   @Mutation(() => Number, {
     name: 'updateWorkspaceEmbeddingIgnoredDocs',
     complexity: 2,

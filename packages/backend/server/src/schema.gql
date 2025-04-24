@@ -273,6 +273,7 @@ type CopilotSessionType {
 }
 
 type CopilotWorkspaceConfig {
+  allIgnoredDocs: [CopilotWorkspaceIgnoredDoc!]!
   files(pagination: PaginationInput!): PaginatedCopilotWorkspaceFileType!
   ignoredDocs(pagination: PaginationInput!): PaginatedIgnoredDocsType!
   workspaceId: String!

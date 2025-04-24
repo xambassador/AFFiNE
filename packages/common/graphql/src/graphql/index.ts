@@ -756,14 +756,6 @@ export const addWorkspaceEmbeddingFilesMutation = {
   file: true,
 };
 
-export const removeWorkspaceEmbeddingFilesMutation = {
-  id: 'removeWorkspaceEmbeddingFilesMutation' as const,
-  op: 'removeWorkspaceEmbeddingFiles',
-  query: `mutation removeWorkspaceEmbeddingFiles($workspaceId: String!, $fileId: String!) {
-  removeWorkspaceEmbeddingFiles(workspaceId: $workspaceId, fileId: $fileId)
-}`,
-};
-
 export const getWorkspaceEmbeddingFilesQuery = {
   id: 'getWorkspaceEmbeddingFilesQuery' as const,
   op: 'getWorkspaceEmbeddingFiles',
@@ -785,6 +777,37 @@ export const getWorkspaceEmbeddingFilesQuery = {
             createdAt
           }
         }
+      }
+    }
+  }
+}`,
+};
+
+export const removeWorkspaceEmbeddingFilesMutation = {
+  id: 'removeWorkspaceEmbeddingFilesMutation' as const,
+  op: 'removeWorkspaceEmbeddingFiles',
+  query: `mutation removeWorkspaceEmbeddingFiles($workspaceId: String!, $fileId: String!) {
+  removeWorkspaceEmbeddingFiles(workspaceId: $workspaceId, fileId: $fileId)
+}`,
+};
+
+export const addWorkspaceEmbeddingIgnoredDocsMutation = {
+  id: 'addWorkspaceEmbeddingIgnoredDocsMutation' as const,
+  op: 'addWorkspaceEmbeddingIgnoredDocs',
+  query: `mutation addWorkspaceEmbeddingIgnoredDocs($workspaceId: String!, $add: [String!]!) {
+  updateWorkspaceEmbeddingIgnoredDocs(workspaceId: $workspaceId, add: $add)
+}`,
+};
+
+export const getAllWorkspaceEmbeddingIgnoredDocsQuery = {
+  id: 'getAllWorkspaceEmbeddingIgnoredDocsQuery' as const,
+  op: 'getAllWorkspaceEmbeddingIgnoredDocs',
+  query: `query getAllWorkspaceEmbeddingIgnoredDocs($workspaceId: String!) {
+  workspace(id: $workspaceId) {
+    embedding {
+      allIgnoredDocs {
+        docId
+        createdAt
       }
     }
   }
@@ -815,15 +838,11 @@ export const getWorkspaceEmbeddingIgnoredDocsQuery = {
 }`,
 };
 
-export const updateWorkspaceEmbeddingIgnoredDocsMutation = {
-  id: 'updateWorkspaceEmbeddingIgnoredDocsMutation' as const,
-  op: 'updateWorkspaceEmbeddingIgnoredDocs',
-  query: `mutation updateWorkspaceEmbeddingIgnoredDocs($workspaceId: String!, $add: [String!], $remove: [String!]) {
-  updateWorkspaceEmbeddingIgnoredDocs(
-    workspaceId: $workspaceId
-    add: $add
-    remove: $remove
-  )
+export const removeWorkspaceEmbeddingIgnoredDocsMutation = {
+  id: 'removeWorkspaceEmbeddingIgnoredDocsMutation' as const,
+  op: 'removeWorkspaceEmbeddingIgnoredDocs',
+  query: `mutation removeWorkspaceEmbeddingIgnoredDocs($workspaceId: String!, $remove: [String!]!) {
+  updateWorkspaceEmbeddingIgnoredDocs(workspaceId: $workspaceId, remove: $remove)
 }`,
 };
 

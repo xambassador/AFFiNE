@@ -366,6 +366,7 @@ export interface CopilotSessionType {
 
 export interface CopilotWorkspaceConfig {
   __typename?: 'CopilotWorkspaceConfig';
+  allIgnoredDocs: Array<CopilotWorkspaceIgnoredDoc>;
   files: PaginatedCopilotWorkspaceFileType;
   ignoredDocs: PaginatedIgnoredDocsType;
   workspaceId: Scalars['String']['output'];
@@ -3273,16 +3274,6 @@ export type AddWorkspaceEmbeddingFilesMutation = {
   };
 };
 
-export type RemoveWorkspaceEmbeddingFilesMutationVariables = Exact<{
-  workspaceId: Scalars['String']['input'];
-  fileId: Scalars['String']['input'];
-}>;
-
-export type RemoveWorkspaceEmbeddingFilesMutation = {
-  __typename?: 'Mutation';
-  removeWorkspaceEmbeddingFiles: boolean;
-};
-
 export type GetWorkspaceEmbeddingFilesQueryVariables = Exact<{
   workspaceId: Scalars['String']['input'];
   pagination: PaginationInput;
@@ -3314,6 +3305,45 @@ export type GetWorkspaceEmbeddingFilesQuery = {
           };
         }>;
       };
+    };
+  };
+};
+
+export type RemoveWorkspaceEmbeddingFilesMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  fileId: Scalars['String']['input'];
+}>;
+
+export type RemoveWorkspaceEmbeddingFilesMutation = {
+  __typename?: 'Mutation';
+  removeWorkspaceEmbeddingFiles: boolean;
+};
+
+export type AddWorkspaceEmbeddingIgnoredDocsMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  add: Array<Scalars['String']['input']> | Scalars['String']['input'];
+}>;
+
+export type AddWorkspaceEmbeddingIgnoredDocsMutation = {
+  __typename?: 'Mutation';
+  updateWorkspaceEmbeddingIgnoredDocs: number;
+};
+
+export type GetAllWorkspaceEmbeddingIgnoredDocsQueryVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+}>;
+
+export type GetAllWorkspaceEmbeddingIgnoredDocsQuery = {
+  __typename?: 'Query';
+  workspace: {
+    __typename?: 'WorkspaceType';
+    embedding: {
+      __typename?: 'CopilotWorkspaceConfig';
+      allIgnoredDocs: Array<{
+        __typename?: 'CopilotWorkspaceIgnoredDoc';
+        docId: string;
+        createdAt: string;
+      }>;
     };
   };
 };
@@ -3350,17 +3380,12 @@ export type GetWorkspaceEmbeddingIgnoredDocsQuery = {
   };
 };
 
-export type UpdateWorkspaceEmbeddingIgnoredDocsMutationVariables = Exact<{
+export type RemoveWorkspaceEmbeddingIgnoredDocsMutationVariables = Exact<{
   workspaceId: Scalars['String']['input'];
-  add?: InputMaybe<
-    Array<Scalars['String']['input']> | Scalars['String']['input']
-  >;
-  remove?: InputMaybe<
-    Array<Scalars['String']['input']> | Scalars['String']['input']
-  >;
+  remove: Array<Scalars['String']['input']> | Scalars['String']['input'];
 }>;
 
-export type UpdateWorkspaceEmbeddingIgnoredDocsMutation = {
+export type RemoveWorkspaceEmbeddingIgnoredDocsMutation = {
   __typename?: 'Mutation';
   updateWorkspaceEmbeddingIgnoredDocs: number;
 };
@@ -4629,6 +4654,11 @@ export type Queries =
       response: GetWorkspaceEmbeddingFilesQuery;
     }
   | {
+      name: 'getAllWorkspaceEmbeddingIgnoredDocsQuery';
+      variables: GetAllWorkspaceEmbeddingIgnoredDocsQueryVariables;
+      response: GetAllWorkspaceEmbeddingIgnoredDocsQuery;
+    }
+  | {
       name: 'getWorkspaceEmbeddingIgnoredDocsQuery';
       variables: GetWorkspaceEmbeddingIgnoredDocsQueryVariables;
       response: GetWorkspaceEmbeddingIgnoredDocsQuery;
@@ -5001,9 +5031,14 @@ export type Mutations =
       response: RemoveWorkspaceEmbeddingFilesMutation;
     }
   | {
-      name: 'updateWorkspaceEmbeddingIgnoredDocsMutation';
-      variables: UpdateWorkspaceEmbeddingIgnoredDocsMutationVariables;
-      response: UpdateWorkspaceEmbeddingIgnoredDocsMutation;
+      name: 'addWorkspaceEmbeddingIgnoredDocsMutation';
+      variables: AddWorkspaceEmbeddingIgnoredDocsMutationVariables;
+      response: AddWorkspaceEmbeddingIgnoredDocsMutation;
+    }
+  | {
+      name: 'removeWorkspaceEmbeddingIgnoredDocsMutation';
+      variables: RemoveWorkspaceEmbeddingIgnoredDocsMutationVariables;
+      response: RemoveWorkspaceEmbeddingIgnoredDocsMutation;
     }
   | {
       name: 'createCheckoutSessionMutation';
