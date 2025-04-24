@@ -16,6 +16,7 @@ import { ParagraphViewExtension } from '@blocksuite/affine-block-paragraph/view'
 import { SurfaceRefViewExtension } from '@blocksuite/affine-block-surface-ref/view';
 import { TableViewExtension } from '@blocksuite/affine-block-table/view';
 import { BrushViewExtension } from '@blocksuite/affine-gfx-brush/view';
+import { ConnectorViewExtension } from '@blocksuite/affine-gfx-connector/view';
 import { MindmapViewExtension } from '@blocksuite/affine-gfx-mindmap/view';
 import { NoteViewExtension as GfxNoteViewExtension } from '@blocksuite/affine-gfx-note/view';
 import { ShapeViewExtension } from '@blocksuite/affine-gfx-shape/view';
@@ -35,6 +36,7 @@ export function getInternalViewExtensions() {
     BrushViewExtension,
     ShapeViewExtension,
     MindmapViewExtension,
+    ConnectorViewExtension,
     TemplateViewExtension,
 
     // Block

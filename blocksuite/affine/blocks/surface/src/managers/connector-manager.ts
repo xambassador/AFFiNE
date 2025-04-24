@@ -850,6 +850,7 @@ function renderRect(
   ctx.restore();
 }
 
+// TODO(@mirone): move to connector package
 export class ConnectionOverlay extends Overlay {
   static override overlayName = 'connection';
 

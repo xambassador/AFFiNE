@@ -1,9 +1,5 @@
 import { ConnectionOverlay } from '@blocksuite/affine-block-surface';
 import type * as BrushEffect from '@blocksuite/affine-gfx-brush';
-import {
-  ConnectorFilter,
-  ConnectorTool,
-} from '@blocksuite/affine-gfx-connector';
 import type * as NoteEffect from '@blocksuite/affine-gfx-note';
 import type * as ShapeEffect from '@blocksuite/affine-gfx-shape';
 import { TextTool } from '@blocksuite/affine-gfx-text';
@@ -30,13 +26,11 @@ export const EdgelessToolExtension: ExtensionType[] = [
   DefaultTool,
   PanTool,
   TextTool,
-  ConnectorTool,
   EmptyTool,
 ];
 
 export const EdgelessEditExtensions: ExtensionType[] = [
   InteractivityManager,
-  ConnectorFilter,
   SnapExtension,
   DblClickAddEdgelessText,
 ];

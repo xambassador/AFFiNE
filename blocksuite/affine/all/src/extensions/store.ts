@@ -16,6 +16,7 @@ import { ParagraphStoreExtension } from '@blocksuite/affine-block-paragraph/stor
 import { SurfaceRefStoreExtension } from '@blocksuite/affine-block-surface-ref/store';
 import { TableStoreExtension } from '@blocksuite/affine-block-table/store';
 import { BrushStoreExtension } from '@blocksuite/affine-gfx-brush/store';
+import { ConnectorStoreExtension } from '@blocksuite/affine-gfx-connector/store';
 import { MindmapStoreExtension } from '@blocksuite/affine-gfx-mindmap/store';
 import { ShapeStoreExtension } from '@blocksuite/affine-gfx-shape/store';
 import { FootnoteStoreExtension } from '@blocksuite/affine-inline-footnote/store';
@@ -55,6 +56,7 @@ export function getInternalStoreExtensions() {
     BrushStoreExtension,
     ShapeStoreExtension,
     MindmapStoreExtension,
+    ConnectorStoreExtension,
 
     MigratingStoreExtension,
   ];

@@ -1,4 +1,3 @@
-import { connectorToolbarExtension } from '@blocksuite/affine-gfx-connector';
 import { groupToolbarExtension } from '@blocksuite/affine-gfx-group';
 import { textToolbarExtension } from '@blocksuite/affine-gfx-text';
 import { ToolbarModuleExtension } from '@blocksuite/affine-shared/services';
@@ -9,8 +8,6 @@ import { builtinLockedToolbarConfig, builtinMiscToolbarConfig } from './misc';
 
 export const EdgelessElementToolbarExtension: ExtensionType[] = [
   groupToolbarExtension,
-
-  connectorToolbarExtension,
 
   textToolbarExtension,
 

@@ -12,17 +12,9 @@ import {
   SurfaceBlockAdapterExtensions,
 } from '@blocksuite/affine-block-surface';
 import {
-  connectorToMarkdownAdapterMatcher,
-  connectorToPlainTextAdapterMatcher,
-} from '@blocksuite/affine-gfx-connector';
-import {
   groupToMarkdownAdapterMatcher,
   groupToPlainTextAdapterMatcher,
 } from '@blocksuite/affine-gfx-group';
-import {
-  mindmapToMarkdownAdapterMatcher,
-  mindmapToPlainTextAdapterMatcher,
-} from '@blocksuite/affine-gfx-mindmap';
 import {
   textToMarkdownAdapterMatcher,
   textToPlainTextAdapterMatcher,
@@ -38,16 +30,12 @@ import type { ExtensionType } from '@blocksuite/store';
 
 const elementToPlainTextAdapterMatchers = [
   groupToPlainTextAdapterMatcher,
-  connectorToPlainTextAdapterMatcher,
   textToPlainTextAdapterMatcher,
-  mindmapToPlainTextAdapterMatcher,
 ];
 
 const elementToMarkdownAdapterMatchers = [
   groupToMarkdownAdapterMatcher,
-  connectorToMarkdownAdapterMatcher,
   textToMarkdownAdapterMatcher,
-  mindmapToMarkdownAdapterMatcher,
 ];
 
 const CommonBlockSpecs: ExtensionType[] = [
