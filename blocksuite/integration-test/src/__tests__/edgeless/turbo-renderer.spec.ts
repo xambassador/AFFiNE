@@ -8,7 +8,7 @@ import {
   ViewportTurboRendererExtension,
 } from '@blocksuite/affine-gfx-turbo-renderer';
 import { firstValueFrom } from 'rxjs';
-import { beforeEach, describe, expect, test } from 'vitest';
+import { afterEach, beforeEach, describe, expect, test } from 'vitest';
 
 import { wait } from '../utils/common.js';
 import { addSampleNotes } from '../utils/doc-generator.js';
@@ -19,8 +19,10 @@ import {
 } from '../utils/setup.js';
 
 describe('viewport turbo renderer', () => {
+  let cleanup: () => void;
+
   beforeEach(async () => {
-    const cleanup = await setupEditor('edgeless', [
+    cleanup = await setupEditor('edgeless', [
       ParagraphLayoutHandlerExtension,
       TurboRendererConfigFactory({
         painterWorkerEntry: createPainterWorker,
@@ -29,6 +31,8 @@ describe('viewport turbo renderer', () => {
     ]);
     return cleanup;
   });
+
+  afterEach(() => cleanup?.());
 
   test('should render 6 notes in viewport', async () => {
     addSampleNotes(doc, 6);
