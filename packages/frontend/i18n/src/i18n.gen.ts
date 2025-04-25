@@ -7654,6 +7654,14 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.integration.calendar.new-error"](): string;
     /**
+      * `All day`
+      */
+    ["com.affine.integration.calendar.all-day"](): string;
+    /**
+      * `New doc`
+      */
+    ["com.affine.integration.calendar.new-doc"](): string;
+    /**
       * `Notes`
       */
     ["com.affine.audio.notes"](): string;
