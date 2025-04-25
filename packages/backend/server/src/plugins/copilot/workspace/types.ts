@@ -13,15 +13,6 @@ declare global {
       jobId: string;
     };
   }
-  interface Jobs {
-    'copilot.workspace.embedding.files': {
-      userId: string;
-      workspaceId: string;
-      blobId: string;
-      fileId: string;
-      fileName: string;
-    };
-  }
 }
 
 @ObjectType('CopilotWorkspaceIgnoredDoc')

@@ -138,7 +138,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
   }
 
   @Transactional()
-  async addFileEmbeddings(
+  async insertFileEmbeddings(
     workspaceId: string,
     fileId: string,
     embeddings: Embedding[]
@@ -151,7 +151,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
       `;
   }
 
-  async listWorkspaceFiles(
+  async listFiles(
     workspaceId: string,
     options?: {
       includeRead?: boolean;
@@ -168,7 +168,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return files;
   }
 
-  async countWorkspaceFiles(workspaceId: string): Promise<number> {
+  async countFiles(workspaceId: string): Promise<number> {
     const count = await this.db.aiWorkspaceFiles.count({
       where: {
         workspaceId,
@@ -177,12 +177,16 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return count;
   }
 
-  async matchWorkspaceFileEmbedding(
+  async matchFileEmbedding(
     workspaceId: string,
     embedding: number[],
     topK: number,
     threshold: number
   ): Promise<FileChunkSimilarity[]> {
+    if (!(await this.allowEmbedding(workspaceId))) {
+      return [];
+    }
+
     const similarityChunks = await this.db.$queryRaw<
       Array<FileChunkSimilarity>
     >`
@@ -195,7 +199,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return similarityChunks.filter(c => Number(c.distance) <= threshold);
   }
 
-  async removeWorkspaceFile(workspaceId: string, fileId: string) {
+  async removeFile(workspaceId: string, fileId: string) {
     // embeddings will be removed by foreign key constraint
     await this.db.aiWorkspaceFiles.deleteMany({
       where: {
@@ -204,5 +208,9 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
       },
     });
     return true;
+  }
+
+  private allowEmbedding(workspaceId: string) {
+    return this.models.workspace.allowEmbedding(workspaceId);
   }
 }
