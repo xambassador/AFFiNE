@@ -340,6 +340,7 @@ input CreateCopilotPromptInput {
 input CreateUserInput {
   email: String!
   name: String
+  password: String
 }
 
 type CredentialsRequirementType {

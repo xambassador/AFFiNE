@@ -444,6 +444,7 @@ export interface CreateCopilotPromptInput {
 export interface CreateUserInput {
   email: Scalars['String']['input'];
   name?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
 }
 
 export interface CredentialsRequirementType {
