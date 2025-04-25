@@ -4,25 +4,35 @@ import { PrismaClient } from '@prisma/client';
 import { once } from 'lodash-es';
 import { Command, CommandRunner } from 'nest-commander';
 
-import * as migrations from '../migrations';
+import * as migrationImports from '../migrations';
 
 interface Migration {
   name: string;
   always?: boolean;
   up: (db: PrismaClient, injector: ModuleRef) => Promise<void>;
   down: (db: PrismaClient, injector: ModuleRef) => Promise<void>;
+  order: number;
 }
 
 export const collectMigrations = once(() => {
-  return Object.values(migrations).map(migration => {
+  const migrations = Object.values(migrationImports).map(migration => {
+    const order = Number(migration.name.match(/([\d]+)$/)?.[1]);
+
+    if (Number.isNaN(order)) {
+      throw new Error(`Invalid migration name: ${migration.name}`);
+    }
+
     return {
       name: migration.name,
       // @ts-expect-error optional
       always: migration.always,
       up: migration.up,
       down: migration.down,
+      order,
     };
   }) as Migration[];
+
+  return migrations.sort((a, b) => a.order - b.order);
 });
 
 @Command({
