@@ -23,10 +23,6 @@ import {
   PreviewRootBlockComponent,
 } from './index.js';
 import {
-  EDGELESS_NAVIGATOR_BLACK_BACKGROUND_WIDGET,
-  EdgelessNavigatorBlackBackgroundWidget,
-} from './widgets/edgeless-navigator-bg/index.js';
-import {
   AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET,
   AffineEdgelessZoomToolbarWidget,
 } from './widgets/edgeless-zoom-toolbar/index.js';
@@ -104,12 +100,6 @@ function registerMiscComponents() {
   // Note and template components
   customElements.define(NOTE_SLICER_WIDGET, NoteSlicer);
 
-  // Navigation components
-  customElements.define(
-    EDGELESS_NAVIGATOR_BLACK_BACKGROUND_WIDGET,
-    EdgelessNavigatorBlackBackgroundWidget
-  );
-
   // Dragging area components
   customElements.define(
     EDGELESS_DRAGGING_AREA_WIDGET,
@@ -128,7 +118,6 @@ declare global {
     'edgeless-auto-complete-panel': EdgelessAutoCompletePanel;
     'edgeless-auto-complete': EdgelessAutoComplete;
     'note-slicer': NoteSlicer;
-    'edgeless-navigator-black-background': EdgelessNavigatorBlackBackgroundWidget;
     'edgeless-dragging-area-rect': EdgelessDraggingAreaRectWidget;
     'edgeless-selected-rect': EdgelessSelectedRectWidget;
     'edgeless-slide-menu': EdgelessSlideMenu;

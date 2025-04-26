@@ -15,7 +15,6 @@ import { EdgelessClipboardFrameConfig } from '@blocksuite/affine-block-frame';
 import { EdgelessClipboardImageConfig } from '@blocksuite/affine-block-image';
 import { EdgelessClipboardNoteConfig } from '@blocksuite/affine-block-note';
 import { ViewportElementExtension } from '@blocksuite/affine-shared/services';
-import { edgelessRemoteSelectionWidget } from '@blocksuite/affine-widget-remote-selection';
 import {
   BlockViewExtension,
   LifeCycleWatcher,
@@ -26,7 +25,6 @@ import type { ExtensionType } from '@blocksuite/store';
 import { literal, unsafeStatic } from 'lit/static-html.js';
 
 import { CommonSpecs } from '../common-specs/index.js';
-import { edgelessNavigatorBgWidget } from '../widgets/edgeless-navigator-bg/index.js';
 import { AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET } from '../widgets/edgeless-zoom-toolbar/index.js';
 import { EdgelessClipboardController } from './clipboard/clipboard.js';
 import { NOTE_SLICER_WIDGET } from './components/note-slicer/index.js';
@@ -94,11 +92,9 @@ const EdgelessCommonExtension: ExtensionType[] = [
 export const EdgelessRootBlockSpec: ExtensionType[] = [
   ...EdgelessCommonExtension,
   BlockViewExtension('affine:page', literal`affine-edgeless-root`),
-  edgelessRemoteSelectionWidget,
   edgelessZoomToolbarWidget,
   edgelessDraggingAreaWidget,
   noteSlicerWidget,
-  edgelessNavigatorBgWidget,
   edgelessSelectedRectWidget,
   EdgelessClipboardController,
 ];

@@ -10,10 +10,6 @@ import {
   ToolbarModuleExtension,
   ToolbarRegistryExtension,
 } from '@blocksuite/affine-shared/services';
-import { docRemoteSelectionWidget } from '@blocksuite/affine-widget-remote-selection';
-import { scrollAnchoringWidget } from '@blocksuite/affine-widget-scroll-anchoring';
-import { SlashMenuExtension } from '@blocksuite/affine-widget-slash-menu';
-import { toolbarWidget } from '@blocksuite/affine-widget-toolbar';
 import { BlockFlavourIdentifier, FlavourExtension } from '@blocksuite/std';
 import type { ExtensionType } from '@blocksuite/store';
 
@@ -35,11 +31,7 @@ export const CommonSpecs: ExtensionType[] = [
   AutoClearSelectionService,
   ...RootBlockAdapterExtensions,
   ...clipboardConfigs,
-  SlashMenuExtension,
-  docRemoteSelectionWidget,
   viewportOverlayWidget,
-  scrollAnchoringWidget,
-  toolbarWidget,
   fallbackKeymap,
 
   ToolbarModuleExtension({

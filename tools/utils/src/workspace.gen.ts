@@ -344,8 +344,6 @@ export const PackageList = [
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',
       'blocksuite/affine/widgets/edgeless-toolbar',
-      'blocksuite/affine/widgets/remote-selection',
-      'blocksuite/affine/widgets/scroll-anchoring',
       'blocksuite/affine/widgets/slash-menu',
       'blocksuite/affine/widgets/toolbar',
       'blocksuite/affine/data-view',
@@ -859,6 +857,7 @@ export const PackageList = [
     workspaceDependencies: [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
@@ -869,6 +868,7 @@ export const PackageList = [
     location: 'blocksuite/affine/widgets/scroll-anchoring',
     name: '@blocksuite/affine-widget-scroll-anchoring',
     workspaceDependencies: [
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
@@ -880,6 +880,7 @@ export const PackageList = [
     name: '@blocksuite/affine-widget-slash-menu',
     workspaceDependencies: [
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
@@ -895,6 +896,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/blocks/table',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
