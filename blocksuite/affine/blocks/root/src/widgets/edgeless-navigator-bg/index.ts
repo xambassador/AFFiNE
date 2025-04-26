@@ -19,6 +19,7 @@ export class EdgelessNavigatorBlackBackgroundWidget extends WidgetComponent<Root
       z-index: 1;
       background-color: transparent;
       box-shadow: 0 0 0 5000px black;
+      pointer-events: none;
     }
   `;
 

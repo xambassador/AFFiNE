@@ -777,6 +777,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/note',
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
@@ -789,6 +790,7 @@ export const PackageList = [
     workspaceDependencies: [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',

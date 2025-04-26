@@ -31,6 +31,8 @@ import { MentionViewExtension } from '@blocksuite/affine-inline-mention/view';
 import { InlinePresetViewExtension } from '@blocksuite/affine-inline-preset/view';
 import { ReferenceViewExtension } from '@blocksuite/affine-inline-reference/view';
 import { DragHandleViewExtension } from '@blocksuite/affine-widget-drag-handle/view';
+import { EdgelessAutoConnectViewExtension } from '@blocksuite/affine-widget-edgeless-auto-connect/view';
+import { EdgelessToolbarViewExtension } from '@blocksuite/affine-widget-edgeless-toolbar/view';
 
 import { MigratingViewExtension } from './migrating-view';
 
@@ -76,7 +78,8 @@ export function getInternalViewExtensions() {
 
     // Widget
     DragHandleViewExtension,
-
+    EdgelessAutoConnectViewExtension,
+    EdgelessToolbarViewExtension,
     MigratingViewExtension,
   ];
 }

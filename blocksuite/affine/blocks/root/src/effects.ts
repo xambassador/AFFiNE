@@ -1,4 +1,3 @@
-import { effects as widgetEdgelessToolbarEffects } from '@blocksuite/affine-widget-edgeless-toolbar/effects';
 import { effects as widgetMobileToolbarEffects } from '@blocksuite/affine-widget-keyboard-toolbar/effects';
 import { effects as widgetLinkedDocEffects } from '@blocksuite/affine-widget-linked-doc/effects';
 
@@ -49,7 +48,6 @@ export function effects() {
   // Run other effects
   widgetMobileToolbarEffects();
   widgetLinkedDocEffects();
-  widgetEdgelessToolbarEffects();
 
   // Register components by category
   registerRootComponents();
