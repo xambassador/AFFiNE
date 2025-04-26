@@ -33,6 +33,8 @@ import { ReferenceViewExtension } from '@blocksuite/affine-inline-reference/view
 import { DragHandleViewExtension } from '@blocksuite/affine-widget-drag-handle/view';
 import { EdgelessAutoConnectViewExtension } from '@blocksuite/affine-widget-edgeless-auto-connect/view';
 import { EdgelessToolbarViewExtension } from '@blocksuite/affine-widget-edgeless-toolbar/view';
+import { FrameTitleViewExtension } from '@blocksuite/affine-widget-frame-title/view';
+import { KeyboardToolbarViewExtension } from '@blocksuite/affine-widget-keyboard-toolbar/view';
 
 import { MigratingViewExtension } from './migrating-view';
 
@@ -81,5 +83,7 @@ export function getInternalViewExtensions() {
     EdgelessAutoConnectViewExtension,
     EdgelessToolbarViewExtension,
     MigratingViewExtension,
+    FrameTitleViewExtension,
+    KeyboardToolbarViewExtension,
   ];
 }

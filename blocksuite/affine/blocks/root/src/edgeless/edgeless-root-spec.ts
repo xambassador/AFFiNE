@@ -15,7 +15,6 @@ import { EdgelessClipboardFrameConfig } from '@blocksuite/affine-block-frame';
 import { EdgelessClipboardImageConfig } from '@blocksuite/affine-block-image';
 import { EdgelessClipboardNoteConfig } from '@blocksuite/affine-block-note';
 import { ViewportElementExtension } from '@blocksuite/affine-shared/services';
-import { frameTitleWidget } from '@blocksuite/affine-widget-frame-title';
 import { edgelessRemoteSelectionWidget } from '@blocksuite/affine-widget-remote-selection';
 import {
   BlockViewExtension,
@@ -97,7 +96,6 @@ export const EdgelessRootBlockSpec: ExtensionType[] = [
   BlockViewExtension('affine:page', literal`affine-edgeless-root`),
   edgelessRemoteSelectionWidget,
   edgelessZoomToolbarWidget,
-  frameTitleWidget,
   edgelessDraggingAreaWidget,
   noteSlicerWidget,
   edgelessNavigatorBgWidget,

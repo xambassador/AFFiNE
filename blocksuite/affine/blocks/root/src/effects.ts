@@ -1,4 +1,3 @@
-import { effects as widgetMobileToolbarEffects } from '@blocksuite/affine-widget-keyboard-toolbar/effects';
 import { effects as widgetLinkedDocEffects } from '@blocksuite/affine-widget-linked-doc/effects';
 
 import { EdgelessAutoCompletePanel } from './edgeless/components/auto-complete/auto-complete-panel.js';
@@ -46,7 +45,6 @@ import {
 
 export function effects() {
   // Run other effects
-  widgetMobileToolbarEffects();
   widgetLinkedDocEffects();
 
   // Register components by category

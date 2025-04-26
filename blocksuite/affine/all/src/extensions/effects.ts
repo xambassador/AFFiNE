@@ -29,7 +29,6 @@ import { effects as fragmentDocTitleEffects } from '@blocksuite/affine-fragment-
 import { effects as fragmentFramePanelEffects } from '@blocksuite/affine-fragment-frame-panel/effects';
 import { effects as fragmentOutlineEffects } from '@blocksuite/affine-fragment-outline/effects';
 import { effects as richTextEffects } from '@blocksuite/affine-rich-text/effects';
-import { effects as widgetFrameTitleEffects } from '@blocksuite/affine-widget-frame-title/effects';
 import { effects as widgetRemoteSelectionEffects } from '@blocksuite/affine-widget-remote-selection/effects';
 import { effects as widgetScrollAnchoringEffects } from '@blocksuite/affine-widget-scroll-anchoring/effects';
 import { effects as widgetSlashMenuEffects } from '@blocksuite/affine-widget-slash-menu/effects';
@@ -67,7 +66,6 @@ export function effects() {
   componentOpenDocDropdownMenuEffects();
 
   widgetScrollAnchoringEffects();
-  widgetFrameTitleEffects();
   widgetRemoteSelectionEffects();
   widgetSlashMenuEffects();
   widgetToolbarEffects();
