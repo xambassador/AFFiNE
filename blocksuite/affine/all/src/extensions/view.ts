@@ -35,6 +35,7 @@ import { EdgelessAutoConnectViewExtension } from '@blocksuite/affine-widget-edge
 import { EdgelessToolbarViewExtension } from '@blocksuite/affine-widget-edgeless-toolbar/view';
 import { FrameTitleViewExtension } from '@blocksuite/affine-widget-frame-title/view';
 import { KeyboardToolbarViewExtension } from '@blocksuite/affine-widget-keyboard-toolbar/view';
+import { LinkedDocViewExtension } from '@blocksuite/affine-widget-linked-doc/view';
 
 import { MigratingViewExtension } from './migrating-view';
 
@@ -85,5 +86,6 @@ export function getInternalViewExtensions() {
     MigratingViewExtension,
     FrameTitleViewExtension,
     KeyboardToolbarViewExtension,
+    LinkedDocViewExtension,
   ];
 }

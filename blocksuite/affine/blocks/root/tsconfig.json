@@ -31,7 +31,6 @@
     { "path": "../../rich-text" },
     { "path": "../../shared" },
     { "path": "../../widgets/edgeless-toolbar" },
-    { "path": "../../widgets/linked-doc" },
     { "path": "../../widgets/remote-selection" },
     { "path": "../../widgets/scroll-anchoring" },
     { "path": "../../widgets/slash-menu" },

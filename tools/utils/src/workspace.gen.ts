@@ -344,7 +344,6 @@ export const PackageList = [
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',
       'blocksuite/affine/widgets/edgeless-toolbar',
-      'blocksuite/affine/widgets/linked-doc',
       'blocksuite/affine/widgets/remote-selection',
       'blocksuite/affine/widgets/scroll-anchoring',
       'blocksuite/affine/widgets/slash-menu',

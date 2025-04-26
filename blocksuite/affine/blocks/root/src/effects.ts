@@ -1,5 +1,3 @@
-import { effects as widgetLinkedDocEffects } from '@blocksuite/affine-widget-linked-doc/effects';
-
 import { EdgelessAutoCompletePanel } from './edgeless/components/auto-complete/auto-complete-panel.js';
 import { EdgelessAutoComplete } from './edgeless/components/auto-complete/edgeless-auto-complete.js';
 import {
@@ -44,9 +42,6 @@ import {
 } from './widgets/viewport-overlay/viewport-overlay.js';
 
 export function effects() {
-  // Run other effects
-  widgetLinkedDocEffects();
-
   // Register components by category
   registerRootComponents();
   registerWidgets();

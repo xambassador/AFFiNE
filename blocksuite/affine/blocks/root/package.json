@@ -34,7 +34,6 @@
     "@blocksuite/affine-rich-text": "workspace:*",
     "@blocksuite/affine-shared": "workspace:*",
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*",
-    "@blocksuite/affine-widget-linked-doc": "workspace:*",
     "@blocksuite/affine-widget-remote-selection": "workspace:*",
     "@blocksuite/affine-widget-scroll-anchoring": "workspace:*",
     "@blocksuite/affine-widget-slash-menu": "workspace:*",
