@@ -8,10 +8,7 @@ import {
   type StoreExtensionContext,
   StoreExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
-import {
-  RootBlockSchemaExtension,
-  TranscriptionBlockSchemaExtension,
-} from '@blocksuite/affine-model';
+import { RootBlockSchemaExtension } from '@blocksuite/affine-model';
 import {
   HtmlAdapterFactoryExtension,
   ImageProxyService,
@@ -69,7 +66,6 @@ function getNotionHtmlAdapterExtensions(): ExtensionType[] {
 
 const MigratingStoreExtensions: ExtensionType[] = [
   RootBlockSchemaExtension,
-  TranscriptionBlockSchemaExtension,
 
   BlockSelectionExtension,
   TextSelectionExtension,

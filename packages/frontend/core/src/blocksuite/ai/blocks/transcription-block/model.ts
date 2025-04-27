@@ -2,7 +2,7 @@ import {
   BlockModel,
   BlockSchemaExtension,
   defineBlockSchema,
-} from '@blocksuite/store';
+} from '@blocksuite/affine/store';
 
 export const TranscriptionBlockFlavour = 'affine:transcription';
 
