@@ -1,9 +1,10 @@
-import { getLastPropsKey } from '@blocksuite/affine-block-surface';
 import { EditPropsStore } from '@blocksuite/affine-shared/services';
 import {
   type SurfaceMiddleware,
   SurfaceMiddlewareBuilder,
 } from '@blocksuite/std/gfx';
+
+import { getLastPropsKey } from '../utils';
 
 export class EditPropsMiddlewareBuilder extends SurfaceMiddlewareBuilder {
   static override key = 'editProps';

@@ -21,6 +21,7 @@ import { ConnectorViewExtension } from '@blocksuite/affine-gfx-connector/view';
 import { GroupViewExtension } from '@blocksuite/affine-gfx-group/view';
 import { MindmapViewExtension } from '@blocksuite/affine-gfx-mindmap/view';
 import { NoteViewExtension as GfxNoteViewExtension } from '@blocksuite/affine-gfx-note/view';
+import { PointerViewExtension } from '@blocksuite/affine-gfx-pointer/view';
 import { ShapeViewExtension } from '@blocksuite/affine-gfx-shape/view';
 import { TemplateViewExtension } from '@blocksuite/affine-gfx-template/view';
 import { TextViewExtension } from '@blocksuite/affine-gfx-text/view';
@@ -46,6 +47,7 @@ import { MigratingViewExtension } from './migrating-view';
 export function getInternalViewExtensions() {
   return [
     // Gfx
+    PointerViewExtension,
     GfxNoteViewExtension,
     BrushViewExtension,
     ShapeViewExtension,

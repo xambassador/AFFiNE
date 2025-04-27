@@ -34,6 +34,7 @@ export const PackageList = [
       'blocksuite/affine/gfx/group',
       'blocksuite/affine/gfx/mindmap',
       'blocksuite/affine/gfx/note',
+      'blocksuite/affine/gfx/pointer',
       'blocksuite/affine/gfx/shape',
       'blocksuite/affine/gfx/template',
       'blocksuite/affine/gfx/text',
@@ -337,6 +338,7 @@ export const PackageList = [
       'blocksuite/affine/gfx/group',
       'blocksuite/affine/gfx/mindmap',
       'blocksuite/affine/gfx/note',
+      'blocksuite/affine/gfx/pointer',
       'blocksuite/affine/gfx/shape',
       'blocksuite/affine/gfx/text',
       'blocksuite/affine/inlines/preset',
@@ -555,6 +557,22 @@ export const PackageList = [
       'blocksuite/affine/blocks/attachment',
       'blocksuite/affine/blocks/bookmark',
       'blocksuite/affine/blocks/image',
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/rich-text',
+      'blocksuite/affine/shared',
+      'blocksuite/affine/widgets/edgeless-toolbar',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+      'blocksuite/framework/store',
+    ],
+  },
+  {
+    location: 'blocksuite/affine/gfx/pointer',
+    name: '@blocksuite/affine-gfx-pointer',
+    workspaceDependencies: [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
       'blocksuite/affine/ext-loader',
@@ -1304,6 +1322,7 @@ export type PackageName =
   | '@blocksuite/affine-gfx-group'
   | '@blocksuite/affine-gfx-mindmap'
   | '@blocksuite/affine-gfx-note'
+  | '@blocksuite/affine-gfx-pointer'
   | '@blocksuite/affine-gfx-shape'
   | '@blocksuite/affine-gfx-template'
   | '@blocksuite/affine-gfx-text'

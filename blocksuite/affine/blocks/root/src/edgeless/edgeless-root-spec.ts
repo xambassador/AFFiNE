@@ -1,19 +1,3 @@
-import { EdgelessClipboardAttachmentConfig } from '@blocksuite/affine-block-attachment';
-import { EdgelessClipboardBookmarkConfig } from '@blocksuite/affine-block-bookmark';
-import { EdgelessClipboardEdgelessTextConfig } from '@blocksuite/affine-block-edgeless-text';
-import {
-  EdgelessClipboardEmbedFigmaConfig,
-  EdgelessClipboardEmbedGithubConfig,
-  EdgelessClipboardEmbedHtmlConfig,
-  EdgelessClipboardEmbedIframeConfig,
-  EdgelessClipboardEmbedLinkedDocConfig,
-  EdgelessClipboardEmbedLoomConfig,
-  EdgelessClipboardEmbedSyncedDocConfig,
-  EdgelessClipboardEmbedYoutubeConfig,
-} from '@blocksuite/affine-block-embed';
-import { EdgelessClipboardFrameConfig } from '@blocksuite/affine-block-frame';
-import { EdgelessClipboardImageConfig } from '@blocksuite/affine-block-image';
-import { EdgelessClipboardNoteConfig } from '@blocksuite/affine-block-note';
 import { ViewportElementExtension } from '@blocksuite/affine-shared/services';
 import {
   BlockViewExtension,
@@ -63,30 +47,12 @@ class EdgelessLocker extends LifeCycleWatcher {
   }
 }
 
-const EdgelessClipboardConfigs: ExtensionType[] = [
-  EdgelessClipboardNoteConfig,
-  EdgelessClipboardEdgelessTextConfig,
-  EdgelessClipboardImageConfig,
-  EdgelessClipboardFrameConfig,
-  EdgelessClipboardAttachmentConfig,
-  EdgelessClipboardBookmarkConfig,
-  EdgelessClipboardEmbedFigmaConfig,
-  EdgelessClipboardEmbedGithubConfig,
-  EdgelessClipboardEmbedHtmlConfig,
-  EdgelessClipboardEmbedLoomConfig,
-  EdgelessClipboardEmbedYoutubeConfig,
-  EdgelessClipboardEmbedIframeConfig,
-  EdgelessClipboardEmbedLinkedDocConfig,
-  EdgelessClipboardEmbedSyncedDocConfig,
-];
-
 const EdgelessCommonExtension: ExtensionType[] = [
   CommonSpecs,
   ToolController,
   EdgelessRootService,
   ViewportElementExtension('.affine-edgeless-viewport'),
   ...quickTools,
-  ...EdgelessClipboardConfigs,
 ].flat();
 
 export const EdgelessRootBlockSpec: ExtensionType[] = [

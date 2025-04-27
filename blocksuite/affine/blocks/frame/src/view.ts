@@ -3,6 +3,7 @@ import {
   ViewExtensionProvider,
 } from '@blocksuite/affine-ext-loader';
 
+import { EdgelessClipboardFrameConfig } from './edgeless-clipboard-config';
 import { frameQuickTool } from './edgeless-toolbar';
 import { effects } from './effects';
 import { FrameHighlightManager } from './frame-highlight-manager';
@@ -30,6 +31,7 @@ export class FrameViewExtension extends ViewExtensionProvider {
       context.register(frameQuickTool);
       context.register(frameToolbarExtension);
       context.register(edgelessNavigatorBgWidget);
+      context.register(EdgelessClipboardFrameConfig);
     }
   }
 }

@@ -1,14 +1,13 @@
+import {
+  DefaultModeDragType,
+  DefaultTool,
+} from '@blocksuite/affine-gfx-pointer';
 import type { RootBlockModel } from '@blocksuite/affine-model';
 import { WidgetComponent } from '@blocksuite/std';
 import { GfxControllerIdentifier } from '@blocksuite/std/gfx';
 import { cssVarV2 } from '@toeverything/theme/v2';
 import { css, html, nothing, unsafeCSS } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
-
-import {
-  DefaultModeDragType,
-  DefaultTool,
-} from '../../gfx-tool/default-tool.js';
 
 export const EDGELESS_DRAGGING_AREA_WIDGET = 'edgeless-dragging-area-rect';
 

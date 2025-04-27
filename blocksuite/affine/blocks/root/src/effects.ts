@@ -14,7 +14,6 @@ import {
 } from './edgeless/components/rects/edgeless-selected-rect.js';
 import { EdgelessSlideMenu } from './edgeless/components/toolbar/common/slide-menu.js';
 import { ToolbarArrowUpIcon } from './edgeless/components/toolbar/common/toolbar-arrow-up-icon.js';
-import { EdgelessDefaultToolButton } from './edgeless/components/toolbar/default/default-tool-button.js';
 import { EdgelessLinkToolButton } from './edgeless/components/toolbar/link/link-tool-button.js';
 import {
   EdgelessRootBlockComponent,
@@ -72,10 +71,6 @@ function registerWidgets() {
 
 function registerEdgelessToolbarComponents() {
   // Tool buttons
-  customElements.define(
-    'edgeless-default-tool-button',
-    EdgelessDefaultToolButton
-  );
   customElements.define('edgeless-link-tool-button', EdgelessLinkToolButton);
 
   // Menus
@@ -122,7 +117,6 @@ declare global {
     'edgeless-selected-rect': EdgelessSelectedRectWidget;
     'edgeless-slide-menu': EdgelessSlideMenu;
     'toolbar-arrow-up-icon': ToolbarArrowUpIcon;
-    'edgeless-default-tool-button': EdgelessDefaultToolButton;
     'edgeless-link-tool-button': EdgelessLinkToolButton;
     'affine-page-root': PageRootBlockComponent;
     'zoom-bar-toggle-button': ZoomBarToggleButton;

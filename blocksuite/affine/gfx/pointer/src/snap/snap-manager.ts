@@ -8,7 +8,7 @@ import {
   InteractivityExtension,
 } from '@blocksuite/std/gfx';
 
-import type { SnapOverlay } from '../utils/snap-manager';
+import type { SnapOverlay } from './snap-overlay';
 
 export class SnapExtension extends InteractivityExtension {
   static override key = 'snap-manager';

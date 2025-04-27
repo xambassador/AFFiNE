@@ -218,9 +218,10 @@ export class ChatPanelUtils {
 
     for (const attachment of attachments) {
       const fileChooserPromise = page.waitForEvent('filechooser');
-      const withButton = await page.getByTestId('chat-panel-with-button');
+      const withButton = page.getByTestId('chat-panel-with-button');
+      await withButton.hover();
       await withButton.click();
-      const withMenu = await page.getByTestId('ai-add-popover');
+      const withMenu = page.getByTestId('ai-add-popover');
       await withMenu.getByTestId('ai-chat-with-files').click();
       const fileChooser = await fileChooserPromise;
       await fileChooser.setFiles(attachment);
@@ -231,8 +232,8 @@ export class ChatPanelUtils {
         .evaluateAll(elements =>
           elements.map(el => el.getAttribute('data-state'))
         );
-      await expect(states).toHaveLength(attachments.length);
-      await expect(states.every(state => state === 'finished')).toBe(true);
+      expect(states).toHaveLength(attachments.length);
+      expect(states.every(state => state === 'finished')).toBe(true);
     }).toPass({ timeout: 20000 });
 
     await this.makeChat(page, text);

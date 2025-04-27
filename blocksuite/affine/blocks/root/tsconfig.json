@@ -24,6 +24,7 @@
     { "path": "../../gfx/group" },
     { "path": "../../gfx/mindmap" },
     { "path": "../../gfx/note" },
+    { "path": "../../gfx/pointer" },
     { "path": "../../gfx/shape" },
     { "path": "../../gfx/text" },
     { "path": "../../inlines/preset" },
