@@ -32,9 +32,6 @@ export class ChatPanelUtils {
       });
       await page.waitForTimeout(500); // wait the sidebar stable
     }
-    if (await page.getByTestId('notification-close-button').isVisible()) {
-      await page.getByTestId('notification-close-button').click();
-    }
     await page.getByTestId('sidebar-tab-chat').click();
     await expect(page.getByTestId('sidebar-tab-content-chat')).toBeVisible();
   }
