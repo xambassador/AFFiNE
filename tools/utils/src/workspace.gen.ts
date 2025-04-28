@@ -52,6 +52,7 @@ export const PackageList = [
       'blocksuite/affine/widgets/drag-handle',
       'blocksuite/affine/widgets/edgeless-auto-connect',
       'blocksuite/affine/widgets/edgeless-toolbar',
+      'blocksuite/affine/widgets/edgeless-zoom-toolbar',
       'blocksuite/affine/widgets/frame-title',
       'blocksuite/affine/widgets/keyboard-toolbar',
       'blocksuite/affine/widgets/linked-doc',
@@ -827,6 +828,19 @@ export const PackageList = [
     ],
   },
   {
+    location: 'blocksuite/affine/widgets/edgeless-zoom-toolbar',
+    name: '@blocksuite/affine-widget-edgeless-zoom-toolbar',
+    workspaceDependencies: [
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/shared',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+    ],
+  },
+  {
     location: 'blocksuite/affine/widgets/frame-title',
     name: '@blocksuite/affine-widget-frame-title',
     workspaceDependencies: [
@@ -1368,6 +1382,7 @@ export type PackageName =
   | '@blocksuite/affine-widget-drag-handle'
   | '@blocksuite/affine-widget-edgeless-auto-connect'
   | '@blocksuite/affine-widget-edgeless-toolbar'
+  | '@blocksuite/affine-widget-edgeless-zoom-toolbar'
   | '@blocksuite/affine-widget-frame-title'
   | '@blocksuite/affine-widget-keyboard-toolbar'
   | '@blocksuite/affine-widget-linked-doc'

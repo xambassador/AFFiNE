@@ -1,10 +1,11 @@
 import { EdgelessLegacySlotIdentifier } from '@blocksuite/affine-block-surface';
 import type { RootBlockModel } from '@blocksuite/affine-model';
-import { WidgetComponent } from '@blocksuite/std';
+import { WidgetComponent, WidgetViewExtension } from '@blocksuite/std';
 import { GfxControllerIdentifier } from '@blocksuite/std/gfx';
 import { effect } from '@preact/signals-core';
 import { css, html, nothing } from 'lit';
 import { state } from 'lit/decorators.js';
+import { literal, unsafeStatic } from 'lit/static-html.js';
 
 export const AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET =
   'affine-edgeless-zoom-toolbar-widget';
@@ -85,3 +86,9 @@ export class AffineEdgelessZoomToolbarWidget extends WidgetComponent<RootBlockMo
   @state()
   private accessor _hide = false;
 }
+
+export const edgelessZoomToolbarWidget = WidgetViewExtension(
+  'affine:page',
+  AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET,
+  literal`${unsafeStatic(AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET)}`
+);

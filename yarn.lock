@@ -3754,6 +3754,28 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@blocksuite/affine-widget-edgeless-zoom-toolbar@workspace:*, @blocksuite/affine-widget-edgeless-zoom-toolbar@workspace:blocksuite/affine/widgets/edgeless-zoom-toolbar":
+  version: 0.0.0-use.local
+  resolution: "@blocksuite/affine-widget-edgeless-zoom-toolbar@workspace:blocksuite/affine/widgets/edgeless-zoom-toolbar"
+  dependencies:
+    "@blocksuite/affine-block-surface": "workspace:*"
+    "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
+    "@blocksuite/affine-model": "workspace:*"
+    "@blocksuite/affine-shared": "workspace:*"
+    "@blocksuite/global": "workspace:*"
+    "@blocksuite/icons": "npm:^2.2.12"
+    "@blocksuite/std": "workspace:*"
+    "@floating-ui/dom": "npm:^1.6.13"
+    "@preact/signals-core": "npm:^1.8.0"
+    "@toeverything/theme": "npm:^1.1.12"
+    "@types/lodash-es": "npm:^4.17.12"
+    lit: "npm:^3.2.0"
+    lodash-es: "npm:^4.17.21"
+    rxjs: "npm:^7.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@blocksuite/affine-widget-frame-title@workspace:*, @blocksuite/affine-widget-frame-title@workspace:blocksuite/affine/widgets/frame-title":
   version: 0.0.0-use.local
   resolution: "@blocksuite/affine-widget-frame-title@workspace:blocksuite/affine/widgets/frame-title"
@@ -3994,6 +4016,7 @@ __metadata:
     "@blocksuite/affine-widget-drag-handle": "workspace:*"
     "@blocksuite/affine-widget-edgeless-auto-connect": "workspace:*"
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*"
+    "@blocksuite/affine-widget-edgeless-zoom-toolbar": "workspace:*"
     "@blocksuite/affine-widget-frame-title": "workspace:*"
     "@blocksuite/affine-widget-keyboard-toolbar": "workspace:*"
     "@blocksuite/affine-widget-linked-doc": "workspace:*"

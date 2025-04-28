@@ -54,6 +54,7 @@
     { "path": "../widgets/drag-handle" },
     { "path": "../widgets/edgeless-auto-connect" },
     { "path": "../widgets/edgeless-toolbar" },
+    { "path": "../widgets/edgeless-zoom-toolbar" },
     { "path": "../widgets/frame-title" },
     { "path": "../widgets/keyboard-toolbar" },
     { "path": "../widgets/linked-doc" },

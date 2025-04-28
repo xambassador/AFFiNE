@@ -9,7 +9,6 @@ import type { ExtensionType } from '@blocksuite/store';
 import { literal, unsafeStatic } from 'lit/static-html.js';
 
 import { CommonSpecs } from '../common-specs/index.js';
-import { AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET } from '../widgets/edgeless-zoom-toolbar/index.js';
 import { EdgelessClipboardController } from './clipboard/clipboard.js';
 import { NOTE_SLICER_WIDGET } from './components/note-slicer/index.js';
 import { EDGELESS_DRAGGING_AREA_WIDGET } from './components/rects/edgeless-dragging-area-rect.js';
@@ -17,11 +16,6 @@ import { EDGELESS_SELECTED_RECT_WIDGET } from './components/rects/edgeless-selec
 import { quickTools } from './components/toolbar/tools.js';
 import { EdgelessRootService } from './edgeless-root-service.js';
 
-export const edgelessZoomToolbarWidget = WidgetViewExtension(
-  'affine:page',
-  AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET,
-  literal`${unsafeStatic(AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET)}`
-);
 export const edgelessDraggingAreaWidget = WidgetViewExtension(
   'affine:page',
   EDGELESS_DRAGGING_AREA_WIDGET,
@@ -57,7 +51,6 @@ const EdgelessCommonExtension: ExtensionType[] = [
 export const EdgelessRootBlockSpec: ExtensionType[] = [
   ...EdgelessCommonExtension,
   BlockViewExtension('affine:page', literal`affine-edgeless-root`),
-  edgelessZoomToolbarWidget,
   edgelessDraggingAreaWidget,
   noteSlicerWidget,
   edgelessSelectedRectWidget,

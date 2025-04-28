@@ -22,12 +22,6 @@ import {
   PreviewRootBlockComponent,
 } from './index.js';
 import {
-  AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET,
-  AffineEdgelessZoomToolbarWidget,
-} from './widgets/edgeless-zoom-toolbar/index.js';
-import { ZoomBarToggleButton } from './widgets/edgeless-zoom-toolbar/zoom-bar-toggle-button.js';
-import { EdgelessZoomToolbar } from './widgets/edgeless-zoom-toolbar/zoom-toolbar.js';
-import {
   AFFINE_PAGE_DRAGGING_AREA_WIDGET,
   AffinePageDraggingAreaWidget,
 } from './widgets/page-dragging-area/page-dragging-area.js';
@@ -55,10 +49,6 @@ function registerWidgets() {
     AFFINE_PAGE_DRAGGING_AREA_WIDGET,
     AffinePageDraggingAreaWidget
   );
-  customElements.define(
-    AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET,
-    AffineEdgelessZoomToolbarWidget
-  );
 }
 
 function registerEdgelessToolbarComponents() {
@@ -73,10 +63,6 @@ function registerEdgelessToolbarComponents() {
 }
 
 function registerMiscComponents() {
-  // Toolbar and UI components
-  customElements.define('edgeless-zoom-toolbar', EdgelessZoomToolbar);
-  customElements.define('zoom-bar-toggle-button', ZoomBarToggleButton);
-
   // Auto-complete components
   customElements.define(
     'edgeless-auto-complete-panel',
@@ -111,9 +97,5 @@ declare global {
     'toolbar-arrow-up-icon': ToolbarArrowUpIcon;
     'edgeless-link-tool-button': EdgelessLinkToolButton;
     'affine-page-root': PageRootBlockComponent;
-    'zoom-bar-toggle-button': ZoomBarToggleButton;
-    'edgeless-zoom-toolbar': EdgelessZoomToolbar;
-
-    [AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET]: AffineEdgelessZoomToolbarWidget;
   }
 }
