@@ -16,6 +16,7 @@ import { ParagraphViewExtension } from '@blocksuite/affine-block-paragraph/view'
 import { SurfaceViewExtension } from '@blocksuite/affine-block-surface/view';
 import { SurfaceRefViewExtension } from '@blocksuite/affine-block-surface-ref/view';
 import { TableViewExtension } from '@blocksuite/affine-block-table/view';
+import { FoundationViewExtension } from '@blocksuite/affine-foundation/view';
 import { BrushViewExtension } from '@blocksuite/affine-gfx-brush/view';
 import { ConnectorViewExtension } from '@blocksuite/affine-gfx-connector/view';
 import { GroupViewExtension } from '@blocksuite/affine-gfx-group/view';
@@ -46,6 +47,8 @@ import { MigratingViewExtension } from './migrating-view';
 
 export function getInternalViewExtensions() {
   return [
+    FoundationViewExtension,
+
     // Gfx
     PointerViewExtension,
     GfxNoteViewExtension,

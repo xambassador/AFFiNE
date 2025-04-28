@@ -4,7 +4,7 @@ import {
   LifeCycleWatcher,
   WidgetViewExtension,
 } from '@blocksuite/std';
-import { GfxControllerIdentifier, ToolController } from '@blocksuite/std/gfx';
+import { GfxControllerIdentifier } from '@blocksuite/std/gfx';
 import type { ExtensionType } from '@blocksuite/store';
 import { literal, unsafeStatic } from 'lit/static-html.js';
 
@@ -49,7 +49,6 @@ class EdgelessLocker extends LifeCycleWatcher {
 
 const EdgelessCommonExtension: ExtensionType[] = [
   CommonSpecs,
-  ToolController,
   EdgelessRootService,
   ViewportElementExtension('.affine-edgeless-viewport'),
   ...quickTools,

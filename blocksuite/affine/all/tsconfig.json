@@ -28,6 +28,7 @@
     { "path": "../blocks/table" },
     { "path": "../components" },
     { "path": "../ext-loader" },
+    { "path": "../foundation" },
     { "path": "../fragments/doc-title" },
     { "path": "../fragments/frame-panel" },
     { "path": "../fragments/outline" },
