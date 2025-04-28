@@ -3916,11 +3916,27 @@ __metadata:
     "@preact/signals-core": "npm:^1.8.0"
     "@toeverything/theme": "npm:^1.1.12"
     "@types/lodash-es": "npm:^4.17.12"
-    "@types/lodash.groupby": "npm:^4"
-    "@types/lodash.mergewith": "npm:^4"
-    "@types/lodash.orderby": "npm:^4"
-    "@types/lodash.partition": "npm:^4"
-    "@types/lodash.topairs": "npm:^4"
+    lit: "npm:^3.2.0"
+    lodash-es: "npm:^4.17.21"
+    rxjs: "npm:^7.8.1"
+  languageName: unknown
+  linkType: soft
+
+"@blocksuite/affine-widget-viewport-overlay@workspace:*, @blocksuite/affine-widget-viewport-overlay@workspace:blocksuite/affine/widgets/viewport-overlay":
+  version: 0.0.0-use.local
+  resolution: "@blocksuite/affine-widget-viewport-overlay@workspace:blocksuite/affine/widgets/viewport-overlay"
+  dependencies:
+    "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
+    "@blocksuite/affine-model": "workspace:*"
+    "@blocksuite/affine-shared": "workspace:*"
+    "@blocksuite/global": "workspace:*"
+    "@blocksuite/icons": "npm:^2.2.12"
+    "@blocksuite/std": "workspace:*"
+    "@floating-ui/dom": "npm:^1.6.13"
+    "@preact/signals-core": "npm:^1.8.0"
+    "@toeverything/theme": "npm:^1.1.12"
+    "@types/lodash-es": "npm:^4.17.12"
     lit: "npm:^3.2.0"
     lodash-es: "npm:^4.17.21"
     rxjs: "npm:^7.8.1"
@@ -3985,6 +4001,7 @@ __metadata:
     "@blocksuite/affine-widget-scroll-anchoring": "workspace:*"
     "@blocksuite/affine-widget-slash-menu": "workspace:*"
     "@blocksuite/affine-widget-toolbar": "workspace:*"
+    "@blocksuite/affine-widget-viewport-overlay": "workspace:*"
     "@blocksuite/data-view": "workspace:*"
     "@blocksuite/global": "workspace:*"
     "@blocksuite/std": "workspace:*"
@@ -15077,15 +15094,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash.groupby@npm:^4":
-  version: 4.6.9
-  resolution: "@types/lodash.groupby@npm:4.6.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10/b8310a9f89badc42a504887ca0b9619c2a284b3fec8dc505cf72508eb6beba47b822df939c7d57c0f69bc685f51ff5a232e0480ecad6b18b7ab76fecc1d74691
-  languageName: node
-  linkType: hard
-
 "@types/lodash.ismatch@npm:^4.4.9":
   version: 4.4.9
   resolution: "@types/lodash.ismatch@npm:4.4.9"
@@ -15101,42 +15109,6 @@ __metadata:
   dependencies:
     "@types/lodash": "npm:*"
   checksum: 10/d0dd6654547c9d8d905184d14aa5c2a37a1ed1c3204f5ab20b7d591a05f34859ef09d3b72c065e94ca1989abf9109eb8230f67c4d64a5768b1d65b9ed8baf8e7
-  languageName: node
-  linkType: hard
-
-"@types/lodash.mergewith@npm:^4":
-  version: 4.6.9
-  resolution: "@types/lodash.mergewith@npm:4.6.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10/c5a67e83040103decfd37090127118f5758773d0ce2a1756d442b371721737c7752f48f62544cc970f44abec8471f260cc4c844e1a4fdef8b76cb96bdec8a595
-  languageName: node
-  linkType: hard
-
-"@types/lodash.orderby@npm:^4":
-  version: 4.6.9
-  resolution: "@types/lodash.orderby@npm:4.6.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10/f3ca3a6ba09caef431955f3110a6704e25c90934fb70973e2ed1f4dd9aa48c4776c7e8b909b78f9ae1fb169e437497f8fe8e60fafb5c74ede49c36739ac44c3e
-  languageName: node
-  linkType: hard
-
-"@types/lodash.partition@npm:^4":
-  version: 4.6.9
-  resolution: "@types/lodash.partition@npm:4.6.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10/29d1fead7f9a71af8279ceb6c1b08128c7f05f06a72ed60fea02a7c010f69006a4e3dc24afb9c4a3187a033b918a1b3dcf611004781f927ff573b104bdf34060
-  languageName: node
-  linkType: hard
-
-"@types/lodash.topairs@npm:^4":
-  version: 4.3.9
-  resolution: "@types/lodash.topairs@npm:4.3.9"
-  dependencies:
-    "@types/lodash": "npm:*"
-  checksum: 10/8d4d9cb7be1c333b70b8d035d0673ef41158bfe24e06616046879149a15438af89673fe21abe1b1e62ddbc00eae5fe4c3795649de8a98742771ba8949100a300
   languageName: node
   linkType: hard
 

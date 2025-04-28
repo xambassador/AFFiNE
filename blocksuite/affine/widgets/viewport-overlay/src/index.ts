@@ -1,9 +1,10 @@
 import type { RootBlockModel } from '@blocksuite/affine-model';
-import { WidgetComponent } from '@blocksuite/std';
+import { WidgetComponent, WidgetViewExtension } from '@blocksuite/std';
 import { css, html } from 'lit';
 import { state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { literal, unsafeStatic } from 'lit/static-html.js';
 
 export const AFFINE_VIEWPORT_OVERLAY_WIDGET = 'affine-viewport-overlay-widget';
 
@@ -75,6 +76,12 @@ export class AffineViewportOverlayWidget extends WidgetComponent<RootBlockModel>
   @state()
   private accessor _lockViewport = false;
 }
+
+export const viewportOverlayWidget = WidgetViewExtension(
+  'affine:page',
+  AFFINE_VIEWPORT_OVERLAY_WIDGET,
+  literal`${unsafeStatic(AFFINE_VIEWPORT_OVERLAY_WIDGET)}`
+);
 
 declare global {
   interface HTMLElementTagNameMap {

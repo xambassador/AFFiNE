@@ -42,6 +42,7 @@ import { RemoteSelectionViewExtension } from '@blocksuite/affine-widget-remote-s
 import { ScrollAnchoringViewExtension } from '@blocksuite/affine-widget-scroll-anchoring/view';
 import { SlashMenuViewExtension } from '@blocksuite/affine-widget-slash-menu/view';
 import { ToolbarViewExtension } from '@blocksuite/affine-widget-toolbar/view';
+import { ViewportOverlayViewExtension } from '@blocksuite/affine-widget-viewport-overlay/view';
 
 import { MigratingViewExtension } from './migrating-view';
 
@@ -100,5 +101,6 @@ export function getInternalViewExtensions() {
     ScrollAnchoringViewExtension,
     SlashMenuViewExtension,
     ToolbarViewExtension,
+    ViewportOverlayViewExtension,
   ];
 }

@@ -59,6 +59,7 @@ export const PackageList = [
       'blocksuite/affine/widgets/scroll-anchoring',
       'blocksuite/affine/widgets/slash-menu',
       'blocksuite/affine/widgets/toolbar',
+      'blocksuite/affine/widgets/viewport-overlay',
       'blocksuite/affine/data-view',
       'blocksuite/framework/global',
       'blocksuite/framework/std',
@@ -937,6 +938,18 @@ export const PackageList = [
     ],
   },
   {
+    location: 'blocksuite/affine/widgets/viewport-overlay',
+    name: '@blocksuite/affine-widget-viewport-overlay',
+    workspaceDependencies: [
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/shared',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+    ],
+  },
+  {
     location: 'blocksuite/docs',
     name: '@blocksuite/bs-docs',
     workspaceDependencies: ['blocksuite/affine/all'],
@@ -1362,6 +1375,7 @@ export type PackageName =
   | '@blocksuite/affine-widget-scroll-anchoring'
   | '@blocksuite/affine-widget-slash-menu'
   | '@blocksuite/affine-widget-toolbar'
+  | '@blocksuite/affine-widget-viewport-overlay'
   | '@blocksuite/bs-docs'
   | '@blocksuite/global'
   | '@blocksuite/std'

@@ -106,6 +106,7 @@
     { "path": "./blocksuite/affine/widgets/scroll-anchoring" },
     { "path": "./blocksuite/affine/widgets/slash-menu" },
     { "path": "./blocksuite/affine/widgets/toolbar" },
+    { "path": "./blocksuite/affine/widgets/viewport-overlay" },
     { "path": "./blocksuite/docs" },
     { "path": "./blocksuite/framework/global" },
     { "path": "./blocksuite/framework/std" },

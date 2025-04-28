@@ -7,13 +7,11 @@ import { RootBlockAdapterExtensions } from '../adapters/extension';
 import { clipboardConfigs } from '../clipboard';
 import { builtinToolbarConfig } from '../configs/toolbar';
 import { fallbackKeymap } from '../keyboard/keymap';
-import { viewportOverlayWidget } from './widgets';
 
 export const CommonSpecs: ExtensionType[] = [
   FlavourExtension('affine:page'),
   ...RootBlockAdapterExtensions,
   ...clipboardConfigs,
-  viewportOverlayWidget,
   fallbackKeymap,
 
   ToolbarModuleExtension({
@@ -21,5 +19,3 @@ export const CommonSpecs: ExtensionType[] = [
     config: builtinToolbarConfig,
   }),
 ];
-
-export * from './widgets';

@@ -31,10 +31,6 @@ import {
   AFFINE_PAGE_DRAGGING_AREA_WIDGET,
   AffinePageDraggingAreaWidget,
 } from './widgets/page-dragging-area/page-dragging-area.js';
-import {
-  AFFINE_VIEWPORT_OVERLAY_WIDGET,
-  AffineViewportOverlayWidget,
-} from './widgets/viewport-overlay/viewport-overlay.js';
 
 export function effects() {
   // Register components by category
@@ -58,10 +54,6 @@ function registerWidgets() {
   customElements.define(
     AFFINE_PAGE_DRAGGING_AREA_WIDGET,
     AffinePageDraggingAreaWidget
-  );
-  customElements.define(
-    AFFINE_VIEWPORT_OVERLAY_WIDGET,
-    AffineViewportOverlayWidget
   );
   customElements.define(
     AFFINE_EDGELESS_ZOOM_TOOLBAR_WIDGET,
