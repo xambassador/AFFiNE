@@ -4,19 +4,19 @@ import { css, html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { repeat } from 'lit/directives/repeat.js';
 
-import type { GroupData } from '../../../core/group-by/trait.js';
-import { LEFT_TOOL_BAR_WIDTH, STATS_BAR_HEIGHT } from '../consts.js';
-import type { TableSingleView } from '../table-view-manager.js';
+import type { GroupData } from '../../../../../../core/group-by/trait';
+import { LEFT_TOOL_BAR_WIDTH, STATS_BAR_HEIGHT } from '../../../../consts';
+import type { TableSingleView } from '../../../../table-view-manager';
 
 const styles = css`
-  affine-database-column-stats {
+  affine-database-virtual-column-stats {
     margin-left: ${LEFT_TOOL_BAR_WIDTH}px;
     height: ${STATS_BAR_HEIGHT}px;
     display: flex;
   }
 `;
 
-export class DataBaseColumnStats extends SignalWatcher(
+export class VirtualDataBaseColumnStats extends SignalWatcher(
   WithDisposable(ShadowlessElement)
 ) {
   static override styles = styles;
@@ -28,10 +28,10 @@ export class DataBaseColumnStats extends SignalWatcher(
         cols,
         col => col.id,
         col => {
-          return html`<affine-database-column-stats-cell
+          return html`<affine-database-virtual-column-stats-cell
             .column=${col}
             .group=${this.group}
-          ></affine-database-column-stats-cell>`;
+          ></affine-database-virtual-column-stats-cell>`;
         }
       )}
     `;
@@ -46,6 +46,6 @@ export class DataBaseColumnStats extends SignalWatcher(
 
 declare global {
   interface HTMLElementTagNameMap {
-    'affine-database-column-stats': DataBaseColumnStats;
+    'affine-database-virtual-column-stats': VirtualDataBaseColumnStats;
   }
 }

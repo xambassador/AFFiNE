@@ -5762,6 +5762,14 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.experimental-features.enable-edgeless-scribbled-style.description"](): string;
     /**
+      * `Database block table view virtual scroll`
+      */
+    ["com.affine.settings.workspace.experimental-features.enable-table-virtual-scroll.name"](): string;
+    /**
+      * `Once enabled, switch table view to virtual scroll mode in Database Block.`
+      */
+    ["com.affine.settings.workspace.experimental-features.enable-table-virtual-scroll.description"](): string;
+    /**
       * `Only an owner can edit the workspace avatar and name. Changes will be shown for everyone.`
       */
     ["com.affine.settings.workspace.not-owner"](): string;

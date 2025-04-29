@@ -14,11 +14,11 @@ import { css, html } from 'lit';
 import { property } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
-import type { GroupData } from '../../../core/group-by/trait.js';
-import { typeSystem } from '../../../core/index.js';
-import { statsFunctions } from '../../../core/statistics/index.js';
-import type { StatisticsConfig } from '../../../core/statistics/types.js';
-import type { TableColumn } from '../table-view-manager.js';
+import { typeSystem } from '../../../../../../core';
+import type { GroupData } from '../../../../../../core/group-by/trait';
+import { statsFunctions } from '../../../../../../core/statistics';
+import type { StatisticsConfig } from '../../../../../../core/statistics/types';
+import type { TableColumn } from '../../../../table-view-manager';
 
 const styles = css`
   .stats-cell {
@@ -34,12 +34,12 @@ const styles = css`
     user-select: none;
   }
 
-  affine-database-column-stats:hover .stats-cell {
+  affine-database-virtual-column-stats:hover .stats-cell {
     opacity: 1;
   }
 
   .stats-cell:hover,
-  affine-database-column-stats-cell.active .stats-cell {
+  affine-database-virtual-column-stats-cell.active .stats-cell {
     opacity: 1;
     background-color: var(--affine-hover-color);
     cursor: pointer;
@@ -67,7 +67,7 @@ const styles = css`
   }
 `;
 
-export class DatabaseColumnStatsCell extends SignalWatcher(
+export class VirtualDatabaseColumnStatsCell extends SignalWatcher(
   WithDisposable(ShadowlessElement)
 ) {
   static override styles = styles;
@@ -241,6 +241,6 @@ export class DatabaseColumnStatsCell extends SignalWatcher(
 
 declare global {
   interface HTMLElementTagNameMap {
-    'affine-database-column-stats-cell': DatabaseColumnStatsCell;
+    'affine-database-virtual-column-stats-cell': VirtualDatabaseColumnStatsCell;
   }
 }
