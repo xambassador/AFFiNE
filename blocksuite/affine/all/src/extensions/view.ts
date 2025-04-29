@@ -13,6 +13,7 @@ import { LatexViewExtension } from '@blocksuite/affine-block-latex/view';
 import { ListViewExtension } from '@blocksuite/affine-block-list/view';
 import { NoteViewExtension } from '@blocksuite/affine-block-note/view';
 import { ParagraphViewExtension } from '@blocksuite/affine-block-paragraph/view';
+import { RootViewExtension } from '@blocksuite/affine-block-root/view';
 import { SurfaceViewExtension } from '@blocksuite/affine-block-surface/view';
 import { SurfaceRefViewExtension } from '@blocksuite/affine-block-surface-ref/view';
 import { TableViewExtension } from '@blocksuite/affine-block-table/view';
@@ -84,6 +85,7 @@ export function getInternalViewExtensions() {
     SurfaceRefViewExtension,
     TableViewExtension,
     SurfaceViewExtension,
+    RootViewExtension,
 
     // Inline
     FootnoteViewExtension,
