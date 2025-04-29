@@ -21,128 +21,19 @@ import type { BlockModel } from '@blocksuite/store';
 
 import type { AttachmentBlockComponent } from './attachment-block';
 
-const attachmentUploads = new Set<string>();
-export function setAttachmentUploading(blockId: string) {
-  attachmentUploads.add(blockId);
-}
-export function setAttachmentUploaded(blockId: string) {
-  attachmentUploads.delete(blockId);
-}
-function isAttachmentUploading(blockId: string) {
-  return attachmentUploads.has(blockId);
-}
-
-/**
- * This function will not verify the size of the file.
- */
-// TODO(@fundon): should remove
-export async function uploadAttachmentBlob(
-  std: BlockStdScope,
-  blockId: string,
-  blob: Blob,
-  filetype: string,
-  isEdgeless?: boolean
-): Promise<void> {
-  if (isAttachmentUploading(blockId)) return;
-
-  let sourceId: string | undefined;
-
-  try {
-    setAttachmentUploading(blockId);
-    sourceId = await std.store.blobSync.set(blob);
-  } catch (error) {
-    console.error(error);
-    if (error instanceof Error) {
-      toast(
-        std.host,
-        `Failed to upload attachment! ${error.message || error.toString()}`
-      );
-    }
-  } finally {
-    setAttachmentUploaded(blockId);
-
-    const block = std.store.getBlock(blockId);
-
-    std.store.withoutTransact(() => {
-      if (!block) return;
-
-      std.store.updateBlock(block.model, {
-        sourceId,
-      } satisfies Partial<AttachmentBlockProps>);
-    });
-
-    std.getOptional(TelemetryProvider)?.track('AttachmentUploadedEvent', {
-      page: `${isEdgeless ? 'whiteboard' : 'doc'} editor`,
-      module: 'attachment',
-      segment: 'attachment',
-      control: 'uploader',
-      type: filetype,
-      category: block && sourceId ? 'success' : 'failure',
-    });
-  }
-}
-
 export async function getAttachmentBlob(model: AttachmentBlockModel) {
-  const sourceId = model.props.sourceId;
-  if (!sourceId) {
-    return null;
-  }
+  const {
+    sourceId$: { value: sourceId },
+    type$: { value: type },
+  } = model.props;
+  if (!sourceId) return null;
 
   const doc = model.doc;
   let blob = await doc.blobSync.get(sourceId);
 
-  if (blob) {
-    blob = new Blob([blob], { type: model.props.type });
-  }
+  if (!blob) return null;
 
-  return blob;
-}
-
-// TODO(@fundon): should remove
-export async function checkAttachmentBlob(block: AttachmentBlockComponent) {
-  const model = block.model;
-  const { id } = model;
-  const { sourceId } = model.props;
-
-  if (isAttachmentUploading(id)) {
-    block.loading = true;
-    block.error = false;
-    block.allowEmbed = false;
-    if (block.blobUrl) {
-      URL.revokeObjectURL(block.blobUrl);
-      block.blobUrl = undefined;
-    }
-    return;
-  }
-
-  try {
-    if (!sourceId) {
-      return;
-    }
-
-    const blob = await getAttachmentBlob(model);
-    if (!blob) {
-      return;
-    }
-
-    block.loading = false;
-    block.error = false;
-    block.allowEmbed = block.embedded();
-    if (block.blobUrl) {
-      URL.revokeObjectURL(block.blobUrl);
-    }
-    block.blobUrl = URL.createObjectURL(blob);
-  } catch (error) {
-    console.warn(error, model, sourceId);
-
-    block.loading = false;
-    block.error = true;
-    block.allowEmbed = false;
-    if (block.blobUrl) {
-      URL.revokeObjectURL(block.blobUrl);
-      block.blobUrl = undefined;
-    }
-  }
+  return new Blob([blob], { type });
 }
 
 /**
@@ -150,26 +41,22 @@ export async function checkAttachmentBlob(block: AttachmentBlockComponent) {
  * the download process may take a long time!
  */
 export function downloadAttachmentBlob(block: AttachmentBlockComponent) {
-  const { host, model, loading, error, downloading, blobUrl } = block;
-  if (downloading) {
-    toast(host, 'Download in progress...');
-    return;
-  }
+  const { host, model, blobUrl, blobState$ } = block;
 
-  if (loading) {
-    toast(host, 'Please wait, file is loading...');
+  if (blobState$.peek().downloading) {
+    toast(host, 'Download in progress...');
     return;
   }
 
   const name = model.props.name;
   const shortName = name.length < 20 ? name : name.slice(0, 20) + '...';
 
-  if (error || !blobUrl) {
+  if (!blobUrl) {
     toast(host, `Failed to download ${shortName}!`);
     return;
   }
 
-  block.downloading = true;
+  block.updateBlobState({ downloading: true });
 
   toast(host, `Downloading ${shortName}`);
 
@@ -180,7 +67,34 @@ export function downloadAttachmentBlob(block: AttachmentBlockComponent) {
   tmpLink.dispatchEvent(event);
   tmpLink.remove();
 
-  block.downloading = false;
+  block.updateBlobState({ downloading: false });
+}
+
+export async function refreshData(
+  std: BlockStdScope,
+  block: AttachmentBlockComponent
+) {
+  const model = block.model;
+  const sourceId = model.props.sourceId$.peek();
+  if (!sourceId) return;
+
+  const blobUrl = block.blobUrl;
+  if (blobUrl) {
+    URL.revokeObjectURL(blobUrl);
+    block.blobUrl = null;
+  }
+
+  let blob = await std.store.blobSync.get(sourceId);
+  if (!blob) {
+    block.updateBlobState({ errorMessage: 'File not found' });
+    return;
+  }
+
+  const type = model.props.type$.peek();
+
+  blob = new Blob([blob], { type });
+
+  block.blobUrl = URL.createObjectURL(blob);
 }
 
 export async function getFileType(file: File) {
@@ -219,6 +133,7 @@ async function buildPropsWith(
 
   try {
     const { name, size } = file;
+    // TODO(@fundon): should re-upload when upload timeout
     const sourceId = await std.store.blobSync.set(file);
     type = await getFileType(file);
 
@@ -233,6 +148,7 @@ async function buildPropsWith(
     category = 'failure';
     throw err;
   } finally {
+    // TODO(@fundon): should change event name because this is just a local operation.
     std.getOptional(TelemetryProvider)?.track('AttachmentUploadedEvent', {
       page: `${mode} editor`,
       module: 'attachment',
@@ -303,7 +219,6 @@ export async function addAttachments(
   const gap = 32;
   const width = EMBED_CARD_WIDTH.cubeThick;
   const height = EMBED_CARD_HEIGHT.cubeThick;
-
   const flavour = AttachmentBlockSchema.model.flavour;
 
   const blocks = propsArray.map((props, index) => {
@@ -312,7 +227,7 @@ export async function addAttachments(
     return { flavour, blockProps: { ...props, style, xywh } };
   });
 
-  const blockIds = std.store.addBlocks(blocks);
+  const blockIds = std.store.addBlocks(blocks, gfx.surface);
 
   gfx.selection.set({
     elements: blockIds,

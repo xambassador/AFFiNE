@@ -481,10 +481,12 @@ export async function addImages(
 
     // If maxWidth is provided, limit the width of the image to maxWidth
     // Otherwise, use the original width
-    const width = maxWidth ? Math.min(props.width, maxWidth) : props.width;
-    const height = maxWidth
-      ? (props.height / props.width) * width
-      : props.height;
+    if (maxWidth) {
+      const p = props.height / props.width;
+      props.width = Math.min(props.width, maxWidth);
+      props.height = props.width * p;
+    }
+    const { width, height } = props;
 
     const xywh = calcBoundByOrigin(
       center,

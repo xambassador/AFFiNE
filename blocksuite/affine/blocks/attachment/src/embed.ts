@@ -187,7 +187,7 @@ const embedConfig: AttachmentEmbedConfig[] = [
 /**
  * Turn the attachment block into an image block.
  */
-export async function turnIntoImageBlock(model: AttachmentBlockModel) {
+async function turnIntoImageBlock(model: AttachmentBlockModel) {
   if (!model.doc.schema.flavourSchemaMap.has('affine:image')) {
     console.error('The image flavour is not supported!');
     return;
