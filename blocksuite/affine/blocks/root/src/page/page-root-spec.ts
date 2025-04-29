@@ -5,11 +5,9 @@ import { literal } from 'lit/static-html.js';
 
 import { PageClipboard } from '../clipboard/page-clipboard.js';
 import { CommonSpecs } from '../common-specs/index.js';
-import { PageRootService } from './page-root-service.js';
 
 const PageCommonExtension: ExtensionType[] = [
   CommonSpecs,
-  PageRootService,
   ViewportElementExtension('.affine-page-viewport'),
 ].flat();
 
