@@ -84,6 +84,7 @@ export const PackageList = [
       'blocksuite/framework/global',
       'blocksuite/framework/std',
       'blocksuite/framework/store',
+      'blocksuite/framework/sync',
     ],
   },
   {
