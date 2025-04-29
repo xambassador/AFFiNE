@@ -39,6 +39,7 @@ import { EdgelessZoomToolbarViewExtension } from '@blocksuite/affine-widget-edge
 import { FrameTitleViewExtension } from '@blocksuite/affine-widget-frame-title/view';
 import { KeyboardToolbarViewExtension } from '@blocksuite/affine-widget-keyboard-toolbar/view';
 import { LinkedDocViewExtension } from '@blocksuite/affine-widget-linked-doc/view';
+import { PageDraggingAreaViewExtension } from '@blocksuite/affine-widget-page-dragging-area/view';
 import { RemoteSelectionViewExtension } from '@blocksuite/affine-widget-remote-selection/view';
 import { ScrollAnchoringViewExtension } from '@blocksuite/affine-widget-scroll-anchoring/view';
 import { SlashMenuViewExtension } from '@blocksuite/affine-widget-slash-menu/view';
@@ -104,5 +105,6 @@ export function getInternalViewExtensions() {
     ToolbarViewExtension,
     ViewportOverlayViewExtension,
     EdgelessZoomToolbarViewExtension,
+    PageDraggingAreaViewExtension,
   ];
 }

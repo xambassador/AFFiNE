@@ -103,6 +103,7 @@
     { "path": "./blocksuite/affine/widgets/frame-title" },
     { "path": "./blocksuite/affine/widgets/keyboard-toolbar" },
     { "path": "./blocksuite/affine/widgets/linked-doc" },
+    { "path": "./blocksuite/affine/widgets/page-dragging-area" },
     { "path": "./blocksuite/affine/widgets/remote-selection" },
     { "path": "./blocksuite/affine/widgets/scroll-anchoring" },
     { "path": "./blocksuite/affine/widgets/slash-menu" },

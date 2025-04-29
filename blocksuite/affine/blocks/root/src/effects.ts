@@ -21,15 +21,10 @@ import {
   PageRootBlockComponent,
   PreviewRootBlockComponent,
 } from './index.js';
-import {
-  AFFINE_PAGE_DRAGGING_AREA_WIDGET,
-  AffinePageDraggingAreaWidget,
-} from './widgets/page-dragging-area/page-dragging-area.js';
 
 export function effects() {
   // Register components by category
   registerRootComponents();
-  registerWidgets();
   registerEdgelessToolbarComponents();
   registerMiscComponents();
 }
@@ -41,13 +36,6 @@ function registerRootComponents() {
   customElements.define(
     'affine-edgeless-root-preview',
     EdgelessRootPreviewBlockComponent
-  );
-}
-
-function registerWidgets() {
-  customElements.define(
-    AFFINE_PAGE_DRAGGING_AREA_WIDGET,
-    AffinePageDraggingAreaWidget
   );
 }
 

@@ -56,6 +56,7 @@ export const PackageList = [
       'blocksuite/affine/widgets/frame-title',
       'blocksuite/affine/widgets/keyboard-toolbar',
       'blocksuite/affine/widgets/linked-doc',
+      'blocksuite/affine/widgets/page-dragging-area',
       'blocksuite/affine/widgets/remote-selection',
       'blocksuite/affine/widgets/scroll-anchoring',
       'blocksuite/affine/widgets/slash-menu',
@@ -900,6 +901,19 @@ export const PackageList = [
     ],
   },
   {
+    location: 'blocksuite/affine/widgets/page-dragging-area',
+    name: '@blocksuite/affine-widget-page-dragging-area',
+    workspaceDependencies: [
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/shared',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+      'blocksuite/framework/store',
+    ],
+  },
+  {
     location: 'blocksuite/affine/widgets/remote-selection',
     name: '@blocksuite/affine-widget-remote-selection',
     workspaceDependencies: [
@@ -1386,6 +1400,7 @@ export type PackageName =
   | '@blocksuite/affine-widget-frame-title'
   | '@blocksuite/affine-widget-keyboard-toolbar'
   | '@blocksuite/affine-widget-linked-doc'
+  | '@blocksuite/affine-widget-page-dragging-area'
   | '@blocksuite/affine-widget-remote-selection'
   | '@blocksuite/affine-widget-scroll-anchoring'
   | '@blocksuite/affine-widget-slash-menu'

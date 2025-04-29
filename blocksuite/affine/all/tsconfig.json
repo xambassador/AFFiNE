@@ -58,6 +58,7 @@
     { "path": "../widgets/frame-title" },
     { "path": "../widgets/keyboard-toolbar" },
     { "path": "../widgets/linked-doc" },
+    { "path": "../widgets/page-dragging-area" },
     { "path": "../widgets/remote-selection" },
     { "path": "../widgets/scroll-anchoring" },
     { "path": "../widgets/slash-menu" },

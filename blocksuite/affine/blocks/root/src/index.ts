@@ -16,7 +16,6 @@ export * from './preview/preview-root-block.js';
 export { RootService } from './root-service.js';
 export * from './types.js';
 export * from './utils/index.js';
-export * from './widgets/index.js';
 
 declare type _GLOBAL_ =
   | typeof PointerEffect
