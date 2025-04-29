@@ -53,6 +53,10 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
     return this.std.store.get(FileSizeLimitService).maxFileSize;
   }
 
+  get isCitation() {
+    return !!this.model.props.footnoteIdentifier;
+  }
+
   convertTo = () => {
     return this.std
       .get(AttachmentEmbedProvider)
@@ -147,7 +151,7 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
       })
     );
 
-    if (!this.model.props.style) {
+    if (!this.model.props.style && !this.doc.readonly) {
       this.doc.withoutTransact(() => {
         this.doc.updateBlock(this.model, {
           style: AttachmentBlockStyles[1],
@@ -322,6 +326,18 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
     );
   };
 
+  private readonly _renderCitation = () => {
+    const { name, footnoteIdentifier } = this.model.props;
+    const fileType = name.split('.').pop() ?? '';
+    const fileTypeIcon = getAttachmentFileIcon(fileType);
+    return html`<affine-citation-card
+      .icon=${fileTypeIcon}
+      .citationTitle=${name}
+      .citationIdentifier=${footnoteIdentifier}
+      .active=${this.selected$.value}
+    ></affine-citation-card>`;
+  };
+
   override renderBlock() {
     return html`
       <div
@@ -332,12 +348,17 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
         style=${this.containerStyleMap}
       >
         ${when(
-          this.embedView,
+          this.isCitation,
+          () => this._renderCitation(),
           () =>
-            html`<div class="affine-attachment-embed-container">
-              ${this.embedView}
-            </div>`,
-          this.renderCard
+            when(
+              this.embedView,
+              () =>
+                html`<div class="affine-attachment-embed-container">
+                  ${this.embedView}
+                </div>`,
+              this.renderCard
+            )
         )}
       </div>
     `;

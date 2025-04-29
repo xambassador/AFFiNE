@@ -139,6 +139,12 @@ const downloadAction = {
     const block = ctx.getCurrentBlockByType(AttachmentBlockComponent);
     block?.download();
   },
+  when: ctx => {
+    const model = ctx.getCurrentModelByType(AttachmentBlockModel);
+    if (!model) return false;
+    // Current citation attachment block does not support download
+    return model.props.style !== 'citation' && !model.props.footnoteIdentifier;
+  },
 } as const satisfies ToolbarAction;
 
 const captionAction = {
@@ -331,7 +337,6 @@ const builtinSurfaceToolbarConfig = {
       id: 'e.caption',
     },
   ],
-
   when: ctx => ctx.getSurfaceModelsByType(AttachmentBlockModel).length === 1,
 } as const satisfies ToolbarModuleConfig;
 

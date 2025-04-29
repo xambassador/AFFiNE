@@ -1,9 +1,8 @@
 import {
-  EmbedLinkedDocBlockSchema,
+  AttachmentBlockSchema,
   FootNoteReferenceParamsSchema,
 } from '@blocksuite/affine-model';
 import {
-  AdapterTextUtils,
   BlockMarkdownAdapterExtension,
   type BlockMarkdownAdapterMatcher,
   FOOTNOTE_DEFINITION_PREFIX,
@@ -14,7 +13,7 @@ import {
 import { FeatureFlagService } from '@blocksuite/affine-shared/services';
 import { nanoid } from '@blocksuite/store';
 
-const isLinkedDocFootnoteDefinitionNode = (node: MarkdownAST) => {
+const isAttachmentFootnoteDefinitionNode = (node: MarkdownAST) => {
   if (!isFootnoteDefinitionNode(node)) return false;
   const footnoteDefinition = getFootnoteDefinitionText(node);
   try {
@@ -22,18 +21,19 @@ const isLinkedDocFootnoteDefinitionNode = (node: MarkdownAST) => {
       JSON.parse(footnoteDefinition)
     );
     return (
-      footnoteDefinitionJson.type === 'doc' && !!footnoteDefinitionJson.docId
+      footnoteDefinitionJson.type === 'attachment' &&
+      !!footnoteDefinitionJson.blobId
     );
   } catch {
     return false;
   }
 };
 
-export const embedLinkedDocBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher =
+export const attachmentBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher =
   {
-    flavour: EmbedLinkedDocBlockSchema.model.flavour,
-    toMatch: o => isLinkedDocFootnoteDefinitionNode(o.node),
-    fromMatch: o => o.node.flavour === EmbedLinkedDocBlockSchema.model.flavour,
+    flavour: AttachmentBlockSchema.model.flavour,
+    toMatch: o => isAttachmentFootnoteDefinitionNode(o.node),
+    fromMatch: o => o.node.flavour === AttachmentBlockSchema.model.flavour,
     toBlockSnapshot: {
       enter: (o, context) => {
         const { provider } = context;
@@ -59,8 +59,8 @@ export const embedLinkedDocBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatc
           const footnoteDefinitionJson = FootNoteReferenceParamsSchema.parse(
             JSON.parse(footnoteDefinition)
           );
-          const { docId } = footnoteDefinitionJson;
-          if (!docId) {
+          const { blobId, fileName } = footnoteDefinitionJson;
+          if (!blobId || !fileName) {
             return;
           }
           walkerContext
@@ -68,11 +68,11 @@ export const embedLinkedDocBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatc
               {
                 type: 'block',
                 id: nanoid(),
-                flavour: EmbedLinkedDocBlockSchema.model.flavour,
+                flavour: AttachmentBlockSchema.model.flavour,
                 props: {
-                  pageId: docId,
+                  name: fileName,
+                  sourceId: blobId,
                   footnoteIdentifier,
-                  style: 'citation',
                 },
                 children: [],
               },
@@ -81,51 +81,13 @@ export const embedLinkedDocBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatc
             .closeNode();
           walkerContext.skipAllChildren();
         } catch (err) {
-          console.warn('Failed to parse linked doc footnote definition:', err);
+          console.warn('Failed to parse attachment footnote definition:', err);
           return;
         }
       },
     },
-    fromBlockSnapshot: {
-      enter: (o, context) => {
-        const { configs, walkerContext } = context;
-        // Parse as link
-        if (!o.node.props.pageId) {
-          return;
-        }
-        const title = configs.get('title:' + o.node.props.pageId) ?? 'untitled';
-        const url = AdapterTextUtils.generateDocUrl(
-          configs.get('docLinkBaseUrl') ?? '',
-          String(o.node.props.pageId),
-          o.node.props.params ?? Object.create(null)
-        );
-        walkerContext
-          .openNode(
-            {
-              type: 'paragraph',
-              children: [],
-            },
-            'children'
-          )
-          .openNode(
-            {
-              type: 'link',
-              url,
-              title: o.node.props.caption as string | null,
-              children: [
-                {
-                  type: 'text',
-                  value: title,
-                },
-              ],
-            },
-            'children'
-          )
-          .closeNode()
-          .closeNode();
-      },
-    },
+    fromBlockSnapshot: {},
   };
 
-export const EmbedLinkedDocMarkdownAdapterExtension =
-  BlockMarkdownAdapterExtension(embedLinkedDocBlockMarkdownAdapterMatcher);
+export const AttachmentBlockMarkdownAdapterExtension =
+  BlockMarkdownAdapterExtension(attachmentBlockMarkdownAdapterMatcher);

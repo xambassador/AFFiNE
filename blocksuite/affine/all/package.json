@@ -226,6 +226,7 @@
     "./components/block-zero-width": "./src/components/block-zero-width.ts",
     "./components/caption": "./src/components/caption.ts",
     "./components/card-style-dropdown-menu": "./src/components/card-style-dropdown-menu.ts",
+    "./components/citation": "./src/components/citation.ts",
     "./components/color-picker": "./src/components/color-picker.ts",
     "./components/context-menu": "./src/components/context-menu.ts",
     "./components/date-picker": "./src/components/date-picker.ts",

@@ -2,6 +2,7 @@ import { BlockSelection } from '@blocksuite/affine-components/block-selection';
 import { BlockZeroWidth } from '@blocksuite/affine-components/block-zero-width';
 import { effects as componentCaptionEffects } from '@blocksuite/affine-components/caption';
 import { effects as componentCardStyleDropdownMenuEffects } from '@blocksuite/affine-components/card-style-dropdown-menu';
+import { effects as componentCitationEffects } from '@blocksuite/affine-components/citation';
 import { effects as componentColorPickerEffects } from '@blocksuite/affine-components/color-picker';
 import { effects as componentContextMenuEffects } from '@blocksuite/affine-components/context-menu';
 import { effects as componentDatePickerEffects } from '@blocksuite/affine-components/date-picker';
@@ -46,6 +47,7 @@ export function effects() {
   componentLinkPreviewEffects();
   componentLinkedDocTitleEffects();
   componentCardStyleDropdownMenuEffects();
+  componentCitationEffects();
   componentHighlightDropdownMenuEffects();
   componentViewDropdownMenuEffects();
   componentTooltipContentWithShortcutEffects();
