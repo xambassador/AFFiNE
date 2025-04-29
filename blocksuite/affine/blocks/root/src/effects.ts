@@ -12,9 +12,6 @@ import {
   EDGELESS_SELECTED_RECT_WIDGET,
   EdgelessSelectedRectWidget,
 } from './edgeless/components/rects/edgeless-selected-rect.js';
-import { EdgelessSlideMenu } from './edgeless/components/toolbar/common/slide-menu.js';
-import { ToolbarArrowUpIcon } from './edgeless/components/toolbar/common/toolbar-arrow-up-icon.js';
-import { EdgelessLinkToolButton } from './edgeless/components/toolbar/link/link-tool-button.js';
 import {
   EdgelessRootBlockComponent,
   EdgelessRootPreviewBlockComponent,
@@ -25,7 +22,6 @@ import {
 export function effects() {
   // Register components by category
   registerRootComponents();
-  registerEdgelessToolbarComponents();
   registerMiscComponents();
 }
 
@@ -37,17 +33,6 @@ function registerRootComponents() {
     'affine-edgeless-root-preview',
     EdgelessRootPreviewBlockComponent
   );
-}
-
-function registerEdgelessToolbarComponents() {
-  // Tool buttons
-  customElements.define('edgeless-link-tool-button', EdgelessLinkToolButton);
-
-  // Menus
-  customElements.define('edgeless-slide-menu', EdgelessSlideMenu);
-
-  // Toolbar components
-  customElements.define('toolbar-arrow-up-icon', ToolbarArrowUpIcon);
 }
 
 function registerMiscComponents() {
@@ -81,9 +66,6 @@ declare global {
     'note-slicer': NoteSlicer;
     'edgeless-dragging-area-rect': EdgelessDraggingAreaRectWidget;
     'edgeless-selected-rect': EdgelessSelectedRectWidget;
-    'edgeless-slide-menu': EdgelessSlideMenu;
-    'toolbar-arrow-up-icon': ToolbarArrowUpIcon;
-    'edgeless-link-tool-button': EdgelessLinkToolButton;
     'affine-page-root': PageRootBlockComponent;
   }
 }

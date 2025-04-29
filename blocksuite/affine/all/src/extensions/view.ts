@@ -20,6 +20,7 @@ import { FoundationViewExtension } from '@blocksuite/affine-foundation/view';
 import { BrushViewExtension } from '@blocksuite/affine-gfx-brush/view';
 import { ConnectorViewExtension } from '@blocksuite/affine-gfx-connector/view';
 import { GroupViewExtension } from '@blocksuite/affine-gfx-group/view';
+import { LinkViewExtension as GfxLinkViewExtension } from '@blocksuite/affine-gfx-link/view';
 import { MindmapViewExtension } from '@blocksuite/affine-gfx-mindmap/view';
 import { NoteViewExtension as GfxNoteViewExtension } from '@blocksuite/affine-gfx-note/view';
 import { PointerViewExtension } from '@blocksuite/affine-gfx-pointer/view';
@@ -62,6 +63,7 @@ export function getInternalViewExtensions() {
     GroupViewExtension,
     TextViewExtension,
     TemplateViewExtension,
+    GfxLinkViewExtension,
 
     // Block
     AttachmentViewExtension,

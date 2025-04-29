@@ -2,9 +2,12 @@ import { insertLinkByQuickSearchCommand } from '@blocksuite/affine-block-bookmar
 import { insertEmbedCard } from '@blocksuite/affine-block-embed';
 import { toggleEmbedCardCreateModal } from '@blocksuite/affine-components/embed-card-modal';
 import { LinkIcon } from '@blocksuite/affine-components/icons';
+import type * as PointerEffect from '@blocksuite/affine-gfx-pointer';
 import { TelemetryProvider } from '@blocksuite/affine-shared/services';
 import { QuickToolMixin } from '@blocksuite/affine-widget-edgeless-toolbar';
 import { css, html, LitElement } from 'lit';
+
+declare type _GLOBAL_ = typeof PointerEffect;
 
 export class EdgelessLinkToolButton extends QuickToolMixin(LitElement) {
   static override styles = css`

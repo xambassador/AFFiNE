@@ -1,9 +1,9 @@
 import { QuickToolExtension } from '@blocksuite/affine-widget-edgeless-toolbar';
 import { html } from 'lit';
 
-import { buildLinkDenseMenu } from './link/link-dense-menu.js';
+import { buildLinkDenseMenu } from './toolbar/link-dense-menu';
 
-const linkQuickTool = QuickToolExtension('link', ({ block, gfx }) => {
+export const linkQuickTool = QuickToolExtension('link', ({ block, gfx }) => {
   return {
     content: html`<edgeless-link-tool-button
       .edgeless=${block}
@@ -11,5 +11,3 @@ const linkQuickTool = QuickToolExtension('link', ({ block, gfx }) => {
     menu: buildLinkDenseMenu(block, gfx),
   };
 });
-
-export const quickTools = [linkQuickTool];

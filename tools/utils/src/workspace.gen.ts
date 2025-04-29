@@ -33,6 +33,7 @@ export const PackageList = [
       'blocksuite/affine/gfx/brush',
       'blocksuite/affine/gfx/connector',
       'blocksuite/affine/gfx/group',
+      'blocksuite/affine/gfx/link',
       'blocksuite/affine/gfx/mindmap',
       'blocksuite/affine/gfx/note',
       'blocksuite/affine/gfx/pointer',
@@ -537,6 +538,25 @@ export const PackageList = [
       'blocksuite/affine/components',
       'blocksuite/affine/ext-loader',
       'blocksuite/affine/gfx/text',
+      'blocksuite/affine/model',
+      'blocksuite/affine/rich-text',
+      'blocksuite/affine/shared',
+      'blocksuite/affine/widgets/edgeless-toolbar',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+      'blocksuite/framework/store',
+    ],
+  },
+  {
+    location: 'blocksuite/affine/gfx/link',
+    name: '@blocksuite/affine-gfx-link',
+    workspaceDependencies: [
+      'blocksuite/affine/blocks/bookmark',
+      'blocksuite/affine/blocks/embed',
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/gfx/pointer',
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',
@@ -1377,6 +1397,7 @@ export type PackageName =
   | '@blocksuite/affine-gfx-brush'
   | '@blocksuite/affine-gfx-connector'
   | '@blocksuite/affine-gfx-group'
+  | '@blocksuite/affine-gfx-link'
   | '@blocksuite/affine-gfx-mindmap'
   | '@blocksuite/affine-gfx-note'
   | '@blocksuite/affine-gfx-pointer'

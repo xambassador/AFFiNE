@@ -35,6 +35,7 @@
     { "path": "../gfx/brush" },
     { "path": "../gfx/connector" },
     { "path": "../gfx/group" },
+    { "path": "../gfx/link" },
     { "path": "../gfx/mindmap" },
     { "path": "../gfx/note" },
     { "path": "../gfx/pointer" },
