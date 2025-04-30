@@ -430,6 +430,9 @@ type DocType {
   """paginated doc granted users list"""
   grantedUsersList(pagination: PaginationInput!): PaginatedGrantedDocUserType!
   id: String!
+
+  """Doc metadata"""
+  meta: WorkspaceDocMeta!
   mode: PublicDocMode!
   permissions: DocPermissions!
   public: Boolean!
@@ -446,7 +449,7 @@ type EditorType {
   name: String!
 }
 
-union ErrorDataUnion = AlreadyInSpaceDataType | BlobNotFoundDataType | CopilotContextFileNotSupportedDataType | CopilotDocNotFoundDataType | CopilotFailedToAddWorkspaceFileEmbeddingDataType | CopilotFailedToMatchContextDataType | CopilotFailedToModifyContextDataType | CopilotInvalidContextDataType | CopilotMessageNotFoundDataType | CopilotPromptNotFoundDataType | CopilotProviderSideErrorDataType | DocActionDeniedDataType | DocHistoryNotFoundDataType | DocNotFoundDataType | DocUpdateBlockedDataType | ExpectToGrantDocUserRolesDataType | ExpectToRevokeDocUserRolesDataType | ExpectToUpdateDocUserRoleDataType | GraphqlBadRequestDataType | HttpRequestErrorDataType | InvalidEmailDataType | InvalidHistoryTimestampDataType | InvalidLicenseUpdateParamsDataType | InvalidOauthCallbackCodeDataType | InvalidPasswordLengthDataType | InvalidRuntimeConfigTypeDataType | MemberNotFoundInSpaceDataType | MentionUserDocAccessDeniedDataType | MissingOauthQueryParameterDataType | NotInSpaceDataType | QueryTooLongDataType | RuntimeConfigNotFoundDataType | SameSubscriptionRecurringDataType | SpaceAccessDeniedDataType | SpaceNotFoundDataType | SpaceOwnerNotFoundDataType | SpaceShouldHaveOnlyOneOwnerDataType | SubscriptionAlreadyExistsDataType | SubscriptionNotExistsDataType | SubscriptionPlanNotFoundDataType | UnknownOauthProviderDataType | UnsupportedClientVersionDataType | UnsupportedSubscriptionPlanDataType | ValidationErrorDataType | VersionRejectedDataType | WorkspaceMembersExceedLimitToDowngradeDataType | WorkspacePermissionNotFoundDataType | WrongSignInCredentialsDataType
+union ErrorDataUnion = AlreadyInSpaceDataType | BlobNotFoundDataType | CopilotContextFileNotSupportedDataType | CopilotDocNotFoundDataType | CopilotFailedToAddWorkspaceFileEmbeddingDataType | CopilotFailedToMatchContextDataType | CopilotFailedToModifyContextDataType | CopilotInvalidContextDataType | CopilotMessageNotFoundDataType | CopilotPromptNotFoundDataType | CopilotProviderSideErrorDataType | DocActionDeniedDataType | DocHistoryNotFoundDataType | DocNotFoundDataType | DocUpdateBlockedDataType | ExpectToGrantDocUserRolesDataType | ExpectToRevokeDocUserRolesDataType | ExpectToUpdateDocUserRoleDataType | GraphqlBadRequestDataType | HttpRequestErrorDataType | InvalidEmailDataType | InvalidHistoryTimestampDataType | InvalidLicenseUpdateParamsDataType | InvalidOauthCallbackCodeDataType | InvalidPasswordLengthDataType | InvalidRuntimeConfigTypeDataType | MemberNotFoundInSpaceDataType | MentionUserDocAccessDeniedDataType | MissingOauthQueryParameterDataType | NoMoreSeatDataType | NotInSpaceDataType | QueryTooLongDataType | RuntimeConfigNotFoundDataType | SameSubscriptionRecurringDataType | SpaceAccessDeniedDataType | SpaceNotFoundDataType | SpaceOwnerNotFoundDataType | SpaceShouldHaveOnlyOneOwnerDataType | SubscriptionAlreadyExistsDataType | SubscriptionNotExistsDataType | SubscriptionPlanNotFoundDataType | UnknownOauthProviderDataType | UnsupportedClientVersionDataType | UnsupportedSubscriptionPlanDataType | ValidationErrorDataType | VersionRejectedDataType | WorkspaceMembersExceedLimitToDowngradeDataType | WorkspacePermissionNotFoundDataType | WrongSignInCredentialsDataType
 
 enum ErrorNames {
   ACCESS_DENIED
@@ -514,6 +517,7 @@ enum ErrorNames {
   INVALID_EMAIL
   INVALID_EMAIL_TOKEN
   INVALID_HISTORY_TIMESTAMP
+  INVALID_INVITATION
   INVALID_LICENSE_SESSION_ID
   INVALID_LICENSE_TO_ACTIVATE
   INVALID_LICENSE_UPDATE_PARAMS
@@ -532,10 +536,12 @@ enum ErrorNames {
   MENTION_USER_ONESELF_DENIED
   MISSING_OAUTH_QUERY_PARAMETER
   NETWORK_ERROR
+  NEW_OWNER_IS_NOT_ACTIVE_MEMBER
   NOTIFICATION_NOT_FOUND
   NOT_FOUND
   NOT_IN_SPACE
   NO_COPILOT_PROVIDER_AVAILABLE
+  NO_MORE_SEAT
   OAUTH_ACCOUNT_ALREADY_CONNECTED
   OAUTH_STATE_EXPIRED
   OWNER_CAN_NOT_LEAVE_WORKSPACE
@@ -775,17 +781,17 @@ type InviteLink {
 type InviteResult {
   email: String!
 
+  """Invite error"""
+  error: JSONObject
+
   """Invite id, null if invite record create failed"""
   inviteId: String
 
   """Invite email sent success"""
-  sentSuccess: Boolean!
+  sentSuccess: Boolean! @deprecated(reason: "Notification will be sent asynchronously")
 }
 
 type InviteUserType {
-  """User accepted"""
-  accepted: Boolean! @deprecated(reason: "Use `status` instead")
-
   """User avatar url"""
   avatarUrl: String
 
@@ -939,7 +945,7 @@ type MissingOauthQueryParameterDataType {
 }
 
 type Mutation {
-  acceptInviteById(inviteId: String!, sendAcceptMail: Boolean @deprecated(reason: "never used"), workspaceId: String!): Boolean!
+  acceptInviteById(inviteId: String!, sendAcceptMail: Boolean @deprecated(reason: "never used"), workspaceId: String @deprecated(reason: "never used")): Boolean!
   activateLicense(license: String!, workspaceId: String!): License!
 
   """add a category to context"""
@@ -1013,9 +1019,9 @@ type Mutation {
 
   """import users"""
   importUsers(input: ImportUsersInput!): [UserImportResultType!]!
-  invite(email: String!, permission: Permission @deprecated(reason: "never used"), sendInviteMail: Boolean @deprecated(reason: "never used"), workspaceId: String!): String!
-  inviteBatch(emails: [String!]!, sendInviteMail: Boolean @deprecated(reason: "never used"), workspaceId: String!): [InviteResult!]!
-  leaveWorkspace(sendLeaveMail: Boolean, workspaceId: String!, workspaceName: String @deprecated(reason: "no longer used")): Boolean!
+  inviteBatch(emails: [String!]!, sendInviteMail: Boolean @deprecated(reason: "never used"), workspaceId: String!): [InviteResult!]! @deprecated(reason: "use [inviteMembers] instead")
+  inviteMembers(emails: [String!]!, workspaceId: String!): [InviteResult!]!
+  leaveWorkspace(sendLeaveMail: Boolean @deprecated(reason: "no used anymore"), workspaceId: String!, workspaceName: String @deprecated(reason: "no longer used")): Boolean!
 
   """mention user in a doc"""
   mentionUser(input: MentionInput!): ID!
@@ -1047,9 +1053,10 @@ type Mutation {
   removeWorkspaceFeature(feature: FeatureType!, workspaceId: String!): Boolean!
   resumeSubscription(idempotencyKey: String @deprecated(reason: "use header `Idempotency-Key`"), plan: SubscriptionPlan = Pro, workspaceId: String): SubscriptionType!
   retryAudioTranscription(jobId: String!, workspaceId: String!): TranscriptionResultType
-  revoke(userId: String!, workspaceId: String!): Boolean!
+  revoke(userId: String!, workspaceId: String!): Boolean! @deprecated(reason: "use [revokeMember] instead")
   revokeDocUserRoles(input: RevokeDocUserRoleInput!): Boolean!
   revokeInviteLink(workspaceId: String!): Boolean!
+  revokeMember(userId: String!, workspaceId: String!): Boolean!
   revokePublicDoc(docId: String!, workspaceId: String!): DocType!
   revokePublicPage(docId: String!, workspaceId: String!): DocType! @deprecated(reason: "use revokePublicDoc instead")
   sendChangeEmail(callbackUrl: String!, email: String): Boolean!
@@ -1092,6 +1099,10 @@ type Mutation {
   """Upload user avatar"""
   uploadAvatar(avatar: Upload!): UserType!
   verifyEmail(token: String!): Boolean!
+}
+
+type NoMoreSeatDataType {
+  spaceId: String!
 }
 
 type NotInSpaceDataType {
@@ -1241,7 +1252,7 @@ type Query {
   currentUser: UserType
   error(name: ErrorNames!): ErrorDataUnion!
 
-  """send workspace invitation"""
+  """get workspace invitation info"""
   getInviteInfo(inviteId: String!): InvitationType!
 
   """Get is admin of workspace"""
@@ -1673,6 +1684,13 @@ type WorkspaceBlobSizes {
   size: SafeInt!
 }
 
+type WorkspaceDocMeta {
+  createdAt: DateTime!
+  createdBy: EditorType
+  updatedAt: DateTime!
+  updatedBy: EditorType
+}
+
 """Workspace invite link expire time"""
 enum WorkspaceInviteLinkExpireTime {
   OneDay
@@ -1684,6 +1702,7 @@ enum WorkspaceInviteLinkExpireTime {
 """Member invite status in workspace"""
 enum WorkspaceMemberStatus {
   Accepted
+  AllocatingSeat
   NeedMoreSeat
   NeedMoreSeatAndReview
   Pending
@@ -1692,13 +1711,6 @@ enum WorkspaceMemberStatus {
 
 type WorkspaceMembersExceedLimitToDowngradeDataType {
   limit: Int!
-}
-
-type WorkspacePageMeta {
-  createdAt: DateTime!
-  createdBy: EditorType
-  updatedAt: DateTime!
-  updatedBy: EditorType
 }
 
 type WorkspacePermissionNotFoundDataType {
@@ -1803,7 +1815,7 @@ type WorkspaceType {
   owner: UserType!
 
   """Cloud page metadata of workspace"""
-  pageMeta(pageId: String!): WorkspacePageMeta!
+  pageMeta(pageId: String!): WorkspaceDocMeta! @deprecated(reason: "use [WorkspaceType.doc.meta] instead")
 
   """map of action permissions"""
   permissions: WorkspacePermissions!
