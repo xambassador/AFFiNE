@@ -5,6 +5,7 @@ import { literal } from 'lit/static-html.js';
 
 import { EmbedSyncedDocBlockAdapterExtensions } from './adapters/extension';
 import { createBuiltinToolbarConfigExtension } from './configs/toolbar';
+import { HeightInitializationExtension } from './init-height-extension';
 
 const flavour = EmbedSyncedDocBlockSchema.model.flavour;
 
@@ -27,4 +28,5 @@ export const EmbedSyncedDocViewExtensions: ExtensionType[] = [
       : literal`affine-embed-synced-doc-block`;
   }),
   createBuiltinToolbarConfigExtension(flavour),
+  HeightInitializationExtension,
 ].flat();

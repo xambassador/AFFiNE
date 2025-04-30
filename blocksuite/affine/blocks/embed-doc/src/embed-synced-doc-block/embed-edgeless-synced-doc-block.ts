@@ -13,8 +13,9 @@ import {
   ThemeProvider,
 } from '@blocksuite/affine-shared/services';
 import { Bound } from '@blocksuite/global/gfx';
-import { BlockStdScope } from '@blocksuite/std';
+import { type BlockComponent, BlockStdScope } from '@blocksuite/std';
 import { html, nothing } from 'lit';
+import { query, queryAsync } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { guard } from 'lit/directives/guard.js';
@@ -27,6 +28,12 @@ import { EmbedSyncedDocBlockComponent } from './embed-synced-doc-block';
 export class EmbedEdgelessSyncedDocBlockComponent extends toEdgelessEmbedBlock(
   EmbedSyncedDocBlockComponent
 ) {
+  @query('.affine-embed-synced-doc-edgeless-header-wrapper')
+  accessor headerWrapper: HTMLDivElement | null = null;
+
+  @queryAsync('affine-preview-root')
+  accessor contentElement!: Promise<BlockComponent | null>;
+
   protected override _renderSyncedView = () => {
     const { syncedDoc, editorMode } = this;
 

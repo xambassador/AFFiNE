@@ -1,4 +1,5 @@
 import type { AffineReference } from '@blocksuite/affine/inlines/reference';
+import type { EmbedSyncedDocBlockProps } from '@blocksuite/affine/model';
 import { expect, type Page } from '@playwright/test';
 
 import { clickView } from '../utils/actions/click.js';
@@ -12,7 +13,7 @@ import {
   isIntersected,
   switchEditorMode,
 } from '../utils/actions/edgeless';
-import { pressEscape } from '../utils/actions/keyboard.js';
+import { pressBackspace, pressEscape } from '../utils/actions/keyboard.js';
 import { enterPlaygroundRoom, waitNextFrame } from '../utils/actions/misc';
 import { test } from '../utils/playwright';
 import { initEmbedSyncedDocState } from './utils';
@@ -74,6 +75,65 @@ test.describe('Embed synced doc in edgeless mode', () => {
       );
     }
   );
+
+  test('new edgeless embed synced doc should fit in height', async ({
+    page,
+  }) => {
+    const [_, embedDocId] = await initEmbedSyncedDocState(page, [
+      { title: 'Root Doc', content: 'hello root doc' },
+      { title: 'Page 1', content: '1\n2\n3\n4\n5\n6\n7' },
+    ]);
+    await switchEditorMode(page);
+
+    const paragraphHeight = (
+      await page
+        .locator('affine-embed-synced-doc-block affine-paragraph')
+        .boundingBox()
+    )?.height;
+    if (!paragraphHeight) {
+      test.fail();
+      return;
+    }
+
+    const createEmbedDocWithHeight = async (height: number) => {
+      await page.evaluate(
+        ({ embedDocId, height }) => {
+          const std = window.editor.std;
+          const surface = std.store.getModelsByFlavour('affine:surface')[0];
+          std.store.addBlock(
+            'affine:embed-synced-doc',
+            {
+              pageId: embedDocId,
+              xywh: `[0,100,370,${height}]`,
+            } satisfies Partial<EmbedSyncedDocBlockProps>,
+            surface.id
+          );
+        },
+        { embedDocId, height }
+      );
+    };
+
+    const embedSyncedBlockInNote = page.locator(
+      'affine-embed-edgeless-synced-doc-block'
+    );
+
+    {
+      const initHeight = paragraphHeight - 50;
+      await createEmbedDocWithHeight(initHeight);
+      const embedSyncedBoxInNote = await embedSyncedBlockInNote.boundingBox();
+      expect(embedSyncedBoxInNote?.height).toBeGreaterThan(initHeight);
+    }
+
+    await embedSyncedBlockInNote.click();
+    await pressBackspace(page);
+
+    {
+      const initHeight = paragraphHeight + 50;
+      await createEmbedDocWithHeight(initHeight);
+      const embedSyncedBoxInNote = await embedSyncedBlockInNote.boundingBox();
+      expect(embedSyncedBoxInNote?.height).toBeLessThan(initHeight);
+    }
+  });
 
   test.describe('edgeless element toolbar', () => {
     test.beforeEach(async ({ page }) => {
