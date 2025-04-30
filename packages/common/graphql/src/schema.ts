@@ -532,20 +532,34 @@ export enum DocRole {
 
 export interface DocType {
   __typename?: 'DocType';
+  createdAt: Maybe<Scalars['DateTime']['output']>;
+  /** Doc create user */
+  createdBy: Maybe<PublicUserType>;
+  creatorId: Maybe<Scalars['String']['output']>;
   defaultRole: DocRole;
   /** paginated doc granted users list */
   grantedUsersList: PaginatedGrantedDocUserType;
   id: Scalars['String']['output'];
+  /** Doc last updated user */
+  lastUpdatedBy: Maybe<PublicUserType>;
+  lastUpdaterId: Maybe<Scalars['String']['output']>;
   /** Doc metadata */
   meta: WorkspaceDocMeta;
   mode: PublicDocMode;
   permissions: DocPermissions;
   public: Scalars['Boolean']['output'];
+  updatedAt: Maybe<Scalars['DateTime']['output']>;
   workspaceId: Scalars['String']['output'];
 }
 
 export interface DocTypeGrantedUsersListArgs {
   pagination: PaginationInput;
+}
+
+export interface DocTypeEdge {
+  __typename?: 'DocTypeEdge';
+  cursor: Scalars['String']['output'];
+  node: DocType;
 }
 
 export interface DocUpdateBlockedDataType {
@@ -1680,6 +1694,13 @@ export interface PaginatedCopilotWorkspaceFileType {
   totalCount: Scalars['Int']['output'];
 }
 
+export interface PaginatedDocType {
+  __typename?: 'PaginatedDocType';
+  edges: Array<DocTypeEdge>;
+  pageInfo: PageInfo;
+  totalCount: Scalars['Int']['output'];
+}
+
 export interface PaginatedGrantedDocUserType {
   __typename?: 'PaginatedGrantedDocUserType';
   edges: Array<GrantedDocUserTypeEdge>;
@@ -2346,6 +2367,7 @@ export interface WorkspaceType {
   createdAt: Scalars['DateTime']['output'];
   /** Get get with given id */
   doc: DocType;
+  docs: PaginatedDocType;
   embedding: CopilotWorkspaceConfig;
   /** Enable AI */
   enableAi: Scalars['Boolean']['output'];
@@ -2372,7 +2394,7 @@ export interface WorkspaceType {
   owner: UserType;
   /**
    * Cloud page metadata of workspace
-   * @deprecated use [WorkspaceType.doc.meta] instead
+   * @deprecated use [WorkspaceType.doc] instead
    */
   pageMeta: WorkspaceDocMeta;
   /** map of action permissions */
@@ -2400,6 +2422,10 @@ export interface WorkspaceType {
 
 export interface WorkspaceTypeDocArgs {
   docId: Scalars['String']['input'];
+}
+
+export interface WorkspaceTypeDocsArgs {
+  pagination: PaginationInput;
 }
 
 export interface WorkspaceTypeHistoriesArgs {

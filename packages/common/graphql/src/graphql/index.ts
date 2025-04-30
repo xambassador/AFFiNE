@@ -1227,7 +1227,7 @@ export const getWorkspacePageMetaByIdQuery = {
     }
   }
 }`,
-  deprecations: ["'pageMeta' is deprecated: use [WorkspaceType.doc.meta] instead"],
+  deprecations: ["'pageMeta' is deprecated: use [WorkspaceType.doc] instead"],
 };
 
 export const getWorkspacePublicByIdQuery = {
