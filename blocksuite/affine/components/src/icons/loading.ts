@@ -1,8 +1,8 @@
 import { ColorScheme } from '@blocksuite/affine-model';
 import { html } from 'lit';
 
-const LoadingIcon = (color: string) => {
-  return html`<svg
+const LoadingIcon = (color: string) =>
+  html`<svg
     width="16"
     height="16"
     viewBox="0 0 16 16"
@@ -21,7 +21,7 @@ const LoadingIcon = (color: string) => {
     </style>
     <path
       d="M14.6666 8.00004C14.6666 11.6819 11.6818 14.6667 7.99992 14.6667C4.31802 14.6667 1.33325 11.6819 1.33325 8.00004C1.33325 4.31814 4.31802 1.33337 7.99992 1.33337C11.6818 1.33337 14.6666 4.31814 14.6666 8.00004ZM3.30003 8.00004C3.30003 10.5957 5.40424 12.6999 7.99992 12.6999C10.5956 12.6999 12.6998 10.5957 12.6998 8.00004C12.6998 5.40436 10.5956 3.30015 7.99992 3.30015C5.40424 3.30015 3.30003 5.40436 3.30003 8.00004Z"
-      fill=${color}
+      fill="${color}"
       fill-opacity="0.1"
     />
     <path
@@ -30,11 +30,10 @@ const LoadingIcon = (color: string) => {
       class="spinner"
     />
   </svg>`;
-};
 
-export const LightLoadingIcon = LoadingIcon('white');
+export const LightLoadingIcon = LoadingIcon('black');
 
-export const DarkLoadingIcon = LoadingIcon('black');
+export const DarkLoadingIcon = LoadingIcon('white');
 
-export const getLoadingIconWith = (theme: ColorScheme) =>
+export const getLoadingIconWith = (theme: ColorScheme = ColorScheme.Light) =>
   theme === ColorScheme.Light ? LightLoadingIcon : DarkLoadingIcon;
