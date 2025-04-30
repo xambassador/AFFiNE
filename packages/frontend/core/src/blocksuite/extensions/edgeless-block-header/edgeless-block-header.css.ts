@@ -17,11 +17,33 @@ export const title = style({
   alignItems: 'center',
   gap: 4,
   flex: 1,
-  color: cssVarV2('text/primary'),
   fontFamily: 'Inter',
-  fontWeight: 600,
-  lineHeight: '30px',
 });
+
+export const noteTitle = style([
+  title,
+  {
+    color: cssVarV2('text/primary'),
+    fontWeight: 600,
+    lineHeight: '30px',
+  },
+]);
+
+export const embedSyncedDocTitle = style([
+  title,
+  {
+    color: cssVarV2('text/secondary'),
+    fontWeight: 400,
+    lineHeight: '24px',
+    fontSize: '15px',
+    selectors: {
+      '&[data-collapsed="true"]': {
+        color: cssVarV2('text/primary'),
+        fontWeight: 500,
+      },
+    },
+  },
+]);
 
 export const iconSize = 24;
 const buttonPadding = 4;
@@ -29,6 +51,16 @@ export const button = style({
   padding: buttonPadding,
   pointerEvents: 'auto',
   color: cssVarV2('icon/transparentBlack'),
+  borderRadius: 4,
 });
+
+export const buttonText = style([
+  embedSyncedDocTitle,
+  {
+    paddingLeft: 4,
+    paddingRight: 4,
+    fontWeight: 500,
+  },
+]);
 
 export const headerHeight = 2 * headerPadding + iconSize + 2 * buttonPadding;

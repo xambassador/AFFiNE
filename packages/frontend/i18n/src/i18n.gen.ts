@@ -7144,6 +7144,18 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.editor.edgeless-note-header.view-in-page"](): string;
     /**
+      * `Fold`
+      */
+    ["com.affine.editor.edgeless-embed-synced-doc-header.fold"](): string;
+    /**
+      * `Unfold`
+      */
+    ["com.affine.editor.edgeless-embed-synced-doc-header.unfold"](): string;
+    /**
+      * `Open`
+      */
+    ["com.affine.editor.edgeless-embed-synced-doc-header.open"](): string;
+    /**
       * `Empower Your Team with Seamless Collaboration`
       */
     ["com.affine.upgrade-to-team-page.title"](): string;
