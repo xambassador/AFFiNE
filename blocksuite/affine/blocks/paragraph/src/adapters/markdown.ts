@@ -3,6 +3,7 @@ import {
   BlockMarkdownAdapterExtension,
   type BlockMarkdownAdapterMatcher,
   IN_PARAGRAPH_NODE_CONTEXT_KEY,
+  isCalloutNode,
   type MarkdownAST,
 } from '@blocksuite/affine-shared/adapters';
 import type { DeltaInsert } from '@blocksuite/store';
@@ -26,7 +27,7 @@ const isParagraphMDASTType = (node: MarkdownAST) =>
 export const paragraphBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher =
   {
     flavour: ParagraphBlockSchema.model.flavour,
-    toMatch: o => isParagraphMDASTType(o.node),
+    toMatch: o => isParagraphMDASTType(o.node) && !isCalloutNode(o.node),
     fromMatch: o => o.node.flavour === ParagraphBlockSchema.model.flavour,
     toBlockSnapshot: {
       enter: (o, context) => {
@@ -78,6 +79,10 @@ export const paragraphBlockMarkdownAdapterMatcher: BlockMarkdownAdapterMatcher =
             break;
           }
           case 'blockquote': {
+            if (isCalloutNode(o.node)) {
+              return;
+            }
+
             walkerContext
               .openNode(
                 {

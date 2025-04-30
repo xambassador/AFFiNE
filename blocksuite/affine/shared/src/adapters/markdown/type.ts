@@ -1,4 +1,9 @@
-import type { FootnoteDefinition, Root, RootContentMap } from 'mdast';
+import type {
+  Blockquote,
+  FootnoteDefinition,
+  Root,
+  RootContentMap,
+} from 'mdast';
 
 export type Markdown = string;
 
@@ -26,6 +31,14 @@ export const getFootnoteDefinitionText = (node: FootnoteDefinition) => {
   const paragraph = childNode.children[0];
   if (paragraph.type !== 'text') return '';
   return paragraph.value;
+};
+
+export const isCalloutNode = (node: MarkdownAST): node is Blockquote => {
+  return node.type === 'blockquote' && !!node.data?.isCallout;
+};
+
+export const getCalloutEmoji = (node: Blockquote) => {
+  return node.data?.calloutEmoji ?? '';
 };
 
 export const FOOTNOTE_DEFINITION_PREFIX = 'footnoteDefinition:';
