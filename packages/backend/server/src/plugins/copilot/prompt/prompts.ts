@@ -1037,7 +1037,7 @@ Finally, please only send us the content of your continuation in Markdown Format
 const chat: Prompt[] = [
   {
     name: 'Chat With AFFiNE AI',
-    model: 'claude-3-7-sonnet-20250219',
+    model: 'gpt-4.1',
     messages: [
       {
         role: 'system',
