@@ -1,11 +1,10 @@
-import type * as BlocksuiteEffects from '@blocksuite/affine/effects';
+import '@blocksuite/affine/effects';
+
 import type { IVec, XYWH } from '@blocksuite/affine/global/gfx';
 import type { CodeBlockComponent } from '@blocksuite/affine-block-code';
 import type { ParagraphBlockComponent } from '@blocksuite/affine-block-paragraph';
 import type { BlockComponent } from '@blocksuite/std';
 import { expect, type Locator, type Page } from '@playwright/test';
-
-declare type _GLOBAL_ = typeof BlocksuiteEffects;
 
 const EDGELESS_TOOLBAR_WIDGET = 'edgeless-toolbar-widget';
 export const ZERO_WIDTH_FOR_EMPTY_LINE =

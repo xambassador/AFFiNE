@@ -3,7 +3,10 @@ import type { DefaultOpenProperty } from '@affine/core/components/doc-properties
 import type { DocTitle } from '@blocksuite/affine/fragments/doc-title';
 import type { DocMode, ReferenceParams } from '@blocksuite/affine/model';
 import { HighlightSelection } from '@blocksuite/affine/shared/selection';
-import { FeatureFlagService as BSFeatureFlagService } from '@blocksuite/affine/shared/services';
+import {
+  DocModeProvider,
+  FeatureFlagService as BSFeatureFlagService,
+} from '@blocksuite/affine/shared/services';
 import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
 import type { InlineEditor } from '@blocksuite/std/inline';
 import { effect } from '@preact/signals-core';
@@ -293,19 +296,18 @@ export class Editor extends Entity {
     unsubs.push(subscription.unsubscribe.bind(subscription));
 
     // ----- Presenting -----
-    const edgelessPage = editorContainer.host?.querySelector(
-      'affine-edgeless-root'
-    );
-    if (!edgelessPage) {
+    const std = editorContainer.host?.std;
+    const editorMode = std?.get(DocModeProvider)?.getEditorMode();
+    if (!editorMode || editorMode !== 'edgeless' || !gfx) {
       this.isPresenting$.next(false);
     } else {
       this.isPresenting$.next(
-        edgelessPage.gfx.tool.currentToolName$.peek() === 'frameNavigator'
+        gfx.tool.currentToolName$.peek() === 'frameNavigator'
       );
 
       const disposable = effect(() => {
         this.isPresenting$.next(
-          edgelessPage.gfx.tool.currentToolName$.value === 'frameNavigator'
+          gfx.tool.currentToolName$.value === 'frameNavigator'
         );
       });
       unsubs.push(disposable);

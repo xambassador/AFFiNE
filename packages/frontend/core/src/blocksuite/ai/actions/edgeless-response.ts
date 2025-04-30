@@ -44,7 +44,6 @@ import { preprocessHtml } from '../utils/html';
 import { fetchImageToFile } from '../utils/image';
 import {
   getCopilotSelectedElems,
-  getEdgelessRootFromEditor,
   getSurfaceElementFromEditor,
 } from '../utils/selection-utils';
 import type { AffineAIPanelWidget } from '../widgets/ai-panel/ai-panel';
@@ -337,12 +336,12 @@ function responseToCreateImage(host: EditorHost) {
     .then(img => {
       if (!img) return;
 
-      const edgelessRoot = getEdgelessRootFromEditor(host);
       const { minX, minY } = bounds;
-      const [x, y] = edgelessRoot.service.viewport.toViewCoord(minX, minY);
+      const gfx = host.std.get(GfxControllerIdentifier);
+      const [x, y] = gfx.viewport.toViewCoord(minX, minY);
 
       host.doc.transact(() => {
-        addImages(edgelessRoot.std, [img], { point: [x, y] })
+        addImages(host.std, [img], { point: [x, y] })
           .then(blockIds => {
             const imageBlockId = blockIds[0];
             const imageBlock = host.doc.getBlock(imageBlockId);
@@ -490,10 +489,8 @@ function responseToMakeItReal(host: EditorHost, ctx: AIContext) {
   edgelessCopilot.hideCopilotPanel();
   aiPanel.hide();
 
-  const edgelessRoot = getEdgelessRootFromEditor(host);
-
   host.doc.transact(() => {
-    edgelessRoot.doc.addBlock(
+    host.doc.addBlock(
       'affine:embed-html',
       {
         html,

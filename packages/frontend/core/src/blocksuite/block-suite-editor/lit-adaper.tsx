@@ -401,7 +401,9 @@ export const BlocksuiteEdgelessEditor = forwardRef<
       editorRef.current.updateComplete
         .then(() => {
           // make sure editor can get keyboard events on showing up
-          editorRef.current?.querySelector('affine-edgeless-root')?.click();
+          editorRef.current
+            ?.querySelector<HTMLElement>('affine-edgeless-root')
+            ?.click();
         })
         .catch(console.error);
     }
