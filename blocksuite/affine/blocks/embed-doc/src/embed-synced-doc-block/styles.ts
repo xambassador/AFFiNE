@@ -1,11 +1,10 @@
+import { embedNoteContentStyles } from '@blocksuite/affine-block-embed';
 import {
   EMBED_CARD_HEIGHT,
   EMBED_CARD_WIDTH,
 } from '@blocksuite/affine-shared/consts';
 import { unsafeCSSVarV2 } from '@blocksuite/affine-shared/theme';
 import { css, html } from 'lit';
-
-import { embedNoteContentStyles } from '../common/embed-note-content-styles.js';
 
 export const blockStyles = css`
   affine-embed-synced-doc-block {

@@ -7,6 +7,7 @@ import { DatabaseViewExtension } from '@blocksuite/affine-block-database/view';
 import { DividerViewExtension } from '@blocksuite/affine-block-divider/view';
 import { EdgelessTextViewExtension } from '@blocksuite/affine-block-edgeless-text/view';
 import { EmbedViewExtension } from '@blocksuite/affine-block-embed/view';
+import { EmbedDocViewExtension } from '@blocksuite/affine-block-embed-doc/view';
 import { FrameViewExtension } from '@blocksuite/affine-block-frame/view';
 import { ImageViewExtension } from '@blocksuite/affine-block-image/view';
 import { LatexViewExtension } from '@blocksuite/affine-block-latex/view';
@@ -77,6 +78,7 @@ export function getInternalViewExtensions() {
     DividerViewExtension,
     EdgelessTextViewExtension,
     EmbedViewExtension,
+    EmbedDocViewExtension,
     FrameViewExtension,
     ImageViewExtension,
     LatexViewExtension,

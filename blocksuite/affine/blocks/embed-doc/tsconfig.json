@@ -8,11 +8,12 @@
   "include": ["./src"],
   "references": [
     { "path": "../embed" },
-    { "path": "../embed-doc" },
     { "path": "../surface" },
     { "path": "../../components" },
     { "path": "../../ext-loader" },
+    { "path": "../../inlines/reference" },
     { "path": "../../model" },
+    { "path": "../../rich-text" },
     { "path": "../../shared" },
     { "path": "../../widgets/slash-menu" },
     { "path": "../../../framework/global" },

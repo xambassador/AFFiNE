@@ -3,7 +3,7 @@ import { DocDisplayMetaService } from '@affine/core/modules/doc-display-meta';
 import { WorkbenchService } from '@affine/core/modules/workbench';
 import { stopPropagation } from '@affine/core/utils';
 import { useI18n } from '@affine/i18n';
-import { EmbedSyncedDocBlockComponent } from '@blocksuite/affine/blocks/embed';
+import { EmbedSyncedDocBlockComponent } from '@blocksuite/affine/blocks/embed-doc';
 import { isPeekable, peek } from '@blocksuite/affine/components/peek';
 import { DisposableGroup } from '@blocksuite/affine/global/disposable';
 import { Bound } from '@blocksuite/affine/global/gfx';

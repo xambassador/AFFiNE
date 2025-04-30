@@ -16,6 +16,7 @@
     { "path": "../blocks/divider" },
     { "path": "../blocks/edgeless-text" },
     { "path": "../blocks/embed" },
+    { "path": "../blocks/embed-doc" },
     { "path": "../blocks/frame" },
     { "path": "../blocks/image" },
     { "path": "../blocks/latex" },

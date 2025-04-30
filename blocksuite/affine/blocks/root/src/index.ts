@@ -10,7 +10,6 @@ export * from './edgeless/index.js';
 export * from './page/page-root-block.js';
 export * from './preview/preview-root-block.js';
 export * from './types.js';
-export * from './utils/index.js';
 
 declare type _GLOBAL_ =
   | typeof PointerEffect

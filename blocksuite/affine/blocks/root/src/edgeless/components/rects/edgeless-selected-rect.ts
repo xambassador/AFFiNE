@@ -2,9 +2,11 @@ import type { EdgelessTextBlockComponent } from '@blocksuite/affine-block-edgele
 import {
   EMBED_HTML_MIN_HEIGHT,
   EMBED_HTML_MIN_WIDTH,
+} from '@blocksuite/affine-block-embed';
+import {
   SYNCED_MIN_HEIGHT,
   SYNCED_MIN_WIDTH,
-} from '@blocksuite/affine-block-embed';
+} from '@blocksuite/affine-block-embed-doc';
 import {
   EdgelessFrameManagerIdentifier,
   type FrameOverlay,

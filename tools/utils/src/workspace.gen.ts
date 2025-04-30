@@ -14,6 +14,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/divider',
       'blocksuite/affine/blocks/edgeless-text',
       'blocksuite/affine/blocks/embed',
+      'blocksuite/affine/blocks/embed-doc',
       'blocksuite/affine/blocks/frame',
       'blocksuite/affine/blocks/image',
       'blocksuite/affine/blocks/latex',
@@ -91,6 +92,7 @@ export const PackageList = [
     name: '@blocksuite/affine-block-bookmark',
     workspaceDependencies: [
       'blocksuite/affine/blocks/embed',
+      'blocksuite/affine/blocks/embed-doc',
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
       'blocksuite/affine/ext-loader',
@@ -221,6 +223,24 @@ export const PackageList = [
     ],
   },
   {
+    location: 'blocksuite/affine/blocks/embed-doc',
+    name: '@blocksuite/affine-block-embed-doc',
+    workspaceDependencies: [
+      'blocksuite/affine/blocks/embed',
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/inlines/reference',
+      'blocksuite/affine/model',
+      'blocksuite/affine/rich-text',
+      'blocksuite/affine/shared',
+      'blocksuite/affine/widgets/slash-menu',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+      'blocksuite/framework/store',
+    ],
+  },
+  {
     location: 'blocksuite/affine/blocks/frame',
     name: '@blocksuite/affine-block-frame',
     workspaceDependencies: [
@@ -331,6 +351,7 @@ export const PackageList = [
       'blocksuite/affine/blocks/database',
       'blocksuite/affine/blocks/edgeless-text',
       'blocksuite/affine/blocks/embed',
+      'blocksuite/affine/blocks/embed-doc',
       'blocksuite/affine/blocks/frame',
       'blocksuite/affine/blocks/image',
       'blocksuite/affine/blocks/note',
@@ -1377,6 +1398,7 @@ export type PackageName =
   | '@blocksuite/affine-block-divider'
   | '@blocksuite/affine-block-edgeless-text'
   | '@blocksuite/affine-block-embed'
+  | '@blocksuite/affine-block-embed-doc'
   | '@blocksuite/affine-block-frame'
   | '@blocksuite/affine-block-image'
   | '@blocksuite/affine-block-latex'

@@ -1,3 +1,7 @@
+import {
+  EmbedBlockComponent,
+  RENDER_CARD_THROTTLE_MS,
+} from '@blocksuite/affine-block-embed';
 import { SurfaceBlockModel } from '@blocksuite/affine-block-surface';
 import { isPeekable, Peekable } from '@blocksuite/affine-components/peek';
 import { RefNodeSlotsProvider } from '@blocksuite/affine-inline-reference';
@@ -39,11 +43,7 @@ import { when } from 'lit/directives/when.js';
 import throttle from 'lodash-es/throttle';
 import * as Y from 'yjs';
 
-import { EmbedBlockComponent } from '../common/embed-block-element.js';
-import {
-  RENDER_CARD_THROTTLE_MS,
-  renderLinkedDocInCard,
-} from '../common/render-linked-doc.js';
+import { renderLinkedDocInCard } from '../common/render-linked-doc';
 import { SyncedDocErrorIcon } from '../embed-synced-doc-block/styles.js';
 import { styles } from './styles.js';
 import { getEmbedLinkedDocIcons } from './utils.js';

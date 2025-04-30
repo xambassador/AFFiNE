@@ -1,7 +1,6 @@
+import { embedNoteContentStyles } from '@blocksuite/affine-block-embed';
 import { unsafeCSSVarV2 } from '@blocksuite/affine-shared/theme';
 import { css, html } from 'lit';
-
-import { embedNoteContentStyles } from '../common/embed-note-content-styles.js';
 
 unsafeCSSVarV2('layer/background/linkedDocOnEdgeless');
 

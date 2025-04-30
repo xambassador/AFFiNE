@@ -1,7 +1,6 @@
+import { insertEmbedCard } from '@blocksuite/affine-block-embed';
 import type { EmbedCardStyle, ReferenceParams } from '@blocksuite/affine-model';
 import type { Command } from '@blocksuite/std';
-
-import { insertEmbedCard } from '../../common/insert-embed-card.js';
 
 export type LinkableFlavour =
   | 'affine:bookmark'

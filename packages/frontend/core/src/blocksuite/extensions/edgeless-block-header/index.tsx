@@ -1,6 +1,6 @@
 import type { ElementOrFactory } from '@affine/component';
 import { JournalService } from '@affine/core/modules/journal';
-import { EmbedSyncedDocConfigExtension } from '@blocksuite/affine/blocks/embed';
+import { EmbedSyncedDocConfigExtension } from '@blocksuite/affine/blocks/embed-doc';
 import { NoteConfigExtension } from '@blocksuite/affine/blocks/note';
 import { EDGELESS_BLOCK_CHILD_PADDING } from '@blocksuite/affine/blocks/root';
 import { Bound, Vec } from '@blocksuite/affine/global/gfx';

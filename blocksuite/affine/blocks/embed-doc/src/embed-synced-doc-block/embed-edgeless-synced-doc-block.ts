@@ -1,3 +1,4 @@
+import { toEdgelessEmbedBlock } from '@blocksuite/affine-block-embed';
 import {
   EdgelessCRUDIdentifier,
   reassociateConnectorsCommand,
@@ -20,9 +21,8 @@ import { guard } from 'lit/directives/guard.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { when } from 'lit/directives/when.js';
 
-import { toEdgelessEmbedBlock } from '../common/to-edgeless-embed-block.js';
-import { EmbedSyncedDocConfigExtension } from './configs/index.js';
-import { EmbedSyncedDocBlockComponent } from './embed-synced-doc-block.js';
+import { EmbedSyncedDocConfigExtension } from './configs';
+import { EmbedSyncedDocBlockComponent } from './embed-synced-doc-block';
 
 export class EmbedEdgelessSyncedDocBlockComponent extends toEdgelessEmbedBlock(
   EmbedSyncedDocBlockComponent

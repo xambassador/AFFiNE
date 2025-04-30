@@ -14,7 +14,7 @@ import {
   BookmarkSlashMenuConfigIdentifier,
   insertLinkByQuickSearchCommand,
 } from '@blocksuite/affine/blocks/bookmark';
-import { LinkedDocSlashMenuConfigIdentifier } from '@blocksuite/affine/blocks/embed';
+import { LinkedDocSlashMenuConfigIdentifier } from '@blocksuite/affine/blocks/embed-doc';
 import type { ServiceIdentifier } from '@blocksuite/affine/global/di';
 import {
   QuickSearchExtension,

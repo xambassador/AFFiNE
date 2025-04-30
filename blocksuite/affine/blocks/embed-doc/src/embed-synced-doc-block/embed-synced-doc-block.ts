@@ -1,3 +1,7 @@
+import {
+  EmbedBlockComponent,
+  isEmptyDoc,
+} from '@blocksuite/affine-block-embed';
 import { Peekable } from '@blocksuite/affine-components/peek';
 import { ViewExtensionManagerIdentifier } from '@blocksuite/affine-ext-loader';
 import {
@@ -40,8 +44,6 @@ import { guard } from 'lit/directives/guard.js';
 import { type StyleInfo, styleMap } from 'lit/directives/style-map.js';
 import * as Y from 'yjs';
 
-import { EmbedBlockComponent } from '../common/embed-block-element.js';
-import { isEmptyDoc } from '../common/render-linked-doc.js';
 import type { EmbedSyncedDocCard } from './components/embed-synced-doc-card.js';
 import { blockStyles } from './styles.js';
 

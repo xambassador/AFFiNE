@@ -1,3 +1,4 @@
+import { RENDER_CARD_THROTTLE_MS } from '@blocksuite/affine-block-embed';
 import { ThemeProvider } from '@blocksuite/affine-shared/services';
 import { WithDisposable } from '@blocksuite/global/lit';
 import {
@@ -10,10 +11,7 @@ import { property, queryAsync } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import throttle from 'lodash-es/throttle';
 
-import {
-  RENDER_CARD_THROTTLE_MS,
-  renderLinkedDocInCard,
-} from '../../common/render-linked-doc.js';
+import { renderLinkedDocInCard } from '../../common/render-linked-doc';
 import type { EmbedSyncedDocBlockComponent } from '../embed-synced-doc-block.js';
 import { cardStyles } from '../styles.js';
 import { getSyncedDocIcons } from '../utils.js';

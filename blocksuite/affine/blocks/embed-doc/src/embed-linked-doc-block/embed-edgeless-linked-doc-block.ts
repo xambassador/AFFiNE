@@ -1,3 +1,4 @@
+import { toEdgelessEmbedBlock } from '@blocksuite/affine-block-embed';
 import {
   EdgelessCRUDIdentifier,
   reassociateConnectorsCommand,
@@ -13,7 +14,6 @@ import {
 } from '@blocksuite/affine-shared/utils';
 import { Bound } from '@blocksuite/global/gfx';
 
-import { toEdgelessEmbedBlock } from '../common/to-edgeless-embed-block.js';
 import { EmbedLinkedDocBlockComponent } from './embed-linked-doc-block.js';
 
 export class EmbedEdgelessLinkedDocBlockComponent extends toEdgelessEmbedBlock(

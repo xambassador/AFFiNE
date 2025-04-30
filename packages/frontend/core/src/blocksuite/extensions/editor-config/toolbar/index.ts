@@ -14,12 +14,14 @@ import {
   EmbedFigmaBlockComponent,
   EmbedGithubBlockComponent,
   EmbedIframeBlockComponent,
-  EmbedLinkedDocBlockComponent,
   EmbedLoomBlockComponent,
-  EmbedSyncedDocBlockComponent,
   EmbedYoutubeBlockComponent,
   getDocContentWithMaxLength,
 } from '@blocksuite/affine/blocks/embed';
+import {
+  EmbedLinkedDocBlockComponent,
+  EmbedSyncedDocBlockComponent,
+} from '@blocksuite/affine/blocks/embed-doc';
 import { SurfaceRefBlockComponent } from '@blocksuite/affine/blocks/surface-ref';
 import { toggleEmbedCardEditModal } from '@blocksuite/affine/components/embed-card-modal';
 import {
