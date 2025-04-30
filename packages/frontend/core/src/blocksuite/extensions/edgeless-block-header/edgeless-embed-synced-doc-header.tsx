@@ -94,12 +94,12 @@ const Title = ({ model }: { model: EmbedSyncedDocModel }) => {
 
   return (
     <div
-      className={styles.embedSyncedDocTitle}
+      className={styles.titleContainer}
       data-collapsed={!!model.props.preFoldHeight}
       data-testid="edgeless-embed-synced-doc-title"
     >
       <LinkedPageIcon />
-      <span>{title}</span>
+      <span className={styles.embedSyncedDocTitle}>{title}</span>
     </div>
   );
 };

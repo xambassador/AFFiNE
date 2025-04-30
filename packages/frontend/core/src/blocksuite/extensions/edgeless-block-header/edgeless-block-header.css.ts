@@ -12,11 +12,18 @@ export const header = style({
   pointerEvents: 'none',
 });
 
-export const title = style({
+export const titleContainer = style({
   display: 'flex',
   alignItems: 'center',
   gap: 4,
   flex: 1,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+});
+
+const title = style({
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
   fontFamily: 'Inter',
 });
 

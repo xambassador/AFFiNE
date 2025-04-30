@@ -476,9 +476,6 @@ export const cardStyles = css`
     width: ${EMBED_CARD_WIDTH.vertical}px;
     height: ${EMBED_CARD_HEIGHT.vertical}px;
     flex-direction: column-reverse;
-    margin-top: calc(
-      (${EMBED_CARD_HEIGHT.syncedDoc}px - ${EMBED_CARD_HEIGHT.vertical}px) / 2
-    );
 
     .affine-embed-synced-doc-card-content {
       width: 100%;

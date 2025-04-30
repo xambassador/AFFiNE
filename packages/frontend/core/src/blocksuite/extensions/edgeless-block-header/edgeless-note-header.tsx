@@ -93,11 +93,11 @@ const EdgelessNoteToggleButton = ({ note }: { note: NoteBlockModel }) => {
       >
         {collapsed ? <ToggleRightIcon /> : <ToggleDownIcon />}
       </IconButton>
-      <div className={styles.noteTitle} data-testid="edgeless-note-title">
+      <div className={styles.titleContainer} data-testid="edgeless-note-title">
         {collapsed && (
           <>
             {emoji && <span>{emoji}</span>}
-            <span>{titleWithoutEmoji}</span>
+            <span className={styles.noteTitle}>{titleWithoutEmoji}</span>
           </>
         )}
       </div>
