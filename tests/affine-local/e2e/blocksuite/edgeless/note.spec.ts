@@ -431,13 +431,13 @@ test('should convert note block to linked doc when clicking turn into linked doc
   page,
 }) => {
   await createEdgelessNoteBlock(page, [100, 100]);
-  await page.keyboard.type('Is this the real life?');
-  await page.keyboard.press('Enter');
-  await page.keyboard.type('Is this just fantasy?');
+  await type(page, '# Two Questions');
+  await pressEnter(page);
+  await type(page, 'Is this the real life?');
+  await pressEnter(page);
+  await type(page, 'Is this just fantasy?');
 
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
-  await page.keyboard.press('Escape');
+  await pressEscape(page, 3);
 
   const note = page.locator('affine-edgeless-note', {
     hasText: 'Is this just fantasy?',
@@ -450,7 +450,9 @@ test('should convert note block to linked doc when clicking turn into linked doc
     name: 'Turn into linked doc',
   });
   await turnIntoLinkedDocBtn.click();
-  await page.keyboard.type('Bohemian Rhapsody');
+  const inputModal = page.getByRole('dialog').locator('input');
+  await expect(inputModal).toHaveValue('Two Questions');
+  await type(page, 'Bohemian Rhapsody');
 
   const confirmBtn = page.getByTestId('confirm-modal-confirm');
   await confirmBtn.click();
@@ -462,6 +464,7 @@ test('should convert note block to linked doc when clicking turn into linked doc
   await expect(noteInSyncedDoc).toBeVisible();
 
   const paragraphs = noteInSyncedDoc.locator('affine-paragraph');
-  await expect(paragraphs.first()).toContainText('Is this the real life?');
-  await expect(paragraphs.last()).toContainText('Is this just fantasy?');
+  await expect(paragraphs.nth(0)).toContainText('Two Questions');
+  await expect(paragraphs.nth(1)).toContainText('Is this the real life?');
+  await expect(paragraphs.nth(2)).toContainText('Is this just fantasy?');
 });
