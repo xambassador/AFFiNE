@@ -1,9 +1,11 @@
-import { getEmbedCardIcons } from '@blocksuite/affine-block-embed';
 import {
   CaptionedBlockComponent,
   SelectedStyle,
 } from '@blocksuite/affine-components/caption';
-import { getAttachmentFileIcon } from '@blocksuite/affine-components/icons';
+import {
+  getAttachmentFileIcon,
+  getLoadingIconWith,
+} from '@blocksuite/affine-components/icons';
 import { Peekable } from '@blocksuite/affine-components/peek';
 import { toast } from '@blocksuite/affine-components/toast';
 import {
@@ -297,7 +299,7 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
     const cardStyle = style ?? AttachmentBlockStyles[1];
 
     const theme = this.std.get(ThemeProvider).theme$.value;
-    const { LoadingIcon } = getEmbedCardIcons(theme);
+    const loadingIcon = getLoadingIconWith(theme);
 
     const blobState = this.blobState$.value;
     const {
@@ -319,7 +321,7 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
     };
 
     const icon = loading
-      ? LoadingIcon
+      ? loadingIcon
       : error
         ? WarningIcon()
         : AttachmentIcon();

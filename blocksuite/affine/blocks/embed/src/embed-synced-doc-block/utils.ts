@@ -1,8 +1,7 @@
 import {
-  DarkLoadingIcon,
   EmbedEdgelessIcon,
   EmbedPageIcon,
-  LightLoadingIcon,
+  getLoadingIconWith,
   ReloadIcon,
 } from '@blocksuite/affine-components/icons';
 import { ColorScheme } from '@blocksuite/affine-model';
@@ -34,9 +33,10 @@ export function getSyncedDocIcons(
   theme: ColorScheme,
   editorMode: 'page' | 'edgeless'
 ): SyncedCardImages {
+  const LoadingIcon = getLoadingIconWith(theme);
   if (theme === ColorScheme.Light) {
     return {
-      LoadingIcon: LightLoadingIcon,
+      LoadingIcon,
       SyncedDocIcon: editorMode === 'page' ? EmbedPageIcon : EmbedEdgelessIcon,
       SyncedDocErrorIcon,
       SyncedDocDeletedIcon,
@@ -47,7 +47,7 @@ export function getSyncedDocIcons(
     };
   } else {
     return {
-      LoadingIcon: DarkLoadingIcon,
+      LoadingIcon,
       SyncedDocIcon: editorMode === 'page' ? EmbedPageIcon : EmbedEdgelessIcon,
       SyncedDocErrorIcon,
       SyncedDocDeletedIcon,

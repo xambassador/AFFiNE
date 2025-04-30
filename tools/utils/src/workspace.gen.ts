@@ -74,7 +74,6 @@ export const PackageList = [
     location: 'blocksuite/affine/blocks/attachment',
     name: '@blocksuite/affine-block-attachment',
     workspaceDependencies: [
-      'blocksuite/affine/blocks/embed',
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
       'blocksuite/affine/ext-loader',
