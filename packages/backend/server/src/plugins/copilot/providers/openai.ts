@@ -348,6 +348,11 @@ export class OpenAIProvider
       const result = await generateImage({
         model: modelInstance,
         prompt,
+        providerOptions: {
+          openai: {
+            quality: options.quality || null,
+          },
+        },
       });
 
       return result.images.map(

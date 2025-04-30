@@ -99,6 +99,7 @@ const CopilotImageOptionsSchema = CopilotProviderOptionsSchema.merge(
   PromptConfigStrictSchema
 )
   .extend({
+    quality: z.string().optional(),
     seed: z.number().optional(),
   })
   .optional();
