@@ -6,22 +6,17 @@ import {
   LitEdgelessEditor,
   type PageEditor,
 } from '@affine/core/blocksuite/editors';
+import type { AffineEditorViewOptions } from '@affine/core/blocksuite/manager/editor-view';
 import { useEnableAI } from '@affine/core/components/hooks/affine/use-enable-ai';
-import { PublicUserService } from '@affine/core/modules/cloud';
 import type { DocCustomPropertyInfo } from '@affine/core/modules/db';
-import { DocService, DocsService } from '@affine/core/modules/doc';
 import type {
   DatabaseRow,
   DatabaseValueCell,
 } from '@affine/core/modules/doc-info/types';
-import { EditorService } from '@affine/core/modules/editor';
 import { EditorSettingService } from '@affine/core/modules/editor-setting';
 import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { JournalService } from '@affine/core/modules/journal';
-import { toDocSearchParams } from '@affine/core/modules/navigation';
 import { useInsidePeekView } from '@affine/core/modules/peek-view';
-import { PeekViewService } from '@affine/core/modules/peek-view/services/peek-view';
-import { MemberSearchService } from '@affine/core/modules/permissions';
 import { WorkspaceService } from '@affine/core/modules/workspace';
 import track from '@affine/track';
 import type { DocTitle } from '@blocksuite/affine/fragments/doc-title';
@@ -44,40 +39,10 @@ import {
 } from 'react';
 
 import {
-  AffinePageReference,
-  AffineSharedPageReference,
-} from '../../components/affine/reference-link';
-import {
   type DefaultOpenProperty,
   DocPropertiesTable,
 } from '../../components/doc-properties';
-import {
-  patchForAudioEmbedView,
-  patchForPDFEmbedView,
-} from '../extensions/attachment-embed-view';
-import { patchDatabaseBlockConfigService } from '../extensions/database-block-config-service';
-import { patchDocModeService } from '../extensions/doc-mode-service';
-import { patchDocUrlExtensions } from '../extensions/doc-url';
-import {
-  patchForEdgelessNoteConfig,
-  patchForEmbedSyncedDocConfig,
-} from '../extensions/edgeless-block-header';
-import { EdgelessClipboardAIChatConfig } from '../extensions/edgeless-clipboard';
-import { patchForClipboardInElectron } from '../extensions/electron-clipboard';
 import { enableEditorExtension } from '../extensions/entry/enable-editor';
-import { enableMobileExtension } from '../extensions/entry/enable-mobile';
-import { patchNotificationService } from '../extensions/notification-service';
-import { patchOpenDocExtension } from '../extensions/open-doc';
-import { patchPeekViewService } from '../extensions/peek-view-service';
-import { patchQuickSearchService } from '../extensions/quick-search-service';
-import {
-  patchReferenceRenderer,
-  type ReferenceReactRenderer,
-} from '../extensions/reference-renderer';
-import { patchSideBarService } from '../extensions/side-bar-service';
-import { patchTurboRendererExtension } from '../extensions/turbo-renderer';
-import { patchUserExtensions } from '../extensions/user';
-import { patchUserListExtensions } from '../extensions/user-list';
 import { BiDirectionalLinkPanel } from './bi-directional-link-panel';
 import { BlocksuiteEditorJournalDocTitle } from './journal-doc-title';
 import { StarterBar } from './starter-bar';
@@ -92,55 +57,12 @@ interface BlocksuiteEditorProps {
 
 const usePatchSpecs = (mode: DocMode) => {
   const [reactToLit, portals] = useLitPortalFactory();
-  const {
-    peekViewService,
-    docService,
-    docsService,
-    editorService,
-    workspaceService,
-    featureFlagService,
-    memberSearchService,
-    publicUserService,
-  } = useServices({
-    PeekViewService,
-    DocService,
-    DocsService,
+  const { workspaceService, featureFlagService } = useServices({
     WorkspaceService,
-    EditorService,
     FeatureFlagService,
-    MemberSearchService,
-    PublicUserService,
   });
   const isCloud = workspaceService.workspace.flavour !== 'local';
   const framework = useFramework();
-  const referenceRenderer: ReferenceReactRenderer = useMemo(() => {
-    return function customReference(reference) {
-      const data = reference.delta.attributes?.reference;
-      if (!data) return <span />;
-
-      const pageId = data.pageId;
-      if (!pageId) return <span />;
-
-      // title alias
-      const title = data.title;
-      const params = toDocSearchParams(data.params);
-
-      if (workspaceService.workspace.openOptions.isSharedMode) {
-        return (
-          <AffineSharedPageReference
-            docCollection={workspaceService.workspace.docCollection}
-            pageId={pageId}
-            params={params}
-            title={title}
-          />
-        );
-      }
-
-      return (
-        <AffinePageReference pageId={pageId} params={params} title={title} />
-      );
-    };
-  }, [workspaceService]);
 
   const confirmModal = useConfirmModal();
 
@@ -158,69 +80,32 @@ const usePatchSpecs = (mode: DocMode) => {
     )
   );
 
-  const patchedSpecs = useMemo(() => {
-    let extensions = enableEditorExtension(framework, mode, enableAI);
+  const editorOptions: AffineEditorViewOptions = useMemo(() => {
+    return {
+      isCloud,
+      isInPeekView: insidePeekView,
 
-    extensions = extensions.concat(
-      [
-        patchReferenceRenderer(reactToLit, referenceRenderer),
-        patchForEdgelessNoteConfig(framework, reactToLit, insidePeekView),
-        patchForEmbedSyncedDocConfig(reactToLit),
-        patchNotificationService(confirmModal),
-        patchPeekViewService(peekViewService),
-        patchOpenDocExtension(),
-        EdgelessClipboardAIChatConfig,
-        patchDocUrlExtensions(framework),
-        patchQuickSearchService(framework),
-        patchSideBarService(framework),
-        patchDocModeService(docService, docsService, editorService),
-        patchForAudioEmbedView(reactToLit),
-        isCloud
-          ? [
-              patchUserListExtensions(memberSearchService),
-              patchUserExtensions(publicUserService),
-            ]
-          : [],
-        patchDatabaseBlockConfigService(),
-        mode === 'edgeless' && enableTurboRenderer
-          ? patchTurboRendererExtension()
-          : [],
-      ].flat()
-    );
+      enableTurboRenderer,
+      enablePDFEmbedPreview,
 
-    if (enablePDFEmbedPreview) {
-      extensions = extensions.concat([patchForPDFEmbedView(reactToLit)]);
-    }
+      framework,
 
-    if (BUILD_CONFIG.isMobileEdition) {
-      extensions = enableMobileExtension(extensions, framework);
-    }
-
-    if (BUILD_CONFIG.isElectron) {
-      extensions = extensions.concat(
-        [patchForClipboardInElectron(framework)].flat()
-      );
-    }
-
-    return extensions;
+      reactToLit: reactToLit as AffineEditorViewOptions['reactToLit'],
+      confirmModal,
+    };
   }, [
-    framework,
-    mode,
-    enableAI,
-    reactToLit,
-    referenceRenderer,
-    insidePeekView,
     confirmModal,
-    peekViewService,
-    docService,
-    docsService,
-    editorService,
-    isCloud,
-    memberSearchService,
-    publicUserService,
-    enableTurboRenderer,
     enablePDFEmbedPreview,
+    enableTurboRenderer,
+    framework,
+    insidePeekView,
+    isCloud,
+    reactToLit,
   ]);
+
+  const patchedSpecs = useMemo(() => {
+    return enableEditorExtension(framework, mode, enableAI, editorOptions);
+  }, [framework, mode, enableAI, editorOptions]);
 
   return [
     patchedSpecs,

@@ -14,20 +14,18 @@ function createPainterWorker() {
   return worker;
 }
 
-export function patchTurboRendererExtension() {
-  return [
-    ParagraphLayoutHandlerExtension,
-    ListLayoutHandlerExtension,
-    NoteLayoutHandlerExtension,
-    CodeLayoutHandlerExtension,
-    ImageLayoutHandlerExtension,
-    TurboRendererConfigFactory({
-      options: {
-        zoomThreshold: 1,
-        debounceTime: 1000,
-      },
-      painterWorkerEntry: createPainterWorker,
-    }),
-    ViewportTurboRendererExtension,
-  ];
-}
+export const turboRendererExtension = [
+  ParagraphLayoutHandlerExtension,
+  ListLayoutHandlerExtension,
+  NoteLayoutHandlerExtension,
+  CodeLayoutHandlerExtension,
+  ImageLayoutHandlerExtension,
+  TurboRendererConfigFactory({
+    options: {
+      zoomThreshold: 1,
+      debounceTime: 1000,
+    },
+    painterWorkerEntry: createPainterWorker,
+  }),
+  ViewportTurboRendererExtension,
+];

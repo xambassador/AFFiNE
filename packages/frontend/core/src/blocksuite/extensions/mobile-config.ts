@@ -1,8 +1,5 @@
 import { VirtualKeyboardProvider } from '@affine/core/mobile/modules/virtual-keyboard';
-import {
-  CodeBlockConfigExtension,
-  codeToolbarWidget,
-} from '@blocksuite/affine/blocks/code';
+import { CodeBlockConfigExtension } from '@blocksuite/affine/blocks/code';
 import { ParagraphBlockConfigExtension } from '@blocksuite/affine/blocks/paragraph';
 import type { Container } from '@blocksuite/affine/global/di';
 import { DisposableGroup } from '@blocksuite/affine/global/disposable';
@@ -13,12 +10,10 @@ import {
 } from '@blocksuite/affine/shared/services';
 import { type BlockStdScope, LifeCycleWatcher } from '@blocksuite/affine/std';
 import type { ExtensionType } from '@blocksuite/affine/store';
-import { SlashMenuExtension } from '@blocksuite/affine/widgets/slash-menu';
-import { toolbarWidget } from '@blocksuite/affine/widgets/toolbar';
 import { batch, signal } from '@preact/signals-core';
 import type { FrameworkProvider } from '@toeverything/infra';
 
-class MobileSpecsPatches extends LifeCycleWatcher {
+export class MobileSpecsPatches extends LifeCycleWatcher {
   static override key = 'mobile-patches';
 
   constructor(std: BlockStdScope) {
@@ -30,7 +25,7 @@ class MobileSpecsPatches extends LifeCycleWatcher {
   }
 }
 
-const mobileParagraphConfig = ParagraphBlockConfigExtension({
+export const mobileParagraphConfig = ParagraphBlockConfigExtension({
   getPlaceholder: model => {
     const placeholders = {
       text: '',
@@ -46,11 +41,13 @@ const mobileParagraphConfig = ParagraphBlockConfigExtension({
   },
 });
 
-const mobileCodeConfig = CodeBlockConfigExtension({
+export const mobileCodeConfig = CodeBlockConfigExtension({
   showLineNumbers: false,
 });
 
-function KeyboardToolbarExtension(framework: FrameworkProvider): ExtensionType {
+export function KeyboardToolbarExtension(
+  framework: FrameworkProvider
+): ExtensionType {
   const affineVirtualKeyboardProvider = framework.get(VirtualKeyboardProvider);
 
   class BSVirtualKeyboardService
@@ -108,29 +105,4 @@ function KeyboardToolbarExtension(framework: FrameworkProvider): ExtensionType {
   }
 
   return BSVirtualKeyboardService;
-}
-
-export function enableMobileExtension(
-  extensions: ExtensionType[],
-  framework: FrameworkProvider
-): ExtensionType[] {
-  const next = extensions.filter(extension => {
-    if (extension === codeToolbarWidget) {
-      return false;
-    }
-    if (extension === toolbarWidget) {
-      return false;
-    }
-    if (extension === SlashMenuExtension) {
-      return false;
-    }
-    return true;
-  });
-  next.push(
-    MobileSpecsPatches,
-    KeyboardToolbarExtension(framework),
-    mobileParagraphConfig,
-    mobileCodeConfig
-  );
-  return next;
 }

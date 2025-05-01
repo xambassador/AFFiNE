@@ -1,16 +1,10 @@
-import type { ElementOrFactory } from '@affine/component';
+import type { ReactToLit } from '@affine/component';
 import { AttachmentEmbedPreview } from '@affine/core/blocksuite/attachment-viewer/attachment-embed-preview';
 import { AttachmentEmbedConfigIdentifier } from '@blocksuite/affine/blocks/attachment';
 import { Bound } from '@blocksuite/affine/global/gfx';
 import type { ExtensionType } from '@blocksuite/affine/store';
-import type { TemplateResult } from 'lit';
 
-export function patchForPDFEmbedView(
-  reactToLit: (
-    element: ElementOrFactory,
-    rerendering?: boolean
-  ) => TemplateResult
-): ExtensionType {
+export function patchForPDFEmbedView(reactToLit: ReactToLit): ExtensionType {
   return {
     setup: di => {
       di.override(AttachmentEmbedConfigIdentifier('pdf'), () => ({
@@ -35,12 +29,7 @@ export function patchForPDFEmbedView(
   };
 }
 
-export function patchForAudioEmbedView(
-  reactToLit: (
-    element: ElementOrFactory,
-    rerendering?: boolean
-  ) => TemplateResult
-): ExtensionType {
+export function patchForAudioEmbedView(reactToLit: ReactToLit): ExtensionType {
   return {
     setup: di => {
       di.override(AttachmentEmbedConfigIdentifier('audio'), () => ({

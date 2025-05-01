@@ -1,4 +1,4 @@
-import type { ElementOrFactory } from '@affine/component';
+import type { ReactToLit } from '@affine/component';
 import { JournalService } from '@affine/core/modules/journal';
 import { EmbedSyncedDocConfigExtension } from '@blocksuite/affine/blocks/embed-doc';
 import { NoteConfigExtension } from '@blocksuite/affine/blocks/note';
@@ -10,7 +10,7 @@ import {
 } from '@blocksuite/affine/shared/services';
 import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
 import type { FrameworkProvider } from '@toeverything/infra';
-import { html, type TemplateResult } from 'lit';
+import { html } from 'lit';
 
 import { BlocksuiteEditorJournalDocTitle } from '../../block-suite-editor/journal-doc-title';
 import { EdgelessEmbedSyncedDocHeader } from './edgeless-embed-synced-doc-header';
@@ -18,7 +18,7 @@ import { EdgelessNoteHeader } from './edgeless-note-header';
 
 export function patchForEdgelessNoteConfig(
   framework: FrameworkProvider,
-  reactToLit: (element: ElementOrFactory) => TemplateResult,
+  reactToLit: ReactToLit,
   insidePeekView: boolean
 ) {
   return NoteConfigExtension({
@@ -100,9 +100,7 @@ export function patchForEdgelessNoteConfig(
   });
 }
 
-export function patchForEmbedSyncedDocConfig(
-  reactToLit: (element: ElementOrFactory) => TemplateResult
-) {
+export function patchForEmbedSyncedDocConfig(reactToLit: ReactToLit) {
   return EmbedSyncedDocConfigExtension({
     edgelessHeader: ({ model, std }) =>
       reactToLit(<EdgelessEmbedSyncedDocHeader model={model} std={std} />),
