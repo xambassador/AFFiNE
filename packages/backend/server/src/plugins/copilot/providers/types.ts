@@ -76,7 +76,7 @@ const CopilotProviderOptionsSchema = z.object({
   user: z.string().optional(),
 });
 
-const CopilotChatOptionsSchema = CopilotProviderOptionsSchema.merge(
+export const CopilotChatOptionsSchema = CopilotProviderOptionsSchema.merge(
   PromptConfigStrictSchema
 )
   .extend({
@@ -87,15 +87,16 @@ const CopilotChatOptionsSchema = CopilotProviderOptionsSchema.merge(
 
 export type CopilotChatOptions = z.infer<typeof CopilotChatOptionsSchema>;
 
-const CopilotEmbeddingOptionsSchema = CopilotProviderOptionsSchema.extend({
-  dimensions: z.number(),
-}).optional();
+export const CopilotEmbeddingOptionsSchema =
+  CopilotProviderOptionsSchema.extend({
+    dimensions: z.number(),
+  }).optional();
 
 export type CopilotEmbeddingOptions = z.infer<
   typeof CopilotEmbeddingOptionsSchema
 >;
 
-const CopilotImageOptionsSchema = CopilotProviderOptionsSchema.merge(
+export const CopilotImageOptionsSchema = CopilotProviderOptionsSchema.merge(
   PromptConfigStrictSchema
 )
   .extend({
