@@ -224,13 +224,3 @@ export class ConnectorTool extends BaseTool<ConnectorToolOptions> {
     this.findTargetByPoint(point);
   }
 }
-
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    connector: ConnectorTool;
-  }
-
-  interface GfxToolsOption {
-    connector: ConnectorToolOptions;
-  }
-}

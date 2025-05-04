@@ -416,9 +416,3 @@ export class DefaultTool extends BaseTool {
 
   override unmounted(): void {}
 }
-
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    default: DefaultTool;
-  }
-}

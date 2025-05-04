@@ -10,7 +10,7 @@ import { BaseTool, type GfxController } from '@blocksuite/std/gfx';
 import * as Y from 'yjs';
 
 import { insertEdgelessTextCommand } from './commands/insert-edgeless-text';
-import { mountTextElementEditor } from './mount-text-editor';
+import { mountTextElementEditor } from './edgeless-text-editor';
 
 function addText(gfx: GfxController, event: PointerEventState) {
   const [x, y] = gfx.viewport.toModelCoord(event.x, event.y);
@@ -62,11 +62,5 @@ export class TextTool extends BaseTool {
       segment: 'toolbar',
       type: 'text',
     });
-  }
-}
-
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    text: TextTool;
   }
 }

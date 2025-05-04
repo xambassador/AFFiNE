@@ -75,8 +75,6 @@ export interface ToolEventTarget {
   ): void;
 }
 
-export const eventTarget = Symbol('eventTarget');
-
 export class ToolController extends GfxExtension {
   static override key = 'ToolController';
 

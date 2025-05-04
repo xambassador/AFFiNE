@@ -123,16 +123,3 @@ export type ToolOptionWithType<T extends BaseTool = BaseTool> = {
   toolType?: ToolType<T>;
   options?: ToolOptions<T>;
 };
-
-export interface GfxToolsMap {}
-
-export interface GfxToolsOption {}
-
-export type GfxToolsFullOption = {
-  [Key in keyof GfxToolsMap]: Key extends keyof GfxToolsOption
-    ? { type: Key } & GfxToolsOption[Key]
-    : { type: Key };
-};
-
-export type GfxToolsFullOptionValue =
-  GfxToolsFullOption[keyof GfxToolsFullOption];

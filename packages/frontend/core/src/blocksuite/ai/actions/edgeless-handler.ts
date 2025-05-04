@@ -1,6 +1,5 @@
 import { splitElements } from '@blocksuite/affine/blocks/root';
 import { DefaultTool } from '@blocksuite/affine/blocks/surface';
-import type * as PointerEffect from '@blocksuite/affine/gfx/pointer';
 import {
   CodeBlockModel,
   EdgelessTextBlockModel,
@@ -49,8 +48,6 @@ import {
   actionToResponse,
   getToolbar,
 } from './edgeless-response';
-
-declare type _GLOBAL_ = typeof PointerEffect;
 
 async function getContentFromEmbedSyncedDocModel(
   host: EditorHost,

@@ -172,9 +172,3 @@ export class CopilotTool extends BaseTool {
     this.draggingAreaUpdated.next(true);
   }
 }
-
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    copilot: CopilotTool;
-  }
-}

@@ -218,16 +218,6 @@ export class NoteTool extends BaseTool<NoteToolOption> {
   }
 }
 
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    'affine:note': NoteTool;
-  }
-
-  interface GfxToolsOption {
-    'affine:note': NoteToolOption;
-  }
-}
-
 type NoteOptions = {
   childFlavour: NoteChildrenFlavour;
   childType: string | null;

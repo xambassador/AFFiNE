@@ -90,10 +90,6 @@ export {
 } from './surface-middleware.js';
 export {
   BaseTool,
-  type GfxToolsFullOption,
-  type GfxToolsFullOptionValue,
-  type GfxToolsMap,
-  type GfxToolsOption,
   type ToolOptions,
   type ToolOptionWithType,
   type ToolType,

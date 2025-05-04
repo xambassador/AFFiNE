@@ -336,13 +336,3 @@ export class ShapeTool extends BaseTool<ShapeToolOption> {
     this._disableOverlay = disable;
   }
 }
-
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    shape: ShapeTool;
-  }
-
-  interface GfxToolsOption {
-    shape: ShapeToolOption;
-  }
-}

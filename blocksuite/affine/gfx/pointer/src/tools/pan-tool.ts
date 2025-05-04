@@ -78,13 +78,3 @@ export class PanTool extends BaseTool<PanToolOption> {
     });
   }
 }
-
-declare module '@blocksuite/std/gfx' {
-  interface GfxToolsMap {
-    pan: PanTool;
-  }
-
-  interface GfxToolsOption {
-    pan: PanToolOption;
-  }
-}
