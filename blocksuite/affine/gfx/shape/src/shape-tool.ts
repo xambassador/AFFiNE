@@ -1,5 +1,6 @@
 import {
   CanvasElementType,
+  DefaultTool,
   EXCLUDING_MOUSE_OUT_CLASS_LIST,
   type SurfaceBlockComponent,
 } from '@blocksuite/affine-block-surface';
@@ -180,8 +181,7 @@ export class ShapeTool extends BaseTool<ShapeToolOption> {
     const element = this.gfx.getElementById(id);
     if (!element) return;
 
-    // @ts-expect-error FIXME: resolve after gfx tool refactor
-    this.gfx.tool.setTool('default');
+    this.gfx.tool.setTool(DefaultTool);
     this.gfx.selection.set({
       elements: [element.id],
       editing: false,
@@ -257,8 +257,7 @@ export class ShapeTool extends BaseTool<ShapeToolOption> {
     const element = this.gfx.getElementById(id);
     if (!element) return;
 
-    // @ts-expect-error FIXME: resolve after gfx tool refactor
-    this.controller.setTool('default');
+    this.controller.setTool(DefaultTool);
     this.gfx.selection.set({
       elements: [element.id],
     });

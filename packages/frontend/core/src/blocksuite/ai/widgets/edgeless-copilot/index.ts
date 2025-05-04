@@ -1,3 +1,4 @@
+import { CopilotTool } from '@affine/core/blocksuite/ai/tool/copilot-tool';
 import { EdgelessLegacySlotIdentifier } from '@blocksuite/affine/blocks/surface';
 import {
   Bound,
@@ -205,7 +206,7 @@ export class EdgelessCopilotWidget extends WidgetComponent<RootBlockModel> {
   override connectedCallback(): void {
     super.connectedCallback();
 
-    const CopilotSelectionTool = this.gfx.tool.get('copilot');
+    const CopilotSelectionTool = this.gfx.tool.get(CopilotTool);
 
     this._disposables.add(
       CopilotSelectionTool.draggingAreaUpdated.subscribe(shouldShowPanel => {

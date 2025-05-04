@@ -1,8 +1,11 @@
 import '../declare-test-window.js';
 
-import type { NoteBlockModel, NoteDisplayMode } from '@blocksuite/affine-model';
-import type { IPoint, IVec } from '@blocksuite/global/gfx';
-import { sleep } from '@blocksuite/global/utils';
+import { ConnectorTool } from '@blocksuite/affine/gfx/connector';
+import { ShapeTool } from '@blocksuite/affine/gfx/shape';
+import type { IPoint, IVec } from '@blocksuite/affine/global/gfx';
+import { sleep } from '@blocksuite/affine/global/utils';
+import type { NoteBlockModel, NoteDisplayMode } from '@blocksuite/affine/model';
+import type { ToolOptions } from '@blocksuite/affine/std/gfx';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
@@ -394,21 +397,23 @@ export async function assertEdgelessShapeType(page: Page, type: ShapeName) {
       throw new Error('Missing edgeless page');
     }
     const tool = container.gfx.tool.currentToolOption$.peek();
-    if (tool.type !== 'shape') throw new Error('Expected shape tool');
+    if (tool.toolType?.toolName !== 'shape')
+      throw new Error('Expected shape tool');
 
-    return tool.shapeName;
+    return (tool.options as ToolOptions<ShapeTool>).shapeName;
   });
 
   expect(type).toEqual(curType);
 }
 
-export async function assertEdgelessTool(page: Page, mode: EdgelessTool) {
+export async function assertEdgelessTool(page: Page, mode: string) {
+  await page.waitForTimeout(1000);
   const type = await page.evaluate(() => {
     const container = document.querySelector('affine-edgeless-root');
     if (!container) {
       throw new Error('Missing edgeless page');
     }
-    return container.gfx.tool.currentToolOption$.peek().type;
+    return container.gfx.tool.currentTool$.peek()?.toolName;
   });
   expect(type).toEqual(mode);
 }
@@ -417,17 +422,21 @@ export async function assertEdgelessConnectorToolMode(
   page: Page,
   mode: ConnectorMode
 ) {
-  const tool = await page.evaluate(() => {
+  const [toolName, toolOptions] = await page.evaluate(() => {
     const container = document.querySelector('affine-edgeless-root');
     if (!container) {
       throw new Error('Missing edgeless page');
     }
-    return container.gfx.tool.currentToolOption$.peek();
+    const tool = container.gfx.tool.currentToolOption$.peek();
+    return [
+      tool.toolType?.toolName as string | undefined,
+      tool.options as ToolOptions<ConnectorTool>,
+    ];
   });
-  if (tool.type !== 'connector') {
+  if (toolName !== 'connector') {
     throw new Error('Expected connector tool');
   }
-  expect(tool.mode).toEqual(mode);
+  expect((toolOptions as ToolOptions<ConnectorTool>).mode).toEqual(mode);
 }
 
 export async function getEdgelessBlockChild(page: Page) {

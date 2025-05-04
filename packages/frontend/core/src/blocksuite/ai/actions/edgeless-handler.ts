@@ -1,4 +1,5 @@
 import { splitElements } from '@blocksuite/affine/blocks/root';
+import { DefaultTool } from '@blocksuite/affine/blocks/surface';
 import type * as PointerEffect from '@blocksuite/affine/gfx/pointer';
 import {
   CodeBlockModel,
@@ -358,7 +359,7 @@ function updateEdgelessAIPanelConfig<
   config.hideCallback = () => {
     aiPanel.updateComplete
       .finally(() => {
-        edgelessCopilot.gfx.tool.setTool('default');
+        edgelessCopilot.gfx.tool.setTool(DefaultTool);
         edgelessCopilot.gfx.selection.set({
           elements: [],
           editing: false,
@@ -431,7 +432,7 @@ export function actionToHandler<T extends keyof BlockSuitePresets.AIActions>(
 
     if (!referenceElement) {
       const gfx = host.std.get(GfxControllerIdentifier);
-      gfx?.tool.setTool({ type: 'default' });
+      gfx?.tool.setTool(DefaultTool);
       edgelessCopilot.lockToolbar(false);
       return;
     }

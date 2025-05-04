@@ -1,3 +1,4 @@
+import { DefaultTool } from '@blocksuite/affine-block-surface';
 import type { TextElementModel } from '@blocksuite/affine-model';
 import {
   FeatureFlagService,
@@ -49,8 +50,7 @@ export class TextTool extends BaseTool {
     if (textFlag) {
       const [x, y] = this.gfx.viewport.toModelCoord(e.x, e.y);
       this.gfx.std.command.exec(insertEdgelessTextCommand, { x, y });
-      // @ts-expect-error TODO: refactor gfx tool
-      this.gfx.tool.setTool('default');
+      this.gfx.tool.setTool(DefaultTool);
     } else {
       addText(this.gfx, e);
     }

@@ -111,6 +111,19 @@ export abstract class BaseTool<
 
 export const ToolIdentifier = createIdentifier<BaseTool>('GfxTool');
 
+export type ToolType<T extends BaseTool = BaseTool> = {
+  new (gfx: GfxController): T;
+  toolName: string;
+};
+
+export type ToolOptions<T extends BaseTool> =
+  T extends BaseTool<infer O> ? O : never;
+
+export type ToolOptionWithType<T extends BaseTool = BaseTool> = {
+  toolType?: ToolType<T>;
+  options?: ToolOptions<T>;
+};
+
 export interface GfxToolsMap {}
 
 export interface GfxToolsOption {}

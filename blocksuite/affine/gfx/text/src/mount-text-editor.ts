@@ -1,5 +1,6 @@
 import {
   CanvasElementType,
+  DefaultTool,
   EdgelessCRUDIdentifier,
   type IModelCoord,
 } from '@blocksuite/affine-block-surface';
@@ -37,8 +38,7 @@ export function mountTextElementEditor(
 
   const gfx = edgeless.std.get(GfxControllerIdentifier);
 
-  // @ts-expect-error TODO: refactor gfx tool
-  gfx.tool.setTool('default');
+  gfx.tool.setTool(DefaultTool);
   gfx.selection.set({
     elements: [textElement.id],
     editing: true,

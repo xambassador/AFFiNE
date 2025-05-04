@@ -1,5 +1,7 @@
 import type { AffineEditorContainer } from '@affine/core/blocksuite/block-suite-editor';
 import type { DefaultOpenProperty } from '@affine/core/components/doc-properties';
+import { PresentTool } from '@blocksuite/affine/blocks/frame';
+import { DefaultTool } from '@blocksuite/affine/blocks/surface';
 import type { DocTitle } from '@blocksuite/affine/fragments/doc-title';
 import type { DocMode, ReferenceParams } from '@blocksuite/affine/model';
 import { HighlightSelection } from '@blocksuite/affine/shared/selection';
@@ -75,9 +77,11 @@ export class Editor extends Entity {
       GfxControllerIdentifier
     );
     if (!gfx) return;
-    gfx.tool.setTool({
-      type: !this.isPresenting$.value ? 'frameNavigator' : 'default',
-    });
+    if (!this.isPresenting$.value) {
+      gfx.tool.setTool(PresentTool);
+    } else {
+      gfx.tool.setTool(DefaultTool);
+    }
   }
 
   setSelector(selector: EditorSelector | undefined) {

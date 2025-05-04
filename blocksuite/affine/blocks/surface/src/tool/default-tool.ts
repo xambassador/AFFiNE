@@ -10,7 +10,7 @@ import {
 } from '@blocksuite/std/gfx';
 import { effect } from '@preact/signals-core';
 
-import { calPanDelta } from '../utils/panning-utils.js';
+import { calPanDelta } from './panning-utils.js';
 
 export enum DefaultModeDragType {
   /** Moving selected contents */
