@@ -4,6 +4,8 @@ import { type FrameworkProvider } from '@toeverything/infra';
 
 export function createLinkedWidgetConfig(
   framework: FrameworkProvider
-): Partial<LinkedWidgetConfig> {
-  return framework.get(AtMenuConfigService).getConfig();
+): Partial<LinkedWidgetConfig> | undefined {
+  const service = framework.getOptional(AtMenuConfigService);
+  if (!service) return;
+  return service.getConfig();
 }

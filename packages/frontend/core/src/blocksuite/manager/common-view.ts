@@ -21,7 +21,6 @@ import {
   getThemeExtension,
 } from '@affine/core/blocksuite/extensions/theme';
 import { PeekViewService } from '@affine/core/modules/peek-view';
-import { ParagraphBlockConfigExtension } from '@blocksuite/affine/blocks/paragraph';
 import {
   type ViewExtensionContext,
   ViewExtensionProvider,
@@ -60,58 +59,37 @@ export class AffineCommonViewExtension extends ViewExtensionProvider<
   ) {
     context.register(AIChatBlockSpec);
     context.register(AITranscriptionBlockSpec);
-    context.register(
-      [
-        AICodeBlockWatcher,
+    context.register([
+      AICodeBlockWatcher,
+      ToolbarModuleExtension({
+        id: BlockFlavourIdentifier('custom:affine:image'),
+        config: imageToolbarAIEntryConfig(),
+      }),
+    ]);
+    if (context.scope === 'edgeless' || context.scope === 'page') {
+      context.register([
+        aiPanelWidget,
+        AiSlashMenuConfigExtension(),
         ToolbarModuleExtension({
-          id: BlockFlavourIdentifier('custom:affine:image'),
-          config: imageToolbarAIEntryConfig(),
+          id: BlockFlavourIdentifier('custom:affine:note'),
+          config: toolbarAIEntryConfig(),
         }),
-        ParagraphBlockConfigExtension({
-          getPlaceholder: model => {
-            const placeholders = {
-              text: "Type '/' for commands, 'space' for AI",
-              h1: 'Heading 1',
-              h2: 'Heading 2',
-              h3: 'Heading 3',
-              h4: 'Heading 4',
-              h5: 'Heading 5',
-              h6: 'Heading 6',
-              quote: '',
-            };
-            return placeholders[model.props.type];
-          },
-        }),
-      ].flat()
-    );
+      ]);
+    }
     if (context.scope === 'edgeless') {
       context.register([
         CopilotTool,
-        aiPanelWidget,
         edgelessCopilotWidget,
         getAIEdgelessRootWatcher(framework),
         // In note
         ToolbarModuleExtension({
-          id: BlockFlavourIdentifier('custom:affine:note'),
-          config: toolbarAIEntryConfig(),
-        }),
-        ToolbarModuleExtension({
           id: BlockFlavourIdentifier('custom:affine:surface:*'),
           config: edgelessToolbarAIEntryConfig(),
         }),
-        AiSlashMenuConfigExtension(),
       ]);
     }
     if (context.scope === 'page') {
-      context.register([
-        aiPanelWidget,
-        getAIPageRootWatcher(framework),
-        ToolbarModuleExtension({
-          id: BlockFlavourIdentifier('custom:affine:note'),
-          config: toolbarAIEntryConfig(),
-        }),
-        AiSlashMenuConfigExtension(),
-      ]);
+      context.register(getAIPageRootWatcher(framework));
     }
   }
 
