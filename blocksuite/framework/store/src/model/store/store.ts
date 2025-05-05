@@ -3,6 +3,7 @@ import { DisposableGroup } from '@blocksuite/global/disposable';
 import { BlockSuiteError, ErrorCode } from '@blocksuite/global/exceptions';
 import { computed, signal } from '@preact/signals-core';
 import { Subject } from 'rxjs';
+import * as Y from 'yjs';
 
 import type { ExtensionType } from '../../extension/extension.js';
 import {
@@ -160,6 +161,10 @@ export type StoreSlots = Doc['slots'] & {
    *
    */
   blockUpdated: Subject<StoreBlockUpdatedPayloads>;
+  /**
+   * This fires when the history is updated.
+   */
+  historyUpdated: Subject<void>;
 };
 
 const internalExtensions = [StoreSelectionExtension];
@@ -186,6 +191,8 @@ export class Store {
 
   private readonly _provider: ServiceProvider;
 
+  private _shouldTransact = true;
+
   private readonly _runQuery = (block: Block) => {
     runQuery(this._query, block);
   };
@@ -208,6 +215,10 @@ export class Store {
   });
 
   private readonly _schema: Schema;
+
+  private readonly _canRedo = signal(false);
+
+  private readonly _canUndo = signal(false);
 
   /**
    * Get the id of the store.
@@ -284,7 +295,7 @@ export class Store {
     if (this.readonly) {
       return false;
     }
-    return this._doc.canRedo;
+    return this._canRedo.peek();
   }
 
   /**
@@ -296,7 +307,7 @@ export class Store {
     if (this.readonly) {
       return false;
     }
-    return this._doc.canUndo;
+    return this._canUndo.peek();
   }
 
   /**
@@ -304,13 +315,12 @@ export class Store {
    *
    * @category History
    */
-  get undo() {
+  undo() {
     if (this.readonly) {
-      return () => {
-        console.error('cannot undo in readonly mode');
-      };
+      console.error('cannot undo in readonly mode');
+      return;
     }
-    return this._doc.undo.bind(this._doc);
+    this._history.undo();
   }
 
   /**
@@ -318,13 +328,12 @@ export class Store {
    *
    * @category History
    */
-  get redo() {
+  redo() {
     if (this.readonly) {
-      return () => {
-        console.error('cannot undo in readonly mode');
-      };
+      console.error('cannot undo in readonly mode');
+      return;
     }
-    return this._doc.redo.bind(this._doc);
+    this._history.redo();
   }
 
   /**
@@ -332,8 +341,8 @@ export class Store {
    *
    * @category History
    */
-  get resetHistory() {
-    return this._doc.resetHistory.bind(this._doc);
+  resetHistory() {
+    return this._history.clear();
   }
 
   /**
@@ -349,8 +358,21 @@ export class Store {
    *
    * @category History
    */
-  get transact() {
-    return this._doc.transact.bind(this._doc);
+  transact(fn: () => void, shouldTransact: boolean = this._shouldTransact) {
+    const spaceDoc = this.doc.spaceDoc;
+    spaceDoc.transact(
+      () => {
+        try {
+          fn();
+        } catch (e) {
+          console.error(
+            `An error occurred while Y.doc ${spaceDoc.guid} transacting:`
+          );
+          console.error(e);
+        }
+      },
+      shouldTransact ? this.rootDoc.clientID : null
+    );
   }
 
   /**
@@ -366,8 +388,10 @@ export class Store {
    *
    * @category History
    */
-  get withoutTransact() {
-    return this._doc.withoutTransact.bind(this._doc);
+  withoutTransact(fn: () => void) {
+    this._shouldTransact = false;
+    fn();
+    this._shouldTransact = true;
   }
 
   /**
@@ -386,8 +410,8 @@ export class Store {
    *
    * @category History
    */
-  get captureSync() {
-    return this._doc.captureSync.bind(this._doc);
+  captureSync() {
+    this._history.stopCapturing();
   }
 
   /**
@@ -403,7 +427,7 @@ export class Store {
    * @category History
    */
   get history() {
-    return this._doc.history;
+    return this._history;
   }
 
   /**
@@ -516,6 +540,8 @@ export class Store {
 
   private _isDisposed = false;
 
+  private readonly _history!: Y.UndoManager;
+
   /**
    * @internal
    * In most cases, you don't need to use the constructor directly.
@@ -528,7 +554,7 @@ export class Store {
       rootAdded: new Subject(),
       rootDeleted: new Subject(),
       blockUpdated: new Subject(),
-      historyUpdated: this._doc.slots.historyUpdated,
+      historyUpdated: new Subject(),
       yBlockUpdated: this._doc.slots.yBlockUpdated,
     };
     this._schema = new Schema();
@@ -565,8 +591,34 @@ export class Store {
       this._onBlockAdded(id, false, true);
     });
 
+    this._history = new Y.UndoManager([this._yBlocks], {
+      trackedOrigins: new Set([this.doc.spaceDoc.clientID]),
+    });
+
+    this._updateCanUndoRedoSignals();
+    this._history.on('stack-cleared', this._historyObserver);
+    this._history.on('stack-item-added', this._historyObserver);
+    this._history.on('stack-item-popped', this._historyObserver);
+    this._history.on('stack-item-updated', this._historyObserver);
+
     this._subscribeToSlots();
   }
+
+  private readonly _updateCanUndoRedoSignals = () => {
+    const canRedo = this._history.canRedo();
+    const canUndo = this._history.canUndo();
+    if (this._canRedo.peek() !== canRedo) {
+      this._canRedo.value = canRedo;
+    }
+    if (this._canUndo.peek() !== canUndo) {
+      this._canUndo.value = canUndo;
+    }
+  };
+
+  private readonly _historyObserver = () => {
+    this._updateCanUndoRedoSignals();
+    this.slots.historyUpdated.next();
+  };
 
   private readonly _subscribeToSlots = () => {
     this.disposableGroup.add(
@@ -1204,6 +1256,7 @@ export class Store {
     this.slots.rootAdded.complete();
     this.slots.rootDeleted.complete();
     this.slots.blockUpdated.complete();
+    this.slots.historyUpdated.complete();
     this.disposableGroup.dispose();
     this._isDisposed = true;
   }

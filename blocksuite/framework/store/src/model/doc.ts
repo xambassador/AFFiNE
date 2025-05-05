@@ -9,10 +9,6 @@ import type { Workspace } from './workspace.js';
 import type { DocMeta } from './workspace-meta.js';
 
 export type GetBlocksOptions = Omit<StoreOptions, 'schema' | 'doc'>;
-export type CreateBlocksOptions = GetBlocksOptions & {
-  id?: string;
-};
-export type YBlocks = Y.Map<YBlock>;
 
 export interface Doc {
   readonly id: string;
@@ -25,10 +21,6 @@ export interface Doc {
 
   slots: {
     /**
-     * This fires when the doc history is updated.
-     */
-    historyUpdated: Subject<void>;
-    /**
      * @internal
      * This fires when the doc yBlock is updated.
      */
@@ -39,16 +31,6 @@ export interface Doc {
     }>;
   };
 
-  get history(): Y.UndoManager;
-  get canRedo(): boolean;
-  get canUndo(): boolean;
-  undo(): void;
-  redo(): void;
-  resetHistory(): void;
-  transact(fn: () => void, shouldTransact?: boolean): void;
-  withoutTransact(fn: () => void): void;
-
-  captureSync(): void;
   clear(): void;
   getStore(options?: GetBlocksOptions): Store;
   clearQuery(query: Query, readonly?: boolean): void;

@@ -1,4 +1,3 @@
-import { signal } from '@preact/signals-core';
 import { Subject } from 'rxjs';
 import * as Y from 'yjs';
 
@@ -17,10 +16,6 @@ type DocOptions = {
 };
 
 export class TestDoc implements Doc {
-  private readonly _canRedo$ = signal(false);
-
-  private readonly _canUndo$ = signal(false);
-
   private readonly _collection: Workspace;
 
   private readonly _storeMap = new Map<string, Store>();
@@ -28,13 +23,6 @@ export class TestDoc implements Doc {
   // doc/space container.
   private readonly _handleYEvents = (events: Y.YEvent<YBlock | Y.Text>[]) => {
     events.forEach(event => this._handleYEvent(event));
-  };
-
-  private _history!: Y.UndoManager;
-
-  private readonly _historyObserver = () => {
-    this._updateCanUndoRedoSignals();
-    this.slots.historyUpdated.next();
   };
 
   private readonly _initSubDoc = () => {
@@ -77,19 +65,6 @@ export class TestDoc implements Doc {
   /** Indicate whether the block tree is ready */
   private _ready = false;
 
-  private _shouldTransact = true;
-
-  private readonly _updateCanUndoRedoSignals = () => {
-    const canRedo = this._history.canRedo();
-    const canUndo = this._history.canUndo();
-    if (this._canRedo$.peek() !== canRedo) {
-      this._canRedo$.value = canRedo;
-    }
-    if (this._canUndo$.peek() !== canUndo) {
-      this._canUndo$.value = canUndo;
-    }
-  };
-
   protected readonly _yBlocks: Y.Map<YBlock>;
 
   /**
@@ -105,7 +80,6 @@ export class TestDoc implements Doc {
   readonly rootDoc: Y.Doc;
 
   readonly slots = {
-    historyUpdated: new Subject<void>(),
     yBlockUpdated: new Subject<
       | {
           type: 'add';
@@ -124,28 +98,8 @@ export class TestDoc implements Doc {
     return this.workspace.blobSync;
   }
 
-  get canRedo() {
-    return this._canRedo$.peek();
-  }
-
-  get canRedo$() {
-    return this._canRedo$;
-  }
-
-  get canUndo() {
-    return this._canUndo$.peek();
-  }
-
-  get canUndo$() {
-    return this._canUndo$;
-  }
-
   get workspace() {
     return this._collection;
-  }
-
-  get history() {
-    return this._history;
   }
 
   get isEmpty() {
@@ -227,19 +181,6 @@ export class TestDoc implements Doc {
   private _initYBlocks() {
     const { _yBlocks } = this;
     _yBlocks.observeDeep(this._handleYEvents);
-    this._history = new Y.UndoManager([_yBlocks], {
-      trackedOrigins: new Set([this._ySpaceDoc.clientID]),
-    });
-
-    this._history.on('stack-cleared', this._historyObserver);
-    this._history.on('stack-item-added', this._historyObserver);
-    this._history.on('stack-item-popped', this._historyObserver);
-    this._history.on('stack-item-updated', this._historyObserver);
-  }
-
-  /** Capture current operations to undo stack synchronously. */
-  captureSync() {
-    this._history.stopCapturing();
   }
 
   clear() {
@@ -258,8 +199,6 @@ export class TestDoc implements Doc {
   }
 
   dispose() {
-    this.slots.historyUpdated.complete();
-
     if (this.ready) {
       this._yBlocks.unobserveDeep(this._handleYEvents);
       this._yBlocks.clear();
@@ -337,45 +276,8 @@ export class TestDoc implements Doc {
     return this;
   }
 
-  redo() {
-    this._history.redo();
-  }
-
-  undo() {
-    this._history.undo();
-  }
-
   remove() {
     this._destroy();
     this.rootDoc.getMap('spaces').delete(this.id);
-  }
-
-  resetHistory() {
-    this._history.clear();
-  }
-
-  /**
-   * If `shouldTransact` is `false`, the transaction will not be push to the history stack.
-   */
-  transact(fn: () => void, shouldTransact: boolean = this._shouldTransact) {
-    this._ySpaceDoc.transact(
-      () => {
-        try {
-          fn();
-        } catch (e) {
-          console.error(
-            `An error occurred while Y.doc ${this._ySpaceDoc.guid} transacting:`
-          );
-          console.error(e);
-        }
-      },
-      shouldTransact ? this.rootDoc.clientID : null
-    );
-  }
-
-  withoutTransact(callback: () => void) {
-    this._shouldTransact = false;
-    callback();
-    this._shouldTransact = true;
   }
 }
