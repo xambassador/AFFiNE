@@ -177,9 +177,5 @@
       "**/*.spec.ts",
       "**/*.e2e.ts"
     ]
-  },
-  "stableVersion": "0.5.3",
-  "installConfig": {
-    "hoistingLimits": "workspaces"
   }
 }
