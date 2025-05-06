@@ -26,11 +26,13 @@ import { computed, effect, type Signal, signal } from '@preact/signals-core';
 import { html, nothing, type TemplateResult } from 'lit';
 import { query } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
+import { styleMap } from 'lit/directives/style-map.js';
 import { bundledLanguagesInfo, type ThemedToken } from 'shiki';
 
 import { CodeBlockConfigExtension } from './code-block-config.js';
 import { CodeBlockInlineManagerExtension } from './code-block-inline.js';
 import { CodeBlockHighlighter } from './code-block-service.js';
+import { CodeBlockPreviewIdentifier } from './code-preview-extension.js';
 import { codeBlockStyles } from './styles.js';
 
 export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> {
@@ -384,6 +386,12 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
       this.std.getOptional(CodeBlockConfigExtension.identifier)
         ?.showLineNumbers ?? true;
 
+    const preview = !!this.model.props.preview;
+    const previewContext = this.std.getOptional(
+      CodeBlockPreviewIdentifier(this.model.props.language ?? '')
+    );
+    const shouldRenderPreview = preview && previewContext;
+
     return html`
       <div
         class=${classMap({
@@ -393,6 +401,9 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
         })}
       >
         <rich-text
+          style=${styleMap({
+            display: shouldRenderPreview ? 'none' : undefined,
+          })}
           .yText=${this.model.props.text.yText}
           .inlineEventSource=${this.topContenteditableElement ?? nothing}
           .undoManager=${this.doc.history}
@@ -416,7 +427,15 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
             : undefined}
         >
         </rich-text>
-
+        <div
+          style=${styleMap({
+            display: shouldRenderPreview ? undefined : 'none',
+          })}
+          contenteditable="false"
+          class="affine-code-block-preview"
+        >
+          ${previewContext?.renderer(this.model)}
+        </div>
         ${this.renderChildren(this.model)} ${Object.values(this.widgets)}
       </div>
     `;

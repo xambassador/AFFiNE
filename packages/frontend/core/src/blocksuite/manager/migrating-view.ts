@@ -12,11 +12,14 @@ import { getInternalViewExtensions } from '@blocksuite/affine/extensions/view';
 import { LinkedDocViewExtension } from '@blocksuite/affine/widgets/linked-doc/view';
 import type { FrameworkProvider } from '@toeverything/infra';
 
+import { CodeBlockPreviewExtensionProvider } from './code-block-preview';
+
 const manager = new ViewExtensionManager([
   ...getInternalViewExtensions(),
 
   AffineCommonViewExtension,
   AffineEditorViewExtension,
+  CodeBlockPreviewExtensionProvider,
 ]);
 
 export function getViewManager(

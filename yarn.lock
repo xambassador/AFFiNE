@@ -431,6 +431,7 @@ __metadata:
     "@types/lodash-es": "npm:^4.17.12"
     "@vanilla-extract/css": "npm:^1.17.0"
     "@vanilla-extract/dynamic": "npm:^2.1.2"
+    "@webcontainer/api": "npm:^1.6.1"
     animejs: "npm:^4.0.0"
     bytes: "npm:^3.1.2"
     clsx: "npm:^2.1.1"
@@ -16441,6 +16442,13 @@ __metadata:
     "@webassemblyjs/ast": "npm:1.14.1"
     "@xtuc/long": "npm:4.2.2"
   checksum: 10/cef09aad2fcd291bfcf9efdae2ea1e961a1ba0f925d1d9dcdd8c746d32fbaf431b6d26a0241699c0e39f82139018aa720b4ceb84ac6f4c78f13072747480db69
+  languageName: node
+  linkType: hard
+
+"@webcontainer/api@npm:^1.6.1":
+  version: 1.6.1
+  resolution: "@webcontainer/api@npm:1.6.1"
+  checksum: 10/c5502da3a86425199f1171665f4c32bdb73cc5b8291abdee3a934023c2f276bb35382e0a36b067f9bd41d96a722419048ee89847852dcc3f60cba70bccf51ca6
   languageName: node
   linkType: hard
 

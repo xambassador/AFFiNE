@@ -120,6 +120,10 @@ const defaultDevServerConfig: DevServerConfiguration = {
       },
     ],
   },
+  headers: {
+    'Cross-Origin-Opener-Policy': 'same-origin',
+    'Cross-Origin-Embedder-Policy': 'require-corp',
+  },
   proxy: [
     {
       context: '/api',
