@@ -24,11 +24,6 @@ export class DocImpl implements Doc {
 
   private readonly _storeMap = new Map<string, Store>();
 
-  // doc/space container.
-  private readonly _handleYEvents = (events: Y.YEvent<YBlock | Y.Text>[]) => {
-    events.forEach(event => this._handleYEvent(event));
-  };
-
   private readonly _initSubDoc = () => {
     {
       // This is a piece of old version compatible code. The old version relies on the subdoc instance on `spaces`.
@@ -73,22 +68,6 @@ export class DocImpl implements Doc {
   readonly id: string;
 
   readonly rootDoc: Y.Doc;
-
-  readonly slots = {
-    // eslint-disable-next-line rxjs/finnish
-    yBlockUpdated: new Subject<
-      | {
-          type: 'add';
-          id: string;
-          isLocal: boolean;
-        }
-      | {
-          type: 'delete';
-          id: string;
-          isLocal: boolean;
-        }
-    >(),
-  };
 
   get blobSync() {
     return this.workspace.blobSync;
@@ -136,48 +115,6 @@ export class DocImpl implements Doc {
     return (readonly?.toString() as 'true' | 'false') ?? 'false';
   }
 
-  private _handleYBlockAdd(id: string, isLocal: boolean) {
-    this.slots.yBlockUpdated.next({ type: 'add', id, isLocal });
-  }
-
-  private _handleYBlockDelete(id: string, isLocal: boolean) {
-    this.slots.yBlockUpdated.next({ type: 'delete', id, isLocal });
-  }
-
-  private _handleYEvent(event: Y.YEvent<YBlock | Y.Text | Y.Array<unknown>>) {
-    // event on top-level block store
-    if (event.target !== this._yBlocks) {
-      return;
-    }
-    const isLocal =
-      !event.transaction.origin ||
-      !this._yBlocks.doc ||
-      event.transaction.origin instanceof Y.UndoManager ||
-      event.transaction.origin.proxy
-        ? true
-        : event.transaction.origin === this._yBlocks.doc.clientID;
-    event.keys.forEach((value, id) => {
-      try {
-        if (value.action === 'add') {
-          this._handleYBlockAdd(id, isLocal);
-          return;
-        }
-        if (value.action === 'delete') {
-          this._handleYBlockDelete(id, isLocal);
-          return;
-        }
-      } catch (e) {
-        console.error('An error occurred while handling Yjs event:');
-        console.error(e);
-      }
-    });
-  }
-
-  private _initYBlocks() {
-    const { _yBlocks } = this;
-    _yBlocks.observeDeep(this._handleYEvents);
-  }
-
   clear() {
     this._yBlocks.clear();
   }
@@ -198,7 +135,6 @@ export class DocImpl implements Doc {
     this._destroy();
 
     if (this.ready) {
-      this._yBlocks.unobserveDeep(this._handleYEvents);
       this._yBlocks.clear();
     }
   }
@@ -265,12 +201,6 @@ export class DocImpl implements Doc {
     this.spaceDoc.load();
     this.workspace.onLoadDoc?.(this.spaceDoc);
     this.workspace.onLoadAwareness?.(this.awarenessStore.awareness);
-
-    this._initYBlocks();
-
-    this._yBlocks.forEach((_, id) => {
-      this._handleYBlockAdd(id, false);
-    });
 
     initFn?.();
 

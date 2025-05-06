@@ -1,4 +1,3 @@
-import type { Subject } from 'rxjs';
 import type * as Y from 'yjs';
 
 import type { AwarenessStore } from '../yjs/awareness.js';
@@ -18,18 +17,6 @@ export interface Doc {
   load(initFn?: () => void): void;
   get ready(): boolean;
   dispose(): void;
-
-  slots: {
-    /**
-     * @internal
-     * This fires when the doc yBlock is updated.
-     */
-    yBlockUpdated: Subject<{
-      type: 'add' | 'delete';
-      id: string;
-      isLocal: boolean;
-    }>;
-  };
 
   clear(): void;
   getStore(options?: GetBlocksOptions): Store;

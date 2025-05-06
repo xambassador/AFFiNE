@@ -19,6 +19,7 @@ import {
   type BlockModel,
   type BlockOptions,
   type BlockProps,
+  type YBlock,
 } from '../block/index.js';
 import type { Doc } from '../doc.js';
 import { DocCRUD } from './crud.js';
@@ -134,7 +135,7 @@ type StoreBlockUpdatedPayloads =
  * @interface
  * @category Store
  */
-export type StoreSlots = Doc['slots'] & {
+export type StoreSlots = {
   /**
    * This fires after `doc.load` is called.
    * The Y.Doc is fully loaded and ready to use.
@@ -165,6 +166,19 @@ export type StoreSlots = Doc['slots'] & {
    * This fires when the history is updated.
    */
   historyUpdated: Subject<void>;
+  /** @internal */
+  yBlockUpdated: Subject<
+    | {
+        type: 'add';
+        id: string;
+        isLocal: boolean;
+      }
+    | {
+        type: 'delete';
+        id: string;
+        isLocal: boolean;
+      }
+  >;
 };
 
 const internalExtensions = [StoreSelectionExtension];
@@ -555,7 +569,7 @@ export class Store {
       rootDeleted: new Subject(),
       blockUpdated: new Subject(),
       historyUpdated: new Subject(),
-      yBlockUpdated: this._doc.slots.yBlockUpdated,
+      yBlockUpdated: new Subject(),
     };
     this._schema = new Schema();
 
@@ -583,6 +597,11 @@ export class Store {
     if (query) {
       this._query = query;
     }
+
+    this._yBlocks.observeDeep(this._handleYEvents);
+    this._yBlocks.forEach((_, id) => {
+      this._handleYBlockAdd(id, false);
+    });
 
     this._yBlocks.forEach((_, id) => {
       if (id in this._blocks.peek()) {
@@ -622,7 +641,7 @@ export class Store {
 
   private readonly _subscribeToSlots = () => {
     this.disposableGroup.add(
-      this._doc.slots.yBlockUpdated.subscribe(({ type, id, isLocal }) => {
+      this.slots.yBlockUpdated.subscribe(({ type, id, isLocal }) => {
         switch (type) {
           case 'add': {
             this._onBlockAdded(id, isLocal, false);
@@ -1252,12 +1271,57 @@ export class Store {
     this._provider.getAll(StoreExtensionIdentifier).forEach(ext => {
       ext.disposed();
     });
+    if (this.doc.ready) {
+      this._yBlocks.unobserveDeep(this._handleYEvents);
+    }
     this.slots.ready.complete();
     this.slots.rootAdded.complete();
     this.slots.rootDeleted.complete();
     this.slots.blockUpdated.complete();
     this.slots.historyUpdated.complete();
+    this.slots.yBlockUpdated.complete();
     this.disposableGroup.dispose();
     this._isDisposed = true;
   }
+
+  private _handleYBlockAdd(id: string, isLocal: boolean) {
+    this.slots.yBlockUpdated.next({ type: 'add', id, isLocal });
+  }
+
+  private _handleYBlockDelete(id: string, isLocal: boolean) {
+    this.slots.yBlockUpdated.next({ type: 'delete', id, isLocal });
+  }
+
+  private _handleYEvent(event: Y.YEvent<YBlock | Y.Text | Y.Array<unknown>>) {
+    // event on top-level block store
+    if (event.target !== this._yBlocks) {
+      return;
+    }
+    const isLocal =
+      !event.transaction.origin ||
+      !this._yBlocks.doc ||
+      event.transaction.origin instanceof Y.UndoManager ||
+      event.transaction.origin.proxy
+        ? true
+        : event.transaction.origin === this._yBlocks.doc.clientID;
+    event.keys.forEach((value, id) => {
+      try {
+        if (value.action === 'add') {
+          this._handleYBlockAdd(id, isLocal);
+          return;
+        }
+        if (value.action === 'delete') {
+          this._handleYBlockDelete(id, isLocal);
+          return;
+        }
+      } catch (e) {
+        console.error('An error occurred while handling Yjs event:');
+        console.error(e);
+      }
+    });
+  }
+
+  private readonly _handleYEvents = (events: Y.YEvent<YBlock | Y.Text>[]) => {
+    events.forEach(event => this._handleYEvent(event));
+  };
 }
