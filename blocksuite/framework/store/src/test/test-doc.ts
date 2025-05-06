@@ -1,4 +1,3 @@
-import { Subject } from 'rxjs';
 import * as Y from 'yjs';
 
 import type { YBlock } from '../model/block/types.js';
@@ -28,7 +27,6 @@ export class TestDoc implements Doc {
       });
       this.rootDoc.getMap('spaces').set(this.id, subDoc);
       this._loaded = true;
-      this._onLoadSlot.next();
     } else {
       this._loaded = false;
       this.rootDoc.on('subdocs', this._onSubdocEvent);
@@ -38,8 +36,6 @@ export class TestDoc implements Doc {
   };
 
   private _loaded!: boolean;
-
-  private readonly _onLoadSlot = new Subject<void>();
 
   private readonly _onSubdocEvent = ({
     loaded,
@@ -54,7 +50,6 @@ export class TestDoc implements Doc {
     }
     this.rootDoc.off('subdocs', this._onSubdocEvent);
     this._loaded = true;
-    this._onLoadSlot.next();
   };
 
   /** Indicate whether the block tree is ready */
@@ -132,7 +127,6 @@ export class TestDoc implements Doc {
 
   private _destroy() {
     this._ySpaceDoc.destroy();
-    this._onLoadSlot.complete();
     this._loaded = false;
   }
 

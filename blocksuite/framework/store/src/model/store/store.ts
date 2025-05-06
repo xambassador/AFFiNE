@@ -601,9 +601,7 @@ export class Store {
     this._yBlocks.observeDeep(this._handleYEvents);
     this._yBlocks.forEach((_, id) => {
       this._handleYBlockAdd(id, false);
-    });
 
-    this._yBlocks.forEach((_, id) => {
       if (id in this._blocks.peek()) {
         return;
       }

@@ -9,7 +9,6 @@ import {
   type Workspace,
   type YBlock,
 } from '@blocksuite/affine/store';
-import { Subject } from 'rxjs';
 import { Awareness } from 'y-protocols/awareness.js';
 import * as Y from 'yjs';
 
@@ -24,7 +23,7 @@ export class DocImpl implements Doc {
 
   private readonly _storeMap = new Map<string, Store>();
 
-  private readonly _initSubDoc = () => {
+  private readonly _initSpaceDoc = () => {
     {
       // This is a piece of old version compatible code. The old version relies on the subdoc instance on `spaces`.
       // So if there is no subdoc on spaces, we will create it.
@@ -46,9 +45,6 @@ export class DocImpl implements Doc {
   };
 
   private _loaded!: boolean;
-
-  // eslint-disable-next-line rxjs/finnish
-  private readonly _onLoadSlot = new Subject();
 
   /** Indicate whether the block tree is ready */
   private _ready = false;
@@ -104,7 +100,7 @@ export class DocImpl implements Doc {
   constructor({ id, collection, doc }: DocOptions) {
     this.id = id;
     this.rootDoc = doc;
-    this._ySpaceDoc = this._initSubDoc() as Y.Doc;
+    this._ySpaceDoc = this._initSpaceDoc() as Y.Doc;
     this.awarenessStore = new AwarenessStore(new Awareness(this._ySpaceDoc));
 
     this._yBlocks = this._ySpaceDoc.getMap('blocks');
@@ -127,7 +123,6 @@ export class DocImpl implements Doc {
   private _destroy() {
     this.awarenessStore.destroy();
     this._ySpaceDoc.destroy();
-    this._onLoadSlot.unsubscribe();
     this._loaded = false;
   }
 
