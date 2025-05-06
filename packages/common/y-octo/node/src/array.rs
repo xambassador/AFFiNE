@@ -1,4 +1,7 @@
-use napi::{bindgen_prelude::Array as JsArray, Env, JsUnknown, ValueType};
+use napi::{
+  bindgen_prelude::{Array as JsArray, Env, Unknown},
+  ValueType,
+};
 use y_octo::{Any, Array, Value};
 
 use super::*;
@@ -104,7 +107,7 @@ impl YArray {
             Ok((object, length)) => {
               for i in 0..length {
                 if let Ok(any) = object
-                  .get_element::<JsUnknown>(i)
+                  .get_element::<Unknown>(i)
                   .and_then(get_any_from_js_unknown)
                 {
                   self

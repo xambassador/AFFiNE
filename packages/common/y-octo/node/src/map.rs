@@ -1,4 +1,4 @@
-use napi::{Env, JsObject, ValueType};
+use napi::bindgen_prelude::{Env, Object, ValueType};
 use y_octo::{Any, Map, Value};
 
 use super::*;
@@ -10,12 +10,6 @@ pub struct YMap {
 
 #[napi]
 impl YMap {
-  #[allow(clippy::new_without_default)]
-  #[napi(constructor)]
-  pub fn new() -> Self {
-    unimplemented!()
-  }
-
   pub(crate) fn inner_new(map: Map) -> Self {
     Self { map }
   }
@@ -111,7 +105,7 @@ impl YMap {
   }
 
   #[napi]
-  pub fn to_json(&self, env: Env) -> Result<JsObject> {
+  pub fn to_json(&self, env: Env) -> Result<Object> {
     let mut js_object = env.create_object()?;
     for (key, value) in self.map.iter() {
       js_object.set(key, get_js_unknown_from_value(env, value))?;
