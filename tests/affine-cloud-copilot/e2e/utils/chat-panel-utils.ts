@@ -264,8 +264,11 @@ export class ChatPanelUtils {
       await withMenu.getByTestId('ai-chat-with-tags').click();
       await withMenu.getByText(tag).click();
       await page.getByTestId('chat-panel-chips').getByText(tag);
+      await this.waitForEmbeddingProgress(page);
+      await withMenu.waitFor({
+        state: 'hidden',
+      });
     }
-    await this.waitForEmbeddingProgress(page);
   }
 
   public static async chatWithCollections(page: Page, collections: string[]) {
@@ -276,8 +279,11 @@ export class ChatPanelUtils {
       await withMenu.getByTestId('ai-chat-with-collections').click();
       await withMenu.getByText(collection).click();
       await page.getByTestId('chat-panel-chips').getByText(collection);
+      await this.waitForEmbeddingProgress(page);
+      await withMenu.waitFor({
+        state: 'hidden',
+      });
     }
-    await this.waitForEmbeddingProgress(page);
   }
 
   public static async waitForEmbeddingProgress(page: Page) {
