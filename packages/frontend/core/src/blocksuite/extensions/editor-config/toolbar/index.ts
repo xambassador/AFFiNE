@@ -355,7 +355,8 @@ function createToolbarMoreMenuConfigV2(baseUrl?: string) {
               const createdByUserId = model.props[createdBy] as string;
               const createdAtTimestamp = model.props[createdAt] as number;
               const date = new Date(createdAtTimestamp);
-              const userProvider = ctx.std.get(UserProvider);
+              const userProvider = ctx.std.getOptional(UserProvider);
+              if (!userProvider) return null;
               userProvider.revalidateUserInfo(createdByUserId);
               const userSignal = userProvider.userInfo$(createdByUserId);
               const isLoadingSignal = userProvider.isLoading$(createdByUserId);
