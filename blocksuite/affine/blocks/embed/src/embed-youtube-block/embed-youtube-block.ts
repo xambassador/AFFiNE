@@ -151,6 +151,7 @@ export class EmbedYoutubeBlockComponent extends EmbedBlockComponent<
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       allowfullscreen
                       loading="lazy"
+                      credentialless
                     ></iframe>
 
                     <!-- overlay to prevent the iframe from capturing pointer events -->

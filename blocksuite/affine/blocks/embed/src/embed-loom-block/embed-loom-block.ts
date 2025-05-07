@@ -127,6 +127,7 @@ export class EmbedLoomBlockComponent extends EmbedBlockComponent<
                       frameborder="0"
                       allow="fullscreen; accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                       loading="lazy"
+                      credentialless
                     ></iframe>
 
                     <!-- overlay to prevent the iframe from capturing pointer events -->

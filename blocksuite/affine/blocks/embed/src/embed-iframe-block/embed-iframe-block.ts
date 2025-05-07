@@ -311,6 +311,7 @@ export class EmbedIframeBlockComponent extends CaptionedBlockComponent<EmbedIfra
         ?allowfullscreen=${allowFullscreen}
         loading="lazy"
         frameborder="0"
+        credentialless
         src=${ifDefined(iframeUrl)}
         allow=${ifDefined(allow)}
         referrerpolicy=${ifDefined(referrerpolicy)}

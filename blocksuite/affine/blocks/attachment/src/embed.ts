@@ -157,6 +157,7 @@ const embedConfig: AttachmentEmbedConfig[] = [
           allowTransparency
           allowfullscreen
           type="application/pdf"
+          credentialless
         ></iframe>
         <div class="affine-attachment-embed-event-mask"></div>
       `;
