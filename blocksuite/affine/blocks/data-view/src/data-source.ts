@@ -169,7 +169,7 @@ export class BlockQueryDataSource extends DataSourceBase {
     insertToPosition: InsertToPosition,
     type: string | undefined
   ): string {
-    const doc = this.block.doc;
+    const doc = this.block.store;
     doc.captureSync();
     const column = DatabaseBlockDataSource.propertiesMap.value[
       type ?? propertyPresets.multiSelectPropertyConfig.type
@@ -292,7 +292,7 @@ export class BlockQueryDataSource extends DataSourceBase {
           ].config.propertyData.default(),
         cells: currentCells.map(() => undefined),
       };
-      this.block.doc.captureSync();
+      this.block.store.captureSync();
       viewColumn.type = toType;
       viewColumn.data = result.property;
       currentCells.forEach((value, i) => {

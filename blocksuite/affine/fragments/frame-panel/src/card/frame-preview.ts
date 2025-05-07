@@ -112,7 +112,7 @@ export class FramePreview extends WithDisposable(ShadowlessElement) {
   };
 
   get _originalDoc() {
-    return this.frame.doc;
+    return this.frame.store;
   }
 
   private _initPreviewDoc() {

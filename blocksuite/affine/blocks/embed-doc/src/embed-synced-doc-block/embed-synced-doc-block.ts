@@ -276,10 +276,10 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
   });
 
   convertToCard = (aliasInfo?: AliasInfo) => {
-    const { doc } = this.model;
+    const { store } = this.model;
     const { caption } = this.model.props;
 
-    const parent = doc.getParent(this.model);
+    const parent = store.getParent(this.model);
     if (!parent) {
       console.error(
         `Trying to convert synced doc to card, but the parent is not found.`
@@ -288,14 +288,14 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
     }
     const index = parent.children.indexOf(this.model);
 
-    const blockId = doc.addBlock(
+    const blockId = store.addBlock(
       'affine:embed-linked-doc',
       { caption, ...this.referenceInfo, ...aliasInfo },
       parent,
       index
     );
 
-    doc.deleteBlock(this.model);
+    store.deleteBlock(this.model);
 
     this.std.selection.setGroup('note', [
       this.std.selection.create(BlockSelection, { blockId }),
@@ -303,8 +303,8 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
   };
 
   convertToInline = () => {
-    const { doc } = this.model;
-    const parent = doc.getParent(this.model);
+    const { store } = this.model;
+    const parent = store.getParent(this.model);
     if (!parent) {
       console.error(
         `Trying to convert synced doc to inline, but the parent is not found.`
@@ -323,7 +323,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
     });
     const text = new Text(yText);
 
-    doc.addBlock(
+    store.addBlock(
       'affine:paragraph',
       {
         text,
@@ -332,7 +332,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
       index
     );
 
-    doc.deleteBlock(this.model);
+    store.deleteBlock(this.model);
   };
 
   protected override embedContainerStyle: StyleInfo = {

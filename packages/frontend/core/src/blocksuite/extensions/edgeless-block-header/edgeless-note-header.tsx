@@ -55,7 +55,7 @@ const EdgelessNoteToggleButton = ({ note }: { note: NoteBlockModel }) => {
 
     const dispose = selection.slots.updated.subscribe(() => {
       if (selection.has(note.id) && selection.editing) {
-        note.doc.transact(() => {
+        note.store.transact(() => {
           note.props.edgeless.collapse = false;
         });
       }
@@ -68,7 +68,7 @@ const EdgelessNoteToggleButton = ({ note }: { note: NoteBlockModel }) => {
     track.edgeless.pageBlock.headerToolbar.toggle({
       type: collapsed ? 'expand' : 'collapse',
     });
-    note.doc.transact(() => {
+    note.store.transact(() => {
       if (collapsed) {
         note.props.edgeless.collapse = false;
       } else {
@@ -134,7 +134,7 @@ const PageBlockInfoButton = ({ note }: { note: NoteBlockModel }) => {
 
   return (
     <DocInfoButton
-      docId={note.doc.id}
+      docId={note.store.id}
       trackFn={trackFn}
       data-testid="edgeless-note-info-button"
     />
@@ -148,7 +148,7 @@ const NoteCopyLinkButton = ({ note }: { note: NoteBlockModel }) => {
 
   return (
     <CopyLinkButton
-      pageId={note.doc.id}
+      pageId={note.store.id}
       blockId={note.id}
       mode="edgeless"
       trackFn={trackFn}

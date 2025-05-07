@@ -402,7 +402,7 @@ export class SurfaceRefBlockComponent extends BlockComponent<SurfaceRefBlockMode
     openMode?: OpenDocMode;
     event?: MouseEvent;
   } = {}) => {
-    const pageId = this.referenceModel?.surface?.doc.id;
+    const pageId = this.referenceModel?.surface?.store.id;
     if (!pageId) return;
 
     this.std.getOptional(RefNodeSlotsProvider)?.docLinkClicked.next({

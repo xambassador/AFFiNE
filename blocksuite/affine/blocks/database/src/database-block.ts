@@ -434,13 +434,13 @@ export class DatabaseBlockComponent extends CaptionedBlockComponent<DatabaseBloc
                   return peekViewService.peek({
                     docId,
                     databaseId: this.blockId,
-                    databaseDocId: this.model.doc.id,
+                    databaseDocId: this.model.store.id,
                     databaseRowId: data.rowId,
                     target: this,
                   });
                 };
                 const doc = getSingleDocIdFromText(
-                  this.model.doc.getBlock(data.rowId)?.model?.text
+                  this.model.store.getBlock(data.rowId)?.model?.text
                 );
                 if (doc) {
                   return openDoc(doc);

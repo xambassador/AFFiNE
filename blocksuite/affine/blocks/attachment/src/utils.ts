@@ -27,7 +27,7 @@ export async function getAttachmentBlob(model: AttachmentBlockModel) {
   const type = type$.peek();
   if (!sourceId) return null;
 
-  const doc = model.doc;
+  const doc = model.store;
   const blob = await doc.blobSync.get(sourceId);
   if (!blob) return null;
 

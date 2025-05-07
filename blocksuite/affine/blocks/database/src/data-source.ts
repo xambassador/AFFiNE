@@ -99,7 +99,7 @@ export class DatabaseBlockDataSource extends DataSourceBase {
 
   readonly$: ReadonlySignal<boolean> = computed(() => {
     return (
-      this._model.doc.readonly ||
+      this._model.store.readonly ||
       // TODO(@L-Sun): use block level readonly
       IS_MOBILE
     );
@@ -120,7 +120,7 @@ export class DatabaseBlockDataSource extends DataSourceBase {
   viewMetas = databaseBlockViews;
 
   get doc() {
-    return this._model.doc;
+    return this._model.store;
   }
 
   allPropertyMetas$ = computed<PropertyMetaConfig<any, any, any, any>[]>(() => {
@@ -302,7 +302,7 @@ export class DatabaseBlockDataSource extends DataSourceBase {
       return;
     }
     const { column: prevColumn, index } = result;
-    this._model.doc.transact(() => {
+    this._model.store.transact(() => {
       if (index >= 0) {
         const result = updater(prevColumn);
         this._model.props.columns[index] = { ...prevColumn, ...result };
@@ -500,15 +500,15 @@ export class DatabaseBlockDataSource extends DataSourceBase {
   }
 
   viewDataAdd(viewData: DataViewDataType): string {
-    this._model.doc.captureSync();
-    this._model.doc.transact(() => {
+    this._model.store.captureSync();
+    this._model.store.transact(() => {
       this._model.props.views = [...this._model.props.views, viewData];
     });
     return viewData.id;
   }
 
   viewDataDelete(viewId: string): void {
-    this._model.doc.captureSync();
+    this._model.store.captureSync();
     deleteView(this._model, viewId);
   }
 

@@ -387,7 +387,7 @@ export function responseToExpandMindmap(host: EditorHost, ctx: AIContext) {
 
     if (!subtree) return;
 
-    surface.doc.transact(() => {
+    surface.store.transact(() => {
       const updateNodeSize = (node: typeof subtree) => {
         fitContent(node.element as ShapeElementModel);
 

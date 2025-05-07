@@ -36,7 +36,7 @@ async function getImageBlob(model: ImageBlockModel) {
   const sourceId = model.props.sourceId$.peek();
   if (!sourceId) return null;
 
-  const doc = model.doc;
+  const doc = model.store;
   let blob = await doc.blobSync.get(sourceId);
   if (!blob) return null;
 
@@ -419,15 +419,15 @@ export function duplicate(block: ImageBlockComponent) {
     ...duplicateProps
   } = blockProps;
 
-  const { doc } = model;
-  const parent = doc.getParent(model);
+  const { store } = model;
+  const parent = store.getParent(model);
   if (!parent) {
     console.error(`Parent not found for block(${model.flavour}) ${model.id}`);
     return;
   }
 
   const index = parent?.children.indexOf(model);
-  const duplicateId = doc.addBlock(
+  const duplicateId = store.addBlock(
     model.flavour,
     duplicateProps,
     parent,

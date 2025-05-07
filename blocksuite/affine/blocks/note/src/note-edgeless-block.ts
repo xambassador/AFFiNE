@@ -130,14 +130,14 @@ export class EdgelessNoteBlockComponent extends toGfxBlockComponent(
     const { collapse, collapsedHeight } = this.model.props.edgeless;
 
     if (collapse) {
-      this.model.doc.updateBlock(this.model, () => {
+      this.model.store.updateBlock(this.model, () => {
         this.model.props.edgeless.collapse = false;
       });
     } else if (collapsedHeight) {
       const { xywh, edgeless } = this.model.props;
       const bound = Bound.deserialize(xywh);
       bound.h = collapsedHeight * (edgeless.scale ?? 1);
-      this.model.doc.updateBlock(this.model, () => {
+      this.model.store.updateBlock(this.model, () => {
         this.model.props.edgeless.collapse = true;
         this.model.props.xywh = bound.serialize();
       });

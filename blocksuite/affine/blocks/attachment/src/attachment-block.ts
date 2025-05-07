@@ -42,7 +42,7 @@ import { downloadAttachmentBlob, refreshData } from './utils';
 
 @Peekable({
   enableOn: ({ model }: AttachmentBlockComponent) => {
-    return !model.doc.readonly && model.props.type.endsWith('pdf');
+    return !model.store.readonly && model.props.type.endsWith('pdf');
   },
 })
 export class AttachmentBlockComponent extends CaptionedBlockComponent<AttachmentBlockModel> {

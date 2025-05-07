@@ -438,7 +438,7 @@ export class ExportManager {
       if (matchModels(block, [ImageBlockModel])) {
         if (!block.props.sourceId) return;
 
-        const blob = await block.doc.blobSync.get(block.props.sourceId);
+        const blob = await block.store.blobSync.get(block.props.sourceId);
         if (!blob) return;
 
         const blobToImage = (blob: Blob) =>

@@ -137,10 +137,10 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
     if (this._referenceToNode) return;
 
     const { caption } = this.model.props;
-    const { parent, doc } = this.model;
+    const { parent, store } = this.model;
     const index = parent?.children.indexOf(this.model);
 
-    const blockId = doc.addBlock(
+    const blockId = store.addBlock(
       'affine:embed-synced-doc',
       {
         caption,
@@ -150,7 +150,7 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
       index
     );
 
-    doc.deleteBlock(this.model);
+    store.deleteBlock(this.model);
 
     this.std.selection.setGroup('note', [
       this.std.selection.create(BlockSelection, { blockId }),
@@ -158,8 +158,8 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
   };
 
   convertToInline = () => {
-    const { doc } = this.model;
-    const parent = doc.getParent(this.model);
+    const { store } = this.model;
+    const parent = store.getParent(this.model);
     if (!parent) {
       return;
     }
@@ -175,7 +175,7 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
     });
     const text = new Text(yText);
 
-    doc.addBlock(
+    store.addBlock(
       'affine:paragraph',
       {
         text,
@@ -184,7 +184,7 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
       index
     );
 
-    doc.deleteBlock(this.model);
+    store.deleteBlock(this.model);
   };
 
   referenceInfo$ = computed(() => {

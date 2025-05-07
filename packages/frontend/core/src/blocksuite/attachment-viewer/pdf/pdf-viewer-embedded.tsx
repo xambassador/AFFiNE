@@ -74,7 +74,7 @@ export function PDFViewerEmbedded({ model }: AttachmentViewerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const peek = useCallback(() => {
-    const target = model.doc.getBlock(model.id);
+    const target = model.store.getBlock(model.id);
     if (!target) return;
     peekView.open({ element: target }).catch(console.error);
   }, [peekView, model]);

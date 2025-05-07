@@ -26,11 +26,13 @@ export function patchForEdgelessNoteConfig(
       reactToLit(<EdgelessNoteHeader note={note} />),
     pageBlockTitle: ({ note }) => {
       const journalService = framework.get(JournalService);
-      const isJournal = !!journalService.journalDate$(note.doc.id).value;
+      const isJournal = !!journalService.journalDate$(note.store.id).value;
       if (isJournal) {
-        return reactToLit(<BlocksuiteEditorJournalDocTitle page={note.doc} />);
+        return reactToLit(
+          <BlocksuiteEditorJournalDocTitle page={note.store} />
+        );
       } else {
-        return html`<doc-title .doc=${note.doc}></doc-title>`;
+        return html`<doc-title .doc=${note.store}></doc-title>`;
       }
     },
     pageBlockViewportFitAnimation: insidePeekView

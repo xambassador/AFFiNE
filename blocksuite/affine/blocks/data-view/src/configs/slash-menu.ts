@@ -21,7 +21,7 @@ export const dataViewSlashMenuConfig: SlashMenuConfig = {
       },
       group: '7_Database@1',
       when: ({ model, std }) =>
-        !isInsideBlockByFlavour(model.doc, model, 'affine:edgeless-text') &&
+        !isInsideBlockByFlavour(model.store, model, 'affine:edgeless-text') &&
         !!std.get(FeatureFlagService).getFlag('enable_block_query'),
 
       action: ({ model, std }) => {
@@ -43,7 +43,7 @@ export const dataViewSlashMenuConfig: SlashMenuConfig = {
         dataView?.dataSource.viewManager.viewAdd('table');
 
         if (model.text?.length === 0) {
-          model.doc.deleteBlock(model);
+          model.store.deleteBlock(model);
         }
       },
     },

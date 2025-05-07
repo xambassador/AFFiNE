@@ -98,7 +98,7 @@ export class AttachmentEmbedService extends Extension {
   convertTo(model: AttachmentBlockModel, maxFileSize = this._maxFileSize) {
     const config = this.values.find(config => config.check(model, maxFileSize));
     if (!config?.action) {
-      model.doc.updateBlock(model, { embed: true });
+      model.store.updateBlock(model, { embed: true });
       return;
     }
     config.action(model, this.std)?.catch(console.error);
@@ -129,7 +129,7 @@ const embedConfig: AttachmentEmbedConfig[] = [
   {
     name: 'image',
     check: model =>
-      model.doc.schema.flavourSchemaMap.has('affine:image') &&
+      model.store.schema.flavourSchemaMap.has('affine:image') &&
       model.props.type.startsWith('image/'),
     async action(model, std) {
       const component = std.view.getBlock(model.id);
@@ -189,7 +189,7 @@ const embedConfig: AttachmentEmbedConfig[] = [
  * Turn the attachment block into an image block.
  */
 async function turnIntoImageBlock(model: AttachmentBlockModel) {
-  if (!model.doc.schema.flavourSchemaMap.has('affine:image')) {
+  if (!model.store.schema.flavourSchemaMap.has('affine:image')) {
     console.error('The image flavour is not supported!');
     return;
   }

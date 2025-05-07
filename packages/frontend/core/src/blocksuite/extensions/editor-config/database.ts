@@ -42,7 +42,7 @@ function createCopyLinkToBlockMenuItem(
     },
     select: () => {
       const serverService = framework.get(ServerService);
-      const pageId = model.doc.id;
+      const pageId = model.store.id;
       const { editor } = framework.get(EditorService);
       const mode = editor.mode$.value;
 

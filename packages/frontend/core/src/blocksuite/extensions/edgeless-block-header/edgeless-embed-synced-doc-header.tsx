@@ -54,7 +54,7 @@ const ToggleButton = ({ model }: { model: EmbedSyncedDocModel }) => {
   }, [model.props.preFoldHeight$, model.xywh$]);
 
   const toggle = useCallback(() => {
-    model.doc.captureSync();
+    model.store.captureSync();
 
     batch(() => {
       const { x, y, w, h } = model.elementBound;

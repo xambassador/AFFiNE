@@ -88,7 +88,7 @@ export class PreviewHelper {
         setup(di) {
           di.override(BlockViewIdentifier('affine:image'), () => {
             return (model: BlockModel) => {
-              const parent = model.doc.getParent(model.id);
+              const parent = model.store.getParent(model.id);
 
               if (parent?.flavour === 'affine:surface') {
                 return literal`affine-edgeless-placeholder-preview-image`;

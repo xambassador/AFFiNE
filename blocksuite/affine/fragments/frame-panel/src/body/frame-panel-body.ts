@@ -312,7 +312,7 @@ export class FramePanelBody extends SignalWatcher(
       const after = frames[insertIndex]?.props.presentationIndex || null;
       selectedFrames.forEach(frame => {
         const newIndex = generateKeyBetweenV2(before, after);
-        frame.doc.updateBlock(frame, {
+        frame.store.updateBlock(frame, {
           presentationIndex: newIndex,
         });
         before = newIndex;

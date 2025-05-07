@@ -60,7 +60,7 @@ export async function downloadBlobToBuffer(model: AttachmentBlockModel) {
     throw new Error('Attachment not found');
   }
 
-  const blob = await model.doc.blobSync.get(sourceId);
+  const blob = await model.store.blobSync.get(sourceId);
   if (!blob) {
     throw new Error('Attachment not found');
   }

@@ -363,7 +363,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
 
   copyCode() {
     const model = this.model;
-    const slice = Slice.fromModels(model.doc, [model]);
+    const slice = Slice.fromModels(model.store, [model]);
     this.std.clipboard
       .copySlice(slice)
       .then(() => {

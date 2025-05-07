@@ -16,7 +16,7 @@ export function patchForPDFEmbedView(reactToLit: ReactToLit): ExtensionType {
           const bound = Bound.deserialize(model.props.xywh);
           bound.w = 537 + 24 + 2;
           bound.h = 759 + 46 + 24 + 2;
-          model.doc.updateBlock(model, {
+          model.store.updateBlock(model, {
             embed: true,
             style: 'pdf',
             xywh: bound.serialize(),
