@@ -1,4 +1,10 @@
-import type { Doc, GetStoreOptions, RemoveStoreOptions } from './doc';
+import type {
+  Doc,
+  ExtensionType,
+  GetStoreOptions,
+  RemoveStoreOptions,
+} from '../extension';
+import { DocIdentifier } from '../extension/workspace';
 import { type Query, Store } from './store';
 
 export class StoreContainer {
@@ -27,12 +33,18 @@ export class StoreContainer {
       return this._storeMap.get(key) as Store;
     }
 
+    const storeExtension: ExtensionType = {
+      setup: di => {
+        di.addImpl(DocIdentifier, () => this.doc);
+      },
+    };
+
     const doc = new Store({
       doc: this.doc,
       readonly,
       query,
       provider,
-      extensions,
+      extensions: [storeExtension].concat(extensions ?? []),
     });
 
     this._storeMap.set(key, doc);

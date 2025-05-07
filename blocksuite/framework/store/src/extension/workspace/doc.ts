@@ -1,8 +1,8 @@
+import { createIdentifier } from '@blocksuite/global/di';
 import type * as Y from 'yjs';
 
-import type { AwarenessStore } from '../yjs/awareness.js';
-import type { YBlock } from './block/types.js';
-import type { Store, StoreOptions } from './store/store.js';
+import type { Store, StoreOptions, YBlock } from '../../model';
+import type { AwarenessStore } from '../../yjs';
 import type { Workspace } from './workspace.js';
 import type { DocMeta } from './workspace-meta.js';
 
@@ -34,3 +34,5 @@ export interface Doc {
   get spaceDoc(): Y.Doc;
   get yBlocks(): Y.Map<YBlock>;
 }
+
+export const DocIdentifier = createIdentifier<Doc>('store-doc');

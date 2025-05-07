@@ -14,8 +14,12 @@ import { Subject } from 'rxjs';
 import { Awareness } from 'y-protocols/awareness.js';
 import * as Y from 'yjs';
 
-import type { ExtensionType } from '../extension/extension.js';
-import type { Doc, Workspace, WorkspaceMeta } from '../model/index.js';
+import type {
+  Doc,
+  ExtensionType,
+  Workspace,
+  WorkspaceMeta,
+} from '../extension/index.js';
 import { type IdGenerator, nanoid } from '../utils/id-generator.js';
 import { AwarenessStore } from '../yjs/index.js';
 import { TestDoc } from './test-doc.js';

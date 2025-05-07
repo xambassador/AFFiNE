@@ -3,7 +3,7 @@ import type { Subject } from 'rxjs';
 import type { Awareness } from 'y-protocols/awareness.js';
 import type * as Y from 'yjs';
 
-import type { IdGenerator } from '../utils/id-generator.js';
+import type { IdGenerator } from '../../utils/id-generator';
 import type { Doc } from './doc.js';
 import type { WorkspaceMeta } from './workspace-meta.js';
 

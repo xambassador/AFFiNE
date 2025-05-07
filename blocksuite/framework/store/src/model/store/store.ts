@@ -8,9 +8,11 @@ import * as Y from 'yjs';
 import type { ExtensionType } from '../../extension/extension.js';
 import {
   BlockSchemaIdentifier,
+  type Doc,
   StoreExtensionIdentifier,
   StoreSelectionExtension,
 } from '../../extension/index.js';
+import { DocIdentifier } from '../../extension/workspace/doc.js';
 import { Schema } from '../../schema/index.js';
 import type { TransformerMiddleware } from '../../transformer/middleware.js';
 import { Transformer } from '../../transformer/transformer.js';
@@ -21,7 +23,6 @@ import {
   type BlockProps,
   type YBlock,
 } from '../block/index.js';
-import type { Doc } from '../doc.js';
 import { DocCRUD } from './crud.js';
 import { StoreIdentifier } from './identifier.js';
 import { type Query, runQuery } from './query.js';
@@ -561,8 +562,7 @@ export class Store {
    * In most cases, you don't need to use the constructor directly.
    * The store is created by the {@link Doc} instance.
    */
-  constructor({ doc, readonly, query, provider, extensions }: StoreOptions) {
-    this._doc = doc;
+  constructor({ readonly, query, provider, extensions }: StoreOptions) {
     this.slots = {
       ready: new Subject(),
       rootAdded: new Subject(),
@@ -590,6 +590,7 @@ export class Store {
     this._provider.getAll(BlockSchemaIdentifier).forEach(schema => {
       this._schema.register([schema]);
     });
+    this._doc = this._provider.get(DocIdentifier);
     this._crud = new DocCRUD(this._yBlocks, this._schema);
     if (readonly !== undefined) {
       this._readonly.value = readonly;

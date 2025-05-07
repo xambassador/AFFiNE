@@ -1,12 +1,8 @@
 import * as Y from 'yjs';
 
+import type { Doc, GetStoreOptions, Workspace } from '../extension/index.js';
 import type { YBlock } from '../model/block/types.js';
-import {
-  type Doc,
-  type GetStoreOptions,
-  StoreContainer,
-  type Workspace,
-} from '../model/index.js';
+import { StoreContainer } from '../model/index.js';
 import type { AwarenessStore } from '../yjs/index.js';
 import type { TestWorkspace } from './test-workspace.js';
 
