@@ -21,14 +21,20 @@ export class EditorUtils {
     await page.keyboard.press('Enter');
   }
 
-  public static async getEditorContent(page: Page) {
+  public static async getEditorContent(page: Page, trim = true) {
     let content = '';
     let retry = 3;
     while (!content && retry > 0) {
       const lines = await page.$$('page-editor .inline-editor');
       const contents = await Promise.all(lines.map(el => el.innerText()));
       content = contents
-        .map(c => c.replace(/[\u200B-\u200D\uFEFF]/g, '').trim())
+        .map(c => {
+          const invisibleFiltered = c.replace(/[\u200B-\u200D\uFEFF]/g, '');
+          if (trim) {
+            return invisibleFiltered.trim();
+          }
+          return invisibleFiltered;
+        })
         .filter(c => !!c)
         .join('\n');
       if (!content) {
