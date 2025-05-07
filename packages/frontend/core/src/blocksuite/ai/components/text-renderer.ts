@@ -273,6 +273,21 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
             this._doc.readonly = true;
             this.requestUpdate();
             if (this.state !== 'generating') {
+              // LinkPreviewerService & ImageProxyService config should read from host settings
+              const linkPreviewerService =
+                this.host?.std.store.get(LinkPreviewerService);
+              const imageProxyService =
+                this.host?.std.store.get(ImageProxyService);
+              if (linkPreviewerService) {
+                this._doc
+                  ?.get(LinkPreviewerService)
+                  .setEndpoint(linkPreviewerService.endpoint);
+              }
+              if (imageProxyService) {
+                this._doc
+                  ?.get(ImageProxyService)
+                  .setImageProxyURL(imageProxyService.imageProxyURL);
+              }
               this._clearTimer();
             }
           })
@@ -288,20 +303,6 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
     this._updateDoc();
     if (this.state === 'generating') {
       this._timer = setInterval(this._updateDoc, 600);
-    }
-
-    // LinkPreviewerService & ImageProxyService config should read from host settings
-    const linkPreviewerService = this.host?.std.store.get(LinkPreviewerService);
-    const imageProxyService = this.host?.std.store.get(ImageProxyService);
-    if (linkPreviewerService) {
-      this._doc
-        ?.get(LinkPreviewerService)
-        .setEndpoint(linkPreviewerService.endpoint);
-    }
-    if (imageProxyService) {
-      this._doc
-        ?.get(ImageProxyService)
-        .setImageProxyURL(imageProxyService.imageProxyURL);
     }
   }
 

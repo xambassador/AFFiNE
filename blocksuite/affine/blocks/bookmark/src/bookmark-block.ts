@@ -6,6 +6,7 @@ import type {
   BookmarkBlockModel,
   LinkPreviewData,
 } from '@blocksuite/affine-model';
+import { ImageProxyService } from '@blocksuite/affine-shared/adapters';
 import {
   DocModeProvider,
   LinkPreviewerService,
@@ -119,6 +120,10 @@ export class BookmarkBlockComponent extends CaptionedBlockComponent<BookmarkBloc
     );
   }
 
+  get imageProxyService() {
+    return this.std.get(ImageProxyService);
+  }
+
   handleClick = (event: MouseEvent) => {
     event.stopPropagation();
 
@@ -135,9 +140,10 @@ export class BookmarkBlockComponent extends CaptionedBlockComponent<BookmarkBloc
   private readonly _renderCitationView = () => {
     const { url, footnoteIdentifier } = this.model.props;
     const { icon, title, description } = this.linkPreview$.value;
+    const iconSrc = icon ? this.imageProxyService.buildUrl(icon) : undefined;
     return html`
       <affine-citation-card
-        .icon=${icon}
+        .icon=${iconSrc}
         .citationTitle=${title || url}
         .citationContent=${description}
         .citationIdentifier=${footnoteIdentifier}
