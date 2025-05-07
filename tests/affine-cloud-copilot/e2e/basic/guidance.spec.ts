@@ -51,4 +51,21 @@ test.describe('AIBasic/Guidance', () => {
       expect(content).toBe(' ');
     }).toPass({ timeout: 5000 });
   });
+
+  test('should support text with space in ai panel input', async ({
+    page,
+    utils,
+  }) => {
+    await utils.editor.focusToEditor(page);
+    await page.keyboard.press('Space');
+    await expect(page.locator('affine-ai-panel-widget')).toBeVisible();
+
+    await page.keyboard.insertText('Hello');
+    await page.keyboard.press('Space');
+    await page.keyboard.insertText('World');
+    await expect(async () => {
+      const input = await page.locator('ai-panel-input textarea');
+      expect(await input.inputValue()).toBe('Hello World');
+    }).toPass({ timeout: 5000 });
+  });
 });

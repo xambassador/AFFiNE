@@ -52,8 +52,9 @@ export function setupSpaceAIEntry(panel: AffineAIPanelWidget) {
           event.preventDefault();
           insertSpace(host);
           panel.hide();
-          return;
         }
+
+        return;
       }
 
       const selection = host.selection.find(TextSelection);
