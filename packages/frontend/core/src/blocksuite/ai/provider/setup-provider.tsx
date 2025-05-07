@@ -96,7 +96,7 @@ export function setupAIProvider(
       params: {
         docs: contexts?.docs,
         files: contexts?.files,
-        searchMode: webSearch ? 'MUST' : 'CAN',
+        searchMode: webSearch ? 'MUST' : 'AUTO',
       },
     });
   });

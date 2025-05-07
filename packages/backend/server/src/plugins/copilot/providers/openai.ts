@@ -2,6 +2,7 @@ import {
   createOpenAI,
   openai,
   type OpenAIProvider as VercelOpenAIProvider,
+  OpenAIResponsesProviderOptions,
 } from '@ai-sdk/openai';
 import {
   AISDKError,
@@ -10,7 +11,6 @@ import {
   generateObject,
   generateText,
   streamText,
-  ToolSet,
 } from 'ai';
 
 import {
@@ -19,6 +19,7 @@ import {
   metrics,
   UserFriendlyError,
 } from '../../../base';
+import { createExaTool } from '../tools';
 import { CopilotProvider } from './provider';
 import {
   ChatMessageRole,
@@ -40,6 +41,11 @@ export const DEFAULT_DIMENSIONS = 256;
 export type OpenAIConfig = {
   apiKey: string;
   baseUrl?: string;
+};
+
+type OpenAITools = {
+  web_search_preview: ReturnType<typeof openai.tools.webSearchPreview>;
+  web_search: ReturnType<typeof createExaTool>;
 };
 
 export class OpenAIProvider
@@ -68,7 +74,7 @@ export class OpenAIProvider
     'gpt-4.1-2025-04-14',
     'gpt-4.1-mini',
     'o1',
-    'o3-mini',
+    'o4-mini',
     // embeddings
     'text-embedding-3-large',
     'text-embedding-3-small',
@@ -80,6 +86,8 @@ export class OpenAIProvider
     'dall-e-3',
     'gpt-image-1',
   ];
+
+  private readonly MAX_STEPS = 20;
 
   #instance!: VercelOpenAIProvider;
 
@@ -179,21 +187,28 @@ export class OpenAIProvider
     }
   }
 
-  private getTools(options: CopilotChatOptions): ToolSet | undefined {
+  private getTools(
+    options: CopilotChatOptions,
+    model: string
+  ): Partial<OpenAITools> {
+    const tools: Partial<OpenAITools> = {};
     if (options?.tools?.length) {
-      const tools: ToolSet = {};
       for (const tool of options.tools) {
         switch (tool) {
           case 'webSearch': {
-            tools.web_search_preview = openai.tools.webSearchPreview();
+            // o series reasoning models
+            if (model.startsWith('o')) {
+              tools.web_search = createExaTool(this.AFFiNEConfig);
+            } else {
+              tools.web_search_preview = openai.tools.webSearchPreview();
+            }
             break;
           }
         }
       }
       return tools;
     }
-
-    return undefined;
+    return tools;
   }
 
   // ====== text to text ======
@@ -231,10 +246,10 @@ export class OpenAIProvider
         : await generateText({
             ...commonParams,
             providerOptions: {
-              openai: options.user ? { user: options.user } : {},
+              openai: this.getOpenAIOptions(options),
             },
-            toolChoice: options.webSearch ? 'required' : 'auto',
-            tools: this.getTools(options),
+            tools: this.getTools(options, model),
+            maxSteps: this.MAX_STEPS,
           });
 
       return text.trim();
@@ -258,14 +273,16 @@ export class OpenAIProvider
 
       const modelInstance = this.#instance.responses(model);
 
+      const tools = this.getTools(options, model);
       const { fullStream } = streamText({
         model: modelInstance,
         system,
         messages: msgs,
-        tools: this.getTools(options),
         providerOptions: {
-          openai: options.user ? { user: options.user } : {},
+          openai: this.getOpenAIOptions(options),
         },
+        tools: tools as OpenAITools,
+        maxSteps: this.MAX_STEPS,
         frequencyPenalty: options.frequencyPenalty || 0,
         presencePenalty: options.presencePenalty || 0,
         temperature: options.temperature || 0,
@@ -274,12 +291,35 @@ export class OpenAIProvider
       });
 
       const parser = new CitationParser();
+      let lastType;
       for await (const chunk of fullStream) {
         if (chunk) {
           switch (chunk.type) {
             case 'text-delta': {
+              if (lastType !== chunk.type) {
+                yield `\n`;
+              }
               const result = parser.parse(chunk.textDelta);
               yield result;
+              break;
+            }
+            case 'reasoning': {
+              if (lastType !== chunk.type) {
+                yield `\n`;
+              }
+              yield chunk.textDelta;
+              break;
+            }
+            case 'tool-call': {
+              if (chunk.toolName === 'web_search') {
+                yield '\n' + `Searching the web "${chunk.args.query}"` + '\n';
+              }
+              break;
+            }
+            case 'tool-result': {
+              if (chunk.toolName === 'web_search') {
+                yield '\n' + this.getWebSearchLinks(chunk.result) + '\n';
+              }
               break;
             }
             case 'step-finish': {
@@ -287,12 +327,17 @@ export class OpenAIProvider
               yield result;
               break;
             }
+            case 'error': {
+              const error = chunk.error as { type: string; message: string };
+              throw new Error(error.message);
+            }
           }
 
           if (options.signal?.aborted) {
             await fullStream.cancel();
             break;
           }
+          lastType = chunk.type;
         }
       }
     } catch (e: any) {
@@ -379,5 +424,29 @@ export class OpenAIProvider
       metrics.ai.counter('generate_images_stream_errors').add(1, { model });
       throw e;
     }
+  }
+
+  private getOpenAIOptions(options: CopilotChatOptions) {
+    const result: OpenAIResponsesProviderOptions = {};
+    if (options?.reasoning) {
+      result.reasoningEffort = 'medium';
+      result.reasoningSummary = 'auto';
+    }
+    if (options?.user) {
+      result.user = options.user;
+    }
+    return result;
+  }
+
+  private getWebSearchLinks(
+    list: {
+      title: string | null;
+      url: string;
+    }[]
+  ): string {
+    const links = list.reduce((acc, result) => {
+      return acc + `\n[${result.title ?? result.url}](${result.url})\n`;
+    }, '\n');
+    return links + '\n';
   }
 }

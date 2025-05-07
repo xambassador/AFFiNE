@@ -10,8 +10,7 @@ export const createExaTool = (config: Config) => {
     parameters: z.object({
       query: z.string().describe('The query to search the web for.'),
       mode: z
-        .enum(['MUST', 'CAN'])
-        .optional()
+        .enum(['MUST', 'AUTO'])
         .describe('The mode to search the web for.'),
     }),
     execute: async ({ query, mode }) => {

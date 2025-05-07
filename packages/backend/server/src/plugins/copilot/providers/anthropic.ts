@@ -177,6 +177,12 @@ export class AnthropicProvider
             yield message.textDelta;
             break;
           }
+          case 'tool-call': {
+            if (message.toolName === 'web_search') {
+              yield '\n' + `Searching the web "${message.args.query}"` + '\n';
+            }
+            break;
+          }
           case 'tool-result': {
             if (message.toolName === 'web_search') {
               this.toolResults.push(this.getWebSearchLinks(message.result));
@@ -219,18 +225,15 @@ export class AnthropicProvider
     return undefined;
   }
 
-  private getAnthropicOptions(
-    options: CopilotChatOptions
-  ): AnthropicProviderOptions {
+  private getAnthropicOptions(options: CopilotChatOptions) {
+    const result: AnthropicProviderOptions = {};
     if (options?.reasoning) {
-      return {
-        thinking: {
-          type: 'enabled',
-          budgetTokens: 12000,
-        },
+      result.thinking = {
+        type: 'enabled',
+        budgetTokens: 12000,
       };
     }
-    return {};
+    return result;
   }
 
   private getWebSearchLinks(
