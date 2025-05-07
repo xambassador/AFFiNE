@@ -22,15 +22,13 @@ import type { BlockModel } from '@blocksuite/store';
 import type { AttachmentBlockComponent } from './attachment-block';
 
 export async function getAttachmentBlob(model: AttachmentBlockModel) {
-  const {
-    sourceId$: { value: sourceId },
-    type$: { value: type },
-  } = model.props;
+  const { sourceId$, type$ } = model.props;
+  const sourceId = sourceId$.peek();
+  const type = type$.peek();
   if (!sourceId) return null;
 
   const doc = model.doc;
-  let blob = await doc.blobSync.get(sourceId);
-
+  const blob = await doc.blobSync.get(sourceId);
   if (!blob) return null;
 
   return new Blob([blob], { type });
@@ -72,19 +70,9 @@ export function downloadAttachmentBlob(block: AttachmentBlockComponent) {
 
 export async function refreshData(block: AttachmentBlockComponent) {
   const model = block.model;
-  const sourceId = model.props.sourceId$.peek();
-  if (!sourceId) return;
-
   const type = model.props.type$.peek();
 
-  const url = await block.resourceController.createBlobUrlWith(type);
-  if (!url) return;
-
-  // Releases the previous url.
-  const prevUrl = block.blobUrl;
-  if (prevUrl) URL.revokeObjectURL(prevUrl);
-
-  block.blobUrl = url;
+  await block.resourceController.refreshUrlWith(type);
 }
 
 export async function getFileType(file: File) {
@@ -94,7 +82,7 @@ export async function getFileType(file: File) {
   const buffer = await file.arrayBuffer();
   const FileType = await import('file-type');
   const fileType = await FileType.fileTypeFromBuffer(buffer);
-  return fileType ? fileType.mime : '';
+  return fileType?.mime ?? '';
 }
 
 function hasExceeded(

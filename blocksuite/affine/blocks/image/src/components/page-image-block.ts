@@ -1,3 +1,4 @@
+import type { ResolvedStateInfo } from '@blocksuite/affine-components/resource';
 import {
   focusBlockEnd,
   focusBlockStart,
@@ -5,6 +6,7 @@ import {
   getPrevBlockCommand,
 } from '@blocksuite/affine-shared/commands';
 import { ImageSelection } from '@blocksuite/affine-shared/selection';
+import { unsafeCSSVarV2 } from '@blocksuite/affine-shared/theme';
 import { WithDisposable } from '@blocksuite/global/lit';
 import type { BlockComponent, UIEventStateContext } from '@blocksuite/std';
 import {
@@ -16,21 +18,37 @@ import type { BaseSelection } from '@blocksuite/store';
 import { css, html, type PropertyValues } from 'lit';
 import { property, query, state } from 'lit/decorators.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { when } from 'lit/directives/when.js';
 
-import type { ImageBlockComponent } from '../image-block.js';
-import { ImageResizeManager } from '../image-resize-manager.js';
-import { shouldResizeImage } from '../utils.js';
-import { ImageSelectedRect } from './image-selected-rect.js';
+import type { ImageBlockComponent } from '../image-block';
+import { ImageResizeManager } from '../image-resize-manager';
+import { shouldResizeImage } from '../utils';
+import { ImageSelectedRect } from './image-selected-rect';
 
 export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
   static override styles = css`
     affine-page-image {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       line-height: 0;
       cursor: pointer;
+    }
+
+    affine-page-image .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 20px;
+      height: 20px;
+      padding: 4px;
+      border-radius: 4px;
+      background: ${unsafeCSSVarV2('loading/backgroundLayer')};
     }
 
     affine-page-image .resizable-img {
@@ -182,7 +200,9 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
   }
 
   private _handleError() {
-    this.block.error = true;
+    this.block.resourceController.updateState({
+      errorMessage: 'Failed to download image!',
+    });
   }
 
   private _handleSelection() {
@@ -334,18 +354,23 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
       ? ImageSelectedRect(this._doc.readonly)
       : null;
 
+    const { loading, icon } = this.state;
+
     return html`
       <div class="resizable-img" style=${styleMap(imageSize)}>
         <img
           class="drag-target"
-          src=${this.block.blobUrl ?? ''}
           draggable="false"
-          @error=${this._handleError}
           loading="lazy"
+          src=${this.block.blobUrl}
+          alt=${this.block.model.props.caption$.value ?? 'Image'}
+          @error=${this._handleError}
         />
 
         ${imageSelectedRect}
       </div>
+
+      ${when(loading, () => html`<div class="loading">${icon}</div>`)}
     `;
   }
 
@@ -354,6 +379,9 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
 
   @property({ attribute: false })
   accessor block!: ImageBlockComponent;
+
+  @property({ attribute: false })
+  accessor state!: ResolvedStateInfo;
 
   @query('.resizable-img')
   accessor resizeImg!: HTMLElement;

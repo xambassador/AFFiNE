@@ -1,3 +1,4 @@
+import type { Disposable } from '@blocksuite/global/disposable';
 import type { BlobEngine, BlobState } from '@blocksuite/sync';
 import { effect, type ReadonlySignal, signal } from '@preact/signals-core';
 import type { TemplateResult } from 'lit-html';
@@ -23,7 +24,9 @@ export type ResolvedStateInfo = StateInfo & {
   state: StateKind;
 };
 
-export class ResourceController {
+export class ResourceController implements Disposable {
+  readonly blobUrl$ = signal<string | null>(null);
+
   readonly state$ = signal<Partial<BlobState>>({});
 
   private engine?: BlobEngine;
@@ -33,6 +36,7 @@ export class ResourceController {
     readonly kind: ResourceKind = 'File'
   ) {}
 
+  // This is a tradeoff, initializing `Blob Sync Engine`.
   setEngine(engine: BlobEngine) {
     this.engine = engine;
     return this;
@@ -142,12 +146,34 @@ export class ResourceController {
     return blob;
   }
 
-  async createBlobUrlWith(type?: string) {
+  async createUrlWith(type?: string) {
     let blob = await this.blob();
     if (!blob) return null;
 
     if (type) blob = new Blob([blob], { type });
 
     return URL.createObjectURL(blob);
+  }
+
+  async refreshUrlWith(type?: string) {
+    const url = await this.createUrlWith(type);
+    if (!url) return;
+
+    const prevUrl = this.blobUrl$.peek();
+
+    this.blobUrl$.value = url;
+
+    if (!prevUrl) return;
+
+    // Releases the previous url.
+    URL.revokeObjectURL(prevUrl);
+  }
+
+  dispose() {
+    const url = this.blobUrl$.peek();
+    if (!url) return;
+
+    // Releases the current url.
+    URL.revokeObjectURL(url);
   }
 }

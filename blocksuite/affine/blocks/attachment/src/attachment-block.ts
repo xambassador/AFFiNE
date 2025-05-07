@@ -31,7 +31,6 @@ import { BlockSelection } from '@blocksuite/std';
 import { Slice } from '@blocksuite/store';
 import { computed } from '@preact/signals-core';
 import { html, type TemplateResult } from 'lit';
-import { property } from 'lit/decorators.js';
 import { choose } from 'lit/directives/choose.js';
 import { type ClassInfo, classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
@@ -54,6 +53,10 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
   resourceController = new ResourceController(
     computed(() => this.model.props.sourceId$.value)
   );
+
+  get blobUrl() {
+    return this.resourceController.blobUrl$.value;
+  }
 
   protected containerStyleMap = styleMap({
     position: 'relative',
@@ -123,10 +126,10 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
 
     this.contentEditable = 'false';
 
-    // This is a tradeoff, initializing `Blob Sync Engine`.
     this.resourceController.setEngine(this.std.store.blobSync);
 
     this.disposables.add(this.resourceController.subscribe());
+    this.disposables.add(this.resourceController);
 
     this.refreshData();
 
@@ -137,14 +140,6 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
         });
       });
     }
-  }
-
-  override disconnectedCallback() {
-    const blobUrl = this.blobUrl;
-    if (blobUrl) {
-      URL.revokeObjectURL(blobUrl);
-    }
-    super.disconnectedCallback();
   }
 
   override firstUpdated() {
@@ -207,7 +202,6 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
       <div class="affine-attachment-content">
         <div class="affine-attachment-content-title">
           <div class="affine-attachment-content-title-icon">${icon}</div>
-
           <div class="affine-attachment-content-title-text truncate">
             ${title}
           </div>
@@ -237,7 +231,6 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
       <div class="affine-attachment-content">
         <div class="affine-attachment-content-title">
           <div class="affine-attachment-content-title-icon">${icon}</div>
-
           <div class="affine-attachment-content-title-text truncate">
             ${title}
           </div>
@@ -325,9 +318,6 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
       </div>
     `;
   }
-
-  @property({ attribute: false })
-  accessor blobUrl: string | null = null;
 
   override accessor selectedStyle = SelectedStyle.Border;
 
