@@ -40,7 +40,6 @@ export class BlobFrontend {
       for (const cb of this.onReachedMaxBlobSizeCallbacks) {
         cb(blob.data.byteLength);
       }
-      throw new Error('Blob size exceeds the maximum limit');
     }
     await using lock = await this.lock.lock('blob', blob.key);
     await this.storage.set(blob);
