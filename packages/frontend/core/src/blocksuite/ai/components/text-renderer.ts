@@ -268,7 +268,7 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
               query: this._query,
             });
             this.disposables.add(() => {
-              doc.doc.clearQuery(this._query);
+              doc.doc.removeStore({ query: this._query });
             });
             this._doc.readonly = true;
             this.requestUpdate();

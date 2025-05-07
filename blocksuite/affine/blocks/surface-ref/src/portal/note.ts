@@ -56,7 +56,7 @@ export class SurfaceRefNotePortal extends WithDisposable(ShadowlessElement) {
 
     const doc = this.model.doc;
     this._disposables.add(() => {
-      doc.doc.clearQuery(query, true);
+      doc.doc.removeStore({ query, readonly: true });
     });
   }
 

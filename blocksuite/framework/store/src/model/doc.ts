@@ -2,12 +2,15 @@ import type * as Y from 'yjs';
 
 import type { AwarenessStore } from '../yjs/awareness.js';
 import type { YBlock } from './block/types.js';
-import type { Query } from './store/query.js';
 import type { Store, StoreOptions } from './store/store.js';
 import type { Workspace } from './workspace.js';
 import type { DocMeta } from './workspace-meta.js';
 
-export type GetBlocksOptions = Omit<StoreOptions, 'schema' | 'doc'>;
+export type GetStoreOptions = Omit<StoreOptions, 'schema' | 'doc'>;
+export type RemoveStoreOptions = Pick<
+  StoreOptions,
+  'query' | 'id' | 'readonly'
+>;
 
 export interface Doc {
   readonly id: string;
@@ -19,8 +22,8 @@ export interface Doc {
   dispose(): void;
 
   clear(): void;
-  getStore(options?: GetBlocksOptions): Store;
-  clearQuery(query: Query, readonly?: boolean): void;
+  getStore(options?: GetStoreOptions): Store;
+  removeStore(options: RemoveStoreOptions): void;
 
   get loaded(): boolean;
   get awarenessStore(): AwarenessStore;

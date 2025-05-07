@@ -7,6 +7,7 @@ import {
   type PageEditor,
 } from '@affine/core/blocksuite/editors';
 import type { AffineEditorViewOptions } from '@affine/core/blocksuite/manager/editor-view';
+import { getViewManager } from '@affine/core/blocksuite/manager/migrating-view';
 import { useEnableAI } from '@affine/core/components/hooks/affine/use-enable-ai';
 import type { DocCustomPropertyInfo } from '@affine/core/modules/db';
 import type {
@@ -21,8 +22,9 @@ import { WorkspaceService } from '@affine/core/modules/workspace';
 import track from '@affine/track';
 import type { DocTitle } from '@blocksuite/affine/fragments/doc-title';
 import type { DocMode } from '@blocksuite/affine/model';
-import type { Store } from '@blocksuite/affine/store';
+import type { ExtensionType, Store } from '@blocksuite/affine/store';
 import {
+  type FrameworkProvider,
   useFramework,
   useLiveData,
   useService,
@@ -42,7 +44,6 @@ import {
   type DefaultOpenProperty,
   DocPropertiesTable,
 } from '../../components/doc-properties';
-import { enableEditorExtension } from '../extensions/entry/enable-editor';
 import { BiDirectionalLinkPanel } from './bi-directional-link-panel';
 import { BlocksuiteEditorJournalDocTitle } from './journal-doc-title';
 import { StarterBar } from './starter-bar';
@@ -301,3 +302,20 @@ export const BlocksuiteEdgelessEditor = forwardRef<
     </div>
   );
 });
+
+function enableEditorExtension(
+  framework: FrameworkProvider,
+  mode: 'edgeless' | 'page',
+  enableAI: boolean,
+  options: AffineEditorViewOptions
+): ExtensionType[] {
+  const manager = getViewManager(framework, enableAI, options);
+  if (BUILD_CONFIG.isMobileEdition) {
+    if (mode === 'page') {
+      return manager.get('mobile-page');
+    }
+
+    return manager.get('mobile-edgeless');
+  }
+  return manager.get(mode);
+}

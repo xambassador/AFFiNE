@@ -34,7 +34,7 @@ import {
   LifeCycleWatcher,
 } from '@blocksuite/std';
 import { GfxControllerIdentifier, GfxExtension } from '@blocksuite/std/gfx';
-import { type GetBlocksOptions, type Query, Text } from '@blocksuite/store';
+import { type GetStoreOptions, type Query, Text } from '@blocksuite/store';
 import { computed, signal } from '@preact/signals-core';
 import { html, nothing, type PropertyValues } from 'lit';
 import { query, state } from 'lit/decorators.js';
@@ -403,7 +403,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
   }
 
   get syncedDoc() {
-    const options: GetBlocksOptions = { readonly: true };
+    const options: GetStoreOptions = { readonly: true };
     if (this.isPageMode) options.query = this._pageFilter;
     const doc = this.std.workspace.getDoc(this.model.props.pageId);
     return doc?.getStore(options) ?? null;

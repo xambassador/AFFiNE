@@ -120,7 +120,7 @@ export class FramePreview extends WithDisposable(ShadowlessElement) {
     this._previewDoc =
       doc?.getStore({ readonly: true, query: this._docFilter }) ?? null;
     this.disposables.add(() => {
-      this._originalDoc.doc.clearQuery(this._docFilter);
+      this._originalDoc.doc.removeStore({ query: this._docFilter });
     });
   }
 
