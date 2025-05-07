@@ -94,18 +94,32 @@ export const attachmentViewDropdownMenu = {
     },
   ],
   content(ctx) {
-    const model = ctx.getCurrentModelByType(AttachmentBlockModel);
-    if (!model) return null;
+    const block = ctx.getCurrentBlockByType(AttachmentBlockComponent);
+    if (!block) return null;
 
+    const model = block.model;
     const embedProvider = ctx.std.get(AttachmentEmbedProvider);
-    const actions = this.actions.map(action => ({ ...action }));
-    const viewType$ = computed(() => {
-      const [cardAction, embedAction] = actions;
+    const actions = computed(() => {
+      const [cardAction, embedAction] = this.actions.map(action => ({
+        ...action,
+      }));
+
+      const ok = block.resourceController.resolvedState$.value.state === 'none';
+      const sourceId = Boolean(model.props.sourceId$.value);
       const embed = model.props.embed$.value ?? false;
+      // 1. Check whether `sourceId` exists.
+      // 2. Check if `embedded` is allowed.
+      // 3. Check `blobState$`
+      const allowed = ok && sourceId && embedProvider.embedded(model) && !embed;
 
       cardAction.disabled = !embed;
-      embedAction.disabled = embed && embedProvider.embedded(model);
+      embedAction.disabled = !allowed;
 
+      return [cardAction, embedAction];
+    });
+    const viewType$ = computed(() => {
+      const [cardAction, embedAction] = actions.value;
+      const embed = model.props.embed$.value ?? false;
       return embed ? embedAction.label : cardAction.label;
     });
     const onToggle = (e: CustomEvent<boolean>) => {
@@ -123,7 +137,7 @@ export const attachmentViewDropdownMenu = {
       model,
       html`<affine-view-dropdown-menu
         @toggle=${onToggle}
-        .actions=${actions}
+        .actions=${actions.value}
         .context=${ctx}
         .viewType$=${viewType$}
       ></affine-view-dropdown-menu>`

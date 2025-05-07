@@ -1,6 +1,11 @@
 import type { Disposable } from '@blocksuite/global/disposable';
 import type { BlobEngine, BlobState } from '@blocksuite/sync';
-import { effect, type ReadonlySignal, signal } from '@preact/signals-core';
+import {
+  computed,
+  effect,
+  type ReadonlySignal,
+  signal,
+} from '@preact/signals-core';
 import type { TemplateResult } from 'lit-html';
 
 export type ResourceKind = 'Blob' | 'File' | 'Image';
@@ -18,16 +23,39 @@ export type StateInfo = {
   description?: string;
 };
 
-export type ResolvedStateInfo = StateInfo & {
+export type ResolvedStateInfoPart = {
   loading: boolean;
   error: boolean;
   state: StateKind;
 };
 
+export type ResolvedStateInfo = StateInfo & ResolvedStateInfoPart;
+
 export class ResourceController implements Disposable {
   readonly blobUrl$ = signal<string | null>(null);
 
   readonly state$ = signal<Partial<BlobState>>({});
+
+  readonly resolvedState$ = computed<ResolvedStateInfoPart>(() => {
+    const {
+      uploading = false,
+      downloading = false,
+      overSize = false,
+      errorMessage,
+    } = this.state$.value;
+    const hasExceeded = overSize;
+    const hasError = hasExceeded || Boolean(errorMessage);
+    const state = this.determineState(
+      hasExceeded,
+      hasError,
+      uploading,
+      downloading
+    );
+
+    const loading = state === 'uploading' || state === 'loading';
+
+    return { error: hasError, loading, state };
+  });
 
   private engine?: BlobEngine;
 
@@ -61,26 +89,12 @@ export class ResourceController implements Disposable {
       errorIcon?: TemplateResult;
     } & StateInfo
   ): ResolvedStateInfo {
-    const {
-      uploading = false,
-      downloading = false,
-      overSize = false,
-      errorMessage,
-    } = this.state$.value;
-    const hasExceeded = overSize;
-    const hasError = hasExceeded || Boolean(errorMessage);
-    const state = this.determineState(
-      hasExceeded,
-      hasError,
-      uploading,
-      downloading
-    );
-    const loading = state === 'uploading' || state === 'loading';
+    const { error, loading, state } = this.resolvedState$.value;
 
     const { icon, title, description, loadingIcon, errorIcon } = info;
 
     const result = {
-      error: hasError,
+      error,
       loading,
       state,
       icon,
@@ -91,9 +105,9 @@ export class ResourceController implements Disposable {
     if (loading) {
       result.icon = loadingIcon ?? icon;
       result.title = state === 'uploading' ? 'Uploading...' : 'Loading...';
-    } else if (hasError) {
+    } else if (error) {
       result.icon = errorIcon ?? icon;
-      result.description = errorMessage ?? description;
+      result.description = this.state$.value.errorMessage ?? description;
     }
 
     return result;
