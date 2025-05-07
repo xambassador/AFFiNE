@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "表示",
   "com.affine.editor.bi-directional-link-panel.hide": "非表示",
   "com.affine.editor.edgeless-note-header.fold-page-block": "ページブロックを折りたたむ",
-  "com.affine.editor.edgeless-note-header.view-in-page": "ページで見る",
+  "com.affine.editor.edgeless-note-header.open-in-page": "ページで見る",
   "com.affine.upgrade-to-team-page.title": "シームレスなコラボレーションでチームに力を与える",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "既存のワークスペースを選択するか、新しいワークスペースを作成",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "ワークスペースを作成",

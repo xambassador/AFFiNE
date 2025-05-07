@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "Visa",
   "com.affine.editor.bi-directional-link-panel.hide": "Dölj",
   "com.affine.editor.edgeless-note-header.fold-page-block": "Vik ihop sidblock",
-  "com.affine.editor.edgeless-note-header.view-in-page": "Visa på sidan",
+  "com.affine.editor.edgeless-note-header.open-in-page": "Visa på sidan",
   "com.affine.upgrade-to-team-page.title": "Stärk ditt team med sömlöst samarbete",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "Välj en befintlig arbetsyta eller skapa en ny",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "Skapa Arbetsyta",

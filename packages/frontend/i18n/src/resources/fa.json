@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "نمایش",
   "com.affine.editor.bi-directional-link-panel.hide": "پنهان کردن",
   "com.affine.editor.edgeless-note-header.fold-page-block": "بستن بلوک صفحه",
-  "com.affine.editor.edgeless-note-header.view-in-page": "مشاهده در صفحه",
+  "com.affine.editor.edgeless-note-header.open-in-page": "مشاهده در صفحه",
   "com.affine.upgrade-to-team-page.title": "تیم خود را با همکاری بی‌وقفه توانمند کنید",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "یک فضای کاری موجود را انتخاب کنید یا یک فضای جدید ایجاد کنید",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "ایجاد فضای کاری",

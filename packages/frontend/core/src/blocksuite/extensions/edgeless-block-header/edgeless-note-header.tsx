@@ -9,7 +9,7 @@ import { Bound } from '@blocksuite/affine/global/gfx';
 import { type NoteBlockModel } from '@blocksuite/affine/model';
 import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
 import {
-  LinkedPageIcon,
+  ExpandFullIcon,
   ToggleDownIcon,
   ToggleRightIcon,
 } from '@blocksuite/icons/rc';
@@ -105,11 +105,11 @@ const EdgelessNoteToggleButton = ({ note }: { note: NoteBlockModel }) => {
   );
 };
 
-const ViewInPageButton = () => {
+const OpenInPageButton = () => {
   const t = useI18n();
   const editor = useService(EditorService).editor;
 
-  const viewInPage = useCallback(() => {
+  const openInPage = useCallback(() => {
     track.edgeless.pageBlock.headerToolbar.switchPageMode();
     editor.setMode('page');
   }, [editor]);
@@ -118,11 +118,11 @@ const ViewInPageButton = () => {
     <IconButton
       className={styles.button}
       size={styles.iconSize}
-      tooltip={t['com.affine.editor.edgeless-note-header.view-in-page']()}
+      tooltip={t['com.affine.editor.edgeless-note-header.open-in-page']()}
       data-testid="edgeless-note-view-in-page-button"
-      onClick={viewInPage}
+      onClick={openInPage}
     >
-      <LinkedPageIcon />
+      <ExpandFullIcon />
     </IconButton>
   );
 };
@@ -165,7 +165,7 @@ export const EdgelessNoteHeader = ({ note }: { note: NoteBlockModel }) => {
   return (
     <div className={styles.header} data-testid="edgeless-page-block-header">
       <EdgelessNoteToggleButton note={note} />
-      <ViewInPageButton />
+      <OpenInPageButton />
       {!insidePeekView && <PageBlockInfoButton note={note} />}
       <NoteCopyLinkButton note={note} />
     </div>

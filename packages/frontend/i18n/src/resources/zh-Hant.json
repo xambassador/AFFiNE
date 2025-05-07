@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "展示",
   "com.affine.editor.bi-directional-link-panel.hide": "隱藏",
   "com.affine.editor.edgeless-note-header.fold-page-block": "折疊頁面塊",
-  "com.affine.editor.edgeless-note-header.view-in-page": "在頁面中查看",
+  "com.affine.editor.edgeless-note-header.open-in-page": "在頁面中查看",
   "com.affine.upgrade-to-team-page.title": "使用無縫協作來賦能您的團隊",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "選擇現有的工作區或建立新工作區",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "建立工作區",

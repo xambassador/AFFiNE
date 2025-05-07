@@ -98,7 +98,9 @@ const Title = ({ model }: { model: EmbedSyncedDocModel }) => {
       data-collapsed={!!model.props.preFoldHeight}
       data-testid="edgeless-embed-synced-doc-title"
     >
-      <LinkedPageIcon />
+      <span className={styles.titleIcon}>
+        <LinkedPageIcon />
+      </span>
       <span className={styles.embedSyncedDocTitle}>{title}</span>
     </div>
   );
@@ -130,7 +132,13 @@ const EmbedSyncedDocCopyLinkButton = ({
   );
 };
 
-const OpenButton = ({ model }: { model: EmbedSyncedDocModel }) => {
+const OpenButton = ({
+  std,
+  model,
+}: {
+  std: BlockStdScope;
+  model: EmbedSyncedDocModel;
+}) => {
   const t = useI18n();
   const workbench = useService(WorkbenchService).workbench;
 
@@ -141,21 +149,24 @@ const OpenButton = ({ model }: { model: EmbedSyncedDocModel }) => {
   }, [model.props.pageId, workbench]);
 
   return (
-    <Button
-      className={styles.button}
-      variant="plain"
-      size="custom"
-      onClick={open}
-      prefixStyle={{
-        width: `${styles.iconSize}px`,
-        height: `${styles.iconSize}px`,
-      }}
-      prefix={<ExpandFullIcon />}
-    >
-      <span className={styles.buttonText}>
-        {t['com.affine.editor.edgeless-embed-synced-doc-header.open']()}
-      </span>
-    </Button>
+    <div>
+      <Button
+        className={styles.button}
+        variant="plain"
+        size="custom"
+        onClick={open}
+        prefixStyle={{
+          width: `${styles.iconSize}px`,
+          height: `${styles.iconSize}px`,
+        }}
+        prefix={<ExpandFullIcon />}
+      >
+        <span className={styles.buttonText}>
+          {t['com.affine.editor.edgeless-embed-synced-doc-header.open']()}
+        </span>
+      </Button>
+      <MoreMenu model={model} std={std} />
+    </div>
   );
 };
 
@@ -256,8 +267,7 @@ export const EdgelessEmbedSyncedDocHeader = ({
     <div className={styles.header} onPointerDown={stopPropagation}>
       <ToggleButton model={model} />
       <Title model={model} />
-      <OpenButton model={model} />
-      <MoreMenu model={model} std={std} />
+      <OpenButton std={std} model={model} />
       <EmbedSyncedDocInfoButton model={model} />
       <EmbedSyncedDocCopyLinkButton model={model} />
     </div>

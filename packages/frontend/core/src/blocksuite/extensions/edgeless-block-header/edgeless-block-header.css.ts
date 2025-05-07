@@ -15,10 +15,18 @@ export const header = style({
 export const titleContainer = style({
   display: 'flex',
   alignItems: 'center',
+  padding: 4,
+  marginRight: 8,
   gap: 4,
   flex: 1,
   overflow: 'hidden',
   whiteSpace: 'nowrap',
+});
+
+export const titleIcon = style({
+  display: 'flex',
+  alignItems: 'center',
+  color: cssVarV2('icon/primary'),
 });
 
 const title = style({
@@ -59,13 +67,12 @@ export const button = style({
   pointerEvents: 'auto',
   color: cssVarV2('icon/transparentBlack'),
   borderRadius: 4,
+  gap: 0,
 });
 
 export const buttonText = style([
   embedSyncedDocTitle,
   {
-    paddingLeft: 4,
-    paddingRight: 4,
     fontWeight: 500,
   },
 ]);

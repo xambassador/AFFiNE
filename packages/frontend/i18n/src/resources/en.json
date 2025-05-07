@@ -1783,7 +1783,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "Show",
   "com.affine.editor.bi-directional-link-panel.hide": "Hide",
   "com.affine.editor.edgeless-note-header.fold-page-block": "Fold page block",
-  "com.affine.editor.edgeless-note-header.view-in-page": "View in page",
+  "com.affine.editor.edgeless-note-header.open-in-page": "Open in Page",
   "com.affine.editor.edgeless-embed-synced-doc-header.fold": "Fold",
   "com.affine.editor.edgeless-embed-synced-doc-header.unfold": "Unfold",
   "com.affine.editor.edgeless-embed-synced-doc-header.open": "Open",

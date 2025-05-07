@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "Εμφάνιση",
   "com.affine.editor.bi-directional-link-panel.hide": "Απόκρυψη",
   "com.affine.editor.edgeless-note-header.fold-page-block": "Σύμπτυξη μπλοκ σελίδας",
-  "com.affine.editor.edgeless-note-header.view-in-page": "Προβολή στη σελίδα",
+  "com.affine.editor.edgeless-note-header.open-in-page": "Άνοιγμα στη σελίδα",
   "com.affine.upgrade-to-team-page.title": "Δώστε δύναμη στην ομάδα σας με Αδιάλειπτη Συνεργασία",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "Επιλέξτε έναν υπάρχοντα χώρο εργασίας ή δημιουργήστε έναν νέο",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "Δημιουργία Χώρου Εργασίας",

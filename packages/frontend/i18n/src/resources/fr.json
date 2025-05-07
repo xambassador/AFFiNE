@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "Afficher",
   "com.affine.editor.bi-directional-link-panel.hide": "Cacher",
   "com.affine.editor.edgeless-note-header.fold-page-block": "Plier le bloc de page",
-  "com.affine.editor.edgeless-note-header.view-in-page": "Voir dans la page",
+  "com.affine.editor.edgeless-note-header.open-in-page": "Voir dans la page",
   "com.affine.upgrade-to-team-page.title": "Renforcez votre équipe avec une collaboration sans faille",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "Sélectionnez un espace de travail existant ou créez-en un nouveau",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "Créer un espace de travail",

@@ -7169,9 +7169,9 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.editor.edgeless-note-header.fold-page-block"](): string;
     /**
-      * `View in page`
+      * `Open in Page`
       */
-    ["com.affine.editor.edgeless-note-header.view-in-page"](): string;
+    ["com.affine.editor.edgeless-note-header.open-in-page"](): string;
     /**
       * `Fold`
       */

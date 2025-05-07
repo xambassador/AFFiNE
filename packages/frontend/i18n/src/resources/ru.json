@@ -1752,7 +1752,7 @@
   "com.affine.editor.bi-directional-link-panel.show": "Показать",
   "com.affine.editor.bi-directional-link-panel.hide": "Скрыть",
   "com.affine.editor.edgeless-note-header.fold-page-block": "Свернуть блок страницы",
-  "com.affine.editor.edgeless-note-header.view-in-page": "Просмотреть на странице",
+  "com.affine.editor.edgeless-note-header.open-in-page": "Просмотреть на странице",
   "com.affine.upgrade-to-team-page.title": "Усильте вашу команду при помощи безупречного взаимодействия",
   "com.affine.upgrade-to-team-page.workspace-selector.placeholder": "Выберите существующее рабочее пространство или создайте новое",
   "com.affine.upgrade-to-team-page.workspace-selector.create-workspace": "Создать рабочее пространство",
