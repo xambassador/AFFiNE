@@ -4,7 +4,7 @@ import {
   listBlobsQuery,
   releaseDeletedBlobsMutation,
   setBlobMutation,
-  workspaceQuotaQuery,
+  workspaceBlobQuotaQuery,
 } from '@affine/graphql';
 
 import {
@@ -161,7 +161,7 @@ export class CloudBlobStorage extends BlobStorageBase {
     }
     try {
       const res = await this.connection.gql({
-        query: workspaceQuotaQuery,
+        query: workspaceBlobQuotaQuery,
         variables: { id: this.options.id },
       });
 

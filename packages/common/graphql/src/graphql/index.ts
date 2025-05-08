@@ -1701,6 +1701,21 @@ export const verifyEmailMutation = {
 }`,
 };
 
+export const workspaceBlobQuotaQuery = {
+  id: 'workspaceBlobQuotaQuery' as const,
+  op: 'workspaceBlobQuota',
+  query: `query workspaceBlobQuota($id: String!) {
+  workspace(id: $id) {
+    quota {
+      blobLimit
+      humanReadable {
+        blobLimit
+      }
+    }
+  }
+}`,
+};
+
 export const getWorkspaceConfigQuery = {
   id: 'getWorkspaceConfigQuery' as const,
   op: 'getWorkspaceConfig',

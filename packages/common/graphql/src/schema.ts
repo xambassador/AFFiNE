@@ -4387,6 +4387,25 @@ export type VerifyEmailMutation = {
   verifyEmail: boolean;
 };
 
+export type WorkspaceBlobQuotaQueryVariables = Exact<{
+  id: Scalars['String']['input'];
+}>;
+
+export type WorkspaceBlobQuotaQuery = {
+  __typename?: 'Query';
+  workspace: {
+    __typename?: 'WorkspaceType';
+    quota: {
+      __typename?: 'WorkspaceQuotaType';
+      blobLimit: number;
+      humanReadable: {
+        __typename?: 'WorkspaceQuotaHumanReadableType';
+        blobLimit: string;
+      };
+    };
+  };
+};
+
 export type GetWorkspaceConfigQueryVariables = Exact<{
   id: Scalars['String']['input'];
 }>;
@@ -4866,6 +4885,11 @@ export type Queries =
       name: 'subscriptionQuery';
       variables: SubscriptionQueryVariables;
       response: SubscriptionQuery;
+    }
+  | {
+      name: 'workspaceBlobQuotaQuery';
+      variables: WorkspaceBlobQuotaQueryVariables;
+      response: WorkspaceBlobQuotaQuery;
     }
   | {
       name: 'getWorkspaceConfigQuery';
