@@ -19,7 +19,7 @@ import {
   metrics,
   UserFriendlyError,
 } from '../../../base';
-import { createExaTool } from '../tools';
+import { createExaSearchTool } from '../tools';
 import { CopilotProvider } from './provider';
 import {
   ChatMessageRole,
@@ -45,7 +45,7 @@ export type OpenAIConfig = {
 
 type OpenAITools = {
   web_search_preview: ReturnType<typeof openai.tools.webSearchPreview>;
-  web_search: ReturnType<typeof createExaTool>;
+  web_search_exa: ReturnType<typeof createExaSearchTool>;
 };
 
 export class OpenAIProvider
@@ -88,6 +88,8 @@ export class OpenAIProvider
   ];
 
   private readonly MAX_STEPS = 20;
+
+  private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
   #instance!: VercelOpenAIProvider;
 
@@ -198,7 +200,7 @@ export class OpenAIProvider
           case 'webSearch': {
             // o series reasoning models
             if (model.startsWith('o')) {
-              tools.web_search = createExaTool(this.AFFiNEConfig);
+              tools.web_search_exa = createExaSearchTool(this.AFFiNEConfig);
             } else {
               tools.web_search_preview = openai.tools.webSearchPreview();
             }
@@ -292,37 +294,52 @@ export class OpenAIProvider
 
       const parser = new CitationParser();
       let lastType;
+      // reasoning, tool-call, tool-result need to mark as callout
+      let prefix: string | null = this.CALLOUT_PREFIX;
       for await (const chunk of fullStream) {
         if (chunk) {
           switch (chunk.type) {
             case 'text-delta': {
+              let result = parser.parse(chunk.textDelta);
               if (lastType !== chunk.type) {
-                yield `\n`;
+                result = '\n\n' + result;
               }
-              const result = parser.parse(chunk.textDelta);
               yield result;
               break;
             }
             case 'reasoning': {
-              if (lastType !== chunk.type) {
-                yield `\n`;
+              if (prefix) {
+                yield prefix;
+                prefix = null;
               }
-              yield chunk.textDelta;
+              let result = chunk.textDelta;
+              if (lastType !== chunk.type) {
+                result = '\n\n' + result;
+              }
+              yield this.markAsCallout(result);
               break;
             }
             case 'tool-call': {
-              if (chunk.toolName === 'web_search') {
-                yield '\n' + `Searching the web "${chunk.args.query}"` + '\n';
+              if (prefix) {
+                yield prefix;
+                prefix = null;
+              }
+              if (chunk.toolName === 'web_search_exa') {
+                yield this.markAsCallout(
+                  `\nSearching the web "${chunk.args.query}"\n`
+                );
               }
               break;
             }
             case 'tool-result': {
-              if (chunk.toolName === 'web_search') {
-                yield '\n' + this.getWebSearchLinks(chunk.result) + '\n';
+              if (chunk.toolName === 'web_search_exa') {
+                yield this.markAsCallout(
+                  `\n${this.getWebSearchLinks(chunk.result)}\n`
+                );
               }
               break;
             }
-            case 'step-finish': {
+            case 'finish': {
               const result = parser.end();
               yield result;
               break;
@@ -430,7 +447,7 @@ export class OpenAIProvider
     const result: OpenAIResponsesProviderOptions = {};
     if (options?.reasoning) {
       result.reasoningEffort = 'medium';
-      result.reasoningSummary = 'auto';
+      result.reasoningSummary = 'detailed';
     }
     if (options?.user) {
       result.user = options.user;
@@ -445,8 +462,12 @@ export class OpenAIProvider
     }[]
   ): string {
     const links = list.reduce((acc, result) => {
-      return acc + `\n[${result.title ?? result.url}](${result.url})\n`;
-    }, '\n');
-    return links + '\n';
+      return acc + `\n[${result.title ?? result.url}](${result.url})\n\n`;
+    }, '');
+    return links;
+  }
+
+  private markAsCallout(text: string) {
+    return text.replaceAll('\n', '\n> ');
   }
 }

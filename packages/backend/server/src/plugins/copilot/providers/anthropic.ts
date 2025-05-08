@@ -11,7 +11,7 @@ import {
   metrics,
   UserFriendlyError,
 } from '../../../base';
-import { createExaTool } from '../tools';
+import { createExaSearchTool } from '../tools';
 import { CopilotProvider } from './provider';
 import {
   ChatMessageRole,
@@ -38,7 +38,7 @@ export class AnthropicProvider
 
   private readonly MAX_STEPS = 20;
 
-  private toolResults: string[] = [];
+  private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
   #instance!: AnthropicSDKProvider;
 
@@ -134,7 +134,7 @@ export class AnthropicProvider
         providerOptions: {
           anthropic: this.getAnthropicOptions(options),
         },
-        tools: this.getTools(options),
+        tools: this.getTools(),
         maxSteps: this.MAX_STEPS,
         experimental_continueSteps: true,
       });
@@ -166,42 +166,63 @@ export class AnthropicProvider
         providerOptions: {
           anthropic: this.getAnthropicOptions(options),
         },
-        tools: this.getTools(options),
+        tools: this.getTools(),
         maxSteps: this.MAX_STEPS,
         experimental_continueSteps: true,
       });
 
-      for await (const message of fullStream) {
-        switch (message.type) {
+      let lastType;
+      // reasoning, tool-call, tool-result need to mark as callout
+      let prefix: string | null = this.CALLOUT_PREFIX;
+      for await (const chunk of fullStream) {
+        switch (chunk.type) {
+          case 'text-delta': {
+            if (!prefix) {
+              prefix = this.CALLOUT_PREFIX;
+            }
+            let result = chunk.textDelta;
+            if (lastType !== chunk.type) {
+              result = '\n\n' + result;
+            }
+            yield result;
+            break;
+          }
           case 'reasoning': {
-            yield message.textDelta;
+            if (prefix) {
+              yield prefix;
+              prefix = null;
+            }
+            let result = chunk.textDelta;
+            if (lastType !== chunk.type) {
+              result = '\n\n' + result;
+            }
+            yield this.markAsCallout(result);
             break;
           }
           case 'tool-call': {
-            if (message.toolName === 'web_search') {
-              yield '\n' + `Searching the web "${message.args.query}"` + '\n';
+            if (prefix) {
+              yield prefix;
+              prefix = null;
+            }
+            if (chunk.toolName === 'web_search') {
+              yield this.markAsCallout(
+                `\nSearching the web "${chunk.args.query}"\n`
+              );
             }
             break;
           }
           case 'tool-result': {
-            if (message.toolName === 'web_search') {
-              this.toolResults.push(this.getWebSearchLinks(message.result));
+            if (chunk.toolName === 'web_search') {
+              if (prefix) {
+                yield prefix;
+                prefix = null;
+              }
+              yield this.markAsCallout(this.getWebSearchLinks(chunk.result));
             }
-            break;
-          }
-          case 'step-finish': {
-            if (message.finishReason === 'tool-calls') {
-              yield this.toolResults.join('\n');
-              this.toolResults = [];
-            }
-            break;
-          }
-          case 'text-delta': {
-            yield message.textDelta;
             break;
           }
           case 'error': {
-            const error = message.error as { type: string; message: string };
+            const error = chunk.error as { type: string; message: string };
             throw new Error(error.message);
           }
         }
@@ -209,6 +230,7 @@ export class AnthropicProvider
           await fullStream.cancel();
           break;
         }
+        lastType = chunk.type;
       }
     } catch (e: any) {
       metrics.ai.counter('chat_text_stream_errors').add(1, { model });
@@ -216,13 +238,10 @@ export class AnthropicProvider
     }
   }
 
-  private getTools(options: CopilotChatOptions) {
-    if (options?.webSearch) {
-      return {
-        web_search: createExaTool(this.AFFiNEConfig),
-      };
-    }
-    return undefined;
+  private getTools() {
+    return {
+      web_search: createExaSearchTool(this.AFFiNEConfig),
+    };
   }
 
   private getAnthropicOptions(options: CopilotChatOptions) {
@@ -243,8 +262,12 @@ export class AnthropicProvider
     }[]
   ): string {
     const links = list.reduce((acc, result) => {
-      return acc + `\n[${result.title ?? result.url}](${result.url})\n`;
-    }, '\n');
-    return links + '\n';
+      return acc + `\n[${result.title ?? result.url}](${result.url})\n\n`;
+    }, '');
+    return links;
+  }
+
+  private markAsCallout(text: string) {
+    return text.replaceAll('\n', '\n> ');
   }
 }

@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { Config } from '../../../base';
 
-export const createExaTool = (config: Config) => {
+export const createExaSearchTool = (config: Config) => {
   return tool({
     description: 'Search the web for information',
     parameters: z.object({

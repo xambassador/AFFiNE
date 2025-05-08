@@ -124,8 +124,8 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
     .ai-answer-text-editor {
       .affine-note-block-container {
         > .affine-block-children-container {
-          > :first-child,
-          > :first-child * {
+          > :first-child:not(affine-callout),
+          > :first-child:not(affine-callout) * {
             margin-top: 0 !important;
           }
           > :last-child,
@@ -225,6 +225,7 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
       'affine:table',
       'affine:surface',
       'affine:paragraph',
+      'affine:callout',
       'affine:code',
       'affine:list',
       'affine:divider',
