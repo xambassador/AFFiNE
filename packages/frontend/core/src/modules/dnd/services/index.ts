@@ -153,8 +153,7 @@ export class DndService extends Service {
 
       const flavour =
         dropTarget === 'canvas'
-          ? this.editorSettingService.editorSetting.docDropCanvasPreferView
-              .value
+          ? this.editorSettingService.editorSetting.docCanvasPreferView.value
           : 'affine:embed-linked-doc';
 
       const { entity, bsEntity } = args.source.data;

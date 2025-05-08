@@ -163,6 +163,17 @@ export async function setViewportZoom(page: Page, zoom = 1, editorIndex = 0) {
   }, zoom);
 }
 
+export async function fitViewportToContent(page: Page, editorIndex = 0) {
+  const container = locateEditorContainer(page, editorIndex);
+  return container.evaluate(container => {
+    const root = container.querySelector('affine-edgeless-root');
+    if (!root) {
+      throw new Error('Edgeless root not found');
+    }
+    root.gfx.fitToScreen();
+  });
+}
+
 /**
  * Convert a canvas point to view coordinate
  * @param point the coordinate on the canvas

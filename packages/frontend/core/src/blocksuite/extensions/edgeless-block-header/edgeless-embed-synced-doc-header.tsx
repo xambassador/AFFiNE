@@ -70,6 +70,8 @@ const ToggleButton = ({ model }: { model: EmbedSyncedDocModel }) => {
 
   return (
     <IconButton
+      data-testid="edgeless-embed-synced-doc-fold-button"
+      data-folded={isFolded}
       className={styles.button}
       size={styles.iconSize}
       onClick={toggle}

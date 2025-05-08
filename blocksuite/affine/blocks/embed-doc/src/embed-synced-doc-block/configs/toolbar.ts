@@ -171,7 +171,7 @@ const conversionsActionGroup = {
         ) {
           const editorSetting = ctx.std.getOptional(EditorSettingProvider);
           editorSetting?.set?.(
-            'docDropCanvasPreferView',
+            'docCanvasPreferView',
             'affine:embed-linked-doc'
           );
         }
