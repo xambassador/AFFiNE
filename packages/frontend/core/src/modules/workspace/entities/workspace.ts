@@ -1,7 +1,9 @@
 import type { Workspace as WorkspaceInterface } from '@blocksuite/affine/store';
-import { Entity, LiveData } from '@toeverything/infra';
-import { Observable } from 'rxjs';
+import { Entity, LiveData, yjsObserveByPath } from '@toeverything/infra';
+import type { Observable } from 'rxjs';
+import { Doc as YDoc, transact } from 'yjs';
 
+import { DocsService } from '../../doc';
 import { WorkspaceImpl } from '../impls/workspace';
 import type { WorkspaceScope } from '../scopes/workspace';
 import { WorkspaceEngineService } from '../services/engine';
@@ -19,12 +21,15 @@ export class Workspace extends Entity {
 
   readonly flavour = this.meta.flavour;
 
+  readonly rootYDoc = new YDoc({ guid: this.openOptions.metadata.id });
+
   _docCollection: WorkspaceInterface | null = null;
 
   get docCollection() {
     if (!this._docCollection) {
       this._docCollection = new WorkspaceImpl({
         id: this.openOptions.metadata.id,
+        rootDoc: this.rootYDoc,
         blobSource: {
           get: async key => {
             const record = await this.engine.blob.get(key);
@@ -54,13 +59,15 @@ export class Workspace extends Entity {
         onLoadDoc: doc => this.engine.doc.connectDoc(doc),
         onLoadAwareness: awareness =>
           this.engine.awareness.connectAwareness(awareness),
+        onCreateDoc: docId =>
+          this.docs.createDoc({ id: docId, skipInit: true }).id,
       });
     }
     return this._docCollection;
   }
 
-  get rootYDoc() {
-    return this.docCollection.doc;
+  get docs() {
+    return this.scope.get(DocsService);
   }
 
   get canGracefulStop() {
@@ -73,28 +80,38 @@ export class Workspace extends Entity {
   }
 
   name$ = LiveData.from<string | undefined>(
-    new Observable(subscriber => {
-      subscriber.next(this.docCollection.meta.name);
-      const subscription =
-        this.docCollection.meta.commonFieldsUpdated.subscribe(() => {
-          subscriber.next(this.docCollection.meta.name);
-        });
-      return subscription.unsubscribe.bind(subscription);
-    }),
+    yjsObserveByPath(this.rootYDoc.getMap('meta'), 'name') as Observable<
+      string | undefined
+    >,
     undefined
   );
 
-  avatar$ = LiveData.from<string | undefined>(
-    new Observable(subscriber => {
-      subscriber.next(this.docCollection.meta.avatar);
-      const subscription =
-        this.docCollection.meta.commonFieldsUpdated.subscribe(() => {
-          subscriber.next(this.docCollection.meta.avatar);
-        });
-      return subscription.unsubscribe.bind(subscription);
-    }),
+  avatar$ = LiveData.from(
+    yjsObserveByPath(this.rootYDoc.getMap('meta'), 'avatar') as Observable<
+      string | undefined
+    >,
     undefined
   );
+
+  setAvatar(avatar: string) {
+    transact(
+      this.rootYDoc,
+      () => {
+        this.rootYDoc.getMap('meta').set('avatar', avatar);
+      },
+      { force: true }
+    );
+  }
+
+  setName(name: string) {
+    transact(
+      this.rootYDoc,
+      () => {
+        this.rootYDoc.getMap('meta').set('name', name);
+      },
+      { force: true }
+    );
+  }
 
   override dispose(): void {
     this.docCollection.dispose();

@@ -16,7 +16,6 @@ import {
   type EditorHost,
 } from '@blocksuite/affine/std';
 import type { DocMeta } from '@blocksuite/affine/store';
-import { Text } from '@blocksuite/affine/store';
 import {
   type LinkedMenuGroup,
   type LinkedMenuItem,
@@ -43,7 +42,6 @@ import { AuthService, type WorkspaceServerService } from '../../cloud';
 import type { WorkspaceDialogService } from '../../dialogs';
 import type { DocsService } from '../../doc';
 import type { DocDisplayMetaService } from '../../doc-display-meta';
-import type { EditorSettingService } from '../../editor-setting';
 import { type JournalService, suggestJournalDate } from '../../journal';
 import { NotificationService } from '../../notification';
 import type { GuardService, MemberSearchService } from '../../permissions';
@@ -65,7 +63,6 @@ export class AtMenuConfigService extends Service {
     private readonly journalService: JournalService,
     private readonly docDisplayMetaService: DocDisplayMetaService,
     private readonly dialogService: WorkspaceDialogService,
-    private readonly editorSettingService: EditorSettingService,
     private readonly docsService: DocsService,
     private readonly searchMenuService: SearchMenuService,
     private readonly workspaceServerService: WorkspaceServerService,
@@ -141,10 +138,7 @@ export class AtMenuConfigService extends Service {
 
     const createPage = (mode: DocMode) => {
       const page = this.docsService.createDoc({
-        docProps: {
-          note: this.editorSettingService.editorSetting.get('affine:note'),
-          page: { title: new Text(query) },
-        },
+        title: query,
         primaryMode: mode,
       });
 

@@ -72,10 +72,6 @@ export class IntegrationWriter extends Entity {
       const doc = collection.getDoc(docId)?.getStore();
       if (!doc) throw new Error('Doc not found');
 
-      doc.workspace.meta.setDocMeta(docId, {
-        updatedDate: Date.now(),
-      });
-
       if (updateStrategy === 'override') {
         const pageBlock = doc.getBlocksByFlavour('affine:page')[0];
         // remove all children of the page block

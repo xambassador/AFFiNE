@@ -20,8 +20,6 @@ export interface Workspace {
 
   slots: {
     docListUpdated: Subject<void>;
-    docCreated: Subject<string>;
-    docRemoved: Subject<string>;
   };
 
   createDoc(docId?: string): Doc;

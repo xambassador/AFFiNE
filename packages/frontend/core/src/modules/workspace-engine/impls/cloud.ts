@@ -46,7 +46,7 @@ import {
 } from '@toeverything/infra';
 import { isEqual } from 'lodash-es';
 import { map, Observable, switchMap, tap } from 'rxjs';
-import { type Doc as YDoc, encodeStateAsUpdate } from 'yjs';
+import { Doc as YDoc, encodeStateAsUpdate } from 'yjs';
 
 import type { Server, ServersService } from '../../cloud';
 import {
@@ -169,6 +169,7 @@ class CloudWorkspaceFlavourProvider implements WorkspaceFlavourProvider {
 
     const docCollection = new WorkspaceImpl({
       id: workspaceId,
+      rootDoc: new YDoc({ guid: workspaceId }),
       blobSource: {
         get: async key => {
           const record = await blobStorage.get(key);

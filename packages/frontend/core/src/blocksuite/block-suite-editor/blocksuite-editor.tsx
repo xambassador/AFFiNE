@@ -175,18 +175,6 @@ const BlockSuiteEditorImpl = ({
   }, [affineEditorContainerProxy.host?.std, page, readonly, shared]);
 
   useEffect(() => {
-    const disposable = page.slots.blockUpdated.subscribe(() => {
-      disposable.unsubscribe();
-      page.workspace.meta.setDocMeta(page.id, {
-        updatedDate: Date.now(),
-      });
-    });
-    return () => {
-      disposable.unsubscribe();
-    };
-  }, [page]);
-
-  useEffect(() => {
     const editorContainer = rootRef.current;
     if (editorContainer) {
       const handleMiddleClick = (e: MouseEvent) => {

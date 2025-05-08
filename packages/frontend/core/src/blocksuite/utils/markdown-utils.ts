@@ -25,7 +25,7 @@ import type {
   TransformerMiddleware,
 } from '@blocksuite/affine/store';
 import { toDraftModel, Transformer } from '@blocksuite/affine/store';
-
+import { Doc as YDoc } from 'yjs';
 const updateSnapshotText = (
   point: TextRangePoint,
   snapshot: BlockSnapshot,
@@ -164,7 +164,9 @@ export async function markDownToDoc(
   middlewares?: TransformerMiddleware[]
 ) {
   // Should not create a new doc in the original collection
-  const collection = new WorkspaceImpl();
+  const collection = new WorkspaceImpl({
+    rootDoc: new YDoc({ guid: 'markdownToDoc' }),
+  });
   collection.meta.initialize();
   const transformer = new Transformer({
     schema,

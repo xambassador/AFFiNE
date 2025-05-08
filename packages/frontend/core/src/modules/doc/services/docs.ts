@@ -1,6 +1,5 @@
 import { DebugLogger } from '@affine/debug';
 import { Unreachable } from '@affine/env/constant';
-import type { DocMode } from '@blocksuite/affine/model';
 import { replaceIdMiddleware } from '@blocksuite/affine/shared/adapters';
 import type { AffineTextAttributes } from '@blocksuite/affine/shared/types';
 import type { DeltaInsert } from '@blocksuite/affine/store';
@@ -9,19 +8,18 @@ import { LiveData, ObjectPool, Service } from '@toeverything/infra';
 import { omitBy } from 'lodash-es';
 import { combineLatest, map } from 'rxjs';
 
-import {
-  type DocProps,
-  initDocFromProps,
-} from '../../../blocksuite/initialization';
+import { initDocFromProps } from '../../../blocksuite/initialization';
 import type { DocProperties } from '../../db';
 import { getAFFiNEWorkspaceSchema } from '../../workspace';
 import type { Doc } from '../entities/doc';
 import { DocPropertyList } from '../entities/property-list';
 import { DocRecordList } from '../entities/record-list';
 import { DocCreated, DocInitialized } from '../events';
+import type { DocCreateMiddleware } from '../providers/doc-create-middleware';
 import { DocScope } from '../scopes/doc';
 import type { DocPropertiesStore } from '../stores/doc-properties';
 import type { DocsStore } from '../stores/docs';
+import type { DocCreateOptions } from '../types';
 import { DocService } from './doc';
 
 const logger = new DebugLogger('DocsService');
@@ -58,7 +56,8 @@ export class DocsService extends Service {
 
   constructor(
     private readonly store: DocsStore,
-    private readonly docPropertiesStore: DocPropertiesStore
+    private readonly docPropertiesStore: DocPropertiesStore,
+    private readonly docCreateMiddlewares: DocCreateMiddleware[]
   ) {
     super();
   }
@@ -110,16 +109,21 @@ export class DocsService extends Service {
     return { doc: obj, release };
   }
 
-  createDoc(
-    options: {
-      primaryMode?: DocMode;
-      docProps?: DocProps;
-      isTemplate?: boolean;
-    } = {}
-  ) {
-    const doc = this.store.createBlockSuiteDoc();
-    initDocFromProps(doc, options.docProps);
-    const docRecord = this.list.doc$(doc.id).value;
+  createDoc(options: DocCreateOptions = {}) {
+    for (const middleware of this.docCreateMiddlewares) {
+      options = middleware.beforeCreate
+        ? middleware.beforeCreate(options)
+        : options;
+    }
+    const id = this.store.createDoc(options.id);
+    const docStore = this.store.getBlockSuiteDoc(id);
+    if (!docStore) {
+      throw new Error('Failed to create doc');
+    }
+    if (options.skipInit !== true) {
+      initDocFromProps(docStore, options.docProps, options);
+    }
+    const docRecord = this.list.doc$(id).value;
     if (!docRecord) {
       throw new Unreachable();
     }
@@ -129,7 +133,14 @@ export class DocsService extends Service {
     if (options.isTemplate) {
       docRecord.setProperty('isTemplate', true);
     }
-    this.eventBus.emit(DocCreated, docRecord);
+    for (const middleware of this.docCreateMiddlewares) {
+      middleware.afterCreate?.(docRecord, options);
+    }
+    docRecord.setCreatedAt(Date.now());
+    this.eventBus.emit(DocCreated, {
+      doc: docRecord,
+      docCreateOptions: options,
+    });
     return docRecord;
   }
 
@@ -200,7 +211,14 @@ export class DocsService extends Service {
         schema: getAFFiNEWorkspaceSchema(),
         blobCRUD: collection.blobSync,
         docCRUD: {
-          create: (id: string) => collection.createDoc(id).getStore({ id }),
+          create: (id: string) => {
+            this.createDoc({ id });
+            const store = collection.getDoc(id)?.getStore({ id });
+            if (!store) {
+              throw new Error('Failed to create doc');
+            }
+            return store;
+          },
           get: (id: string) => collection.getDoc(id)?.getStore({ id }) ?? null,
           delete: (id: string) => collection.removeDoc(id),
         },
@@ -293,7 +311,14 @@ export class DocsService extends Service {
         schema: getAFFiNEWorkspaceSchema(),
         blobCRUD: collection.blobSync,
         docCRUD: {
-          create: (id: string) => collection.createDoc(id).getStore({ id }),
+          create: (id: string) => {
+            this.createDoc({ id });
+            const store = collection.getDoc(id)?.getStore({ id });
+            if (!store) {
+              throw new Error('Failed to create doc');
+            }
+            return store;
+          },
           get: (id: string) => collection.getDoc(id)?.getStore({ id }) ?? null,
           delete: (id: string) => collection.removeDoc(id),
         },

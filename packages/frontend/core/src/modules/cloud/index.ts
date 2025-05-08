@@ -95,6 +95,8 @@ import { UserCopilotQuotaStore } from './stores/user-copilot-quota';
 import { UserFeatureStore } from './stores/user-feature';
 import { UserQuotaStore } from './stores/user-quota';
 import { UserSettingsStore } from './stores/user-settings';
+import { DocCreatedByService } from './services/doc-created-by';
+import { DocUpdatedByService } from './services/doc-updated-by';
 
 export function configureCloudModule(framework: Framework) {
   configureDefaultAuthProvider(framework);
@@ -164,7 +166,9 @@ export function configureCloudModule(framework: Framework) {
   framework
     .scope(WorkspaceScope)
     .service(WorkspaceServerService)
+    .service(DocCreatedByService, [WorkspaceServerService])
     .scope(DocScope)
+    .service(DocUpdatedByService, [WorkspaceServerService])
     .service(CloudDocMetaService)
     .entity(CloudDocMeta, [CloudDocMetaStore, DocService, GlobalCache])
     .store(CloudDocMetaStore, [WorkspaceServerService]);

@@ -83,14 +83,18 @@ export class BlockQueryDataSource extends DataSourceBase {
     this.workspace.docs.forEach(doc => {
       this.listenToDoc(doc.getStore());
     });
-    this.workspace.slots.docCreated.subscribe(id => {
-      const doc = this.workspace.getDoc(id);
-      if (doc) {
-        this.listenToDoc(doc.getStore());
-      }
-    });
-    this.workspace.slots.docRemoved.subscribe(id => {
-      this.docDisposeMap.get(id)?.();
+    this.workspace.slots.docListUpdated.subscribe(() => {
+      this.workspace.docs.forEach(doc => {
+        if (!this.docDisposeMap.has(doc.id)) {
+          this.listenToDoc(doc.getStore());
+        }
+      });
+      this.docDisposeMap.forEach((_, id) => {
+        if (!this.workspace.docs.has(id)) {
+          this.docDisposeMap.get(id)?.();
+          this.docDisposeMap.delete(id);
+        }
+      });
     });
   }
 

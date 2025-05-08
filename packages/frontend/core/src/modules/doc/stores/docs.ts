@@ -6,8 +6,9 @@ import {
   yjsObserveByPath,
   yjsObserveDeep,
 } from '@toeverything/infra';
+import { nanoid } from 'nanoid';
 import { distinctUntilChanged, map, switchMap } from 'rxjs';
-import { Array as YArray, Map as YMap } from 'yjs';
+import { Array as YArray, Map as YMap, transact } from 'yjs';
 
 import type { WorkspaceService } from '../../workspace';
 import type { DocPropertiesStore } from './doc-properties';
@@ -32,9 +33,33 @@ export class DocsStore extends Store {
     return this.workspaceService.workspace.docCollection;
   }
 
-  createBlockSuiteDoc() {
-    const doc = this.workspaceService.workspace.docCollection.createDoc();
-    return doc.getStore({ id: doc.id });
+  createDoc(docId?: string) {
+    const id = docId ?? nanoid();
+
+    transact(
+      this.workspaceService.workspace.rootYDoc,
+      () => {
+        const docs = this.workspaceService.workspace.rootYDoc
+          .getMap('meta')
+          .get('pages');
+
+        if (!docs || !(docs instanceof YArray)) {
+          return;
+        }
+
+        docs.push([
+          new YMap([
+            ['id', id],
+            ['title', ''],
+            ['createDate', Date.now()],
+            ['tags', new YArray()],
+          ]),
+        ]);
+      },
+      { force: true }
+    );
+
+    return id;
   }
 
   watchDocIds() {

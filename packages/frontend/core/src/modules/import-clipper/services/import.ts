@@ -64,7 +64,7 @@ export class ImportClipperService extends Service {
       flavour,
       async docCollection => {
         docCollection.meta.initialize();
-        docCollection.meta.setName(workspaceName);
+        docCollection.doc.getMap('meta').set('name', workspaceName);
         docId = await MarkdownTransformer.importMarkdownToDoc({
           collection: docCollection,
           schema: getAFFiNEWorkspaceSchema(),
@@ -73,6 +73,7 @@ export class ImportClipperService extends Service {
         });
       }
     );
+
     if (!docId) {
       throw new Error('Failed to import doc');
     }

@@ -1,6 +1,5 @@
 import type { DocProps } from '@affine/core/blocksuite/initialization';
 import { DocsService } from '@affine/core/modules/doc';
-import { EditorSettingService } from '@affine/core/modules/editor-setting';
 import { AudioAttachmentService } from '@affine/core/modules/media/services/audio-attachment';
 import { WorkbenchService } from '@affine/core/modules/workbench';
 import { DebugLogger } from '@affine/debug';
@@ -8,7 +7,6 @@ import { apis, events } from '@affine/electron-api';
 import { i18nTime } from '@affine/i18n';
 import track from '@affine/track';
 import type { AttachmentBlockModel } from '@blocksuite/affine/model';
-import { Text } from '@blocksuite/affine/store';
 import type { BlobEngine } from '@blocksuite/affine/sync';
 import type { FrameworkProvider } from '@toeverything/infra';
 
@@ -40,10 +38,7 @@ export function setupRecordingEvents(frameworkProvider: FrameworkProvider) {
           return;
         }
         const { workspace } = currentWorkspace;
-        const editorSettingService =
-          frameworkProvider.get(EditorSettingService);
         const docsService = workspace.scope.get(DocsService);
-        const editorSetting = editorSettingService.editorSetting;
         const aiEnabled = isAiEnabled(frameworkProvider);
 
         const timestamp = i18nTime(status.startTime, {
@@ -54,15 +49,6 @@ export function setupRecordingEvents(frameworkProvider: FrameworkProvider) {
         });
 
         const docProps: DocProps = {
-          note: editorSetting.get('affine:note'),
-          page: {
-            title: new Text(
-              'Recording ' +
-                (status.appName ?? 'System Audio') +
-                ' ' +
-                timestamp
-            ),
-          },
           onStoreLoad: (doc, { noteId }) => {
             (async () => {
               // name + timestamp(readable) + extension
@@ -136,7 +122,12 @@ export function setupRecordingEvents(frameworkProvider: FrameworkProvider) {
               });
           },
         };
-        const page = docsService.createDoc({ docProps, primaryMode: 'page' });
+        const page = docsService.createDoc({
+          docProps,
+          title:
+            'Recording ' + (status.appName ?? 'System Audio') + ' ' + timestamp,
+          primaryMode: 'page',
+        });
         workspace.scope.get(WorkbenchService).workbench.openDoc(page.id);
       }
     })().catch(console.error);

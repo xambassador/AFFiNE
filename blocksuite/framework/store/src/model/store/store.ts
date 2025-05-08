@@ -386,7 +386,7 @@ export class Store {
           console.error(e);
         }
       },
-      shouldTransact ? this.rootDoc.clientID : null
+      shouldTransact ? this.spaceDoc.clientID : null
     );
   }
 

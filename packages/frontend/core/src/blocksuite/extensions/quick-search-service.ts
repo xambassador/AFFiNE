@@ -1,5 +1,4 @@
 import { DocsService } from '@affine/core/modules/doc';
-import { EditorSettingService } from '@affine/core/modules/editor-setting';
 import {
   CreationQuickSearchSession,
   DocsQuickSearchSession,
@@ -20,15 +19,13 @@ import {
   QuickSearchExtension,
   type QuickSearchResult,
 } from '@blocksuite/affine/shared/services';
-import { type ExtensionType, Text } from '@blocksuite/affine/store';
+import { type ExtensionType } from '@blocksuite/affine/store';
 import type {
   SlashMenuConfig,
   SlashMenuItem,
 } from '@blocksuite/affine/widgets/slash-menu';
 import type { FrameworkProvider } from '@toeverything/infra';
 import { pick } from 'lodash-es';
-
-import type { DocProps } from '../initialization';
 
 export function patchQuickSearchService(framework: FrameworkProvider) {
   const QuickSearch = QuickSearchExtension({
@@ -96,16 +93,11 @@ export function patchQuickSearchService(framework: FrameworkProvider) {
 
             if (result.source === 'creation') {
               const docsService = framework.get(DocsService);
-              const editorSettingService = framework.get(EditorSettingService);
               const mode =
                 result.id === 'creation:create-edgeless' ? 'edgeless' : 'page';
-              const docProps: DocProps = {
-                page: { title: new Text(result.payload.title) },
-                note: editorSettingService.editorSetting.get('affine:note'),
-              };
               const newDoc = docsService.createDoc({
                 primaryMode: mode,
-                docProps,
+                title: result.payload.title,
               });
 
               resolve({ docId: newDoc.id });

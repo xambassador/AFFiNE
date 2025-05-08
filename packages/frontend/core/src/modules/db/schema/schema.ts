@@ -25,6 +25,8 @@ export const AFFiNE_WORKSPACE_DB_SCHEMA = {
     pageWidth: f.string().optional(),
     isTemplate: f.boolean().optional(),
     integrationType: integrationType.optional(),
+    createdBy: f.string().optional(),
+    updatedBy: f.string().optional(),
   }),
   docCustomPropertyInfo: {
     id: f.string().primaryKey().optional().default(nanoid),

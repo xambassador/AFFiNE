@@ -30,16 +30,9 @@ export interface WorkspaceMeta {
   get properties(): DocsPropertiesMeta;
   setProperties(meta: DocsPropertiesMeta): void;
 
-  get avatar(): string | undefined;
-  setAvatar(avatar: string): void;
-
-  get name(): string | undefined;
-  setName(name: string): void;
-
   get docs(): unknown[] | undefined;
   initialize(): void;
 
-  commonFieldsUpdated: Subject<void>;
   docMetaAdded: Subject<string>;
   docMetaRemoved: Subject<string>;
   docMetaUpdated: Subject<void>;
