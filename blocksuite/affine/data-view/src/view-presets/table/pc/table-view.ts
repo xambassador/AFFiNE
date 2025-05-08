@@ -237,12 +237,8 @@ export class DataViewTable extends DataViewBase<
       moveTo: (id, evt) => {
         const result = this.dragController.getInsertPosition(evt);
         if (result) {
-          this.props.view.rowMove(
-            id,
-            result.position,
-            undefined,
-            result.groupKey
-          );
+          const row = this.props.view.rowGetOrCreate(id);
+          row.move(result.position, undefined, result.groupKey);
         }
       },
       getSelection: () => {

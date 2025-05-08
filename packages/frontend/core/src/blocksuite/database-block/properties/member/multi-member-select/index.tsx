@@ -205,7 +205,11 @@ export const MemberListItem = (props: {
       data-selected={isSelected ? 'true' : 'false'}
     >
       <div className={styles.avatar}>
-        <Avatar url={member.avatar} size={24} />
+        <Avatar
+          name={member.removed ? undefined : (member.name ?? undefined)}
+          url={member.avatar}
+          size={24}
+        />
       </div>
       <div className={styles.memberName}>{member.name}</div>
     </div>
@@ -228,6 +232,7 @@ export const MemberPreview = ({
   return (
     <div className={styles.memberPreviewContainer}>
       <Avatar
+        name={userInfo.removed ? undefined : (userInfo.name ?? undefined)}
         className={styles.avatar}
         url={!userInfo.removed ? userInfo.avatar : undefined}
         size={16}

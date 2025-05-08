@@ -86,15 +86,15 @@ export class TableGroupHeader extends SignalWatcher(
         name: 'Ungroup',
         hide: () => group.value == null,
         select: () => {
-          group.rows.forEach(id => {
-            group.manager.removeFromGroup(id, group.key);
+          group.rows.forEach(row => {
+            group.manager.removeFromGroup(row.rowId, group.key);
           });
         },
       }),
       menu.action({
         name: 'Delete Cards',
         select: () => {
-          this.tableViewManager.rowDelete(group.rows);
+          this.tableViewManager.rowsDelete(group.rows.map(row => row.rowId));
         },
       }),
     ]);

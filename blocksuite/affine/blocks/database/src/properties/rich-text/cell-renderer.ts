@@ -310,7 +310,6 @@ export class RichTextCell extends BaseCellRenderer<Text, string> {
         });
       }
     } else {
-      console.log(text);
       inlineEditor.insertText(inlineRange, text);
       inlineEditor.setInlineRange({
         index: inlineRange.index + text.length,

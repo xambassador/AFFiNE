@@ -161,6 +161,7 @@ const MemberPreview = ({
   return (
     <div className={styles.memberPreviewContainer}>
       <Avatar
+        name={userInfo.removed ? undefined : (userInfo.name ?? undefined)}
         className={styles.avatar}
         url={!userInfo.removed ? userInfo.avatar : undefined}
         size={24}

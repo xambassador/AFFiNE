@@ -2,6 +2,7 @@ import type {
   ColumnDataType,
   ColumnUpdater,
   DatabaseBlockModel,
+  ParagraphBlockModel,
 } from '@blocksuite/affine-model';
 import { getSelectedModelsCommand } from '@blocksuite/affine-shared/commands';
 import { FeatureFlagService } from '@blocksuite/affine-shared/services';
@@ -51,7 +52,59 @@ import {
   databaseBlockViews,
 } from './views/index.js';
 
+type SpacialProperty = {
+  valueSet: (rowId: string, propertyId: string, value: unknown) => void;
+  valueGet: (rowId: string, propertyId: string) => unknown;
+};
 export class DatabaseBlockDataSource extends DataSourceBase {
+  spacialProperties: Record<string, SpacialProperty> = {
+    'created-time': {
+      valueSet: () => {},
+      valueGet: (rowId: string) => {
+        const model = this.getModelById(rowId) as ParagraphBlockModel;
+        if (!model) {
+          return null;
+        }
+        return model.props['meta:createdAt'];
+      },
+    },
+    'created-by': {
+      valueSet: () => {},
+      valueGet: (rowId: string) => {
+        const model = this.getModelById(rowId) as
+          | ParagraphBlockModel
+          | undefined;
+        return model ? model.props['meta:createdBy'] : null;
+      },
+    },
+    type: {
+      valueSet: () => {},
+      valueGet: (rowId: string) => {
+        const model = this.getModelById(rowId);
+        if (!model) {
+          return;
+        }
+        return getIcon(model);
+      },
+    },
+    title: {
+      valueSet: () => {},
+      valueGet: (rowId: string) => {
+        const model = this.getModelById(rowId);
+        if (!model) {
+          return;
+        }
+        return model.text;
+      },
+    },
+  };
+  isSpacialProperty(propertyId: string): boolean {
+    return this.spacialProperties[propertyId] !== undefined;
+  }
+  spacialValueGet(rowId: string, propertyId: string): unknown {
+    return this.spacialProperties[propertyId]?.valueGet(rowId, propertyId);
+  }
+
   static externalProperties = signal<PropertyMetaConfig[]>([]);
   static propertiesList = computed(() => {
     return [
@@ -196,20 +249,15 @@ export class DatabaseBlockDataSource extends DataSourceBase {
   }
 
   cellValueGet(rowId: string, propertyId: string): unknown {
-    if (propertyId === 'type') {
-      const model = this.getModelById(rowId);
-      if (!model) {
-        return;
-      }
-      return getIcon(model);
+    if (this.isSpacialProperty(propertyId)) {
+      return this.spacialValueGet(rowId, propertyId);
     }
     const type = this.propertyTypeGet(propertyId);
     if (!type) {
       return;
     }
     if (type === 'title') {
-      const model = this.getModelById(rowId);
-      return model?.text;
+      return this.spacialValueGet(rowId, 'title');
     }
     const meta = this.propertyMetaGet(type);
     if (!meta) {

@@ -140,7 +140,7 @@ export class BlockRenderer
       return;
     }
     return html` <div class="database-block-detail-header-icon">
-      ${this.view.cellValueGet(this.rowId, iconColumn)}
+      ${this.view.cellGetOrCreate(this.rowId, iconColumn).value$.value}
     </div>`;
   }
 
