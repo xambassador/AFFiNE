@@ -232,7 +232,7 @@ export class AIChatComposer extends SignalWatcher(
 
     const fileChips: FileChip[] = await Promise.all(
       files.map(async file => {
-        const blob = await this.host.doc.blobSync.get(file.blobId);
+        const blob = await this.host.store.blobSync.get(file.blobId);
         return {
           file: new File(blob ? [blob] : [], file.name),
           blobId: file.blobId,

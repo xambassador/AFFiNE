@@ -127,7 +127,10 @@ export class BookmarkBlockComponent extends CaptionedBlockComponent<BookmarkBloc
   handleClick = (event: MouseEvent) => {
     event.stopPropagation();
 
-    if (this.model.parent?.flavour !== 'affine:surface' && !this.doc.readonly) {
+    if (
+      this.model.parent?.flavour !== 'affine:surface' &&
+      !this.store.readonly
+    ) {
       this.selectBlock();
     }
   };
@@ -184,7 +187,7 @@ export class BookmarkBlockComponent extends CaptionedBlockComponent<BookmarkBloc
     ) {
       // When the doc is readonly, and the preview data not provided
       // We should fetch the preview data and update the local link preview data
-      if (this.doc.readonly) {
+      if (this.store.readonly) {
         this._updateLocalLinkPreview();
         return;
       }

@@ -542,7 +542,7 @@ type RootBlockComponent = BlockComponent & {
 function getRootByEditorHost(
   editorHost: EditorHost
 ): RootBlockComponent | null {
-  const model = editorHost.doc.root;
+  const model = editorHost.store.root;
   if (!model) return null;
   const root = editorHost.view.getBlock(model.id);
   return root as RootBlockComponent | null;

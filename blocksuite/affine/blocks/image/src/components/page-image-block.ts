@@ -65,7 +65,7 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
   private _isDragging = false;
 
   private get _doc() {
-    return this.block.doc;
+    return this.block.store;
   }
 
   private get _host() {
@@ -128,21 +128,21 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
         return true;
       },
       Delete: ctx => {
-        if (this._host.doc.readonly || !this._isSelected) return;
+        if (this._host.store.readonly || !this._isSelected) return;
 
         addParagraph(ctx);
         this._doc.deleteBlock(this._model);
         return true;
       },
       Backspace: ctx => {
-        if (this._host.doc.readonly || !this._isSelected) return;
+        if (this._host.store.readonly || !this._isSelected) return;
 
         addParagraph(ctx);
         this._doc.deleteBlock(this._model);
         return true;
       },
       Enter: ctx => {
-        if (this._host.doc.readonly || !this._isSelected) return;
+        if (this._host.store.readonly || !this._isSelected) return;
 
         addParagraph(ctx);
         return true;

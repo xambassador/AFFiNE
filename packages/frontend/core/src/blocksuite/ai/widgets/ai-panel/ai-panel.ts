@@ -327,7 +327,7 @@ export class AffineAIPanelWidget extends WidgetComponent {
   }
 
   get viewportOverlayWidget() {
-    const rootId = this.host.doc.root?.id;
+    const rootId = this.host.store.root?.id;
     return rootId
       ? (this.host.view.getWidget(
           AFFINE_VIEWPORT_OVERLAY_WIDGET,

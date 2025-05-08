@@ -12,17 +12,17 @@ describe('helpers/affine-template', () => {
       </affine-page>
     `;
 
-    expect(host.doc).toBeDefined();
+    expect(host.store).toBeDefined();
 
-    const pageBlock = host.doc.getBlock('page');
+    const pageBlock = host.store.getBlock('page');
     expect(pageBlock).toBeDefined();
     expect(pageBlock?.flavour).toBe('affine:page');
 
-    const noteBlock = host.doc.getBlock('note');
+    const noteBlock = host.store.getBlock('note');
     expect(noteBlock).toBeDefined();
     expect(noteBlock?.flavour).toBe('affine:note');
 
-    const paragraphBlock = host.doc.getBlock('paragraph-1');
+    const paragraphBlock = host.store.getBlock('paragraph-1');
     expect(paragraphBlock).toBeDefined();
     expect(paragraphBlock?.flavour).toBe('affine:paragraph');
   });
@@ -38,16 +38,17 @@ describe('helpers/affine-template', () => {
       </affine-page>
     `;
 
-    const noteBlocks = host.doc.getBlocksByFlavour('affine:note');
-    const paragraphBlocks = host.doc.getBlocksByFlavour('affine:paragraph');
-    const listBlocks = host.doc.getBlocksByFlavour('affine:list');
+    const noteBlocks = host.store.getBlocksByFlavour('affine:note');
+    const paragraphBlocks = host.store.getBlocksByFlavour('affine:paragraph');
+    const listBlocks = host.store.getBlocksByFlavour('affine:list');
 
     expect(noteBlocks.length).toBe(1);
     expect(paragraphBlocks.length).toBe(2);
     expect(listBlocks.length).toBe(1);
 
     const noteBlock = noteBlocks[0];
-    const noteChildren = host.doc.getBlock(noteBlock.id)?.model.children || [];
+    const noteChildren =
+      host.store.getBlock(noteBlock.id)?.model.children || [];
     expect(noteChildren.length).toBe(3);
 
     expect(noteChildren[0].flavour).toBe('affine:paragraph');
@@ -64,10 +65,10 @@ describe('helpers/affine-template', () => {
       </affine-page>
     `;
 
-    const paragraphBlocks = host.doc.getBlocksByFlavour('affine:paragraph');
+    const paragraphBlocks = host.store.getBlocksByFlavour('affine:paragraph');
     expect(paragraphBlocks.length).toBe(1);
 
-    const paragraphBlock = host.doc.getBlock(paragraphBlocks[0].id);
+    const paragraphBlock = host.store.getBlock(paragraphBlocks[0].id);
     const paragraphText = paragraphBlock?.model.text?.toString() || '';
     expect(paragraphText).toBe('');
   });

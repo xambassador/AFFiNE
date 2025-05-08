@@ -115,7 +115,7 @@ export const textRender: DraggableTool['render'] = async (bound, edgeless) => {
   const w = 100;
   const h = 32;
 
-  const flag = edgeless.doc
+  const flag = edgeless.store
     .get(FeatureFlagService)
     .getFlag('enable_edgeless_text');
   let id: string;
@@ -135,7 +135,7 @@ export const textRender: DraggableTool['render'] = async (bound, edgeless) => {
       text: new Y.Text(),
     }) as string;
 
-    edgeless.doc.captureSync();
+    edgeless.store.captureSync();
     const textElement = crud.getElementById(id);
     if (!(textElement instanceof TextElementModel)) {
       console.error('Cannot mount text editor on a non-text element');

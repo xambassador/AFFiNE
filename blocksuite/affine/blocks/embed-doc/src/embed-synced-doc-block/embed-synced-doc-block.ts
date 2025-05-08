@@ -48,7 +48,7 @@ import type { EmbedSyncedDocCard } from './components/embed-synced-doc-card.js';
 import { blockStyles } from './styles.js';
 
 @Peekable({
-  enableOn: ({ doc }: EmbedSyncedDocBlockComponent) => !doc.readonly,
+  enableOn: ({ store }: EmbedSyncedDocBlockComponent) => !store.readonly,
 })
 export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSyncedDocModel> {
   static override styles = blockStyles;
@@ -348,7 +348,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
 
   open = (event?: Partial<DocLinkClickedEvent>) => {
     const pageId = this.model.props.pageId;
-    if (pageId === this.doc.id) return;
+    if (pageId === this.store.id) return;
 
     this.std
       .getOptional(RefNodeSlotsProvider)
@@ -413,7 +413,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
     let editorHost: EditorHost | null = this.host;
     while (editorHost && !this._cycle) {
       this._cycle =
-        !!editorHost && editorHost.doc.id === this.model.props.pageId;
+        !!editorHost && editorHost.store.id === this.model.props.pageId;
       editorHost = editorHost.parentElement?.closest('editor-host') ?? null;
     }
   }
@@ -482,7 +482,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
   }
 
   private _setDocUpdatedAt() {
-    const meta = this.doc.workspace.meta.getDocMeta(this.model.props.pageId);
+    const meta = this.store.workspace.meta.getDocMeta(this.model.props.pageId);
     if (meta) {
       const date = meta.updatedDate || meta.createDate;
       this._docUpdatedAt = new Date(date);
@@ -518,7 +518,7 @@ export class EmbedSyncedDocBlockComponent extends EmbedBlockComponent<EmbedSynce
 
     this._setDocUpdatedAt();
     this.disposables.add(
-      this.doc.workspace.slots.docListUpdated.subscribe(() => {
+      this.store.workspace.slots.docListUpdated.subscribe(() => {
         this._setDocUpdatedAt();
       })
     );

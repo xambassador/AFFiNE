@@ -67,11 +67,11 @@ export const insert = async (
   );
   const insertIndex = below ? index + 1 : index;
 
-  const { doc } = host;
+  const { store } = host;
   const models = await insertFromMarkdown(
     host,
     content,
-    doc,
+    store,
     blockParent.model.id,
     insertIndex
   );
@@ -112,27 +112,27 @@ export const replace = async (
     host.std.command.exec(deleteTextCommand, { textSelection });
     const { snapshot, transformer } = await markdownToSnapshot(
       content,
-      host.doc,
+      host.store,
       host
     );
     if (snapshot) {
       await transformer.snapshotToSlice(
         snapshot,
-        host.doc,
+        host.store,
         firstBlockParent.model.id,
         firstIndex + 1
       );
     }
   } else {
     selectedModels.forEach(model => {
-      host.doc.deleteBlock(model);
+      host.store.deleteBlock(model);
     });
 
-    const { doc } = host;
+    const { store } = host;
     const models = await insertFromMarkdown(
       host,
       content,
-      doc,
+      store,
       firstBlockParent.model.id,
       firstIndex
     );

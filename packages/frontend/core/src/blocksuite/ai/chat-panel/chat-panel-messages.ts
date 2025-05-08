@@ -174,7 +174,7 @@ export class ChatPanelMessages extends WithDisposable(ShadowlessElement) {
 
   private _renderAIOnboarding() {
     return this.isLoading ||
-      !this.host?.doc.get(FeatureFlagService).getFlag('enable_ai_onboarding')
+      !this.host?.store.get(FeatureFlagService).getFlag('enable_ai_onboarding')
       ? nothing
       : html`<div class="onboarding-wrapper" data-testid="ai-onboarding">
           ${repeat(
@@ -328,7 +328,7 @@ export class ChatPanelMessages extends WithDisposable(ShadowlessElement) {
     disposables.add(
       docModeService.onPrimaryModeChange(
         () => this.requestUpdate(),
-        this.host.doc.id
+        this.host.store.id
       )
     );
   }
@@ -364,12 +364,12 @@ export class ChatPanelMessages extends WithDisposable(ShadowlessElement) {
       }
       this.updateContext({ messages, status: 'loading', error: null });
 
-      const { doc } = this.host;
+      const { store } = this.host;
       const stream = await AIProvider.actions.chat({
         sessionId,
         retry: true,
-        docId: doc.id,
-        workspaceId: doc.workspace.id,
+        docId: store.id,
+        workspaceId: store.workspace.id,
         host: this.host,
         stream: true,
         signal: abortController.signal,

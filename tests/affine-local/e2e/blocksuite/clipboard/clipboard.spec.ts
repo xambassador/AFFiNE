@@ -448,7 +448,7 @@ test.describe('paste in readonly mode', () => {
       const pageRoot = document.querySelector(
         'affine-page-root'
       ) as PageRootBlockComponent;
-      pageRoot.doc.readonly = true;
+      pageRoot.store.readonly = true;
     });
 
     await setSelection(page, blockIds[0], 0, blockIds[0], 4);

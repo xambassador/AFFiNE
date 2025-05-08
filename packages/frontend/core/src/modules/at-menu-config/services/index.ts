@@ -369,7 +369,7 @@ export class AtMenuConfigService extends Service {
             this.workspaceServerService.server?.scope.get(NotificationService);
           if (!notificationService) return;
 
-          const doc = block.doc;
+          const doc = block.store;
           const workspaceId = doc.workspace.id;
           const docId = doc.id;
           const mode = block.std.get(DocModeProvider).getEditorMode() ?? 'page';

@@ -568,20 +568,20 @@ export const convertToDatabase = (host: EditorHost, viewType: string) => {
   const firstModel = selectedModels?.[0];
   if (!firstModel) return;
 
-  host.doc.captureSync();
+  host.store.captureSync();
 
-  const parentModel = host.doc.getParent(firstModel);
+  const parentModel = host.store.getParent(firstModel);
   if (!parentModel) {
     return;
   }
 
-  const id = host.doc.addBlock(
+  const id = host.store.addBlock(
     'affine:database',
     {},
     parentModel,
     parentModel.children.indexOf(firstModel)
   );
-  const databaseModel = host.doc.getBlock(id)?.model as
+  const databaseModel = host.store.getBlock(id)?.model as
     | DatabaseBlockModel
     | undefined;
   if (!databaseModel) {
@@ -589,7 +589,7 @@ export const convertToDatabase = (host: EditorHost, viewType: string) => {
   }
   const datasource = new DatabaseBlockDataSource(databaseModel);
   datasource.viewManager.viewAdd(viewType);
-  host.doc.moveBlocks(selectedModels, databaseModel);
+  host.store.moveBlocks(selectedModels, databaseModel);
 
   const selectionManager = host.selection;
   selectionManager.clear();

@@ -79,7 +79,7 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
   };
 
   copy = () => {
-    const slice = Slice.fromModels(this.doc, [this.model]);
+    const slice = Slice.fromModels(this.store, [this.model]);
     this.std.clipboard.copySlice(slice).catch(console.error);
     toast(this.host, 'Copied to clipboard');
   };
@@ -133,9 +133,9 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
 
     this.refreshData();
 
-    if (!this.model.props.style && !this.doc.readonly) {
-      this.doc.withoutTransact(() => {
-        this.doc.updateBlock(this.model, {
+    if (!this.model.props.style && !this.store.readonly) {
+      this.store.withoutTransact(() => {
+        this.store.updateBlock(this.model, {
           style: AttachmentBlockStyles[1],
         });
       });

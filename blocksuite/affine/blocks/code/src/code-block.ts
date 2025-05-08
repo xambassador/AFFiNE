@@ -68,7 +68,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
   }
 
   get readonly() {
-    return this.doc.readonly;
+    return this.store.readonly;
   }
 
   get langs() {
@@ -226,7 +226,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
         return;
       },
       Tab: ctx => {
-        if (this.doc.readonly) return;
+        if (this.store.readonly) return;
         const state = ctx.get('keyboardState');
         const event = state.raw;
         const inlineEditor = this.inlineEditor;
@@ -337,7 +337,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
         return;
       },
       Enter: () => {
-        this.doc.captureSync();
+        this.store.captureSync();
         return true;
       },
       'Mod-Enter': () => {
@@ -348,11 +348,16 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
         if (!inlineRange || !inlineEditor) return;
         const isEnd = model.props.text.length === inlineRange.index;
         if (!isEnd) return;
-        const parent = this.doc.getParent(model);
+        const parent = this.store.getParent(model);
         if (!parent) return;
         const index = parent.children.indexOf(model);
         if (index === -1) return;
-        const id = this.doc.addBlock('affine:paragraph', {}, parent, index + 1);
+        const id = this.store.addBlock(
+          'affine:paragraph',
+          {},
+          parent,
+          index + 1
+        );
         focusTextModel(std, id);
         return true;
       },
@@ -406,10 +411,10 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
           })}
           .yText=${this.model.props.text.yText}
           .inlineEventSource=${this.topContenteditableElement ?? nothing}
-          .undoManager=${this.doc.history}
+          .undoManager=${this.store.history}
           .attributesSchema=${this.inlineManager.getSchema()}
           .attributeRenderer=${this.inlineManager.getRenderer()}
-          .readonly=${this.doc.readonly}
+          .readonly=${this.store.readonly}
           .inlineRangeProvider=${this._inlineRangeProvider}
           .enableClipboard=${false}
           .enableUndoRedo=${false}
@@ -442,7 +447,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
   }
 
   setWrap(wrap: boolean) {
-    this.doc.updateBlock(this.model, { wrap });
+    this.store.updateBlock(this.model, { wrap });
   }
 
   @query('rich-text')

@@ -22,7 +22,7 @@ export const embedLoomSlashMenuConfig: SlashMenuConfig = {
       action: ({ std, model }) => {
         (async () => {
           const { host } = std;
-          const parentModel = host.doc.getParent(model);
+          const parentModel = host.store.getParent(model);
           if (!parentModel) {
             return;
           }

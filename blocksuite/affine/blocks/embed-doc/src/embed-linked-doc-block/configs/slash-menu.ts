@@ -25,7 +25,7 @@ const linkedDocSlashMenuConfig: SlashMenuConfig = {
       when: ({ model }) =>
         model.store.schema.flavourSchemaMap.has('affine:embed-linked-doc'),
       action: ({ std, model }) => {
-        const newDoc = createDefaultDoc(std.host.doc.workspace);
+        const newDoc = createDefaultDoc(std.host.store.workspace);
         insertContent(std, model, REFERENCE_NODE, {
           reference: {
             type: 'LinkedPage',

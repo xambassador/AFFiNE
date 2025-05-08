@@ -26,7 +26,7 @@ const bookmarkSlashMenuConfig: SlashMenuConfig = {
         model.store.schema.flavourSchemaMap.has('affine:bookmark'),
       action: ({ std, model }) => {
         const { host } = std;
-        const parentModel = host.doc.getParent(model);
+        const parentModel = host.store.getParent(model);
         if (!parentModel) {
           return;
         }

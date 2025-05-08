@@ -49,7 +49,7 @@ import { styles } from './styles.js';
 import { getEmbedLinkedDocIcons } from './utils.js';
 
 @Peekable({
-  enableOn: ({ doc }: EmbedLinkedDocBlockComponent) => !doc.readonly,
+  enableOn: ({ store }: EmbedLinkedDocBlockComponent) => !store.readonly,
 })
 export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinkedDocModel> {
   static override styles = styles;
@@ -124,7 +124,7 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
   };
 
   private readonly _setDocUpdatedAt = () => {
-    const meta = this.doc.workspace.meta.getDocMeta(this.model.props.pageId);
+    const meta = this.store.workspace.meta.getDocMeta(this.model.props.pageId);
     if (meta) {
       const date = meta.updatedDate || meta.createDate;
       this._docUpdatedAt = new Date(date);
@@ -249,7 +249,7 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
   }
 
   get readonly() {
-    return this.doc.readonly;
+    return this.store.readonly;
   }
 
   get isCitation() {
@@ -504,7 +504,7 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
 
       this._setDocUpdatedAt();
       this.disposables.add(
-        this.doc.workspace.slots.docListUpdated.subscribe(() => {
+        this.store.workspace.slots.docListUpdated.subscribe(() => {
           this._setDocUpdatedAt();
         })
       );
@@ -563,8 +563,8 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
     if (linkedDoc && style === 'horizontalThin') {
       bound.w = EMBED_CARD_WIDTH.horizontal;
       bound.h = EMBED_CARD_HEIGHT.horizontal;
-      this.doc.withoutTransact(() => {
-        this.doc.updateBlock(this.model, {
+      this.store.withoutTransact(() => {
+        this.store.updateBlock(this.model, {
           xywh: bound.serialize(),
           style: 'horizontal',
         });
@@ -572,8 +572,8 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
     } else if (!linkedDoc && style === 'horizontal') {
       bound.w = EMBED_CARD_WIDTH.horizontalThin;
       bound.h = EMBED_CARD_HEIGHT.horizontalThin;
-      this.doc.withoutTransact(() => {
-        this.doc.updateBlock(this.model, {
+      this.store.withoutTransact(() => {
+        this.store.updateBlock(this.model, {
           xywh: bound.serialize(),
           style: 'horizontalThin',
         });

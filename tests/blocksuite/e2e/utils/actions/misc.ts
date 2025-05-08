@@ -1142,7 +1142,7 @@ export async function initImageState(page: Page, prependParagraph = false) {
     const imageBlob = await fetch(`${location.origin}/test-card-1.png`).then(
       response => response.blob()
     );
-    const storage = pageRoot.doc.blobSync;
+    const storage = pageRoot.store.blobSync;
     const sourceId = await storage.set(imageBlob);
     if (prepend) {
       doc.addBlock('affine:paragraph', {}, noteId);

@@ -229,10 +229,10 @@ export function createTestHost(doc: Store): EditorHost {
   };
 
   const host = {
-    doc: doc,
+    store: doc,
     std: std as any,
   };
-  host.doc = doc;
+  host.store = doc;
   host.std = std as any;
 
   std.host = host;

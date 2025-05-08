@@ -551,9 +551,9 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
         sessionId,
         input: userInput,
         contexts,
-        docId: this.host.doc.id,
+        docId: this.host.store.id,
         attachments: images,
-        workspaceId: this.host.doc.workspace.id,
+        workspaceId: this.host.store.workspace.id,
         host: this.host,
         stream: true,
         signal: abortController.signal,
@@ -616,8 +616,8 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
     if (!last.id) {
       const sessionId = await this.getSessionId();
       const historyIds = await AIProvider.histories?.ids(
-        this.host.doc.workspace.id,
-        this.host.doc.id,
+        this.host.store.workspace.id,
+        this.host.store.id,
         { sessionId }
       );
       if (!historyIds || !historyIds[0]) return;

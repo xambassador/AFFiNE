@@ -9,9 +9,9 @@ import { type AIChatBlockModel } from './model';
 import { AIChatBlockStyles } from './styles';
 
 @Peekable({
-  enableOn: ({ doc }: AIChatBlockComponent) => {
+  enableOn: ({ store }: AIChatBlockComponent) => {
     // Disable on mobile and readonly mode
-    return !BUILD_CONFIG.isMobileEdition && !doc.readonly;
+    return !BUILD_CONFIG.isMobileEdition && !store.readonly;
   },
 })
 export class AIChatBlockComponent extends BlockComponent<AIChatBlockModel> {

@@ -60,7 +60,7 @@ export class BlockQueryDataSource extends DataSourceBase {
   }
 
   get workspace() {
-    return this.host.doc.workspace;
+    return this.host.store.workspace;
   }
 
   constructor(

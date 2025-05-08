@@ -50,9 +50,9 @@ export class PreviewButton extends WithDisposable(SignalWatcher(LitElement)) {
   `;
 
   private readonly _toggle = (value: boolean) => {
-    if (this.blockComponent.doc.readonly) return;
+    if (this.blockComponent.store.readonly) return;
 
-    this.blockComponent.doc.updateBlock(this.blockComponent.model, {
+    this.blockComponent.store.updateBlock(this.blockComponent.model, {
       preview: value,
     });
   };

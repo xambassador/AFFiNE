@@ -53,7 +53,7 @@ async function getContentFromEmbedSyncedDocModel(
   host: EditorHost,
   models: EmbedSyncedDocModel[]
 ) {
-  const slice = Slice.fromModels(host.doc, models);
+  const slice = Slice.fromModels(host.store, models);
   return (await getContentFromSlice(host, slice)).trim();
 }
 
@@ -64,7 +64,7 @@ async function getContentFromHubBlockModel(
   return (
     await Promise.all(
       models.map(model => {
-        const slice = Slice.fromModels(host.doc, model.children);
+        const slice = Slice.fromModels(host.store, model.children);
         return getContentFromSlice(host, slice);
       })
     )
@@ -195,8 +195,8 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
             where,
             models,
             host,
-            docId: host.doc.id,
-            workspaceId: host.doc.workspace.id,
+            docId: host.store.id,
+            workspaceId: host.store.workspace.id,
             webSearch: visible?.value && enabled?.value,
           } as Parameters<typeof action>[0];
 
@@ -237,8 +237,8 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
           models,
           control: 'format-bar',
           host,
-          docId: host.doc.id,
-          workspaceId: host.doc.workspace.id,
+          docId: host.store.id,
+          workspaceId: host.store.workspace.id,
         } as Parameters<typeof action>[0];
 
         // @ts-expect-error TODO(@Peng): maybe fix this

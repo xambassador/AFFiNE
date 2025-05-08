@@ -48,7 +48,7 @@ export function isMindmapChild(ele: GfxModel) {
 export function getEdgelessCopilotWidget(
   host: EditorHost
 ): EdgelessCopilotWidget {
-  const rootBlockId = host.doc.root?.id as string;
+  const rootBlockId = host.store.root?.id as string;
   const copilotWidget = host.view.getWidget(
     AFFINE_EDGELESS_COPILOT_WIDGET,
     rootBlockId

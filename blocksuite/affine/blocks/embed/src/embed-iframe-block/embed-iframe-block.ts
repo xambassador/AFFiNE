@@ -177,7 +177,7 @@ export class EmbedIframeBlockComponent extends CaptionedBlockComponent<EmbedIfra
 
       // update model
       const iframeUrl = this._getIframeUrl(embedData) ?? currentIframeUrl;
-      this.doc.updateBlock(this.model, {
+      this.store.updateBlock(this.model, {
         iframeUrl,
         title: embedData?.title || previewData?.title,
         description: embedData?.description || previewData?.description,
@@ -373,7 +373,7 @@ export class EmbedIframeBlockComponent extends CaptionedBlockComponent<EmbedIfra
 
     // if the iframe url is not set, refresh the data to get the iframe url
     if (!this.model.props.iframeUrl) {
-      this.doc.withoutTransact(() => {
+      this.store.withoutTransact(() => {
         this.refreshData().catch(console.error);
       });
     } else {
@@ -452,7 +452,7 @@ export class EmbedIframeBlockComponent extends CaptionedBlockComponent<EmbedIfra
   };
 
   get readonly() {
-    return this.doc.readonly;
+    return this.store.readonly;
   }
 
   get selectionManager() {

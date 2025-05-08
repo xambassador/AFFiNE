@@ -85,7 +85,7 @@ export class EdgelessCopilotWidget extends WidgetComponent<RootBlockModel> {
       if (!referenceElement || !referenceElement.isConnected) return;
 
       // show ai input
-      const rootBlockId = this.host.doc.root?.id;
+      const rootBlockId = this.host.store.root?.id;
       if (!rootBlockId) return;
 
       const input = this.host.view.getWidget(

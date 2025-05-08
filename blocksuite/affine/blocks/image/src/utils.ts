@@ -108,7 +108,7 @@ export async function resetImageSize(
   const xywh = bound.serialize();
   const props: Partial<ImageBlockProps> = { ...imageSize, xywh };
 
-  block.doc.updateBlock(model, props);
+  block.store.updateBlock(model, props);
 }
 
 function convertToPng(blob: Blob): Promise<Blob | null> {
@@ -193,7 +193,7 @@ export async function copyImageBlob(
 export async function turnImageIntoCardView(
   block: ImageBlockComponent | ImageEdgelessBlockComponent
 ) {
-  const doc = block.doc;
+  const doc = block.store;
   if (!doc.schema.flavourSchemaMap.has('affine:attachment')) {
     console.error('The attachment flavour is not supported!');
     return;

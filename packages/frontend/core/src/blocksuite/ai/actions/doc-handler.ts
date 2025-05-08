@@ -107,8 +107,8 @@ function actionToStream<T extends keyof BlockSuitePresets.AIActions>(
         signal,
         control,
         where,
-        docId: host.doc.id,
-        workspaceId: host.doc.workspace.id,
+        docId: host.store.id,
+        workspaceId: host.store.workspace.id,
         webSearch: visible?.value && enabled?.value,
       } as Parameters<typeof action>[0];
       // @ts-expect-error TODO(@Peng): maybe fix this

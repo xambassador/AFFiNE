@@ -61,7 +61,7 @@ type ErrorConfig = Exclude<
 >['errorStateConfig'];
 
 export function getToolbar(host: EditorHost) {
-  const rootBlockId = host.doc.root?.id as string;
+  const rootBlockId = host.store.root?.id as string;
   const toolbar = host.view.getWidget(
     AFFINE_TOOLBAR_WIDGET,
     rootBlockId
@@ -211,7 +211,7 @@ export function asCaption<T extends keyof BlockSuitePresets.AIActions>(
       const imageBlock = selectedElements[0];
       if (!(imageBlock instanceof ImageBlockModel)) return;
 
-      host.doc.updateBlock(imageBlock, { caption });
+      host.store.updateBlock(imageBlock, { caption });
       panel.hide();
     },
   };
@@ -223,7 +223,7 @@ function insertBelow(
   parentId: string,
   index = 0
 ) {
-  insertFromMarkdown(host, markdown, host.doc, parentId, index)
+  insertFromMarkdown(host, markdown, host.store, parentId, index)
     .then(() => {
       const gfx = host.std.get(GfxControllerIdentifier);
 
@@ -242,7 +242,7 @@ function createBlockAndInsert(
   markdown: string,
   type: 'edgelessText' | 'note'
 ) {
-  const doc = host.doc;
+  const doc = host.store;
   const edgelessCopilot = getEdgelessCopilotWidget(host);
   doc.transact(() => {
     if (!doc.root) return;
@@ -340,11 +340,11 @@ function responseToCreateImage(host: EditorHost) {
       const gfx = host.std.get(GfxControllerIdentifier);
       const [x, y] = gfx.viewport.toViewCoord(minX, minY);
 
-      host.doc.transact(() => {
+      host.store.transact(() => {
         addImages(host.std, [img], { point: [x, y] })
           .then(blockIds => {
             const imageBlockId = blockIds[0];
-            const imageBlock = host.doc.getBlock(imageBlockId);
+            const imageBlock = host.store.getBlock(imageBlockId);
             if (!imageBlock || !selectedBound) return;
 
             // Update the image width and height to the same with the selected image
@@ -356,7 +356,7 @@ function responseToCreateImage(host: EditorHost) {
               selectedBound.w,
               selectedBound.h
             );
-            host.doc.updateBlock(imageModel, { xywh: newBound.serialize() });
+            host.store.updateBlock(imageModel, { xywh: newBound.serialize() });
           })
           .catch(console.error);
       });
@@ -365,7 +365,7 @@ function responseToCreateImage(host: EditorHost) {
 }
 
 export function responseToExpandMindmap(host: EditorHost, ctx: AIContext) {
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!surface) return;
 
   const elements = ctx.get().selectedElements;
@@ -414,7 +414,7 @@ function responseToBrainstormMindmap(host: EditorHost, ctx: AIContext) {
   const gfx = host.std.get(GfxControllerIdentifier);
   const edgelessCopilot = getEdgelessCopilotWidget(host);
   const selectionRect = edgelessCopilot.selectionModelRect;
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!surface) return;
 
   const { node, style, selectedElements } = ctx.get();
@@ -440,7 +440,7 @@ function responseToBrainstormMindmap(host: EditorHost, ctx: AIContext) {
   });
   const mindmap = surface.getElementById(mindmapId) as MindmapElementModel;
 
-  host.doc.transact(() => {
+  host.store.transact(() => {
     mindmap.childElements.forEach(shape => {
       fitContent(shape as ShapeElementModel);
     });
@@ -477,7 +477,7 @@ function responseToMakeItReal(host: EditorHost, ctx: AIContext) {
   html = preprocessHtml(html);
 
   const edgelessCopilot = getEdgelessCopilotWidget(host);
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!surface) return;
 
   const data = ctx.get();
@@ -489,8 +489,8 @@ function responseToMakeItReal(host: EditorHost, ctx: AIContext) {
   edgelessCopilot.hideCopilotPanel();
   aiPanel.hide();
 
-  host.doc.transact(() => {
-    host.doc.addBlock(
+  host.store.transact(() => {
+    host.store.addBlock(
       'affine:embed-html',
       {
         html,

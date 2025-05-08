@@ -225,7 +225,7 @@ class FileCellManager {
     this.selectCurrentCell = props.selectCurrentCell;
     this.isEditing = props.isEditing$;
     this.blobSync = this.cell?.view?.contextGet
-      ? this.cell.view.contextGet(HostContextKey)?.doc.blobSync
+      ? this.cell.view.contextGet(HostContextKey)?.store.blobSync
       : undefined;
 
     this.fileUploadManager = this.blobSync

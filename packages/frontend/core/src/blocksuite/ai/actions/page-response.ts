@@ -66,10 +66,10 @@ function responseToBrainstormMindmap(
   ctx: AIContext,
   place: Place
 ) {
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!surface) return;
 
-  host.doc.transact(() => {
+  host.store.transact(() => {
     const { node, style } = ctx.get();
     if (!node) return;
     const bound = getEdgelessContentBound(host);
@@ -106,7 +106,7 @@ function responseToBrainstormMindmap(
 }
 
 function responseToMakeItReal(host: EditorHost, ctx: AIContext, place: Place) {
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   const aiPanel = getAIPanelWidget(host);
   if (!aiPanel.answer || !surface) return;
 
@@ -116,8 +116,8 @@ function responseToMakeItReal(host: EditorHost, ctx: AIContext, place: Place) {
   const y = bound ? bound.y : 0;
   const htmlBound = new Bound(x, y + PADDING, width || 800, height || 600);
   const html = preprocessHtml(aiPanel.answer);
-  host.doc.transact(() => {
-    host.doc.addBlock(
+  host.store.transact(() => {
+    host.store.addBlock(
       'affine:embed-html',
       {
         html,
@@ -137,7 +137,7 @@ async function responseToCreateSlides(
   place: Place
 ) {
   const { contents, images = [] } = ctx.get();
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!contents || !surface) return;
 
   try {
@@ -235,11 +235,11 @@ function getSelection(host: EditorHost) {
 }
 
 function getEdgelessContentBound(host: EditorHost) {
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!surface) return;
 
   const elements = (
-    host.doc
+    host.store
       .getAllModels()
       .filter(
         model =>
@@ -262,9 +262,9 @@ function expandBound(bound: Bound, margin: number) {
 }
 
 function addSurfaceRefBlock(host: EditorHost, bound: Bound, place: Place) {
-  const surface = getSurfaceBlock(host.doc);
+  const surface = getSurfaceBlock(host.store);
   if (!surface) return;
-  const frame = host.doc.addBlock(
+  const frame = host.store.addBlock(
     'affine:frame',
     {
       title: new Text(new Y.Text('Frame')),
@@ -296,7 +296,7 @@ function addSiblingBlocks(
 ) {
   const targetModel = getTargetModel(host, place);
   if (!targetModel) return;
-  return host.doc.addSiblingBlocks(targetModel, props, place);
+  return host.store.addSiblingBlocks(targetModel, props, place);
 }
 
 function findFrameObject(obj: AffineNode): AffineNode | null {

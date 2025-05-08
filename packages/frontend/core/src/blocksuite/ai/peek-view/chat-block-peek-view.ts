@@ -156,10 +156,10 @@ export class AIChatBlockPeekView extends LitElement {
     const lastMessage = this._historyMessages.at(-1);
     if (!lastMessage) return;
 
-    const { doc } = this.host;
+    const { store } = this.host;
     const forkSessionId = await AIProvider.forkChat?.({
-      workspaceId: doc.workspace.id,
-      docId: doc.id,
+      workspaceId: store.workspace.id,
+      docId: store.id,
       sessionId: this._sessionId,
       latestMessageId: lastMessage.id,
     });
@@ -195,9 +195,9 @@ export class AIChatBlockPeekView extends LitElement {
       return;
     }
 
-    const { doc } = this.host;
+    const { store } = this.host;
     // create a new AI chat block
-    const surfaceBlock = doc
+    const surfaceBlock = store
       .getAllModels()
       .find(block => block.flavour === 'affine:surface');
     if (!surfaceBlock) {
@@ -262,8 +262,8 @@ export class AIChatBlockPeekView extends LitElement {
       return;
     }
 
-    const { doc } = this.host;
-    const chatBlock = doc.getBlock(this._forkBlockId);
+    const { store } = this.host;
+    const chatBlock = store.getBlock(this._forkBlockId);
     if (!chatBlock) return;
 
     // Get fork session messages
@@ -276,7 +276,7 @@ export class AIChatBlockPeekView extends LitElement {
     if (!messages.length) {
       return;
     }
-    doc.updateBlock(chatBlock.model, {
+    store.updateBlock(chatBlock.model, {
       messages: JSON.stringify(messages),
     });
   };
@@ -298,12 +298,12 @@ export class AIChatBlockPeekView extends LitElement {
   private readonly _onHistoryCleared = async () => {
     const { _forkBlockId, host } = this;
     if (_forkBlockId) {
-      const surface = getSurfaceBlock(host.doc);
+      const surface = getSurfaceBlock(host.store);
       const crud = host.std.get(EdgelessCRUDIdentifier);
-      const chatBlock = host.doc.getBlock(_forkBlockId)?.model;
+      const chatBlock = host.store.getBlock(_forkBlockId)?.model;
       if (chatBlock) {
         const connectors = surface?.getConnectors(chatBlock.id);
-        host.doc.transact(() => {
+        host.store.transact(() => {
           // Delete the AI chat block
           crud.removeElement(_forkBlockId);
           // Delete the connectors
@@ -335,12 +335,12 @@ export class AIChatBlockPeekView extends LitElement {
       }
       this.updateContext({ messages, status: 'loading', error: null });
 
-      const { doc } = this.host;
+      const { store } = this.host;
       const stream = await AIProvider.actions.chat({
         sessionId: _forkSessionId,
         retry: true,
-        docId: doc.id,
-        workspaceId: doc.workspace.id,
+        docId: store.id,
+        workspaceId: store.workspace.id,
         host: this.host,
         stream: true,
         signal: abortController.signal,
@@ -505,7 +505,7 @@ export class AIChatBlockPeekView extends LitElement {
         <div class="history-clear-container">
           <ai-history-clear
             .host=${this.host}
-            .doc=${this.host.doc}
+            .doc=${this.host.store}
             .getSessionId=${this._getSessionId}
             .onHistoryCleared=${this._onHistoryCleared}
             .chatContextValue=${chatContext}
@@ -514,7 +514,7 @@ export class AIChatBlockPeekView extends LitElement {
       </div>
       <ai-chat-composer
         .host=${host}
-        .doc=${this.host.doc}
+        .doc=${this.host.store}
         .getSessionId=${this._getSessionId}
         .createSessionId=${this._createSessionId}
         .chatContextValue=${chatContext}
