@@ -546,19 +546,7 @@ export class EditorUtils {
     };
   }
 
-  public static async askAIWithText(page: Page, text: string) {
-    await this.focusToEditor(page);
-    const texts = text.split('\n');
-    for (const [index, line] of texts.entries()) {
-      await page.keyboard.insertText(line);
-      if (index !== texts.length - 1) {
-        await page.keyboard.press('Enter');
-      }
-    }
-    await page.keyboard.press('ControlOrMeta+A');
-    await page.keyboard.press('ControlOrMeta+A');
-    await page.keyboard.press('ControlOrMeta+A');
-
+  public static async showAIMenu(page: Page) {
     const askAI = await page.locator('page-editor editor-toolbar ask-ai-icon');
     await askAI.waitFor({
       state: 'attached',
@@ -659,6 +647,22 @@ export class EditorUtils {
         page.getByTestId('action-write-twitter-post').click()
       ),
     } as const;
+  }
+
+  public static async askAIWithText(page: Page, text: string) {
+    await this.focusToEditor(page);
+    const texts = text.split('\n');
+    for (const [index, line] of texts.entries()) {
+      await page.keyboard.insertText(line);
+      if (index !== texts.length - 1) {
+        await page.keyboard.press('Enter');
+      }
+    }
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.press('ControlOrMeta+A');
+    await page.keyboard.press('ControlOrMeta+A');
+
+    return await this.showAIMenu(page);
   }
 
   public static async whatAreYourThoughts(page: Page, text: string) {
