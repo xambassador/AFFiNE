@@ -57,8 +57,7 @@ export const QuotaCheck = ({
     if (workspaceMeta.flavour === 'local' || !quota || isTeam) {
       return;
     }
-    const memberOverflow = quota.memberCount > quota.memberLimit;
-    // remember to use real percent
+    const memberOverflow = quota.overcapacityMemberCount > 0;
     const storageOverflow = usedPercent && usedPercent >= 100;
     const message = getSyncPausedMessage(
       !!isOwner,
