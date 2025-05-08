@@ -4,15 +4,12 @@ import { replaceIdMiddleware } from '@blocksuite/affine/shared/adapters';
 import type { AffineTextAttributes } from '@blocksuite/affine/shared/types';
 import type { DeltaInsert } from '@blocksuite/affine/store';
 import { Slice, Text, Transformer } from '@blocksuite/affine/store';
-import { LiveData, ObjectPool, Service } from '@toeverything/infra';
-import { omitBy } from 'lodash-es';
+import { ObjectPool, Service } from '@toeverything/infra';
 import { combineLatest, map } from 'rxjs';
 
 import { initDocFromProps } from '../../../blocksuite/initialization';
-import type { DocProperties } from '../../db';
 import { getAFFiNEWorkspaceSchema } from '../../workspace';
 import type { Doc } from '../entities/doc';
-import { DocPropertyList } from '../entities/property-list';
 import { DocRecordList } from '../entities/record-list';
 import { DocCreated, DocInitialized } from '../events';
 import type { DocCreateMiddleware } from '../providers/doc-create-middleware';
@@ -33,26 +30,44 @@ export class DocsService extends Service {
     },
   });
 
-  propertyList = this.framework.createEntity(DocPropertyList);
+  /**
+   * Get all property values of a property, used for search
+   *
+   * Results may include docs in trash or deleted docs
+   * Legacy property data such as old `journal` will not be included in the values
+   */
+  propertyValues$(propertyKey: string) {
+    return combineLatest([
+      this.store.watchDocIds(),
+      this.docPropertiesStore.watchPropertyAllValues(propertyKey),
+    ]).pipe(
+      map(([docIds, propertyValues]) => {
+        const result = new Map<string, string | undefined>();
+        for (const docId of docIds) {
+          result.set(docId, propertyValues.get(docId));
+        }
+        return result;
+      })
+    );
+  }
 
   /**
-   * used for search doc by properties, for convenience of search, all non-exist doc or trash doc have been filtered
+   * used for search
    */
-  allDocProperties$: LiveData<Record<string, DocProperties>> = LiveData.from(
-    combineLatest([
-      this.docPropertiesStore.watchAllDocProperties(),
-      this.store.watchNonTrashDocIds(),
-    ]).pipe(
-      map(([properties, docIds]) => {
-        const allIds = new Set(docIds);
-        return omitBy(
-          properties as Record<string, DocProperties>,
-          (_, id) => !allIds.has(id)
-        );
-      })
-    ),
-    {}
-  );
+  allDocsCreatedDate$() {
+    return this.store.watchAllDocCreateDate();
+  }
+
+  /**
+   * used for search
+   */
+  allDocsUpdatedDate$() {
+    return this.store.watchAllDocUpdatedDate();
+  }
+
+  allDocsTagIds$() {
+    return this.store.watchAllDocTagIds();
+  }
 
   constructor(
     private readonly store: DocsStore,

@@ -1,5 +1,5 @@
 import type { Workspace as WorkspaceInterface } from '@blocksuite/affine/store';
-import { Entity, LiveData, yjsObserveByPath } from '@toeverything/infra';
+import { Entity, LiveData, yjsGetPath } from '@toeverything/infra';
 import type { Observable } from 'rxjs';
 import { Doc as YDoc, transact } from 'yjs';
 
@@ -80,14 +80,14 @@ export class Workspace extends Entity {
   }
 
   name$ = LiveData.from<string | undefined>(
-    yjsObserveByPath(this.rootYDoc.getMap('meta'), 'name') as Observable<
+    yjsGetPath(this.rootYDoc.getMap('meta'), 'name') as Observable<
       string | undefined
     >,
     undefined
   );
 
   avatar$ = LiveData.from(
-    yjsObserveByPath(this.rootYDoc.getMap('meta'), 'avatar') as Observable<
+    yjsGetPath(this.rootYDoc.getMap('meta'), 'avatar') as Observable<
       string | undefined
     >,
     undefined

@@ -15,6 +15,7 @@ export { FetchService } from './services/fetch';
 export { GraphQLService } from './services/graphql';
 export { InvitationService } from './services/invitation';
 export { InvoicesService } from './services/invoices';
+export type { PublicUserInfo } from './services/public-user';
 export { PublicUserService } from './services/public-user';
 export { SelfhostGenerateLicenseService } from './services/selfhost-generate-license';
 export { SelfhostLicenseService } from './services/selfhost-license';

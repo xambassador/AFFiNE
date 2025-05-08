@@ -42,8 +42,8 @@ import {
 
 import {
   type DefaultOpenProperty,
-  DocPropertiesTable,
-} from '../../components/doc-properties';
+  WorkspacePropertiesTable,
+} from '../../components/properties';
 import { BiDirectionalLinkPanel } from './bi-directional-link-panel';
 import { BlocksuiteEditorJournalDocTitle } from './journal-doc-title';
 import { StarterBar } from './starter-bar';
@@ -229,7 +229,7 @@ export const BlocksuiteDocEditor = forwardRef<
         )}
         {!shared && displayDocInfo ? (
           <div className={styles.docPropertiesTableContainer}>
-            <DocPropertiesTable
+            <WorkspacePropertiesTable
               className={styles.docPropertiesTable}
               onDatabasePropertyChange={onDatabasePropertyChange}
               onPropertyChange={onPropertyChange}
