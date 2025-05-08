@@ -104,7 +104,7 @@ const createHelmCommand = ({ isDryRun }) => {
         `--set        web.resources.requests.cpu="${cpu.web}"`,
         `--set        graphql.resources.requests.cpu="${cpu.graphql}"`,
         `--set        sync.resources.requests.cpu="${cpu.sync}"`,
-        `--set        doc.resources.requests.cpu="${cpu.store}"`,
+        `--set        doc.resources.requests.cpu="${cpu.doc}"`,
       ]
     : [];
 
