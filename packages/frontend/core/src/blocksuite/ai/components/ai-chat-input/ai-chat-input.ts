@@ -1,6 +1,6 @@
 import { stopPropagation } from '@affine/core/utils';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
-import { unsafeCSSVarV2 } from '@blocksuite/affine/shared/theme';
+import { unsafeCSSVar, unsafeCSSVarV2 } from '@blocksuite/affine/shared/theme';
 import { openFileOrFiles } from '@blocksuite/affine/shared/utils';
 import type { EditorHost } from '@blocksuite/affine/std';
 import {
@@ -182,8 +182,28 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
         color: var(--affine-text-primary-color);
         box-sizing: border-box;
         resize: none;
-        overflow-y: hidden;
+        overflow-y: scroll;
         background-color: transparent;
+      }
+
+      textarea::-webkit-scrollbar {
+        -webkit-appearance: none;
+        width: 4px;
+        display: block;
+      }
+
+      textarea::-webkit-scrollbar:horizontal {
+        height: 8px;
+      }
+
+      textarea::-webkit-scrollbar-thumb {
+        border-radius: 2px;
+        background-color: transparent;
+      }
+
+      textarea:hover::-webkit-scrollbar-thumb {
+        border-radius: 16px;
+        background-color: ${unsafeCSSVar('black30')};
       }
 
       textarea::placeholder {
