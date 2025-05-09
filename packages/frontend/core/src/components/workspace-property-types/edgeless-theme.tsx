@@ -1,9 +1,12 @@
 import { PropertyValue, type RadioItem } from '@affine/component';
 import { DocService } from '@affine/core/modules/doc';
 import { useI18n } from '@affine/i18n';
+import { EdgelessIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { useCallback, useMemo } from 'react';
 
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import { PropertyRadioGroup } from '../properties/widgets/radio-group';
 import * as styles from './edgeless-theme.css';
@@ -54,5 +57,22 @@ export const EdgelessThemeValue = ({
         disabled={readonly}
       />
     </PropertyValue>
+  );
+};
+
+export const EdgelessThemeDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const t = useI18n();
+  const edgelessTheme = useLiveData(
+    doc.properties$.selector(p => p.edgelessColorTheme)
+  );
+
+  return (
+    <StackProperty icon={<EdgelessIcon />}>
+      {edgelessTheme === 'system' || !edgelessTheme
+        ? t['com.affine.themeSettings.auto']()
+        : edgelessTheme === 'light'
+          ? t['com.affine.themeSettings.light']()
+          : t['com.affine.themeSettings.dark']()}
+    </StackProperty>
   );
 };

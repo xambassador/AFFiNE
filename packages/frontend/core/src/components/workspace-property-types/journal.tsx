@@ -12,6 +12,7 @@ import { JournalService } from '@affine/core/modules/journal';
 import { WorkbenchService } from '@affine/core/modules/workbench';
 import { ViewService } from '@affine/core/modules/workbench/services/view';
 import { i18nTime, useI18n } from '@affine/i18n';
+import { TodayIcon } from '@blocksuite/icons/rc';
 import {
   useLiveData,
   useService,
@@ -20,6 +21,9 @@ import {
 import dayjs from 'dayjs';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps, GroupHeaderProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import * as styles from './journal.css';
 
@@ -214,5 +218,29 @@ export const JournalFilterValue = ({
     >
       <span>{filter.value === 'true' ? 'True' : 'False'}</span>
     </Menu>
+  );
+};
+
+export const JournalDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const journalService = useService(JournalService);
+  const journalDate = useLiveData(journalService.journalDate$(doc.id));
+
+  if (!journalDate) {
+    return null;
+  }
+
+  return (
+    <StackProperty icon={<TodayIcon />}>
+      {i18nTime(journalDate, { absolute: { accuracy: 'day' } })}
+    </StackProperty>
+  );
+};
+
+export const JournalGroupHeader = ({ groupId, docCount }: GroupHeaderProps) => {
+  const text = groupId === 'true' ? 'Journal' : 'Not Journal';
+  return (
+    <PlainTextDocGroupHeader groupId={groupId} docCount={docCount}>
+      {text}
+    </PlainTextDocGroupHeader>
   );
 };

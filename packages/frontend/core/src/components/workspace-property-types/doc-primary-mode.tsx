@@ -9,9 +9,13 @@ import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { DocService } from '@affine/core/modules/doc';
 import { useI18n } from '@affine/i18n';
 import type { DocMode } from '@blocksuite/affine/model';
+import { EdgelessIcon, PageIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { useCallback, useMemo } from 'react';
 
+import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps, GroupHeaderProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import { PropertyRadioGroup } from '../properties/widgets/radio-group';
 import * as styles from './doc-primary-mode.css';
@@ -112,5 +116,39 @@ export const DocPrimaryModeFilterValue = ({
     >
       <span>{filter.value === 'edgeless' ? t['Edgeless']() : t['Page']()}</span>
     </Menu>
+  );
+};
+
+export const DocPrimaryModeDocListProperty = ({
+  doc,
+}: DocListPropertyProps) => {
+  const t = useI18n();
+  const primaryMode = useLiveData(doc.primaryMode$);
+
+  return (
+    <StackProperty
+      icon={primaryMode === 'edgeless' ? <EdgelessIcon /> : <PageIcon />}
+    >
+      {primaryMode === 'edgeless' ? t['Edgeless']() : t['Page']()}
+    </StackProperty>
+  );
+};
+
+export const DocPrimaryModeGroupHeader = ({
+  groupId,
+  docCount,
+}: GroupHeaderProps) => {
+  const t = useI18n();
+  const text =
+    groupId === 'edgeless'
+      ? t['com.affine.edgelessMode']()
+      : groupId === 'page'
+        ? t['com.affine.pageMode']()
+        : 'Default';
+
+  return (
+    <PlainTextDocGroupHeader groupId={groupId} docCount={docCount}>
+      {text}
+    </PlainTextDocGroupHeader>
   );
 };

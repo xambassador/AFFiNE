@@ -1,7 +1,12 @@
 import { Checkbox, Menu, MenuItem, PropertyValue } from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
+import { useI18n } from '@affine/i18n';
+import { CheckBoxCheckLinearIcon } from '@blocksuite/icons/rc';
 import { useCallback } from 'react';
 
+import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps, GroupHeaderProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import * as styles from './checkbox.css';
 
@@ -71,5 +76,35 @@ export const CheckboxFilterValue = ({
     >
       <span>{filter.value === 'true' ? 'True' : 'False'}</span>
     </Menu>
+  );
+};
+
+export const CheckboxDocListProperty = ({
+  value,
+  propertyInfo,
+}: DocListPropertyProps) => {
+  const t = useI18n();
+  if (!value) return null;
+
+  return (
+    <StackProperty icon={<CheckBoxCheckLinearIcon />}>
+      {/* 
+        Has circular dependency issue (WorkspacePropertyName -> WorkspacePropertyTypes -> Checkbox)
+        <WorkspacePropertyName propertyInfo={propertyInfo} /> 
+      */}
+      {propertyInfo.name || t['unnamed']()}
+    </StackProperty>
+  );
+};
+
+export const CheckboxGroupHeader = ({
+  groupId,
+  docCount,
+}: GroupHeaderProps) => {
+  const text = groupId === 'true' ? 'Checked' : 'Unchecked';
+  return (
+    <PlainTextDocGroupHeader docCount={docCount} groupId={groupId}>
+      {text}
+    </PlainTextDocGroupHeader>
   );
 };

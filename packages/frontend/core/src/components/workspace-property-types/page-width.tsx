@@ -2,9 +2,12 @@ import { PropertyValue, type RadioItem } from '@affine/component';
 import { DocService } from '@affine/core/modules/doc';
 import { EditorSettingService } from '@affine/core/modules/editor-setting';
 import { useI18n } from '@affine/i18n';
+import { LongerIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { useCallback, useMemo } from 'react';
 
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import { PropertyRadioGroup } from '../properties/widgets/radio-group';
 import { container } from './page-width.css';
@@ -56,5 +59,22 @@ export const PageWidthValue = ({ readonly }: PropertyValueProps) => {
         disabled={readonly}
       />
     </PropertyValue>
+  );
+};
+
+export const PageWidthDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const t = useI18n();
+  const pageWidth = useLiveData(doc.properties$.selector(p => p.pageWidth));
+
+  return (
+    <StackProperty icon={<LongerIcon />}>
+      {pageWidth === 'standard' || !pageWidth
+        ? t[
+            'com.affine.settings.editorSettings.page.default-page-width.standard'
+          ]()
+        : t[
+            'com.affine.settings.editorSettings.page.default-page-width.full-width'
+          ]()}
+    </StackProperty>
   );
 };

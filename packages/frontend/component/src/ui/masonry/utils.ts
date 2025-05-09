@@ -1,13 +1,22 @@
-import type { MasonryGroup, MasonryItem, MasonryItemXYWH } from './type';
+import type {
+  MasonryGroup,
+  MasonryItem,
+  MasonryItemXYWH,
+  MasonryPX,
+} from './type';
+
+export const calcPX = (px: MasonryPX, totalWidth: number) =>
+  typeof px === 'number' ? px : px(totalWidth);
 
 export const calcColumns = (
   totalWidth: number,
   itemWidth: number | 'stretch',
   itemWidthMin: number,
   gapX: number,
-  paddingX: number,
+  _paddingX: MasonryPX,
   columns?: number
 ) => {
+  const paddingX = calcPX(_paddingX, totalWidth);
   const availableWidth = totalWidth - paddingX * 2;
 
   if (columns) {
@@ -47,7 +56,7 @@ export const calcLayout = (
     width: number;
     gapX: number;
     gapY: number;
-    paddingX: number;
+    paddingX: MasonryPX;
     paddingY: number;
     groupsGap: number;
     groupHeaderGapWithItems: number;
@@ -60,12 +69,13 @@ export const calcLayout = (
     width,
     gapX,
     gapY,
-    paddingX,
+    paddingX: _paddingX,
     paddingY,
     groupsGap,
     groupHeaderGapWithItems,
     collapsedGroups,
   } = options;
+  const paddingX = calcPX(_paddingX, totalWidth);
 
   const layout = new Map<string, MasonryItemXYWH>();
   let finalHeight = paddingY;
@@ -79,9 +89,9 @@ export const calcLayout = (
     // calculate group header
     const groupHeaderLayout: MasonryItemXYWH = {
       type: 'group',
-      x: paddingX,
+      x: 0,
       y: finalHeight,
-      w: totalWidth - paddingX * 2,
+      w: totalWidth,
       h: group.height,
     };
     layout.set(group.id, groupHeaderLayout);
@@ -97,10 +107,11 @@ export const calcLayout = (
       const itemId = group.id ? `${group.id}:${item.id}` : item.id;
       const minHeight = Math.min(...heightStack);
       const minHeightIndex = heightStack.indexOf(minHeight);
+      const hasGap = heightStack[minHeightIndex] ? gapY : 0;
       const x = minHeightIndex * (width + gapX) + paddingX;
-      const y = minHeight + finalHeight;
+      const y = finalHeight + minHeight + hasGap;
 
-      heightStack[minHeightIndex] += item.height + gapY;
+      heightStack[minHeightIndex] += item.height + hasGap;
       layout.set(itemId, {
         type: 'item',
         x,
@@ -117,7 +128,7 @@ export const calcLayout = (
   return { layout, height: finalHeight };
 };
 
-export const calcSleep = (options: {
+export const calcActive = (options: {
   viewportHeight: number;
   scrollY: number;
   layoutMap: Map<MasonryItem['id'], MasonryItemXYWH>;
@@ -125,7 +136,7 @@ export const calcSleep = (options: {
 }) => {
   const { viewportHeight, scrollY, layoutMap, preloadHeight } = options;
 
-  const sleepMap = new Map<MasonryItem['id'], boolean>();
+  const activeMap = new Map<MasonryItem['id'], boolean>();
 
   layoutMap.forEach((layout, id) => {
     const { y, h } = layout;
@@ -134,10 +145,12 @@ export const calcSleep = (options: {
       y + h + preloadHeight > scrollY &&
       y - preloadHeight < scrollY + viewportHeight;
 
-    sleepMap.set(id, !isInView);
+    if (isInView) {
+      activeMap.set(id, true);
+    }
   });
 
-  return sleepMap;
+  return activeMap;
 };
 
 export const calcSticky = (options: {

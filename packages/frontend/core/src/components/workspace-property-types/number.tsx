@@ -1,5 +1,6 @@
 import { PropertyValue } from '@affine/component';
 import { useI18n } from '@affine/i18n';
+import { NumberIcon } from '@blocksuite/icons/rc';
 import {
   type ChangeEventHandler,
   useCallback,
@@ -7,6 +8,7 @@ import {
   useState,
 } from 'react';
 
+import { StackProperty } from '../explorer/docs-view/stack-property';
 import type { PropertyValueProps } from '../properties/types';
 import * as styles from './number.css';
 
@@ -54,4 +56,12 @@ export const NumberValue = ({
       />
     </PropertyValue>
   );
+};
+
+export const NumberDocListProperty = ({ value }: { value: number }) => {
+  if (value !== 0 && !value) {
+    return null;
+  }
+
+  return <StackProperty icon={<NumberIcon />}>{value}</StackProperty>;
 };

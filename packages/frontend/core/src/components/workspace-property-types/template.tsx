@@ -1,8 +1,12 @@
 import { Checkbox, PropertyValue } from '@affine/component';
 import { DocService } from '@affine/core/modules/doc';
+import { useI18n } from '@affine/i18n';
+import { TemplateIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { type ChangeEvent, useCallback } from 'react';
 
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import * as styles from './template.css';
 
@@ -37,5 +41,18 @@ export const TemplateValue = ({ readonly }: PropertyValueProps) => {
         disabled={readonly}
       />
     </PropertyValue>
+  );
+};
+
+export const TemplateDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const t = useI18n();
+  const isTemplate = useLiveData(doc.properties$.selector(p => p.isTemplate));
+
+  if (!isTemplate) {
+    return null;
+  }
+
+  return (
+    <StackProperty icon={<TemplateIcon />}>{t['Template']()}</StackProperty>
   );
 };

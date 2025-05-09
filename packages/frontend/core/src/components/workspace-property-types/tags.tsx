@@ -1,7 +1,7 @@
 import { PropertyValue } from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { DocService } from '@affine/core/modules/doc';
-import { TagService } from '@affine/core/modules/tag';
+import { type Tag, TagService } from '@affine/core/modules/tag';
 import { WorkspaceService } from '@affine/core/modules/workspace';
 import { useI18n } from '@affine/i18n';
 import { TagsIcon } from '@blocksuite/icons/rc';
@@ -9,6 +9,9 @@ import { useLiveData, useService } from '@toeverything/infra';
 import { cssVarV2 } from '@toeverything/theme/v2';
 import { useCallback, useMemo } from 'react';
 
+import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps, GroupHeaderProps } from '../explorer/types';
 import { useNavigateHelper } from '../hooks/use-navigate-helper';
 import type { PropertyValueProps } from '../properties/types';
 import {
@@ -162,5 +165,75 @@ const TagsInlineEditor = ({
         </>
       }
     />
+  );
+};
+
+const TagName = ({ tag }: { tag: Tag }) => {
+  const name = useLiveData(tag.value$);
+  return name;
+};
+const TagIcon = ({ tag, size = 8 }: { tag: Tag; size?: number }) => {
+  const color = useLiveData(tag.color$);
+  return (
+    <div
+      style={{
+        backgroundColor: color,
+        width: size,
+        height: size,
+        borderRadius: '50%',
+      }}
+    />
+  );
+};
+export const TagsDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const tagList = useService(TagService).tagList;
+  const tags = useLiveData(tagList.tagsByPageId$(doc.id));
+
+  return (
+    <>
+      {tags.map(tag => {
+        return (
+          <StackProperty icon={<TagIcon tag={tag} />} key={tag.id}>
+            <TagName tag={tag} />
+          </StackProperty>
+        );
+      })}
+    </>
+  );
+};
+
+export const TagsGroupHeader = ({ groupId, docCount }: GroupHeaderProps) => {
+  const t = useI18n();
+  const tagService = useService(TagService);
+  const tag = useLiveData(tagService.tagList.tagByTagId$(groupId));
+
+  if (!tag) {
+    return (
+      <PlainTextDocGroupHeader
+        groupId={groupId}
+        docCount={docCount}
+        icon={
+          <div
+            style={{
+              backgroundColor: cssVarV2.icon.secondary,
+              width: 8,
+              height: 8,
+              borderRadius: '50%',
+            }}
+          />
+        }
+      >
+        {t['com.affine.page.display.grouping.group-by-tag.untagged']()}
+      </PlainTextDocGroupHeader>
+    );
+  }
+  return (
+    <PlainTextDocGroupHeader
+      groupId={groupId}
+      docCount={docCount}
+      icon={<TagIcon tag={tag} />}
+    >
+      <TagName tag={tag} />
+    </PlainTextDocGroupHeader>
   );
 };

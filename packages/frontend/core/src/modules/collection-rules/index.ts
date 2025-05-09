@@ -14,6 +14,7 @@ import { PropertyFilterProvider } from './impls/filters/property';
 import { SystemFilterProvider } from './impls/filters/system';
 import { TagsFilterProvider } from './impls/filters/tags';
 import { TextPropertyFilterProvider } from './impls/filters/text';
+import { TrashFilterProvider } from './impls/filters/trash';
 import { UpdatedAtFilterProvider } from './impls/filters/updated-at';
 import { UpdatedByFilterProvider } from './impls/filters/updated-by';
 import { CheckboxPropertyGroupByProvider } from './impls/group-by/checkbox';
@@ -79,6 +80,7 @@ export function configureCollectionRulesModule(framework: Framework) {
       DocPrimaryModeFilterProvider,
       [DocsService]
     )
+    .impl(FilterProvider('system:trash'), TrashFilterProvider, [DocsService])
     .impl(FilterProvider('property:date'), DatePropertyFilterProvider, [
       DocsService,
     ])

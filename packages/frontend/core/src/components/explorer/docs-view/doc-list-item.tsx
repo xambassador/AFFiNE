@@ -1,0 +1,400 @@
+import {
+  Checkbox,
+  DragHandle as DragHandleIcon,
+  Skeleton,
+  useDraggable,
+} from '@affine/component';
+import { DocsService } from '@affine/core/modules/doc';
+import { DocDisplayMetaService } from '@affine/core/modules/doc-display-meta';
+import { WorkbenchLink } from '@affine/core/modules/workbench';
+import type { AffineDNDData } from '@affine/core/types/dnd';
+import { useI18n } from '@affine/i18n';
+import {
+  AutoTidyUpIcon,
+  PropertyIcon,
+  ResizeTidyUpIcon,
+} from '@blocksuite/icons/rc';
+import { useLiveData, useService } from '@toeverything/infra';
+import {
+  type HTMLProps,
+  memo,
+  type ReactNode,
+  type SVGProps,
+  useCallback,
+  useContext,
+  useState,
+} from 'react';
+
+import { PagePreview } from '../../page-list/page-content-preview';
+import { DocExplorerContext } from '../context';
+import { quickActions } from '../quick-actions.constants';
+import * as styles from './doc-list-item.css';
+import { MoreMenuButton } from './more-menu';
+import { CardViewProperties, ListViewProperties } from './properties';
+
+export type DocListItemView = 'list' | 'grid' | 'masonry';
+
+export const DocListViewIcon = ({
+  view,
+  ...props
+}: { view: DocListItemView } & SVGProps<SVGSVGElement>) => {
+  const Component = {
+    list: PropertyIcon,
+    grid: ResizeTidyUpIcon,
+    masonry: AutoTidyUpIcon,
+  }[view];
+
+  return <Component {...props} />;
+};
+
+export interface DocListItemProps {
+  docId: string;
+  groupId: string;
+}
+
+class MixId {
+  static connector = '||';
+  static create(groupId: string, docId: string) {
+    return `${groupId}${this.connector}${docId}`;
+  }
+  static parse(mixId: string) {
+    if (!mixId) {
+      return { groupId: null, docId: null };
+    }
+    const [groupId, docId] = mixId.split(this.connector);
+    return { groupId, docId };
+  }
+}
+export const DocListItem = ({ ...props }: DocListItemProps) => {
+  const {
+    view,
+    groups,
+    selectMode,
+    selectedDocIds,
+    prevCheckAnchorId,
+    onSelect,
+    onToggleSelect,
+    setPrevCheckAnchorId,
+  } = useContext(DocExplorerContext);
+
+  const handleMultiSelect = useCallback(
+    (prevCursor: string, currCursor: string) => {
+      const flattenList = groups.flatMap(group =>
+        group.items.map(docId => MixId.create(group.key, docId))
+      );
+      const prevIndex = flattenList.indexOf(prevCursor);
+      const currIndex = flattenList.indexOf(currCursor);
+
+      onSelect(prev => {
+        const lowerIndex = Math.min(prevIndex, currIndex);
+        const upperIndex = Math.max(prevIndex, currIndex);
+
+        const resSet = new Set(prev);
+        const handledSet = new Set<string>();
+        for (let i = lowerIndex; i <= upperIndex; i++) {
+          const mixId = flattenList[i];
+          const { groupId, docId } = MixId.parse(mixId);
+          if (groupId === null || docId === null) {
+            continue;
+          }
+          if (handledSet.has(docId) || mixId === prevCursor) {
+            continue;
+          }
+          if (resSet.has(docId)) {
+            resSet.delete(docId);
+          } else {
+            resSet.add(docId);
+          }
+          handledSet.add(docId);
+        }
+        return [...resSet];
+      });
+      setPrevCheckAnchorId(currCursor);
+    },
+    [groups, onSelect, setPrevCheckAnchorId]
+  );
+
+  const handleClick = useCallback(
+    (e: React.MouseEvent<Element>) => {
+      const { docId, groupId } = props;
+      const currCursor = MixId.create(groupId, docId);
+      if (selectMode || e.shiftKey) {
+        e.preventDefault();
+      }
+
+      if (selectMode) {
+        if (e.shiftKey && prevCheckAnchorId) {
+          // do multi select
+          handleMultiSelect(prevCheckAnchorId, currCursor);
+        } else {
+          onToggleSelect(docId);
+          setPrevCheckAnchorId(currCursor);
+        }
+      } else {
+        if (e.shiftKey) {
+          onToggleSelect(docId);
+          setPrevCheckAnchorId(currCursor);
+          return;
+        } else {
+          // as link
+          return;
+        }
+      }
+    },
+    [
+      handleMultiSelect,
+      onToggleSelect,
+      prevCheckAnchorId,
+      props,
+      selectMode,
+      setPrevCheckAnchorId,
+    ]
+  );
+
+  return (
+    <WorkbenchLink
+      draggable={false}
+      to={`/${props.docId}`}
+      onClick={handleClick}
+      data-selected={selectedDocIds.includes(props.docId)}
+      className={styles.root}
+    >
+      {view === 'list' ? (
+        <ListViewDoc {...props} />
+      ) : (
+        <CardViewDoc {...props} />
+      )}
+    </WorkbenchLink>
+  );
+};
+
+const RawDocIcon = memo(function RawDocIcon({
+  id,
+  ...props
+}: HTMLProps<SVGSVGElement>) {
+  const docDisplayMetaService = useService(DocDisplayMetaService);
+  const Icon = useLiveData(id ? docDisplayMetaService.icon$(id) : null);
+  return <Icon {...props} />;
+});
+const RawDocTitle = memo(function RawDocTitle({ id }: { id: string }) {
+  const i18n = useI18n();
+  const docDisplayMetaService = useService(DocDisplayMetaService);
+  const title = useLiveData(docDisplayMetaService.title$(id));
+  return i18n.t(title);
+});
+const RawDocPreview = memo(function RawDocPreview({
+  id,
+  loading,
+}: {
+  id: string;
+  loading?: ReactNode;
+}) {
+  return <PagePreview pageId={id} fallback={loading} />;
+});
+const DragHandle = memo(function DragHandle({
+  id,
+  preview,
+  ...props
+}: HTMLProps<HTMLDivElement> & { preview?: ReactNode }) {
+  const { selectMode } = useContext(DocExplorerContext);
+
+  const { dragRef, CustomDragPreview } = useDraggable<AffineDNDData>(
+    () => ({
+      canDrag: true,
+      data: {
+        entity: {
+          type: 'doc',
+          id: id as string,
+        },
+        from: {
+          at: 'all-docs:list',
+        },
+      },
+    }),
+    [id]
+  );
+
+  if (selectMode || !id) {
+    return null;
+  }
+
+  return (
+    <>
+      <div ref={dragRef} {...props}>
+        <DragHandleIcon />
+      </div>
+      <CustomDragPreview>
+        {preview ?? (
+          <>
+            <RawDocIcon id={id} />
+            <RawDocTitle id={id} />
+          </>
+        )}
+      </CustomDragPreview>
+    </>
+  );
+});
+const Select = memo(function Select({
+  id,
+  ...props
+}: HTMLProps<HTMLDivElement>) {
+  const { selectMode, selectedDocIds, onToggleSelect } =
+    useContext(DocExplorerContext);
+
+  const handleSelectChange = useCallback(() => {
+    id && onToggleSelect(id);
+  }, [id, onToggleSelect]);
+
+  if (!id) {
+    return null;
+  }
+
+  return (
+    <div data-select-mode={selectMode} {...props}>
+      <Checkbox
+        checked={selectedDocIds.includes(id)}
+        onChange={handleSelectChange}
+      />
+    </div>
+  );
+});
+// Different with RawDocIcon, refer to `ExplorerPreference.showDocIcon`
+const DocIcon = memo(function DocIcon({
+  id,
+  ...props
+}: HTMLProps<HTMLDivElement>) {
+  const { showDocIcon } = useContext(DocExplorerContext);
+  if (!showDocIcon) {
+    return null;
+  }
+  return (
+    <div {...props}>
+      <RawDocIcon id={id} />
+    </div>
+  );
+});
+const DocTitle = memo(function DocTitle({
+  id,
+  ...props
+}: HTMLProps<HTMLDivElement>) {
+  if (!id) return null;
+  return (
+    <div {...props}>
+      <RawDocTitle id={id} />
+    </div>
+  );
+});
+const DocPreview = memo(function DocPreview({
+  id,
+  loading,
+  ...props
+}: HTMLProps<HTMLDivElement> & { loading?: ReactNode }) {
+  const { showDocPreview } = useContext(DocExplorerContext);
+
+  if (!id || !showDocPreview) return null;
+
+  return (
+    <div {...props}>
+      <RawDocPreview id={id} loading={loading} />
+    </div>
+  );
+});
+
+const listMoreMenuContentOptions = {
+  side: 'bottom',
+  align: 'end',
+  sideOffset: 12,
+  alignOffset: -4,
+} as const;
+export const ListViewDoc = ({ docId }: DocListItemProps) => {
+  const docsService = useService(DocsService);
+  const doc = useLiveData(docsService.list.doc$(docId));
+  const [previewSkeletonWidth] = useState(
+    Math.round(100 + Math.random() * 100)
+  );
+
+  if (!doc) {
+    return null;
+  }
+
+  return (
+    <li className={styles.listViewRoot}>
+      <DragHandle id={docId} className={styles.listDragHandle} />
+      <Select id={docId} className={styles.listSelect} />
+      <DocIcon id={docId} className={styles.listIcon} />
+      <div className={styles.listBrief}>
+        <DocTitle id={docId} className={styles.listTitle} />
+        <DocPreview
+          id={docId}
+          className={styles.listPreview}
+          loading={<Skeleton height={20} width={previewSkeletonWidth} />}
+        />
+      </div>
+      <div className={styles.listSpace} />
+      <ListViewProperties docId={docId} />
+      {quickActions.map(action => {
+        return <action.Component key={action.key} doc={doc} />;
+      })}
+      <MoreMenuButton
+        docId={docId}
+        contentOptions={listMoreMenuContentOptions}
+      />
+    </li>
+  );
+};
+
+const cardMoreMenuContentOptions = {
+  side: 'bottom',
+  align: 'end',
+  sideOffset: 12,
+  alignOffset: -4,
+} as const;
+const randomPreviewSkeleton = () => {
+  return Array.from({ length: Math.floor(Math.random() * 2) + 1 }, (_, i) => ({
+    id: i,
+    width: Math.round(30 + Math.random() * 70),
+  }));
+};
+export const CardViewDoc = ({ docId }: DocListItemProps) => {
+  const { selectMode } = useContext(DocExplorerContext);
+  const docsService = useService(DocsService);
+  const doc = useLiveData(docsService.list.doc$(docId));
+  const [previewSkeleton] = useState(randomPreviewSkeleton);
+
+  if (!doc) {
+    return null;
+  }
+
+  return (
+    <li className={styles.cardViewRoot}>
+      <header className={styles.cardViewHeader}>
+        <DocIcon id={docId} className={styles.cardViewIcon} />
+        <DocTitle id={docId} className={styles.cardViewTitle} />
+        {quickActions.map(action => {
+          return <action.Component size="16" key={action.key} doc={doc} />;
+        })}
+        {selectMode ? (
+          <Select id={docId} className={styles.cardViewCheckbox} />
+        ) : (
+          <MoreMenuButton
+            docId={docId}
+            contentOptions={cardMoreMenuContentOptions}
+            iconProps={{ size: '16' }}
+          />
+        )}
+      </header>
+      <DocPreview
+        id={docId}
+        className={styles.cardPreviewContainer}
+        loading={
+          <div>
+            {previewSkeleton.map(({ id, width }) => (
+              <Skeleton key={id} height={20} width={`${width}%`} />
+            ))}
+          </div>
+        }
+      />
+      <CardViewProperties docId={docId} />
+    </li>
+  );
+};

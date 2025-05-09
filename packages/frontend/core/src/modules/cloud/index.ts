@@ -38,8 +38,6 @@ export type { ServerConfig } from './types';
 // eslint-disable-next-line simple-import-sort/imports
 import { type Framework } from '@toeverything/infra';
 
-import { DocScope } from '../doc/scopes/doc';
-import { DocService } from '../doc/services/doc';
 import { GlobalCache, GlobalState } from '../storage/providers/global';
 import { GlobalStateService } from '../storage/services/global';
 import { UrlService } from '../url';
@@ -101,7 +99,7 @@ import { DocCreatedByService } from './services/doc-created-by';
 import { DocUpdatedByService } from './services/doc-updated-by';
 import { DocCreatedByUpdatedBySyncService } from './services/doc-created-by-updated-by-sync';
 import { WorkspacePermissionService } from '../permissions';
-import { DocsService } from '../doc';
+import { DocScope, DocService, DocsService } from '../doc';
 import { DocCreatedByUpdatedBySyncStore } from './stores/doc-created-by-updated-by-sync';
 
 export function configureCloudModule(framework: Framework) {

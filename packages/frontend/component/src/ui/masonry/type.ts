@@ -22,3 +22,5 @@ export interface MasonryItemXYWH {
   w: number;
   h: number;
 }
+
+export type MasonryPX = number | ((totalWidth: number) => number);

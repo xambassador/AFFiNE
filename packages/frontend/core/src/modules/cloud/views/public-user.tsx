@@ -7,7 +7,15 @@ import { useLayoutEffect, useMemo } from 'react';
 import { PublicUserService } from '../services/public-user';
 import * as styles from './public-user.css';
 
-export const PublicUserLabel = ({ id }: { id: string }) => {
+export const PublicUserLabel = ({
+  id,
+  size = 20,
+  showName = true,
+}: {
+  id: string;
+  size?: number;
+  showName?: boolean;
+}) => {
   const serverService = useCurrentServerService();
   const publicUser = useMemo(() => {
     return serverService?.scope.get(PublicUserService);
@@ -28,10 +36,16 @@ export const PublicUserLabel = ({ id }: { id: string }) => {
   }
 
   if (user?.removed) {
-    return (
+    return showName ? (
       <span className={styles.publicUserLabelRemoved}>
         {t['Unknown User']()}
       </span>
+    ) : (
+      <Avatar
+        size={size}
+        name={t['Unknown User']()}
+        className={styles.publicUserLabelAvatar}
+      />
     );
   }
 
@@ -40,10 +54,10 @@ export const PublicUserLabel = ({ id }: { id: string }) => {
       <Avatar
         url={user?.avatar}
         name={user?.name ?? ''}
-        size={20}
+        size={size}
         className={styles.publicUserLabelAvatar}
       />
-      {user?.name}
+      {showName && user?.name}
     </span>
   );
 };

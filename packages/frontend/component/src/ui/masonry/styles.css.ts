@@ -20,3 +20,7 @@ export const stickyGroupHeader = style({
   top: 0,
   width: '100%',
 });
+
+export const item = style({
+  position: 'absolute',
+});

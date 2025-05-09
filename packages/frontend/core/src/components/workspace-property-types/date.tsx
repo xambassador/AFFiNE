@@ -2,10 +2,14 @@ import { DatePicker, Menu, PropertyValue, Tooltip } from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { DocService } from '@affine/core/modules/doc';
 import { i18nTime, useI18n } from '@affine/i18n';
+import { DateTimeIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useServices } from '@toeverything/infra';
 import { cssVarV2 } from '@toeverything/theme/v2';
 import { useCallback } from 'react';
 
+import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { DocListPropertyProps, GroupHeaderProps } from '../explorer/types';
 import type { PropertyValueProps } from '../properties/types';
 import * as styles from './date.css';
 
@@ -183,4 +187,72 @@ export const DateFilterValue = ({
       </Menu>
     </>
   ) : undefined;
+};
+
+export const DateDocListProperty = ({ value }: DocListPropertyProps) => {
+  if (!value) return null;
+
+  return (
+    <StackProperty icon={<DateTimeIcon />}>
+      {i18nTime(value, { absolute: { accuracy: 'day' } })}
+    </StackProperty>
+  );
+};
+
+export const CreateDateDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const t = useI18n();
+  const docMeta = useLiveData(doc.meta$);
+  const createDate = docMeta?.createDate;
+
+  if (!createDate) return null;
+
+  return (
+    <Tooltip
+      content={
+        <span className={styles.tooltip}>
+          {t.t('created at', { time: i18nTime(createDate) })}
+        </span>
+      }
+    >
+      <div className={styles.dateDocListInlineProperty}>
+        {i18nTime(createDate, { relative: true })}
+      </div>
+    </Tooltip>
+  );
+};
+
+export const UpdatedDateDocListProperty = ({ doc }: DocListPropertyProps) => {
+  const t = useI18n();
+  const docMeta = useLiveData(doc.meta$);
+  const updatedDate = docMeta?.updatedDate;
+
+  if (!updatedDate) return null;
+
+  return (
+    <Tooltip
+      content={
+        <span className={styles.tooltip}>
+          {t.t('updated at', { time: i18nTime(updatedDate) })}
+        </span>
+      }
+    >
+      <div className={styles.dateDocListInlineProperty}>
+        {i18nTime(updatedDate, { relative: true })}
+      </div>
+    </Tooltip>
+  );
+};
+
+export const DateGroupHeader = ({ groupId, docCount }: GroupHeaderProps) => {
+  const date = groupId || 'No Date';
+
+  return (
+    <PlainTextDocGroupHeader groupId={groupId} docCount={docCount}>
+      {date}
+    </PlainTextDocGroupHeader>
+  );
+};
+
+export const CreatedGroupHeader = (props: GroupHeaderProps) => {
+  return <PlainTextDocGroupHeader {...props} />;
 };

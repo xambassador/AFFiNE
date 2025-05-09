@@ -1,7 +1,7 @@
 import { Input, Menu, PropertyValue } from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { useI18n } from '@affine/i18n';
-import { TextIcon } from '@blocksuite/icons/rc';
+import { TextIcon, TextTypeIcon } from '@blocksuite/icons/rc';
 import { cssVar } from '@toeverything/theme';
 import { cssVarV2 } from '@toeverything/theme/v2';
 import {
@@ -12,6 +12,9 @@ import {
   useState,
 } from 'react';
 
+import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
+import { StackProperty } from '../explorer/docs-view/stack-property';
+import type { GroupHeaderProps } from '../explorer/types';
 import { ConfigModal } from '../mobile';
 import type { PropertyValueProps } from '../properties/types';
 import * as styles from './text.css';
@@ -247,4 +250,21 @@ export const TextFilterValue = ({
       )}
     </Menu>
   ) : null;
+};
+
+export const TextDocListProperty = ({ value }: { value: string }) => {
+  if (!value) {
+    return null;
+  }
+
+  return <StackProperty icon={<TextTypeIcon />}>{value}</StackProperty>;
+};
+
+export const TextGroupHeader = ({ groupId, docCount }: GroupHeaderProps) => {
+  const text = groupId || 'No Text';
+  return (
+    <PlainTextDocGroupHeader groupId={groupId} docCount={docCount}>
+      {text}
+    </PlainTextDocGroupHeader>
+  );
 };

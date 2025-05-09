@@ -14,15 +14,26 @@ import {
 import { observeResize } from '../../utils';
 import { Scrollable } from '../scrollbar';
 import * as styles from './styles.css';
-import type { MasonryGroup, MasonryItem, MasonryItemXYWH } from './type';
-import { calcColumns, calcLayout, calcSleep, calcSticky } from './utils';
+import type {
+  MasonryGroup,
+  MasonryItem,
+  MasonryItemXYWH,
+  MasonryPX,
+} from './type';
+import {
+  calcActive,
+  calcColumns,
+  calcLayout,
+  calcPX,
+  calcSticky,
+} from './utils';
 
 export interface MasonryProps extends React.HTMLAttributes<HTMLDivElement> {
   items: MasonryItem[] | MasonryGroup[];
 
   gapX?: number;
   gapY?: number;
-  paddingX?: number;
+  paddingX?: MasonryPX;
   paddingY?: number;
 
   groupsGap?: number;
@@ -48,6 +59,8 @@ export interface MasonryProps extends React.HTMLAttributes<HTMLDivElement> {
    * Specify the number of columns, will override the calculated
    */
   columns?: number;
+  resizeDebounce?: number;
+  preloadHeight?: number;
 }
 
 export const Masonry = ({
@@ -66,6 +79,8 @@ export const Masonry = ({
   stickyGroupHeader = true,
   collapsedGroups,
   columns,
+  preloadHeight = 50,
+  resizeDebounce = 20,
   onGroupCollapse,
   ...props
 }: MasonryProps) => {
@@ -74,13 +89,16 @@ export const Masonry = ({
   const [layoutMap, setLayoutMap] = useState<
     Map<MasonryItem['id'], MasonryItemXYWH>
   >(new Map());
-  const [sleepMap, setSleepMap] = useState<Map<
-    MasonryItem['id'],
-    boolean
-  > | null>(null);
+  /**
+   * Record active items, to ensure all items won't be rendered when initialized.
+   */
+  const [activeMap, setActiveMap] = useState<Map<MasonryItem['id'], boolean>>(
+    new Map()
+  );
   const [stickyGroupId, setStickyGroupId] = useState<string | undefined>(
     undefined
   );
+  const [totalWidth, setTotalWidth] = useState(0);
   const stickyGroupCollapsed = !!(
     collapsedGroups &&
     stickyGroupId &&
@@ -91,7 +109,7 @@ export const Masonry = ({
     if (items.length === 0) {
       return [];
     }
-    if ('items' in items[0]) return items as MasonryGroup[];
+    if (items[0] && 'items' in items[0]) return items as MasonryGroup[];
     return [{ id: '', height: 0, items: items as MasonryItem[] }];
   }, [items]);
 
@@ -100,7 +118,7 @@ export const Masonry = ({
     return groups.find(group => group.id === stickyGroupId);
   }, [groups, stickyGroupId]);
 
-  const updateSleepMap = useCallback(
+  const updateActiveMap = useCallback(
     (layoutMap: Map<MasonryItem['id'], MasonryItemXYWH>, _scrollY?: number) => {
       if (!virtualScroll) return;
 
@@ -109,16 +127,16 @@ export const Masonry = ({
 
       requestAnimationFrame(() => {
         const scrollY = _scrollY ?? rootEl.scrollTop;
-        const sleepMap = calcSleep({
+        const activeMap = calcActive({
           viewportHeight: rootEl.clientHeight,
           scrollY,
           layoutMap,
-          preloadHeight: 50,
+          preloadHeight,
         });
-        setSleepMap(sleepMap);
+        setActiveMap(activeMap);
       });
     },
-    [virtualScroll]
+    [preloadHeight, virtualScroll]
   );
 
   const calculateLayout = useCallback(() => {
@@ -149,7 +167,8 @@ export const Masonry = ({
     });
     setLayoutMap(layout);
     setHeight(height);
-    updateSleepMap(layout);
+    setTotalWidth(totalWidth);
+    updateActiveMap(layout);
     if (stickyGroupHeader && rootRef.current) {
       setStickyGroupId(
         calcSticky({ scrollY: rootRef.current.scrollTop, layoutMap: layout })
@@ -168,17 +187,20 @@ export const Masonry = ({
     paddingX,
     paddingY,
     stickyGroupHeader,
-    updateSleepMap,
+    updateActiveMap,
   ]);
 
   // handle resize
   useEffect(() => {
     calculateLayout();
     if (rootRef.current) {
-      return observeResize(rootRef.current, debounce(calculateLayout, 50));
+      return observeResize(
+        rootRef.current,
+        debounce(calculateLayout, resizeDebounce)
+      );
     }
     return;
-  }, [calculateLayout]);
+  }, [calculateLayout, resizeDebounce]);
 
   // handle scroll
   useEffect(() => {
@@ -188,7 +210,7 @@ export const Masonry = ({
     if (virtualScroll) {
       const handler = throttle((e: Event) => {
         const scrollY = (e.target as HTMLElement).scrollTop;
-        updateSleepMap(layoutMap, scrollY);
+        updateActiveMap(layoutMap, scrollY);
         if (stickyGroupHeader) {
           setStickyGroupId(calcSticky({ scrollY, layoutMap }));
         }
@@ -199,7 +221,7 @@ export const Masonry = ({
       };
     }
     return;
-  }, [layoutMap, stickyGroupHeader, updateSleepMap, virtualScroll]);
+  }, [layoutMap, stickyGroupHeader, updateActiveMap, virtualScroll]);
 
   return (
     <Scrollable.Root>
@@ -211,11 +233,9 @@ export const Masonry = ({
       >
         {groups.map(group => {
           // sleep is not calculated, do not render
-          if (virtualScroll && !sleepMap) return null;
           const {
             id: groupId,
             items,
-            children,
             className,
             Component,
             ...groupProps
@@ -223,14 +243,11 @@ export const Masonry = ({
           const collapsed =
             collapsedGroups && collapsedGroups.includes(groupId);
 
-          const sleep =
-            (virtualScroll && sleepMap && sleepMap.get(groupId)) ?? false;
-
           return (
             <Fragment key={groupId}>
               {/* group header */}
-              {sleep ? null : (
-                <MasonryItem
+              {virtualScroll && !activeMap.get(group.id) ? null : (
+                <MasonryGroupHeader
                   className={clsx(styles.groupHeader, className)}
                   key={`header-${groupId}`}
                   id={groupId}
@@ -238,41 +255,30 @@ export const Masonry = ({
                   xywh={layoutMap.get(groupId)}
                   {...groupProps}
                   onClick={() => onGroupCollapse?.(groupId, !collapsed)}
-                >
-                  {Component ? (
-                    <Component
-                      itemCount={items.length}
-                      groupId={groupId}
-                      collapsed={collapsed}
-                    />
-                  ) : (
-                    children
-                  )}
-                </MasonryItem>
+                  Component={Component}
+                  itemCount={items.length}
+                  collapsed={!!collapsed}
+                  groupId={groupId}
+                  paddingX={calcPX(paddingX, totalWidth)}
+                />
               )}
               {/* group items */}
               {collapsed
                 ? null
                 : items.map(({ id: itemId, Component, ...item }) => {
                     const mixId = groupId ? `${groupId}:${itemId}` : itemId;
-                    const sleep =
-                      (virtualScroll && sleepMap && sleepMap.get(mixId)) ??
-                      false;
-                    if (sleep) return null;
+                    if (virtualScroll && !activeMap.get(mixId)) return null;
                     return (
-                      <MasonryItem
+                      <MasonryGroupItem
                         key={mixId}
                         id={mixId}
                         {...item}
                         locateMode={locateMode}
                         xywh={layoutMap.get(mixId)}
-                      >
-                        {Component ? (
-                          <Component groupId={groupId} itemId={itemId} />
-                        ) : (
-                          item.children
-                        )}
-                      </MasonryItem>
+                        groupId={groupId}
+                        itemId={itemId}
+                        Component={Component}
+                      />
                     );
                   })}
             </Fragment>
@@ -283,10 +289,11 @@ export const Masonry = ({
       <Scrollable.Scrollbar />
       {stickyGroup ? (
         <div
-          className={styles.stickyGroupHeader}
+          className={clsx(styles.stickyGroupHeader, stickyGroup.className)}
           style={{
-            padding: `0 ${paddingX}px`,
+            padding: `0 ${calcPX(paddingX, totalWidth)}px`,
             height: stickyGroup.height,
+            ...stickyGroup.style,
           }}
           onClick={() =>
             onGroupCollapse?.(stickyGroup.id, !stickyGroupCollapsed)
@@ -314,11 +321,87 @@ interface MasonryItemProps
   xywh?: MasonryItemXYWH;
 }
 
+const MasonryGroupHeader = memo(function MasonryGroupHeader({
+  id,
+  children,
+  style,
+  className,
+  Component,
+  groupId,
+  itemCount,
+  collapsed,
+  height,
+  paddingX,
+  ...props
+}: Omit<MasonryItemProps, 'Component'> & {
+  Component?: MasonryGroup['Component'];
+  groupId: string;
+  itemCount: number;
+  collapsed: boolean;
+  paddingX?: number;
+}) {
+  const content = useMemo(() => {
+    if (Component) {
+      return (
+        <Component
+          groupId={groupId}
+          itemCount={itemCount}
+          collapsed={collapsed}
+        />
+      );
+    }
+    return children;
+  }, [Component, children, collapsed, groupId, itemCount]);
+
+  return (
+    <MasonryItem
+      id={id}
+      height={height}
+      style={{
+        padding: `0 ${paddingX}px`,
+        height: '100%',
+        ...style,
+      }}
+      className={className}
+      {...props}
+    >
+      {content}
+    </MasonryItem>
+  );
+});
+
+const MasonryGroupItem = memo(function MasonryGroupItem({
+  id,
+  children,
+  className,
+  Component,
+  groupId,
+  itemId,
+  ...props
+}: MasonryItemProps & {
+  groupId: string;
+  itemId: string;
+}) {
+  const content = useMemo(() => {
+    if (Component) {
+      return <Component groupId={groupId} itemId={itemId} />;
+    }
+    return children;
+  }, [Component, children, groupId, itemId]);
+
+  return (
+    <MasonryItem id={id} className={className} {...props}>
+      {content}
+    </MasonryItem>
+  );
+});
+
 const MasonryItem = memo(function MasonryItem({
   id,
   xywh,
   locateMode = 'leftTop',
   children,
+  className,
   style: styleProp,
   ...props
 }: MasonryItemProps) {
@@ -341,14 +424,19 @@ const MasonryItem = memo(function MasonryItem({
       ...posStyle,
       width: `${w}px`,
       height: `${h}px`,
-      position: 'absolute' as const,
     };
   }, [locateMode, styleProp, xywh]);
 
   if (!xywh) return null;
 
   return (
-    <div data-masonry-item data-masonry-item-id={id} style={style} {...props}>
+    <div
+      data-masonry-item
+      data-masonry-item-id={id}
+      style={style}
+      className={clsx(styles.item, className)}
+      {...props}
+    >
       {children}
     </div>
   );

@@ -594,6 +594,18 @@ export function useAFFiNEI18N(): {
       */
     current(): string;
     /**
+      * `created at {{time}}`
+      */
+    ["created at"](options: {
+        readonly time: string;
+    }): string;
+    /**
+      * `last updated at {{time}}`
+      */
+    ["updated at"](options: {
+        readonly time: string;
+    }): string;
+    /**
       * `Automatically check for new updates periodically.`
       */
     ["com.affine.aboutAFFiNE.autoCheckUpdate.description"](): string;
@@ -6908,6 +6920,46 @@ export function useAFFiNEI18N(): {
       * `Inactive workspace`
       */
     ["com.affine.inactive-workspace"](): string;
+    /**
+      * `Display Properties`
+      */
+    ["com.affine.all-docs.display.properties"](): string;
+    /**
+      * `List view options`
+      */
+    ["com.affine.all-docs.display.list-view"](): string;
+    /**
+      * `Icon`
+      */
+    ["com.affine.all-docs.display.list-view.icon"](): string;
+    /**
+      * `Body`
+      */
+    ["com.affine.all-docs.display.list-view.body"](): string;
+    /**
+      * `Quick actions`
+      */
+    ["com.affine.all-docs.quick-actions"](): string;
+    /**
+      * `Favorite`
+      */
+    ["com.affine.all-docs.quick-action.favorite"](): string;
+    /**
+      * `Move to trash`
+      */
+    ["com.affine.all-docs.quick-action.trash"](): string;
+    /**
+      * `Open in split view`
+      */
+    ["com.affine.all-docs.quick-action.split"](): string;
+    /**
+      * `Open in new tab`
+      */
+    ["com.affine.all-docs.quick-action.tab"](): string;
+    /**
+      * `Select checkbox`
+      */
+    ["com.affine.all-docs.quick-action.select"](): string;
     /**
       * `core`
       */

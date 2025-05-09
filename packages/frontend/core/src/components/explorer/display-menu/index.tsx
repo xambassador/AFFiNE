@@ -1,4 +1,4 @@
-import { Button, Menu, MenuSub } from '@affine/component';
+import { Button, Divider, Menu, MenuSub } from '@affine/component';
 import type {
   GroupByParams,
   OrderByParams,
@@ -11,6 +11,8 @@ import { useCallback } from 'react';
 import type { ExplorerPreference } from '../types';
 import { GroupByList, GroupByName } from './group';
 import { OrderByList, OrderByName } from './order';
+import { DisplayProperties } from './properties';
+import { QuickActionsConfig } from './quick-actions';
 import * as styles from './styles.css';
 
 const ExplorerDisplayMenu = ({
@@ -78,6 +80,10 @@ const ExplorerDisplayMenu = ({
           </span>
         </div>
       </MenuSub>
+      <Divider size="thinner" />
+      <DisplayProperties preference={preference} onChange={onChange} />
+      <Divider size="thinner" />
+      <QuickActionsConfig preference={preference} onChange={onChange} />
     </div>
   );
 };
