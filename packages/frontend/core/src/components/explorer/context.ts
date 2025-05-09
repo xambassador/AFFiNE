@@ -1,9 +1,11 @@
 import { createContext, type Dispatch, type SetStateAction } from 'react';
 
+import type { DocListItemView } from './docs-view/doc-list-item';
 import type { ExplorerPreference } from './types';
 
 export type DocExplorerContextType = ExplorerPreference & {
-  view: 'list' | 'grid' | 'masonry';
+  view: DocListItemView;
+  setView: Dispatch<SetStateAction<DocListItemView>>;
   groups: Array<{ key: string; items: string[] }>;
   collapsed: string[];
   selectMode?: boolean;
@@ -17,6 +19,7 @@ export type DocExplorerContextType = ExplorerPreference & {
 
 export const DocExplorerContext = createContext<DocExplorerContextType>({
   view: 'list',
+  setView: () => {},
   groups: [],
   collapsed: [],
   selectedDocIds: [],

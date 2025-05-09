@@ -1,3 +1,4 @@
+import { cssVarV2 } from '@toeverything/theme/v2';
 import { style } from '@vanilla-extract/css';
 export const scrollContainer = style({
   flex: 1,
@@ -26,4 +27,36 @@ export const body = style({
   flex: 1,
   height: '100%',
   width: '100%',
+  containerName: 'docs-body',
+  containerType: 'size',
+});
+
+export const scrollArea = style({
+  height: 0,
+  flex: 1,
+});
+
+// group
+export const groupHeader = style({
+  background: cssVarV2.layer.background.primary,
+});
+
+export const docItem = style({
+  transition: 'width 0.2s ease-in-out',
+});
+
+export const filterArea = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: 8,
+  padding: '0 24px',
+  paddingTop: '24px',
+  '@container': {
+    'docs-body (width <= 500px)': {
+      padding: '0 20px',
+    },
+    'docs-body (width <= 393px)': {
+      padding: '0 16px',
+    },
+  },
 });

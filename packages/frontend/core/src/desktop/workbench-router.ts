@@ -6,8 +6,8 @@ export const workbenchRoutes = [
     lazy: () => import('./pages/workspace/all-page/all-page'),
   },
   {
-    path: '/all-new',
-    lazy: () => import('./pages/workspace/all-page-new/all-page'),
+    path: '/all-old',
+    lazy: () => import('./pages/workspace/all-page-old/all-page'),
   },
   {
     path: '/collection',

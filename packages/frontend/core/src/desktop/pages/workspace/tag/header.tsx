@@ -1,11 +1,11 @@
+import { ExplorerNavigation } from '@affine/core/components/explorer/header/navigation';
 import { PageDisplayMenu } from '@affine/core/components/page-list';
 import { Header } from '@affine/core/components/pure/header';
-import { WorkspaceModeFilterTab } from '@affine/core/components/pure/workspace-mode-filter-tab';
 
 export const TagDetailHeader = () => {
   return (
     <Header
-      center={<WorkspaceModeFilterTab activeFilter={'tags'} />}
+      left={<ExplorerNavigation active={'tags'} />}
       right={<PageDisplayMenu />}
     />
   );

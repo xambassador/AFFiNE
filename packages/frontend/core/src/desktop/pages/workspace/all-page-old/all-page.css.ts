@@ -1,4 +1,3 @@
-import { cssVarV2 } from '@toeverything/theme/v2';
 import { style } from '@vanilla-extract/css';
 export const scrollContainer = style({
   flex: 1,
@@ -7,6 +6,7 @@ export const scrollContainer = style({
 });
 export const headerCreateNewButton = style({
   transition: 'opacity 0.1s ease-in-out',
+  marginRight: 16,
 });
 
 export const headerCreateNewCollectionIconButton = style({
@@ -27,18 +27,4 @@ export const body = style({
   flex: 1,
   height: '100%',
   width: '100%',
-});
-
-export const scrollArea = style({
-  height: 0,
-  flex: 1,
-});
-
-// group
-export const groupHeader = style({
-  background: cssVarV2.layer.background.primary,
-});
-
-export const docItem = style({
-  transition: 'width 0.2s ease-in-out',
 });

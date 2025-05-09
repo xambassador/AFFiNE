@@ -1,4 +1,10 @@
-import { Button, Divider, Menu, MenuSub } from '@affine/component';
+import {
+  Button,
+  Divider,
+  Menu,
+  type MenuProps,
+  MenuSub,
+} from '@affine/component';
 import type {
   GroupByParams,
   OrderByParams,
@@ -92,12 +98,14 @@ export const ExplorerDisplayMenuButton = ({
   style,
   className,
   preference,
+  menuProps,
   onChange,
 }: {
   style?: React.CSSProperties;
   className?: string;
   preference: ExplorerPreference;
   onChange?: (preference: ExplorerPreference) => void;
+  menuProps?: Omit<MenuProps, 'items' | 'children'>;
 }) => {
   const t = useI18n();
   return (
@@ -105,6 +113,7 @@ export const ExplorerDisplayMenuButton = ({
       items={
         <ExplorerDisplayMenu preference={preference} onChange={onChange} />
       }
+      {...menuProps}
     >
       <Button
         className={className}

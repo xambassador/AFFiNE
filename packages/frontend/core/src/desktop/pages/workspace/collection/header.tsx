@@ -1,7 +1,7 @@
 import { IconButton } from '@affine/component';
+import { ExplorerNavigation } from '@affine/core/components/explorer/header/navigation';
 import { PageDisplayMenu } from '@affine/core/components/page-list';
 import { Header } from '@affine/core/components/pure/header';
-import { WorkspaceModeFilterTab } from '@affine/core/components/pure/workspace-mode-filter-tab';
 import { PlusIcon } from '@blocksuite/icons/rc';
 import clsx from 'clsx';
 
@@ -31,7 +31,7 @@ export const CollectionDetailHeader = ({
           <PageDisplayMenu />
         </>
       }
-      center={<WorkspaceModeFilterTab activeFilter={'collections'} />}
+      left={<ExplorerNavigation active="collections" />}
     />
   );
 };
