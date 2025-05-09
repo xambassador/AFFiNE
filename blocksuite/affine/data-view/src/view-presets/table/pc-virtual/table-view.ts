@@ -9,7 +9,7 @@ import { cssVarV2 } from '@toeverything/theme/v2';
 import { styleMap } from 'lit/directives/style-map.js';
 import { html } from 'lit/static-html.js';
 
-import * as dv from '../../../core/common/dv.css.js';
+import * as dv from '../../../core/common/dv-css.js';
 import {
   type GroupTrait,
   groupTraitKey,
@@ -31,7 +31,7 @@ import { TableGroupHeader } from './group/top/group-header';
 import { DatabaseCellContainer } from './row/cell';
 import { TableRowHeader } from './row/row-header.js';
 import { TableRowLast } from './row/row-last.js';
-import * as styles from './table-view.css.js';
+import * as styles from './table-view-css.js';
 import type {
   TableCellData,
   TableGrid,

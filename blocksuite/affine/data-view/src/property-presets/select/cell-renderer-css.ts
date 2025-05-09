@@ -1,7 +1,7 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
-import { style } from '@vanilla-extract/css';
 
-export const selectStyle = style({
+export const selectStyle = css({
   overflow: 'hidden',
   display: 'flex',
   alignItems: 'center',

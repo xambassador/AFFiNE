@@ -1,7 +1,7 @@
 import { cssVar, cssVarV2 } from '@blocksuite/affine-shared/theme';
-import { createVar, style } from '@vanilla-extract/css';
+import { css } from '@emotion/css';
 
-export const cellContainerStyle = style({
+export const cellContainerStyle = css({
   position: 'relative',
   alignItems: 'center',
   border: '1px solid',
@@ -12,7 +12,7 @@ export const cellContainerStyle = style({
   verticalAlign: 'top',
 });
 
-export const columnOptionsCellStyle = style({
+export const columnOptionsCellStyle = css({
   position: 'absolute',
   height: '0',
   top: '0',
@@ -23,8 +23,7 @@ export const columnOptionsCellStyle = style({
   justifyContent: 'center',
 });
 
-const threePointerIconColorVar = createVar();
-export const columnOptionsStyle = style({
+export const columnOptionsStyle = css({
   cursor: 'pointer',
   zIndex: 2,
   width: '28px',
@@ -37,24 +36,18 @@ export const columnOptionsStyle = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  vars: {
-    [threePointerIconColorVar]: cssVarV2.icon.secondary,
+  '--three-pointer-icon-color': cssVarV2.icon.secondary,
+  ':hover': {
+    opacity: 1,
   },
-  selectors: {
-    '&:hover': {
-      opacity: 1,
-    },
-    '&.active': {
-      opacity: 1,
-      backgroundColor: cssVarV2.table.indicator.activated,
-      vars: {
-        [threePointerIconColorVar]: cssVarV2.table.indicator.pointerActive,
-      },
-    },
+  '&.active': {
+    opacity: 1,
+    backgroundColor: cssVarV2.table.indicator.activated,
+    '--three-pointer-icon-color': cssVarV2.table.indicator.pointerActive,
   },
 });
 
-export const rowOptionsCellStyle = style({
+export const rowOptionsCellStyle = css({
   position: 'absolute',
   top: '0',
   left: '0',
@@ -65,7 +58,8 @@ export const rowOptionsCellStyle = style({
   alignItems: 'center',
   justifyContent: 'center',
 });
-export const rowOptionsStyle = style({
+
+export const rowOptionsStyle = css({
   cursor: 'pointer',
   zIndex: 2,
   width: '16px',
@@ -78,44 +72,40 @@ export const rowOptionsStyle = style({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  vars: {
-    [threePointerIconColorVar]: cssVarV2.icon.secondary,
+  '--three-pointer-icon-color': cssVarV2.icon.secondary,
+  ':hover': {
+    opacity: 1,
   },
-  selectors: {
-    '&:hover': {
-      opacity: 1,
-    },
-    '&.active': {
-      opacity: 1,
-      backgroundColor: cssVarV2.table.indicator.activated,
-      vars: {
-        [threePointerIconColorVar]: cssVarV2.table.indicator.pointerActive,
-      },
-    },
+  '&.active': {
+    opacity: 1,
+    backgroundColor: cssVarV2.table.indicator.activated,
+    '--three-pointer-icon-color': cssVarV2.table.indicator.pointerActive,
   },
 });
 
-export const threePointerIconStyle = style({
+export const threePointerIconStyle = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
   gap: '2px',
 });
 
-export const threePointerIconDotStyle = style({
+export const threePointerIconDotStyle = css({
   width: '3px',
   height: '3px',
-  backgroundColor: threePointerIconColorVar,
+  backgroundColor: 'var(--three-pointer-icon-color)',
   borderRadius: '50%',
 });
-export const indicatorStyle = style({
+
+export const indicatorStyle = css({
   position: 'absolute',
   backgroundColor: cssVarV2.table.indicator.activated,
   zIndex: 2,
   transition: 'opacity 0.2s ease-in-out',
   pointerEvents: 'none',
 });
-export const columnIndicatorStyle = style([
+
+export const columnIndicatorStyle = css([
   indicatorStyle,
   {
     top: '-1px',
@@ -123,7 +113,8 @@ export const columnIndicatorStyle = style([
     width: '5px',
   },
 ]);
-export const columnRightIndicatorStyle = style([
+
+export const columnRightIndicatorStyle = css([
   columnIndicatorStyle,
   {
     cursor: 'ew-resize',
@@ -131,13 +122,15 @@ export const columnRightIndicatorStyle = style([
     pointerEvents: 'auto',
   },
 ]);
-export const columnLeftIndicatorStyle = style([
+
+export const columnLeftIndicatorStyle = css([
   columnIndicatorStyle,
   {
     left: '-2px',
   },
 ]);
-export const rowIndicatorStyle = style([
+
+export const rowIndicatorStyle = css([
   indicatorStyle,
   {
     left: '-1px',
@@ -145,13 +138,15 @@ export const rowIndicatorStyle = style([
     height: '5px',
   },
 ]);
-export const rowBottomIndicatorStyle = style([
+
+export const rowBottomIndicatorStyle = css([
   rowIndicatorStyle,
   {
     bottom: '-3px',
   },
 ]);
-export const rowTopIndicatorStyle = style([
+
+export const rowTopIndicatorStyle = css([
   rowIndicatorStyle,
   {
     top: '-2px',

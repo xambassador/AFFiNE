@@ -1,7 +1,7 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
-import { style } from '@vanilla-extract/css';
 
-export const textStyle = style({
+export const textStyle = css({
   display: 'flex',
   alignItems: 'center',
   height: '100%',
@@ -19,7 +19,7 @@ export const textStyle = style({
   whiteSpace: 'nowrap',
 });
 
-export const textInputStyle = style({
+export const textInputStyle = css({
   display: 'flex',
   alignItems: 'center',
   height: '100%',

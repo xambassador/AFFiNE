@@ -1,18 +1,18 @@
+import { css } from '@emotion/css';
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { style } from '@vanilla-extract/css';
 
-export const leftBar = style({
+export const leftBar = css({
   display: 'flex',
   height: '34px',
 });
 
-export const dragHandlerWrapper = style({
+export const dragHandlerWrapper = css({
   backgroundColor: cssVarV2.layer.background.primary,
   marginBottom: '1px',
   display: 'flex',
 });
 
-export const dragHandler = style({
+export const dragHandler = css({
   width: '4px',
   display: 'flex',
   alignItems: 'center',
@@ -22,24 +22,24 @@ export const dragHandler = style({
   opacity: 0,
 });
 
-export const checkboxWrapper = style({
+export const checkboxWrapper = css({
   backgroundColor: cssVarV2.layer.background.primary,
   marginBottom: '1px',
   display: 'flex',
 });
 
-export const rowSelectedBg = style({
+export const rowSelectedBg = css({
   backgroundColor: 'var(--affine-primary-color-04)',
 });
 
-export const dragHandlerIndicator = style({
+export const dragHandlerIndicator = css({
   width: '4px',
   borderRadius: '2px',
   height: '12px',
   backgroundColor: 'var(--affine-placeholder-color)',
 });
 
-export const rowSelectCheckbox = style({
+export const rowSelectCheckbox = css({
   display: 'flex',
   alignItems: 'center',
   opacity: 0,
@@ -48,6 +48,6 @@ export const rowSelectCheckbox = style({
   color: cssVarV2.icon.primary,
 });
 
-export const show = style({
+export const show = css({
   opacity: 1,
 });

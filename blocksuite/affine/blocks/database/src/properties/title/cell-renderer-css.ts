@@ -1,12 +1,12 @@
 import { cssVarV2 } from '@blocksuite/affine-shared/theme';
-import { style } from '@vanilla-extract/css';
+import { css } from '@emotion/css';
 
-export const titleCellStyle = style({
+export const titleCellStyle = css({
   width: '100%',
   display: 'flex',
 });
 
-export const titleRichTextStyle = style({
+export const titleRichTextStyle = css({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',
@@ -18,7 +18,7 @@ export const titleRichTextStyle = style({
   lineHeight: 'var(--data-view-cell-text-line-height)',
 });
 
-export const headerAreaIconStyle = style({
+export const headerAreaIconStyle = css({
   height: 'max-content',
   display: 'flex',
   alignItems: 'center',

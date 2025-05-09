@@ -1,37 +1,37 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
-import { style } from '@vanilla-extract/css';
 
-export const progressCellStyle = style({
+export const progressCellStyle = css({
   display: 'block',
   width: '100%',
   padding: '0 4px',
   userSelect: 'none',
 });
 
-export const progressContainerStyle = style({
+export const progressContainerStyle = css({
   display: 'flex',
   alignItems: 'center',
   height: 'var(--data-view-cell-text-line-height)',
   gap: '4px',
 });
 
-export const progressBarStyle = style({
+export const progressBarStyle = css({
   position: 'relative',
   width: '100%',
 });
 
-export const progressBgStyle = style({
+export const progressBgStyle = css({
   overflow: 'hidden',
   width: '100%',
   height: '10px',
   borderRadius: '22px',
 });
 
-export const progressFgStyle = style({
+export const progressFgStyle = css({
   height: '100%',
 });
 
-export const progressDragHandleStyle = style({
+export const progressDragHandleStyle = css({
   position: 'absolute',
   top: '0',
   left: '0',
@@ -45,7 +45,7 @@ export const progressDragHandleStyle = style({
   transition: 'opacity 0.2s ease-in-out',
 });
 
-export const progressNumberStyle = style({
+export const progressNumberStyle = css({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',

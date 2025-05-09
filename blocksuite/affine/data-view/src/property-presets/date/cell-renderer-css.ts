@@ -1,7 +1,7 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
-import { style } from '@vanilla-extract/css';
 
-export const dateCellStyle = style({
+export const dateCellStyle = css({
   display: 'flex',
   alignItems: 'center',
   width: '100%',
@@ -16,7 +16,7 @@ export const dateCellStyle = style({
   height: 'var(--data-view-cell-text-line-height)',
 });
 
-export const dateValueContainerStyle = style({
+export const dateValueContainerStyle = css({
   padding: '12px',
   backgroundColor: 'var(--layer-background-primary)',
   borderRadius: '12px',
@@ -26,7 +26,7 @@ export const dateValueContainerStyle = style({
   height: '46px',
 });
 
-export const datePickerContainerStyle = style({
+export const datePickerContainerStyle = css({
   padding: '12px',
   backgroundColor: 'var(--layer-background-primary)',
   borderRadius: '12px',

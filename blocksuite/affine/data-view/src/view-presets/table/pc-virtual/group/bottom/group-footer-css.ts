@@ -1,10 +1,10 @@
+import { css } from '@emotion/css';
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { style } from '@vanilla-extract/css';
 
-export const groupFooter = style({
+export const groupFooter = css({
   display: 'block',
 });
-export const addRowWrapper = style({
+export const addRowWrapper = css({
   display: 'flex',
   width: '100%',
   height: '28px',
@@ -16,7 +16,7 @@ export const addRowWrapper = style({
   borderBottom: `1px solid ${cssVarV2.database.border}`,
 });
 
-export const addRowButton = style({
+export const addRowButton = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -25,7 +25,7 @@ export const addRowButton = style({
   left: '8px',
 });
 
-export const addRowText = style({
+export const addRowText = css({
   userSelect: 'none',
   fontSize: '12px',
   lineHeight: '20px',

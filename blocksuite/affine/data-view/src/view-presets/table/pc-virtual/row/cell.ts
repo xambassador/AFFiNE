@@ -19,7 +19,7 @@ import {
 import type { VirtualTableView } from '../table-view';
 import type { TableGridCell } from '../types';
 import { popRowMenu } from './menu';
-import { rowSelectedBg } from './row-header.css';
+import { rowSelectedBg } from './row-header-css';
 export class DatabaseCellContainer extends SignalWatcher(
   WithDisposable(ShadowlessElement)
 ) {

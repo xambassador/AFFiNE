@@ -1,7 +1,7 @@
 import { cssVar, cssVarV2 } from '@blocksuite/affine-shared/theme';
-import { style } from '@vanilla-extract/css';
+import { css } from '@emotion/css';
 
-export const addColumnButtonStyle = style({
+export const addColumnButtonStyle = css({
   cursor: 'col-resize',
   backgroundColor: cssVarV2.layer.background.hoverOverlay,
   fontSize: '16px',
@@ -18,16 +18,19 @@ export const addColumnButtonStyle = style({
     'opacity 0.2s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out',
   borderRadius: '2px',
   opacity: 0,
-  selectors: {
-    '&:hover, &.active': {
-      backgroundColor: cssVarV2.table.indicator.drag,
-      color: cssVarV2.icon.primary,
-      opacity: 1,
-    },
+  ':hover': {
+    backgroundColor: cssVarV2.table.indicator.drag,
+    color: cssVarV2.icon.primary,
+    opacity: 1,
+  },
+  '&.active': {
+    backgroundColor: cssVarV2.table.indicator.drag,
+    color: cssVarV2.icon.primary,
+    opacity: 1,
   },
 });
 
-export const addRowButtonStyle = style({
+export const addRowButtonStyle = css({
   cursor: 'row-resize',
   backgroundColor: cssVarV2.layer.background.hoverOverlay,
   fontSize: '16px',
@@ -44,16 +47,19 @@ export const addRowButtonStyle = style({
     'opacity 0.2s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out',
   borderRadius: '2px',
   opacity: 0,
-  selectors: {
-    '&:hover, &.active': {
-      backgroundColor: cssVarV2.table.indicator.drag,
-      color: cssVarV2.icon.primary,
-      opacity: 1,
-    },
+  ':hover': {
+    backgroundColor: cssVarV2.table.indicator.drag,
+    color: cssVarV2.icon.primary,
+    opacity: 1,
+  },
+  '&.active': {
+    backgroundColor: cssVarV2.table.indicator.drag,
+    color: cssVarV2.icon.primary,
+    opacity: 1,
   },
 });
 
-export const addRowColumnButtonStyle = style({
+export const addRowColumnButtonStyle = css({
   cursor: 'nwse-resize',
   backgroundColor: cssVarV2.layer.background.hoverOverlay,
   fontSize: '16px',
@@ -70,16 +76,19 @@ export const addRowColumnButtonStyle = style({
   opacity: 0,
   transition:
     'opacity 0.2s ease-in-out, background-color 0.2s ease-in-out, color 0.2s ease-in-out',
-  selectors: {
-    '&:hover, &.active': {
-      backgroundColor: cssVarV2.table.indicator.drag,
-      color: cssVarV2.icon.primary,
-      opacity: 1,
-    },
+  ':hover': {
+    backgroundColor: cssVarV2.table.indicator.drag,
+    color: cssVarV2.icon.primary,
+    opacity: 1,
+  },
+  '&.active': {
+    backgroundColor: cssVarV2.table.indicator.drag,
+    color: cssVarV2.icon.primary,
+    opacity: 1,
   },
 });
 
-export const cellCountTipsStyle = style({
+export const cellCountTipsStyle = css({
   position: 'absolute',
   backgroundColor: cssVarV2.tooltips.background,
   borderRadius: '4px',

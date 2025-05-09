@@ -16,7 +16,7 @@ import {
   groupHeaderTitle,
   groupTitleRow,
   show,
-} from './group-title.css';
+} from './group-title-css';
 
 function GroupHeaderCount(group: GroupData) {
   const cards = group.rows;

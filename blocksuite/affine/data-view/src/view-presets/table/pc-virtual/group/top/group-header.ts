@@ -12,7 +12,7 @@ import { property } from 'lit/decorators.js';
 import { TableViewAreaSelection } from '../../../selection';
 import type { VirtualTableView } from '../../table-view';
 import type { TableGridGroup } from '../../types';
-import * as styles from './group-header.css';
+import * as styles from './group-header-css';
 import { GroupTitle } from './group-title';
 export class TableGroupHeader extends SignalWatcher(
   WithDisposable(ShadowlessElement)

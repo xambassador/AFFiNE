@@ -8,7 +8,7 @@ import { styleMap } from 'lit/directives/style-map.js';
 import { html } from 'lit/static-html.js';
 
 import type { TableSingleView } from '../../../../table-view-manager';
-import * as styles from './column-header.css';
+import * as styles from './column-header-css';
 
 export class VirtualTableHeader extends SignalWatcher(
   WithDisposable(ShadowlessElement)

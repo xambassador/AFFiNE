@@ -1,13 +1,13 @@
-import { style } from '@vanilla-extract/css';
+import { css } from '@emotion/css';
 
-export const richTextCellStyle = style({
+export const richTextCellStyle = css({
   display: 'flex',
   alignItems: 'center',
   width: '100%',
   userSelect: 'none',
 });
 
-export const richTextContainerStyle = style({
+export const richTextContainerStyle = css({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'center',

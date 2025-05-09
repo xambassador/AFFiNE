@@ -1,8 +1,8 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { style } from '@vanilla-extract/css';
 
-export const tagSelectContainerStyle = style({
+export const tagSelectContainerStyle = css({
   position: 'absolute',
   zIndex: 2,
   color: cssVarV2('text/primary'),
@@ -16,14 +16,12 @@ export const tagSelectContainerStyle = style({
   display: 'flex',
   flexDirection: 'column',
   gap: '4px',
-  '@media': {
-    print: {
-      display: 'none',
-    },
+  '@media print': {
+    display: 'none',
   },
 });
 
-export const tagSelectInputContainerStyle = style({
+export const tagSelectInputContainerStyle = css({
   display: 'flex',
   alignItems: 'center',
   flexWrap: 'wrap',
@@ -31,7 +29,7 @@ export const tagSelectInputContainerStyle = style({
   padding: '4px',
 });
 
-export const tagSelectInputStyle = style({
+export const tagSelectInputStyle = css({
   flex: '1 1 0',
   border: 'none',
   fontFamily: baseTheme.fontSansFamily,
@@ -45,7 +43,7 @@ export const tagSelectInputStyle = style({
   },
 });
 
-export const selectOptionsTipsStyle = style({
+export const selectOptionsTipsStyle = css({
   padding: '4px',
   color: cssVarV2('text/secondary'),
   fontSize: '14px',
@@ -54,7 +52,7 @@ export const selectOptionsTipsStyle = style({
   userSelect: 'none',
 });
 
-export const selectOptionsContainerStyle = style({
+export const selectOptionsContainerStyle = css({
   maxHeight: '400px',
   overflowY: 'auto',
   userSelect: 'none',
@@ -63,7 +61,7 @@ export const selectOptionsContainerStyle = style({
   gap: '4px',
 });
 
-export const selectOptionStyle = style({
+export const selectOptionStyle = css({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
@@ -72,11 +70,11 @@ export const selectOptionStyle = style({
   cursor: 'pointer',
 });
 
-export const selectedStyle = style({
+export const selectedStyle = css({
   background: cssVarV2('layer/background/hoverOverlay'),
 });
 
-export const tagContainerStyle = style({
+export const tagContainerStyle = css({
   display: 'flex',
   alignItems: 'center',
   padding: '0 8px',
@@ -89,26 +87,26 @@ export const tagContainerStyle = style({
   userSelect: 'none',
 });
 
-export const tagTextStyle = style({
+export const tagTextStyle = css({
   fontSize: '14px',
   lineHeight: '22px',
   overflow: 'hidden',
   textOverflow: 'ellipsis',
 });
 
-export const tagDeleteIconStyle = style({
+export const tagDeleteIconStyle = css({
   display: 'flex',
   alignItems: 'center',
   color: cssVarV2('chip/label/text'),
 });
 
-export const selectOptionContentStyle = style({
+export const selectOptionContentStyle = css({
   display: 'flex',
   alignItems: 'center',
   overflow: 'hidden',
 });
 
-export const selectOptionIconStyle = style({
+export const selectOptionIconStyle = css({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -121,14 +119,12 @@ export const selectOptionIconStyle = style({
   ':hover': {
     background: cssVarV2('layer/background/hoverOverlay'),
   },
-  selectors: {
-    [`${selectedStyle} &`]: {
-      visibility: 'visible',
-    },
+  [`.${selectedStyle} &`]: {
+    visibility: 'visible',
   },
 });
 
-export const selectOptionDragHandlerStyle = style({
+export const selectOptionDragHandlerStyle = css({
   width: '4px',
   height: '12px',
   borderRadius: '1px',
@@ -138,7 +134,7 @@ export const selectOptionDragHandlerStyle = style({
   flexShrink: 0,
 });
 
-export const selectOptionNewIconStyle = style({
+export const selectOptionNewIconStyle = css({
   fontSize: '14px',
   lineHeight: '22px',
   color: cssVarV2('text/primary'),

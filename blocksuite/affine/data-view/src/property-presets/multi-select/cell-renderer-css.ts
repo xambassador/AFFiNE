@@ -1,7 +1,7 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
-import { style } from '@vanilla-extract/css';
 
-export const multiSelectStyle = style({
+export const multiSelectStyle = css({
   display: 'flex',
   alignItems: 'center',
   width: '100%',

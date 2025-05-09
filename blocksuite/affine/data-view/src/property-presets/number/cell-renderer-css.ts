@@ -1,7 +1,7 @@
+import { css } from '@emotion/css';
 import { baseTheme } from '@toeverything/theme';
-import { style } from '@vanilla-extract/css';
 
-export const numberStyle = style({
+export const numberStyle = css({
   overflow: 'hidden',
   display: 'flex',
   alignItems: 'center',
@@ -18,7 +18,7 @@ export const numberStyle = style({
   wordBreak: 'break-all',
 });
 
-export const numberInputStyle = style({
+export const numberInputStyle = css({
   display: 'flex',
   alignItems: 'center',
   width: '100%',

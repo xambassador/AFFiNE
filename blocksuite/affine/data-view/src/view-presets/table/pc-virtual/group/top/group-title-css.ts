@@ -1,7 +1,7 @@
 import { cssVarV2 } from '@blocksuite/affine-shared/theme';
-import { style } from '@vanilla-extract/css';
+import { css } from '@emotion/css';
 
-export const groupHeaderCount = style({
+export const groupHeaderCount = css({
   flexShrink: 0,
   width: '20px',
   height: '20px',
@@ -14,27 +14,20 @@ export const groupHeaderCount = style({
   fontSize: 'var(--data-view-cell-text-size)',
 });
 
-export const groupHeaderName = style({
-  flex: 1,
-  overflow: 'hidden',
-});
-
-export const groupHeaderOps = style({
+export const groupHeaderOps = css({
   display: 'flex',
   alignItems: 'center',
   opacity: 0,
-  selectors: {
-    '&:has(.active)': {
-      opacity: 1,
-    },
+  '&:has(.active)': {
+    opacity: 1,
   },
 });
 
-export const show = style({
+export const show = css({
   opacity: 1,
 });
 
-export const groupHeaderOp = style({
+export const groupHeaderOp = css({
   display: 'flex',
   alignItems: 'center',
   cursor: 'pointer',
@@ -42,14 +35,12 @@ export const groupHeaderOp = style({
   borderRadius: '4px',
   transition: 'all 150ms cubic-bezier(0.42, 0, 1, 1)',
   color: cssVarV2.icon.primary,
-  selectors: {
-    '&:hover, &.active': {
-      backgroundColor: cssVarV2.layer.background.hoverOverlay,
-    },
+  '&:hover, &.active': {
+    backgroundColor: cssVarV2.layer.background.hoverOverlay,
   },
 });
 
-export const groupHeaderIcon = style({
+export const groupHeaderIcon = css({
   display: 'flex',
   alignItems: 'center',
   marginRight: '-4px',
@@ -57,13 +48,13 @@ export const groupHeaderIcon = style({
   fontSize: '16px',
 });
 
-export const groupHeaderTitle = style({
+export const groupHeaderTitle = css({
   color: cssVarV2.text.primary,
   fontSize: 'var(--data-view-cell-text-size)',
   marginLeft: '4px',
 });
 
-export const groupTitleRow = style({
+export const groupTitleRow = css({
   display: 'flex',
   alignItems: 'center',
   gap: '8px',
