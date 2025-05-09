@@ -191,6 +191,7 @@ export interface CopilotContextMatchFilesArgs {
 export interface CopilotContextMatchWorkspaceDocsArgs {
   content: Scalars['String']['input'];
   limit?: InputMaybe<Scalars['SafeInt']['input']>;
+  scopedThreshold?: InputMaybe<Scalars['Float']['input']>;
   threshold?: InputMaybe<Scalars['Float']['input']>;
 }
 

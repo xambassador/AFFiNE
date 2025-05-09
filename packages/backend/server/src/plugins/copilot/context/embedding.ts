@@ -2,11 +2,14 @@ import {
   createOpenAI,
   type OpenAIProvider as VercelOpenAIProvider,
 } from '@ai-sdk/openai';
-import { embedMany } from 'ai';
+import { embedMany, generateObject } from 'ai';
+import { chunk } from 'lodash-es';
 
-import { Embedding } from '../../../models';
+import { ChunkSimilarity, Embedding } from '../../../models';
 import { OpenAIConfig } from '../providers/openai';
-import { EmbeddingClient } from './types';
+import { EmbeddingClient, getReRankSchema, ReRankResult } from './types';
+
+const RERANK_MODEL = 'gpt-4.1-mini';
 
 export class OpenAIEmbeddingClient extends EmbeddingClient {
   readonly #instance: VercelOpenAIProvider;
@@ -34,6 +37,85 @@ export class OpenAIEmbeddingClient extends EmbeddingClient {
       embedding,
       content: input[index],
     }));
+  }
+
+  private getRelevancePrompt<Chunk extends ChunkSimilarity = ChunkSimilarity>(
+    query: string,
+    embeddings: Chunk[]
+  ) {
+    const results = embeddings
+      .map(e => {
+        const targetId = 'docId' in e ? e.docId : 'fileId' in e ? e.fileId : '';
+        // NOTE: not xml, just for the sake of the prompt format
+        return [
+          '<result>',
+          `<targetId>${targetId}</targetId>`,
+          `<chunk>${e.chunk}</chunk>`,
+          `<content>${e.content}</content>`,
+          '</result>',
+        ];
+      })
+      .flat()
+      .join('\n');
+    return `Generate a score array based on the search results list to measure the likelihood that the information contained in the search results is useful for the report on the following topic: ${query}\n\nHere are the search results:\n<results>\n${results}\n</results>`;
+  }
+
+  private async getEmbeddingRelevance<
+    Chunk extends ChunkSimilarity = ChunkSimilarity,
+  >(
+    query: string,
+    embeddings: Chunk[],
+    signal?: AbortSignal
+  ): Promise<ReRankResult> {
+    const prompt = this.getRelevancePrompt(query, embeddings);
+    const modelInstance = this.#instance(RERANK_MODEL);
+
+    const {
+      object: { ranks },
+    } = await generateObject({
+      model: modelInstance,
+      prompt,
+      schema: getReRankSchema(embeddings.length),
+      maxRetries: 3,
+      abortSignal: signal,
+    });
+    return ranks;
+  }
+
+  override async reRank<Chunk extends ChunkSimilarity = ChunkSimilarity>(
+    query: string,
+    embeddings: Chunk[],
+    topK: number,
+    signal?: AbortSignal
+  ): Promise<Chunk[]> {
+    const sortedEmbeddings = embeddings.toSorted(
+      (a, b) => (a.distance ?? Infinity) - (b.distance ?? Infinity)
+    );
+
+    const chunks = sortedEmbeddings.reduce(
+      (acc, e) => {
+        const targetId = 'docId' in e ? e.docId : 'fileId' in e ? e.fileId : '';
+        const key = `${targetId}:${e.chunk}`;
+        acc[key] = e;
+        return acc;
+      },
+      {} as Record<string, Chunk>
+    );
+
+    const ranks = [];
+    for (const c of chunk(sortedEmbeddings, Math.min(topK, 10))) {
+      const rank = await this.getEmbeddingRelevance(query, c, signal);
+      ranks.push(rank);
+    }
+
+    const highConfidenceChunks = ranks
+      .flat()
+      .toSorted((a, b) => b.scores.score - a.scores.score)
+      .filter(r => r.scores.score > 5)
+      .map(r => chunks[`${r.scores.targetId}:${r.scores.chunk}`])
+      .filter(Boolean);
+
+    return highConfidenceChunks.slice(0, topK);
   }
 }
 

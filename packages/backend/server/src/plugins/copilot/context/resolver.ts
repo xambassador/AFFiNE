@@ -701,6 +701,8 @@ export class CopilotContextResolver {
     @Args('content') content: string,
     @Args('limit', { type: () => SafeIntResolver, nullable: true })
     limit?: number,
+    @Args('scopedThreshold', { type: () => Float, nullable: true })
+    scopedThreshold?: number,
     @Args('threshold', { type: () => Float, nullable: true })
     threshold?: number
   ): Promise<ContextMatchedDocChunk[]> {
@@ -726,6 +728,7 @@ export class CopilotContextResolver {
         content,
         limit,
         this.getSignal(ctx.req),
+        scopedThreshold,
         threshold
       );
     } catch (e: any) {

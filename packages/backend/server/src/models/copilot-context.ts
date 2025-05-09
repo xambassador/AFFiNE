@@ -209,12 +209,14 @@ export class CopilotContextModel extends BaseModel {
     embedding: number[],
     workspaceId: string,
     topK: number,
-    threshold: number
+    threshold: number,
+    matchDocIds?: string[]
   ): Promise<DocChunkSimilarity[]> {
     const similarityChunks = await this.db.$queryRaw<Array<DocChunkSimilarity>>`
       SELECT "doc_id" as "docId", "chunk", "content", "embedding" <=> ${embedding}::vector as "distance"
       FROM "ai_workspace_embeddings"
       WHERE "workspace_id" = ${workspaceId}
+      ${matchDocIds?.length ? Prisma.sql`AND "doc_id" IN (${Prisma.join(matchDocIds)})` : Prisma.empty}
       ORDER BY "distance" ASC
       LIMIT ${topK};
     `;
