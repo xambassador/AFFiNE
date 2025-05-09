@@ -3017,6 +3017,8 @@ export type MatchWorkspaceDocsQueryVariables = Exact<{
   contextId: Scalars['String']['input'];
   content: Scalars['String']['input'];
   limit?: InputMaybe<Scalars['SafeInt']['input']>;
+  scopedThreshold?: InputMaybe<Scalars['Float']['input']>;
+  threshold?: InputMaybe<Scalars['Float']['input']>;
 }>;
 
 export type MatchWorkspaceDocsQuery = {
@@ -3043,6 +3045,7 @@ export type MatchFilesQueryVariables = Exact<{
   contextId: Scalars['String']['input'];
   content: Scalars['String']['input'];
   limit?: InputMaybe<Scalars['SafeInt']['input']>;
+  threshold?: InputMaybe<Scalars['Float']['input']>;
 }>;
 
 export type MatchFilesQuery = {
