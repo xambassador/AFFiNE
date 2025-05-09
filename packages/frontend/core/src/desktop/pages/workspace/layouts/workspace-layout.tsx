@@ -1,5 +1,5 @@
 import { uniReactRoot } from '@affine/component';
-import { WorkspaceAIOnboarding } from '@affine/core/components/affine/ai-onboarding';
+// import { WorkspaceAIOnboarding } from '@affine/core/components/affine/ai-onboarding';
 import { AiLoginRequiredModal } from '@affine/core/components/affine/auth/ai-login-required';
 import {
   CloudQuotaModal,
@@ -43,7 +43,7 @@ export const WorkspaceLayout = function WorkspaceLayout({
 
       <WorkspaceLayoutInner>{children}</WorkspaceLayoutInner>
       {/* should show after workspace loaded */}
-      <WorkspaceAIOnboarding />
+      {/* FIXME: wait for better ai, <WorkspaceAIOnboarding /> */}
       <AIIsland />
       <uniReactRoot.Root />
     </SWRConfigProvider>

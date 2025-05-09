@@ -5,7 +5,7 @@ import { AIProvider } from '@affine/core/blocksuite/ai';
 import type { AffineEditorContainer } from '@affine/core/blocksuite/block-suite-editor';
 import { EditorOutlineViewer } from '@affine/core/blocksuite/outline-viewer';
 import { AffineErrorBoundary } from '@affine/core/components/affine/affine-error-boundary';
-import { PageAIOnboarding } from '@affine/core/components/affine/ai-onboarding';
+// import { PageAIOnboarding } from '@affine/core/components/affine/ai-onboarding';
 import { GlobalPageHistoryModal } from '@affine/core/components/affine/page-history-modal';
 import { useGuard } from '@affine/core/components/guard';
 import { useAppSettingHelper } from '@affine/core/components/hooks/affine/use-app-setting-helper';
@@ -361,7 +361,7 @@ const DetailPageImpl = memo(function DetailPageImpl() {
       </ViewSidebarTab>
 
       <GlobalPageHistoryModal />
-      <PageAIOnboarding />
+      {/* FIXME: wait for better ai, <PageAIOnboarding /> */}
     </FrameworkScope>
   );
 });
