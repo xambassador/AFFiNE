@@ -710,28 +710,44 @@ export class CopilotContextResolver {
       return [];
     }
 
-    const session = await this.context.get(context.id);
-    await this.ac
-      .user(user.id)
-      .workspace(session.workspaceId)
-      .allowLocal()
-      .assert('Workspace.Copilot');
-    const allowEmbedding = await this.models.workspace.allowEmbedding(
-      session.workspaceId
-    );
-    if (!allowEmbedding) {
-      return [];
-    }
-
     try {
-      return await session.matchWorkspaceChunks(
+      const session = await this.context.get(context.id);
+      await this.ac
+        .user(user.id)
+        .workspace(session.workspaceId)
+        .allowLocal()
+        .assert('Workspace.Copilot');
+      const allowEmbedding = await this.models.workspace.allowEmbedding(
+        session.workspaceId
+      );
+      if (!allowEmbedding) {
+        return [];
+      }
+
+      const chunks = await session.matchWorkspaceChunks(
         content,
         limit,
         this.getSignal(ctx.req),
         scopedThreshold,
         threshold
       );
+      const docsMap = await Promise.all(
+        chunks.map(c =>
+          this.ac
+            .user(user.id)
+            .workspace(session.workspaceId)
+            .doc(c.docId)
+            .can('Doc.Read')
+            .then(ret => [c.docId, ret] as const)
+        )
+      ).then(r => new Map(r));
+
+      return chunks.filter(c => docsMap.get(c.docId));
     } catch (e: any) {
+      // passthrough user friendly error
+      if (e instanceof UserFriendlyError) {
+        throw e;
+      }
       throw new CopilotFailedToMatchContext({
         contextId: context.id,
         // don't record the large content
