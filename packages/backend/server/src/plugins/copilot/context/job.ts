@@ -87,6 +87,30 @@ export class CopilotContextDocJob {
     }
   }
 
+  // @OnEvent('doc.indexer.updated')
+  async addDocEmbeddingQueueFromEvent(
+    // TODO(@darkskygit): replace this with real event type
+    doc: { workspaceId: string; docId: string } //Events['doc.indexer.updated'],
+  ) {
+    if (!this.supportEmbedding) return;
+
+    await this.queue.add('copilot.embedding.docs', {
+      workspaceId: doc.workspaceId,
+      docId: doc.workspaceId,
+    });
+  }
+
+  // @OnEvent('doc.indexer.deleted')
+  async deleteDocEmbeddingQueueFromEvent(
+    // TODO(@darkskygit): replace this with real event type
+    doc: { workspaceId: string; docId: string } //Events['doc.indexer.deleted'],
+  ) {
+    await this.models.copilotContext.deleteWorkspaceEmbedding(
+      doc.workspaceId,
+      doc.docId
+    );
+  }
+
   async readCopilotBlob(
     userId: string,
     workspaceId: string,

@@ -164,7 +164,10 @@ export class ContextSession implements AsyncDisposable {
   }
 
   async removeFile(fileId: string): Promise<boolean> {
-    await this.models.copilotContext.deleteEmbedding(this.contextId, fileId);
+    await this.models.copilotContext.deleteFileEmbedding(
+      this.contextId,
+      fileId
+    );
     this.config.files = this.config.files.filter(f => f.id !== fileId);
     await this.save();
     return true;

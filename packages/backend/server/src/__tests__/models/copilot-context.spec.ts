@@ -116,7 +116,7 @@ test('should insert embedding by doc id', async t => {
     }
 
     {
-      await t.context.copilotContext.deleteEmbedding(contextId, 'file-id');
+      await t.context.copilotContext.deleteFileEmbedding(contextId, 'file-id');
       const ret = await t.context.copilotContext.matchFileEmbedding(
         Array.from({ length: 1024 }, () => 0.9),
         contextId,
@@ -168,6 +168,20 @@ test('should insert embedding by doc id', async t => {
       );
       t.is(ret.length, 1);
       t.is(ret[0].content, 'content');
+    }
+
+    {
+      await t.context.copilotContext.deleteWorkspaceEmbedding(
+        workspace.id,
+        docId
+      );
+      const ret = await t.context.copilotContext.matchWorkspaceEmbedding(
+        Array.from({ length: 1024 }, () => 0.9),
+        workspace.id,
+        1,
+        1
+      );
+      t.snapshot(ret, 'should return empty array when embedding deleted');
     }
   }
 });

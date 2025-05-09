@@ -168,6 +168,12 @@ export class CopilotContextModel extends BaseModel {
   `;
   }
 
+  async deleteFileEmbedding(contextId: string, fileId: string) {
+    await this.db.aiContextEmbedding.deleteMany({
+      where: { contextId, fileId },
+    });
+  }
+
   async matchFileEmbedding(
     embedding: number[],
     contextId: string,
@@ -205,6 +211,12 @@ export class CopilotContextModel extends BaseModel {
     `;
   }
 
+  async deleteWorkspaceEmbedding(workspaceId: string, docId: string) {
+    await this.db.aiWorkspaceEmbedding.deleteMany({
+      where: { workspaceId, docId },
+    });
+  }
+
   async matchWorkspaceEmbedding(
     embedding: number[],
     workspaceId: string,
@@ -221,11 +233,5 @@ export class CopilotContextModel extends BaseModel {
       LIMIT ${topK};
     `;
     return similarityChunks.filter(c => Number(c.distance) <= threshold);
-  }
-
-  async deleteEmbedding(contextId: string, fileId: string) {
-    await this.db.aiContextEmbedding.deleteMany({
-      where: { contextId, fileId },
-    });
   }
 }
