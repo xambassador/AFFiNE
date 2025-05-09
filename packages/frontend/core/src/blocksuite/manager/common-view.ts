@@ -11,15 +11,10 @@ import { CopilotTool } from '@affine/core/blocksuite/ai/tool/copilot-tool';
 import { aiPanelWidget } from '@affine/core/blocksuite/ai/widgets/ai-panel/ai-panel';
 import { edgelessCopilotWidget } from '@affine/core/blocksuite/ai/widgets/edgeless-copilot';
 import { buildDocDisplayMetaExtension } from '@affine/core/blocksuite/extensions/display-meta';
-import { getEditorConfigExtension } from '@affine/core/blocksuite/extensions/editor-config';
 import { patchFileSizeLimitExtension } from '@affine/core/blocksuite/extensions/file-size-limit';
 import { getFontConfigExtension } from '@affine/core/blocksuite/extensions/font-config';
 import { patchPeekViewService } from '@affine/core/blocksuite/extensions/peek-view-service';
 import { getTelemetryExtension } from '@affine/core/blocksuite/extensions/telemetry';
-import {
-  getPreviewThemeExtension,
-  getThemeExtension,
-} from '@affine/core/blocksuite/extensions/theme';
 import { PeekViewService } from '@affine/core/modules/peek-view';
 import {
   type ViewExtensionContext,
@@ -41,17 +36,6 @@ export class AffineCommonViewExtension extends ViewExtensionProvider<
   override name = 'affine-view-extensions';
 
   override schema = optionsSchema;
-
-  private _setupTheme(
-    context: ViewExtensionContext,
-    framework: FrameworkProvider
-  ) {
-    if (this.isPreview(context.scope)) {
-      context.register(getPreviewThemeExtension(framework));
-    } else {
-      context.register(getThemeExtension(framework));
-    }
-  }
 
   private _setupAI(
     context: ViewExtensionContext,
@@ -97,7 +81,7 @@ export class AffineCommonViewExtension extends ViewExtensionProvider<
     context: ViewExtensionContext,
     options?: z.infer<typeof optionsSchema>
   ) {
-    super.setup(context);
+    super.setup(context, options);
     const { framework, enableAI } = options || {};
     if (framework) {
       context.register(patchPeekViewService(framework.get(PeekViewService)));
@@ -106,9 +90,7 @@ export class AffineCommonViewExtension extends ViewExtensionProvider<
         buildDocDisplayMetaExtension(framework),
       ]);
       context.register(getTelemetryExtension());
-      this._setupTheme(context, framework);
       if (context.scope === 'edgeless' || context.scope === 'page') {
-        context.register(getEditorConfigExtension(framework));
         context.register(patchFileSizeLimitExtension(framework));
       }
       if (enableAI) {

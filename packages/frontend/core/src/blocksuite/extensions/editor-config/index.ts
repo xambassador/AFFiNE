@@ -1,30 +1,34 @@
-import { WorkspaceServerService } from '@affine/core/modules/cloud';
-import { EditorSettingService } from '@affine/core/modules/editor-setting';
-import { ToolbarMoreMenuConfigExtension } from '@blocksuite/affine/components/toolbar';
-import { EditorSettingExtension } from '@blocksuite/affine/shared/services';
-import type { ExtensionType } from '@blocksuite/affine/store';
-import type { FrameworkProvider } from '@toeverything/infra';
-
+import { getEditorConfigExtension } from '@affine/core/blocksuite/extensions/editor-config/get-config';
 import {
-  createCustomToolbarExtension,
-  createToolbarMoreMenuConfig,
-} from './toolbar';
+  type ViewExtensionContext,
+  ViewExtensionProvider,
+} from '@blocksuite/affine/ext-loader';
+import { FrameworkProvider } from '@toeverything/infra';
+import { z } from 'zod';
 
-export function getEditorConfigExtension(
-  framework: FrameworkProvider
-): ExtensionType[] {
-  const editorSettingService = framework.get(EditorSettingService);
-  const workspaceServerService = framework.get(WorkspaceServerService);
-  const baseUrl = workspaceServerService.server?.baseUrl ?? location.origin;
+const optionsSchema = z.object({
+  framework: z.instanceof(FrameworkProvider).optional(),
+});
 
-  return [
-    EditorSettingExtension({
-      // eslint-disable-next-line rxjs/finnish
-      setting$: editorSettingService.editorSetting.settingSignal,
-      set: (k, v) => editorSettingService.editorSetting.set(k, v),
-    }),
-    ToolbarMoreMenuConfigExtension(createToolbarMoreMenuConfig(framework)),
+type AffineEditorConfigViewOptions = z.infer<typeof optionsSchema>;
 
-    createCustomToolbarExtension(editorSettingService.editorSetting, baseUrl),
-  ].flat();
+export class AffineEditorConfigViewExtension extends ViewExtensionProvider<AffineEditorConfigViewOptions> {
+  override name = 'affine-view-editor-config';
+
+  override schema = optionsSchema;
+
+  override setup(
+    context: ViewExtensionContext,
+    options?: AffineEditorConfigViewOptions
+  ) {
+    super.setup(context, options);
+    const framework = options?.framework;
+    if (!framework) {
+      return;
+    }
+
+    if (context.scope === 'edgeless' || context.scope === 'page') {
+      context.register(getEditorConfigExtension(framework));
+    }
+  }
 }

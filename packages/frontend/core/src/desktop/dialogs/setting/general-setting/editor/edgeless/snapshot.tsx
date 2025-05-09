@@ -56,7 +56,12 @@ export const EdgelessSnapshot = (props: Props) => {
   const { editorSetting } = framework.get(EditorSettingService);
 
   const extensions = useMemo(() => {
-    const manager = getViewManager(framework, false);
+    const manager = getViewManager()
+      .config.init()
+      .common(framework)
+      .theme(framework)
+      .database(framework)
+      .linkedDoc(framework).value;
     return manager
       .get('preview-edgeless')
       .concat([ViewportElementExtension('.ref-viewport')]);

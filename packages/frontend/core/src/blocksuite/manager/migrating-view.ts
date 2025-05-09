@@ -1,5 +1,11 @@
+import {
+  EdgelessBlockHeaderConfigViewExtension,
+  type EdgelessBlockHeaderViewOptions,
+} from '@affine/core/blocksuite/extensions/edgeless-block-header';
+import { AffineEditorConfigViewExtension } from '@affine/core/blocksuite/extensions/editor-config';
 import { createDatabaseOptionsConfig } from '@affine/core/blocksuite/extensions/editor-config/database';
 import { createLinkedWidgetConfig } from '@affine/core/blocksuite/extensions/editor-config/linked';
+import { AffineThemeViewExtension } from '@affine/core/blocksuite/extensions/theme';
 import { AffineCommonViewExtension } from '@affine/core/blocksuite/manager/common-view';
 import {
   AffineEditorViewExtension,
@@ -12,54 +18,142 @@ import { getInternalViewExtensions } from '@blocksuite/affine/extensions/view';
 import { LinkedDocViewExtension } from '@blocksuite/affine/widgets/linked-doc/view';
 import type { FrameworkProvider } from '@toeverything/infra';
 
-import { CodeBlockPreviewExtensionProvider } from './code-block-preview';
+import { CodeBlockPreviewViewExtension } from './code-block-preview';
 
-const manager = new ViewExtensionManager([
-  ...getInternalViewExtensions(),
-
-  AffineCommonViewExtension,
-  AffineEditorViewExtension,
-  CodeBlockPreviewExtensionProvider,
-]);
-
-export function getViewManager(
-  framework?: FrameworkProvider,
-  enableAI?: boolean,
-  options?: AffineEditorViewOptions
-) {
-  manager.configure(AffineCommonViewExtension, {
-    framework,
-    enableAI,
-  });
-  manager.configure(AffineEditorViewExtension, options);
-
-  if (framework) {
-    manager.configure(
-      DatabaseViewExtension,
-      createDatabaseOptionsConfig(framework)
-    );
-    manager.configure(
-      LinkedDocViewExtension,
-      createLinkedWidgetConfig(framework)
-    );
+class ViewProvider {
+  static instance: ViewProvider | null = null;
+  static getInstance() {
+    if (!ViewProvider.instance) {
+      ViewProvider.instance = new ViewProvider();
+    }
+    return ViewProvider.instance;
   }
 
-  if (enableAI) {
-    manager.configure(ParagraphViewExtension, {
-      getPlaceholder: model => {
-        const placeholders = {
-          text: "Type '/' for commands, 'space' for AI",
-          h1: 'Heading 1',
-          h2: 'Heading 2',
-          h3: 'Heading 3',
-          h4: 'Heading 4',
-          h5: 'Heading 5',
-          h6: 'Heading 6',
-          quote: '',
-        };
-        return placeholders[model.props.type] ?? '';
-      },
+  private readonly _manager: ViewExtensionManager;
+
+  constructor() {
+    this._manager = new ViewExtensionManager([
+      ...getInternalViewExtensions(),
+
+      AffineThemeViewExtension,
+      AffineCommonViewExtension,
+      AffineEditorViewExtension,
+      AffineEditorConfigViewExtension,
+      CodeBlockPreviewViewExtension,
+      EdgelessBlockHeaderConfigViewExtension,
+    ]);
+  }
+
+  get value() {
+    return this._manager;
+  }
+
+  get config() {
+    return {
+      init: this._initDefaultConfig,
+      common: this._configureCommon,
+      editorView: this._configureEditorView,
+      theme: this._configureTheme,
+      editorConfig: this._configureEditorConfig,
+      edgelessBlockHeader: this._configureEdgelessBlockHeader,
+      database: this._configureDatabase,
+      linkedDoc: this._configureLinkedDoc,
+      paragraph: this._configureParagraph,
+      value: this._manager,
+    };
+  }
+
+  private readonly _initDefaultConfig = () => {
+    this.config
+      .common()
+      .theme()
+      .editorView()
+      .editorConfig()
+      .edgelessBlockHeader()
+      .database()
+      .linkedDoc()
+      .paragraph();
+
+    return this.config;
+  };
+
+  private readonly _configureCommon = (
+    framework?: FrameworkProvider,
+    enableAI?: boolean
+  ) => {
+    this._manager.configure(AffineCommonViewExtension, {
+      framework,
+      enableAI,
     });
-  }
-  return manager;
+    return this.config;
+  };
+
+  private readonly _configureEditorView = (
+    options?: AffineEditorViewOptions
+  ) => {
+    this._manager.configure(AffineEditorViewExtension, options);
+    return this.config;
+  };
+
+  private readonly _configureTheme = (framework?: FrameworkProvider) => {
+    this._manager.configure(AffineThemeViewExtension, { framework });
+    return this.config;
+  };
+
+  private readonly _configureEditorConfig = (framework?: FrameworkProvider) => {
+    this._manager.configure(AffineEditorConfigViewExtension, { framework });
+    return this.config;
+  };
+
+  private readonly _configureEdgelessBlockHeader = (
+    options?: EdgelessBlockHeaderViewOptions
+  ) => {
+    this._manager.configure(EdgelessBlockHeaderConfigViewExtension, options);
+    return this.config;
+  };
+
+  private readonly _configureDatabase = (framework?: FrameworkProvider) => {
+    if (framework) {
+      this._manager.configure(
+        DatabaseViewExtension,
+        createDatabaseOptionsConfig(framework)
+      );
+    }
+    return this.config;
+  };
+
+  private readonly _configureLinkedDoc = (framework?: FrameworkProvider) => {
+    if (framework) {
+      this._manager.configure(
+        LinkedDocViewExtension,
+        createLinkedWidgetConfig(framework)
+      );
+    }
+    return this.config;
+  };
+
+  private readonly _configureParagraph = (enableAI?: boolean) => {
+    if (enableAI) {
+      this._manager.configure(ParagraphViewExtension, {
+        getPlaceholder: model => {
+          const placeholders = {
+            text: "Type '/' for commands, 'space' for AI",
+            h1: 'Heading 1',
+            h2: 'Heading 2',
+            h3: 'Heading 3',
+            h4: 'Heading 4',
+            h5: 'Heading 5',
+            h6: 'Heading 6',
+            quote: '',
+          };
+          return placeholders[model.props.type] ?? '';
+        },
+      });
+    }
+    return this.config;
+  };
+}
+
+export function getViewManager() {
+  return ViewProvider.getInstance();
 }

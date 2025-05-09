@@ -6,10 +6,6 @@ import {
 import { patchDatabaseBlockConfigService } from '@affine/core/blocksuite/extensions/database-block-config-service';
 import { patchDocModeService } from '@affine/core/blocksuite/extensions/doc-mode-service';
 import { patchDocUrlExtensions } from '@affine/core/blocksuite/extensions/doc-url';
-import {
-  patchForEdgelessNoteConfig,
-  patchForEmbedSyncedDocConfig,
-} from '@affine/core/blocksuite/extensions/edgeless-block-header';
 import { EdgelessClipboardAIChatConfig } from '@affine/core/blocksuite/extensions/edgeless-clipboard';
 import { patchForClipboardInElectron } from '@affine/core/blocksuite/extensions/electron-clipboard';
 import { patchNotificationService } from '@affine/core/blocksuite/extensions/notification-service';
@@ -116,13 +112,12 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
     context: ViewExtensionContext,
     options?: AffineEditorViewOptions
   ) {
-    super.setup(context);
+    super.setup(context, options);
     if (!options) {
       return;
     }
     const {
       isCloud,
-      isInPeekView,
 
       enableTurboRenderer,
       enablePDFEmbedPreview,
@@ -155,8 +150,6 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
     context.register(patchDocUrlExtensions(framework));
     context.register(patchQuickSearchService(framework));
     context.register([
-      patchForEmbedSyncedDocConfig(reactToLit),
-      patchForEdgelessNoteConfig(framework, reactToLit, isInPeekView),
       patchDatabaseBlockConfigService(),
       patchForAudioEmbedView(reactToLit),
     ]);

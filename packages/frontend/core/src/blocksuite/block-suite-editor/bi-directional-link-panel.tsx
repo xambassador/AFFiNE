@@ -163,7 +163,13 @@ const usePreviewExtensions = () => {
   const enableAI = useEnableAI();
 
   const extensions = useMemo(() => {
-    const manager = getViewManager(framework, enableAI);
+    const manager = getViewManager()
+      .config.init()
+      .common(framework, enableAI)
+      .theme(framework)
+      .database(framework)
+      .linkedDoc(framework)
+      .paragraph(enableAI).value;
     const specs = manager.get('preview-page');
     return [...specs, patchReferenceRenderer(reactToLit, referenceRenderer)];
   }, [reactToLit, referenceRenderer, framework, enableAI]);

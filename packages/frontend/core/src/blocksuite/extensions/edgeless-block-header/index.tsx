@@ -1,110 +1,42 @@
-import type { ReactToLit } from '@affine/component';
-import { JournalService } from '@affine/core/modules/journal';
-import { EmbedSyncedDocConfigExtension } from '@blocksuite/affine/blocks/embed-doc';
-import { NoteConfigExtension } from '@blocksuite/affine/blocks/note';
-import { EDGELESS_BLOCK_CHILD_PADDING } from '@blocksuite/affine/blocks/root';
-import { Bound, Vec } from '@blocksuite/affine/global/gfx';
+import type { ElementOrFactory } from '@affine/component';
 import {
-  DocModeProvider,
-  EditPropsStore,
-} from '@blocksuite/affine/shared/services';
-import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
-import type { FrameworkProvider } from '@toeverything/infra';
-import { html } from 'lit';
+  patchForEdgelessNoteConfig,
+  patchForEmbedSyncedDocConfig,
+} from '@affine/core/blocksuite/extensions/edgeless-block-header/patch';
+import {
+  type ViewExtensionContext,
+  ViewExtensionProvider,
+} from '@blocksuite/affine/ext-loader';
+import { FrameworkProvider } from '@toeverything/infra';
+import type { TemplateResult } from 'lit';
+import { z } from 'zod';
 
-import { BlocksuiteEditorJournalDocTitle } from '../../block-suite-editor/journal-doc-title';
-import { EdgelessEmbedSyncedDocHeader } from './edgeless-embed-synced-doc-header';
-import { EdgelessNoteHeader } from './edgeless-note-header';
+const optionsSchema = z.object({
+  isInPeekView: z.boolean(),
+  framework: z.instanceof(FrameworkProvider),
+  reactToLit: z
+    .function()
+    .args(z.custom<ElementOrFactory>(), z.boolean().optional())
+    .returns(z.custom<TemplateResult>()),
+});
 
-export function patchForEdgelessNoteConfig(
-  framework: FrameworkProvider,
-  reactToLit: ReactToLit,
-  insidePeekView: boolean
-) {
-  return NoteConfigExtension({
-    edgelessNoteHeader: ({ note }) =>
-      reactToLit(<EdgelessNoteHeader note={note} />),
-    pageBlockTitle: ({ note }) => {
-      const journalService = framework.get(JournalService);
-      const isJournal = !!journalService.journalDate$(note.store.id).value;
-      if (isJournal) {
-        return reactToLit(
-          <BlocksuiteEditorJournalDocTitle page={note.store} />
-        );
-      } else {
-        return html`<doc-title .doc=${note.store}></doc-title>`;
-      }
-    },
-    pageBlockViewportFitAnimation: insidePeekView
-      ? undefined
-      : ({ std, note }) => {
-          const storedViewport = std.get(EditPropsStore).getStorage('viewport');
-          // if there is a stored viewport, don't run the animation
-          // in other word, this doc has been opened before
-          if (storedViewport) return false;
+export type EdgelessBlockHeaderViewOptions = z.infer<typeof optionsSchema>;
 
-          if (!std.store.root) return false;
-          const rootView = std.view.getBlock(std.store.root.id);
-          if (!rootView) return false;
+export class EdgelessBlockHeaderConfigViewExtension extends ViewExtensionProvider<EdgelessBlockHeaderViewOptions> {
+  override name = 'header-config-view';
+  override schema = optionsSchema;
 
-          const gfx = std.get(GfxControllerIdentifier);
-          const primaryMode = std
-            .get(DocModeProvider)
-            .getPrimaryMode(std.store.id);
+  override setup(
+    context: ViewExtensionContext,
+    options?: EdgelessBlockHeaderViewOptions
+  ) {
+    super.setup(context, options);
+    if (!options) return;
+    const { framework, isInPeekView, reactToLit } = options;
 
-          if (primaryMode !== 'page' || !note || note.props.edgeless.collapse) {
-            return false;
-          }
-
-          const leftPadding = parseInt(
-            window
-              .getComputedStyle(rootView)
-              .getPropertyValue('--affine-editor-side-padding')
-              .replace('px', '')
-          );
-          if (isNaN(leftPadding)) {
-            return false;
-          }
-
-          let editorWidth = parseInt(
-            window
-              .getComputedStyle(rootView)
-              .getPropertyValue('--affine-editor-width')
-              .replace('px', '')
-          );
-          if (isNaN(editorWidth)) {
-            return false;
-          }
-
-          const containerWidth = rootView.getBoundingClientRect().width;
-          const leftMargin =
-            containerWidth > editorWidth
-              ? (containerWidth - editorWidth) / 2
-              : 0;
-
-          const pageTitleAnchor = gfx.viewport.toModelCoord(
-            leftPadding + leftMargin,
-            0
-          );
-
-          const noteBound = Bound.deserialize(note.xywh);
-          const edgelessTitleAnchor = Vec.add(noteBound.tl, [
-            EDGELESS_BLOCK_CHILD_PADDING,
-            12,
-          ]);
-
-          const center = Vec.sub(edgelessTitleAnchor, pageTitleAnchor);
-          gfx.viewport.setCenter(center[0], center[1]);
-          gfx.viewport.smoothZoom(0.65, undefined, 15);
-
-          return true;
-        },
-  });
-}
-
-export function patchForEmbedSyncedDocConfig(reactToLit: ReactToLit) {
-  return EmbedSyncedDocConfigExtension({
-    edgelessHeader: ({ model, std }) =>
-      reactToLit(<EdgelessEmbedSyncedDocHeader model={model} std={std} />),
-  });
+    context.register(
+      patchForEdgelessNoteConfig(framework, reactToLit, isInPeekView)
+    );
+    context.register(patchForEmbedSyncedDocConfig(reactToLit));
+  }
 }

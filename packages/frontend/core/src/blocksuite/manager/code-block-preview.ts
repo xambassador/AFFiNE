@@ -8,7 +8,7 @@ import {
   effects as htmlPreviewEffects,
 } from '../extensions/code-block-preview/html-preview';
 
-export class CodeBlockPreviewExtensionProvider extends ViewExtensionProvider {
+export class CodeBlockPreviewViewExtension extends ViewExtensionProvider {
   override name = 'code-block-preview';
 
   override effect() {

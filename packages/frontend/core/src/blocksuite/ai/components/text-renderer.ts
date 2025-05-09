@@ -43,17 +43,20 @@ import type {
   AffineAIPanelWidgetConfig,
 } from '../widgets/ai-panel/type';
 
-export const getCustomPageEditorBlockSpecs: () => ExtensionType[] = () => [
-  ...getViewManager().get('page'),
-  {
-    setup: di => {
-      di.override(
-        BlockViewIdentifier('affine:page'),
-        () => literal`affine-page-root`
-      );
+export const getCustomPageEditorBlockSpecs: () => ExtensionType[] = () => {
+  const manager = getViewManager().config.init().value;
+  return [
+    ...manager.get('page'),
+    {
+      setup: di => {
+        di.override(
+          BlockViewIdentifier('affine:page'),
+          () => literal`affine-page-root`
+        );
+      },
     },
-  },
-];
+  ];
+};
 
 const customHeadingStyles = css`
   .custom-heading {

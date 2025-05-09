@@ -6,7 +6,6 @@ import {
   LitEdgelessEditor,
   type PageEditor,
 } from '@affine/core/blocksuite/editors';
-import type { AffineEditorViewOptions } from '@affine/core/blocksuite/manager/editor-view';
 import { getViewManager } from '@affine/core/blocksuite/manager/migrating-view';
 import { useEnableAI } from '@affine/core/components/hooks/affine/use-enable-ai';
 import type { DocCustomPropertyInfo } from '@affine/core/modules/db';
@@ -22,9 +21,8 @@ import { WorkspaceService } from '@affine/core/modules/workspace';
 import track from '@affine/track';
 import type { DocTitle } from '@blocksuite/affine/fragments/doc-title';
 import type { DocMode } from '@blocksuite/affine/model';
-import type { ExtensionType, Store } from '@blocksuite/affine/store';
+import type { Store } from '@blocksuite/affine/store';
 import {
-  type FrameworkProvider,
   useFramework,
   useLiveData,
   useService,
@@ -69,7 +67,7 @@ const usePatchSpecs = (mode: DocMode) => {
 
   const enableAI = useEnableAI();
 
-  const insidePeekView = useInsidePeekView();
+  const isInPeekView = useInsidePeekView();
 
   const enableTurboRenderer = useLiveData(
     featureFlagService.flags.enable_turbo_renderer.$
@@ -81,32 +79,50 @@ const usePatchSpecs = (mode: DocMode) => {
     )
   );
 
-  const editorOptions: AffineEditorViewOptions = useMemo(() => {
-    return {
-      isCloud,
-      isInPeekView: insidePeekView,
+  const patchedSpecs = useMemo(() => {
+    const manager = getViewManager()
+      .config.init()
+      .common(framework, enableAI)
+      .theme(framework)
+      .editorConfig(framework)
+      .editorView({
+        isCloud,
+        isInPeekView,
+        enableTurboRenderer,
+        enablePDFEmbedPreview,
+        framework,
+        reactToLit,
+        confirmModal,
+      })
+      .edgelessBlockHeader({
+        framework,
+        isInPeekView,
+        reactToLit,
+      })
+      .database(framework)
+      .linkedDoc(framework)
+      .paragraph(enableAI).value;
 
-      enableTurboRenderer,
-      enablePDFEmbedPreview,
-
-      framework,
-
-      reactToLit: reactToLit as AffineEditorViewOptions['reactToLit'],
-      confirmModal,
-    };
+    if (BUILD_CONFIG.isMobileEdition) {
+      if (mode === 'page') {
+        return manager.get('mobile-page');
+      } else {
+        return manager.get('mobile-edgeless');
+      }
+    } else {
+      return manager.get(mode);
+    }
   }, [
     confirmModal,
+    enableAI,
     enablePDFEmbedPreview,
     enableTurboRenderer,
     framework,
-    insidePeekView,
+    isInPeekView,
     isCloud,
+    mode,
     reactToLit,
   ]);
-
-  const patchedSpecs = useMemo(() => {
-    return enableEditorExtension(framework, mode, enableAI, editorOptions);
-  }, [framework, mode, enableAI, editorOptions]);
 
   return [
     patchedSpecs,
@@ -302,20 +318,3 @@ export const BlocksuiteEdgelessEditor = forwardRef<
     </div>
   );
 });
-
-function enableEditorExtension(
-  framework: FrameworkProvider,
-  mode: 'edgeless' | 'page',
-  enableAI: boolean,
-  options: AffineEditorViewOptions
-): ExtensionType[] {
-  const manager = getViewManager(framework, enableAI, options);
-  if (BUILD_CONFIG.isMobileEdition) {
-    if (mode === 'page') {
-      return manager.get('mobile-page');
-    }
-
-    return manager.get('mobile-edgeless');
-  }
-  return manager.get(mode);
-}

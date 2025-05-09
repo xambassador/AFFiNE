@@ -10,7 +10,7 @@ export function createBlockStdScope(doc: Store) {
   logger.debug('createBlockStdScope', doc.id);
   const std = new BlockStdScope({
     store: doc,
-    extensions: getViewManager().get('page'),
+    extensions: getViewManager().config.init().value.get('page'),
   });
   return std;
 }
