@@ -13,12 +13,17 @@ export class CodeBlockPreviewExtensionProvider extends ViewExtensionProvider {
 
   override effect() {
     super.effect();
-    htmlPreviewEffects();
+
+    if (window.crossOriginIsolated) {
+      htmlPreviewEffects();
+    }
   }
 
   override setup(context: ViewExtensionContext) {
     super.setup(context);
 
-    context.register(CodeBlockHtmlPreview);
+    if (window.crossOriginIsolated) {
+      context.register(CodeBlockHtmlPreview);
+    }
   }
 }
