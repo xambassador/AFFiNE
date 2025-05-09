@@ -15,17 +15,14 @@ export const passwordLimitsFragment = `fragment PasswordLimits on PasswordLimits
   minLength
   maxLength
 }`;
-export const activateLicenseMutation = {
-  id: 'activateLicenseMutation' as const,
-  op: 'activateLicense',
-  query: `mutation activateLicense($workspaceId: String!, $license: String!) {
-  activateLicense(workspaceId: $workspaceId, license: $license) {
-    installedAt
-    validatedAt
-  }
-}`,
-};
-
+export const licenseFragment = `fragment license on License {
+  expiredAt
+  installedAt
+  quantity
+  recurring
+  validatedAt
+  variant
+}`;
 export const adminServerConfigQuery = {
   id: 'adminServerConfigQuery' as const,
   op: 'adminServerConfig',
@@ -893,14 +890,6 @@ export const createWorkspaceMutation = {
 }`,
 };
 
-export const deactivateLicenseMutation = {
-  id: 'deactivateLicenseMutation' as const,
-  op: 'deactivateLicense',
-  query: `mutation deactivateLicense($workspaceId: String!) {
-  deactivateLicense(workspaceId: $workspaceId)
-}`,
-};
-
 export const deleteAccountMutation = {
   id: 'deleteAccountMutation' as const,
   op: 'deleteAccount',
@@ -1063,22 +1052,6 @@ export const getIsOwnerQuery = {
   isOwner(workspaceId: $workspaceId)
 }`,
   deprecations: ["'isOwner' is deprecated: use WorkspaceType[role] instead"],
-};
-
-export const getLicenseQuery = {
-  id: 'getLicenseQuery' as const,
-  op: 'getLicense',
-  query: `query getLicense($workspaceId: String!) {
-  workspace(id: $workspaceId) {
-    license {
-      expiredAt
-      installedAt
-      quantity
-      recurring
-      validatedAt
-    }
-  }
-}`,
 };
 
 export const getMemberCountByWorkspaceIdQuery = {
@@ -1389,6 +1362,50 @@ export const leaveWorkspaceMutation = {
   query: `mutation leaveWorkspace($workspaceId: String!, $sendLeaveMail: Boolean) {
   leaveWorkspace(workspaceId: $workspaceId, sendLeaveMail: $sendLeaveMail)
 }`,
+};
+
+export const activateLicenseMutation = {
+  id: 'activateLicenseMutation' as const,
+  op: 'activateLicense',
+  query: `mutation activateLicense($workspaceId: String!, $license: String!) {
+  activateLicense(workspaceId: $workspaceId, license: $license) {
+    ...license
+  }
+}
+${licenseFragment}`,
+};
+
+export const deactivateLicenseMutation = {
+  id: 'deactivateLicenseMutation' as const,
+  op: 'deactivateLicense',
+  query: `mutation deactivateLicense($workspaceId: String!) {
+  deactivateLicense(workspaceId: $workspaceId)
+}`,
+};
+
+export const getLicenseQuery = {
+  id: 'getLicenseQuery' as const,
+  op: 'getLicense',
+  query: `query getLicense($workspaceId: String!) {
+  workspace(id: $workspaceId) {
+    license {
+      ...license
+    }
+  }
+}
+${licenseFragment}`,
+};
+
+export const installLicenseMutation = {
+  id: 'installLicenseMutation' as const,
+  op: 'installLicense',
+  query: `mutation installLicense($workspaceId: String!, $license: Upload!) {
+  installLicense(workspaceId: $workspaceId, license: $license) {
+    ...license
+  }
+}
+${licenseFragment}`,
+  file: true,
 };
 
 export const listNotificationsQuery = {

@@ -257,6 +257,11 @@ export class WorkspaceService {
       workspaceId,
       quantity
     );
+
+    if (!pendings.length) {
+      return;
+    }
+
     const owner = await this.models.workspaceUser.getOwner(workspaceId);
     for (const member of pendings) {
       try {

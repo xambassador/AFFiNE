@@ -598,6 +598,7 @@ export type ErrorDataUnion =
   | HttpRequestErrorDataType
   | InvalidEmailDataType
   | InvalidHistoryTimestampDataType
+  | InvalidLicenseToActivateDataType
   | InvalidLicenseUpdateParamsDataType
   | InvalidOauthCallbackCodeDataType
   | InvalidPasswordLengthDataType
@@ -622,7 +623,6 @@ export type ErrorDataUnion =
   | UnsupportedSubscriptionPlanDataType
   | ValidationErrorDataType
   | VersionRejectedDataType
-  | WorkspaceMembersExceedLimitToDowngradeDataType
   | WorkspacePermissionNotFoundDataType
   | WrongSignInCredentialsDataType;
 
@@ -701,6 +701,7 @@ export enum ErrorNames {
   INVALID_PASSWORD_LENGTH = 'INVALID_PASSWORD_LENGTH',
   INVALID_RUNTIME_CONFIG_TYPE = 'INVALID_RUNTIME_CONFIG_TYPE',
   INVALID_SUBSCRIPTION_PARAMETERS = 'INVALID_SUBSCRIPTION_PARAMETERS',
+  LICENSE_EXPIRED = 'LICENSE_EXPIRED',
   LICENSE_NOT_FOUND = 'LICENSE_NOT_FOUND',
   LICENSE_REVEALED = 'LICENSE_REVEALED',
   LINK_EXPIRED = 'LINK_EXPIRED',
@@ -749,7 +750,6 @@ export enum ErrorNames {
   WORKSPACE_ID_REQUIRED_FOR_TEAM_SUBSCRIPTION = 'WORKSPACE_ID_REQUIRED_FOR_TEAM_SUBSCRIPTION',
   WORKSPACE_ID_REQUIRED_TO_UPDATE_TEAM_SUBSCRIPTION = 'WORKSPACE_ID_REQUIRED_TO_UPDATE_TEAM_SUBSCRIPTION',
   WORKSPACE_LICENSE_ALREADY_EXISTS = 'WORKSPACE_LICENSE_ALREADY_EXISTS',
-  WORKSPACE_MEMBERS_EXCEED_LIMIT_TO_DOWNGRADE = 'WORKSPACE_MEMBERS_EXCEED_LIMIT_TO_DOWNGRADE',
   WORKSPACE_PERMISSION_NOT_FOUND = 'WORKSPACE_PERMISSION_NOT_FOUND',
   WRONG_SIGN_IN_CREDENTIALS = 'WRONG_SIGN_IN_CREDENTIALS',
   WRONG_SIGN_IN_METHOD = 'WRONG_SIGN_IN_METHOD',
@@ -835,6 +835,11 @@ export interface InvalidEmailDataType {
 export interface InvalidHistoryTimestampDataType {
   __typename?: 'InvalidHistoryTimestampDataType';
   timestamp: Scalars['String']['output'];
+}
+
+export interface InvalidLicenseToActivateDataType {
+  __typename?: 'InvalidLicenseToActivateDataType';
+  reason: Scalars['String']['output'];
 }
 
 export interface InvalidLicenseUpdateParamsDataType {
@@ -1029,6 +1034,7 @@ export interface License {
   quantity: Scalars['Int']['output'];
   recurring: SubscriptionRecurring;
   validatedAt: Scalars['DateTime']['output'];
+  variant: Maybe<SubscriptionVariant>;
 }
 
 export interface LimitedUserType {
@@ -1166,6 +1172,7 @@ export interface Mutation {
   grantMember: Scalars['Boolean']['output'];
   /** import users */
   importUsers: Array<UserImportResultType>;
+  installLicense: License;
   /** @deprecated use [inviteMembers] instead */
   inviteBatch: Array<InviteResult>;
   inviteMembers: Array<InviteResult>;
@@ -1389,6 +1396,11 @@ export interface MutationGrantMemberArgs {
 
 export interface MutationImportUsersArgs {
   input: ImportUsersInput;
+}
+
+export interface MutationInstallLicenseArgs {
+  license: Scalars['Upload']['input'];
+  workspaceId: Scalars['String']['input'];
 }
 
 export interface MutationInviteBatchArgs {
@@ -2291,11 +2303,6 @@ export enum WorkspaceMemberStatus {
   UnderReview = 'UnderReview',
 }
 
-export interface WorkspaceMembersExceedLimitToDowngradeDataType {
-  __typename?: 'WorkspaceMembersExceedLimitToDowngradeDataType';
-  limit: Scalars['Int']['output'];
-}
-
 export interface WorkspacePermissionNotFoundDataType {
   __typename?: 'WorkspacePermissionNotFoundDataType';
   spaceId: Scalars['String']['output'];
@@ -2473,20 +2480,6 @@ export interface TokenType {
   sessionToken: Maybe<Scalars['String']['output']>;
   token: Scalars['String']['output'];
 }
-
-export type ActivateLicenseMutationVariables = Exact<{
-  workspaceId: Scalars['String']['input'];
-  license: Scalars['String']['input'];
-}>;
-
-export type ActivateLicenseMutation = {
-  __typename?: 'Mutation';
-  activateLicense: {
-    __typename?: 'License';
-    installedAt: string;
-    validatedAt: string;
-  };
-};
 
 export type AdminServerConfigQueryVariables = Exact<{ [key: string]: never }>;
 
@@ -3495,15 +3488,6 @@ export type CreateWorkspaceMutation = {
   };
 };
 
-export type DeactivateLicenseMutationVariables = Exact<{
-  workspaceId: Scalars['String']['input'];
-}>;
-
-export type DeactivateLicenseMutation = {
-  __typename?: 'Mutation';
-  deactivateLicense: boolean;
-};
-
 export type DeleteAccountMutationVariables = Exact<{ [key: string]: never }>;
 
 export type DeleteAccountMutation = {
@@ -3692,25 +3676,6 @@ export type GetIsOwnerQueryVariables = Exact<{
 }>;
 
 export type GetIsOwnerQuery = { __typename?: 'Query'; isOwner: boolean };
-
-export type GetLicenseQueryVariables = Exact<{
-  workspaceId: Scalars['String']['input'];
-}>;
-
-export type GetLicenseQuery = {
-  __typename?: 'Query';
-  workspace: {
-    __typename?: 'WorkspaceType';
-    license: {
-      __typename?: 'License';
-      expiredAt: string | null;
-      installedAt: string;
-      quantity: number;
-      recurring: SubscriptionRecurring;
-      validatedAt: string;
-    } | null;
-  };
-};
 
 export type GetMemberCountByWorkspaceIdQueryVariables = Exact<{
   workspaceId: Scalars['String']['input'];
@@ -4057,6 +4022,81 @@ export type LeaveWorkspaceMutationVariables = Exact<{
 export type LeaveWorkspaceMutation = {
   __typename?: 'Mutation';
   leaveWorkspace: boolean;
+};
+
+export type ActivateLicenseMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  license: Scalars['String']['input'];
+}>;
+
+export type ActivateLicenseMutation = {
+  __typename?: 'Mutation';
+  activateLicense: {
+    __typename?: 'License';
+    expiredAt: string | null;
+    installedAt: string;
+    quantity: number;
+    recurring: SubscriptionRecurring;
+    validatedAt: string;
+    variant: SubscriptionVariant | null;
+  };
+};
+
+export type DeactivateLicenseMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+}>;
+
+export type DeactivateLicenseMutation = {
+  __typename?: 'Mutation';
+  deactivateLicense: boolean;
+};
+
+export type GetLicenseQueryVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+}>;
+
+export type GetLicenseQuery = {
+  __typename?: 'Query';
+  workspace: {
+    __typename?: 'WorkspaceType';
+    license: {
+      __typename?: 'License';
+      expiredAt: string | null;
+      installedAt: string;
+      quantity: number;
+      recurring: SubscriptionRecurring;
+      validatedAt: string;
+      variant: SubscriptionVariant | null;
+    } | null;
+  };
+};
+
+export type InstallLicenseMutationVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  license: Scalars['Upload']['input'];
+}>;
+
+export type InstallLicenseMutation = {
+  __typename?: 'Mutation';
+  installLicense: {
+    __typename?: 'License';
+    expiredAt: string | null;
+    installedAt: string;
+    quantity: number;
+    recurring: SubscriptionRecurring;
+    validatedAt: string;
+    variant: SubscriptionVariant | null;
+  };
+};
+
+export type LicenseFragment = {
+  __typename?: 'License';
+  expiredAt: string | null;
+  installedAt: string;
+  quantity: number;
+  recurring: SubscriptionRecurring;
+  validatedAt: string;
+  variant: SubscriptionVariant | null;
 };
 
 export type ListNotificationsQueryVariables = Exact<{
@@ -4796,11 +4836,6 @@ export type Queries =
       response: GetIsOwnerQuery;
     }
   | {
-      name: 'getLicenseQuery';
-      variables: GetLicenseQueryVariables;
-      response: GetLicenseQuery;
-    }
-  | {
       name: 'getMemberCountByWorkspaceIdQuery';
       variables: GetMemberCountByWorkspaceIdQueryVariables;
       response: GetMemberCountByWorkspaceIdQuery;
@@ -4896,6 +4931,11 @@ export type Queries =
       response: InvoicesQuery;
     }
   | {
+      name: 'getLicenseQuery';
+      variables: GetLicenseQueryVariables;
+      response: GetLicenseQuery;
+    }
+  | {
       name: 'listNotificationsQuery';
       variables: ListNotificationsQueryVariables;
       response: ListNotificationsQuery;
@@ -4952,11 +4992,6 @@ export type Queries =
     };
 
 export type Mutations =
-  | {
-      name: 'activateLicenseMutation';
-      variables: ActivateLicenseMutationVariables;
-      response: ActivateLicenseMutation;
-    }
   | {
       name: 'createChangePasswordUrlMutation';
       variables: CreateChangePasswordUrlMutationVariables;
@@ -5163,11 +5198,6 @@ export type Mutations =
       response: CreateWorkspaceMutation;
     }
   | {
-      name: 'deactivateLicenseMutation';
-      variables: DeactivateLicenseMutationVariables;
-      response: DeactivateLicenseMutation;
-    }
-  | {
       name: 'deleteAccountMutation';
       variables: DeleteAccountMutationVariables;
       response: DeleteAccountMutation;
@@ -5191,6 +5221,21 @@ export type Mutations =
       name: 'leaveWorkspaceMutation';
       variables: LeaveWorkspaceMutationVariables;
       response: LeaveWorkspaceMutation;
+    }
+  | {
+      name: 'activateLicenseMutation';
+      variables: ActivateLicenseMutationVariables;
+      response: ActivateLicenseMutation;
+    }
+  | {
+      name: 'deactivateLicenseMutation';
+      variables: DeactivateLicenseMutationVariables;
+      response: DeactivateLicenseMutation;
+    }
+  | {
+      name: 'installLicenseMutation';
+      variables: InstallLicenseMutationVariables;
+      response: InstallLicenseMutation;
     }
   | {
       name: 'mentionUserMutation';

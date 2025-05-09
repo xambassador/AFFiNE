@@ -8441,9 +8441,11 @@ export function useAFFiNEI18N(): {
       */
     ["error.LICENSE_NOT_FOUND"](): string;
     /**
-      * `Invalid license to activate.`
+      * `Invalid license to activate. {{reason}}`
       */
-    ["error.INVALID_LICENSE_TO_ACTIVATE"](): string;
+    ["error.INVALID_LICENSE_TO_ACTIVATE"](options: {
+        readonly reason: string;
+    }): string;
     /**
       * `Invalid license update params. {{reason}}`
       */
@@ -8451,11 +8453,9 @@ export function useAFFiNEI18N(): {
         readonly reason: string;
     }): string;
     /**
-      * `You cannot downgrade the workspace from team workspace because there are more than {{limit}} members that are currently active.`
+      * `License has expired.`
       */
-    ["error.WORKSPACE_MEMBERS_EXCEED_LIMIT_TO_DOWNGRADE"](options: {
-        readonly limit: string;
-    }): string;
+    ["error.LICENSE_EXPIRED"](): string;
     /**
       * `Unsupported client with version [{{clientVersion}}], required version is [{{requiredVersion}}].`
       */

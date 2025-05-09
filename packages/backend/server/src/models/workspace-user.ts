@@ -427,6 +427,6 @@ export class WorkspaceUserModel extends BaseModel {
       data: { status: WorkspaceMemberStatus.NeedMoreSeat },
     });
 
-    return groups.Email;
+    return groups.Email ?? [];
   }
 }

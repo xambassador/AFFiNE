@@ -767,10 +767,12 @@ model InstalledLicense {
   workspaceId String    @unique @map("workspace_id") @db.VarChar
   quantity    Int       @default(1) @db.Integer
   recurring   String    @db.VarChar
+  variant     String?   @db.VarChar
   installedAt DateTime  @default(now()) @map("installed_at") @db.Timestamptz(3)
   validateKey String    @map("validate_key") @db.VarChar
   validatedAt DateTime  @map("validated_at") @db.Timestamptz(3)
   expiredAt   DateTime? @map("expired_at") @db.Timestamptz(3)
+  license     Bytes?    @db.ByteA
 
   @@map("installed_licenses")
 }

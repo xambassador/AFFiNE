@@ -120,9 +120,19 @@ const defaultDevServerConfig: DevServerConfiguration = {
       },
     ],
   },
-  headers: {
-    'Cross-Origin-Opener-Policy': 'same-origin',
-    'Cross-Origin-Embedder-Policy': 'require-corp',
+  headers: (req): Record<string, string | string[]> => {
+    if (
+      [/^\/api/, /^\/socket\.io/, /^\/graphql/].some(path =>
+        path.test(req.path)
+      )
+    ) {
+      return {};
+    }
+
+    return {
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
+    };
   },
   proxy: [
     {

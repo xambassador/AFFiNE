@@ -1,4 +1,5 @@
-import { resolve } from 'node:path';
+import { homedir } from 'node:os';
+import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import pkg from '../package.json' with { type: 'json' };
@@ -9,6 +10,8 @@ declare global {
     var env: Readonly<Env>;
     // oxlint-disable-next-line no-var
     var readEnv: <T>(key: string, defaultValue: T, availableValues?: T[]) => T;
+    // oxlint-disable-next-line no-var
+    var CUSTOM_CONFIG_PATH: string;
   }
 }
 
@@ -50,6 +53,7 @@ export type AppEnv = {
   version: string;
 };
 
+globalThis.CUSTOM_CONFIG_PATH = join(homedir(), '.affine/config');
 globalThis.readEnv = function readEnv<T>(
   env: string,
   defaultValue: T,

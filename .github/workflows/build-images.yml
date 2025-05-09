@@ -136,6 +136,8 @@ jobs:
           extra-flags: workspaces focus @affine/server-native
       - name: Build Rust
         uses: ./.github/actions/build-rust
+        env:
+          AFFINE_PRO_PUBLIC_KEY: ${{ secrets.AFFINE_PRO_PUBLIC_KEY }}
         with:
           target: ${{ matrix.targets.name }}
           package: '@affine/server-native'

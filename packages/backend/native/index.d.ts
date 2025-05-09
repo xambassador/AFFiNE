@@ -4,6 +4,8 @@ export declare class Tokenizer {
   count(content: string, allowedSpecial?: Array<string> | undefined | null): number
 }
 
+export const AFFINE_PRO_PUBLIC_KEY: string | undefined | null
+
 export declare function fromModelName(modelName: string): Tokenizer | null
 
 export declare function getMime(input: Uint8Array): string

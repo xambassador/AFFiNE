@@ -914,10 +914,14 @@ export class LicenseNotFound extends UserFriendlyError {
     super('resource_not_found', 'license_not_found', message);
   }
 }
+@ObjectType()
+class InvalidLicenseToActivateDataType {
+  @Field() reason!: string
+}
 
 export class InvalidLicenseToActivate extends UserFriendlyError {
-  constructor(message?: string) {
-    super('bad_request', 'invalid_license_to_activate', message);
+  constructor(args: InvalidLicenseToActivateDataType, message?: string | ((args: InvalidLicenseToActivateDataType) => string)) {
+    super('bad_request', 'invalid_license_to_activate', message, args);
   }
 }
 @ObjectType()
@@ -930,14 +934,10 @@ export class InvalidLicenseUpdateParams extends UserFriendlyError {
     super('invalid_input', 'invalid_license_update_params', message, args);
   }
 }
-@ObjectType()
-class WorkspaceMembersExceedLimitToDowngradeDataType {
-  @Field() limit!: number
-}
 
-export class WorkspaceMembersExceedLimitToDowngrade extends UserFriendlyError {
-  constructor(args: WorkspaceMembersExceedLimitToDowngradeDataType, message?: string | ((args: WorkspaceMembersExceedLimitToDowngradeDataType) => string)) {
-    super('bad_request', 'workspace_members_exceed_limit_to_downgrade', message, args);
+export class LicenseExpired extends UserFriendlyError {
+  constructor(message?: string) {
+    super('bad_request', 'license_expired', message);
   }
 }
 @ObjectType()
@@ -1100,7 +1100,7 @@ export enum ErrorNames {
   LICENSE_NOT_FOUND,
   INVALID_LICENSE_TO_ACTIVATE,
   INVALID_LICENSE_UPDATE_PARAMS,
-  WORKSPACE_MEMBERS_EXCEED_LIMIT_TO_DOWNGRADE,
+  LICENSE_EXPIRED,
   UNSUPPORTED_CLIENT_VERSION,
   NOTIFICATION_NOT_FOUND,
   MENTION_USER_DOC_ACCESS_DENIED,
@@ -1114,5 +1114,5 @@ registerEnumType(ErrorNames, {
 export const ErrorDataUnionType = createUnionType({
   name: 'ErrorDataUnion',
   types: () =>
-    [GraphqlBadRequestDataType, HttpRequestErrorDataType, QueryTooLongDataType, ValidationErrorDataType, WrongSignInCredentialsDataType, UnknownOauthProviderDataType, InvalidOauthCallbackCodeDataType, MissingOauthQueryParameterDataType, InvalidEmailDataType, InvalidPasswordLengthDataType, WorkspacePermissionNotFoundDataType, SpaceNotFoundDataType, MemberNotFoundInSpaceDataType, NotInSpaceDataType, AlreadyInSpaceDataType, SpaceAccessDeniedDataType, SpaceOwnerNotFoundDataType, SpaceShouldHaveOnlyOneOwnerDataType, DocNotFoundDataType, DocActionDeniedDataType, DocUpdateBlockedDataType, VersionRejectedDataType, InvalidHistoryTimestampDataType, DocHistoryNotFoundDataType, BlobNotFoundDataType, ExpectToGrantDocUserRolesDataType, ExpectToRevokeDocUserRolesDataType, ExpectToUpdateDocUserRoleDataType, NoMoreSeatDataType, UnsupportedSubscriptionPlanDataType, SubscriptionAlreadyExistsDataType, SubscriptionNotExistsDataType, SameSubscriptionRecurringDataType, SubscriptionPlanNotFoundDataType, CopilotDocNotFoundDataType, CopilotMessageNotFoundDataType, CopilotPromptNotFoundDataType, CopilotProviderSideErrorDataType, CopilotInvalidContextDataType, CopilotContextFileNotSupportedDataType, CopilotFailedToModifyContextDataType, CopilotFailedToMatchContextDataType, CopilotFailedToAddWorkspaceFileEmbeddingDataType, RuntimeConfigNotFoundDataType, InvalidRuntimeConfigTypeDataType, InvalidLicenseUpdateParamsDataType, WorkspaceMembersExceedLimitToDowngradeDataType, UnsupportedClientVersionDataType, MentionUserDocAccessDeniedDataType] as const,
+    [GraphqlBadRequestDataType, HttpRequestErrorDataType, QueryTooLongDataType, ValidationErrorDataType, WrongSignInCredentialsDataType, UnknownOauthProviderDataType, InvalidOauthCallbackCodeDataType, MissingOauthQueryParameterDataType, InvalidEmailDataType, InvalidPasswordLengthDataType, WorkspacePermissionNotFoundDataType, SpaceNotFoundDataType, MemberNotFoundInSpaceDataType, NotInSpaceDataType, AlreadyInSpaceDataType, SpaceAccessDeniedDataType, SpaceOwnerNotFoundDataType, SpaceShouldHaveOnlyOneOwnerDataType, DocNotFoundDataType, DocActionDeniedDataType, DocUpdateBlockedDataType, VersionRejectedDataType, InvalidHistoryTimestampDataType, DocHistoryNotFoundDataType, BlobNotFoundDataType, ExpectToGrantDocUserRolesDataType, ExpectToRevokeDocUserRolesDataType, ExpectToUpdateDocUserRoleDataType, NoMoreSeatDataType, UnsupportedSubscriptionPlanDataType, SubscriptionAlreadyExistsDataType, SubscriptionNotExistsDataType, SameSubscriptionRecurringDataType, SubscriptionPlanNotFoundDataType, CopilotDocNotFoundDataType, CopilotMessageNotFoundDataType, CopilotPromptNotFoundDataType, CopilotProviderSideErrorDataType, CopilotInvalidContextDataType, CopilotContextFileNotSupportedDataType, CopilotFailedToModifyContextDataType, CopilotFailedToMatchContextDataType, CopilotFailedToAddWorkspaceFileEmbeddingDataType, RuntimeConfigNotFoundDataType, InvalidRuntimeConfigTypeDataType, InvalidLicenseToActivateDataType, InvalidLicenseUpdateParamsDataType, UnsupportedClientVersionDataType, MentionUserDocAccessDeniedDataType] as const,
 });

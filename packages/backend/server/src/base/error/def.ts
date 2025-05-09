@@ -811,18 +811,17 @@ export const USER_FRIENDLY_ERRORS = {
   },
   invalid_license_to_activate: {
     type: 'bad_request',
-    message: 'Invalid license to activate.',
+    args: { reason: 'string' },
+    message: ({ reason }) => `Invalid license to activate. ${reason}`,
   },
   invalid_license_update_params: {
     type: 'invalid_input',
     args: { reason: 'string' },
     message: ({ reason }) => `Invalid license update params. ${reason}`,
   },
-  workspace_members_exceed_limit_to_downgrade: {
+  license_expired: {
     type: 'bad_request',
-    args: { limit: 'number' },
-    message: ({ limit }) =>
-      `You cannot downgrade the workspace from team workspace because there are more than ${limit} members that are currently active.`,
+    message: 'License has expired.',
   },
 
   // version errors
