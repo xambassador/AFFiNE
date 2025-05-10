@@ -10,7 +10,7 @@ import {
 } from './docs-view/quick-actions';
 import type { ExplorerPreference } from './types';
 
-export interface QuickAction {
+interface QuickActionItem {
   name: I18nString;
   Component: React.FC<QuickActionProps>;
   disabled?: boolean;
@@ -22,7 +22,7 @@ type ExtractPrefixKeys<Obj extends object, Prefix extends string> = {
 
 export type QuickActionKey = ExtractPrefixKeys<ExplorerPreference, 'quick'>;
 
-const QUICK_ACTION_MAP: Record<QuickActionKey, QuickAction> = {
+const QUICK_ACTION_MAP: Record<QuickActionKey, QuickActionItem> = {
   quickFavorite: {
     name: 'com.affine.all-docs.quick-action.favorite',
     Component: QuickFavorite,
@@ -50,3 +50,5 @@ export const quickActions = Object.entries(QUICK_ACTION_MAP).map(
     return { key: key as QuickActionKey, ...config };
   }
 );
+
+export type QuickAction = (typeof quickActions)[number];

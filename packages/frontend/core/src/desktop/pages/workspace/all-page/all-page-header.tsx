@@ -1,10 +1,13 @@
 import { type MenuProps, RadioGroup, type RadioItem } from '@affine/component';
 import { DocExplorerContext } from '@affine/core/components/explorer/context';
 import { ExplorerDisplayMenuButton } from '@affine/core/components/explorer/display-menu';
-import { DocListViewIcon } from '@affine/core/components/explorer/docs-view/doc-list-item';
+import {
+  type DocListItemView,
+  DocListViewIcon,
+} from '@affine/core/components/explorer/docs-view/doc-list-item';
 import { ExplorerNavigation } from '@affine/core/components/explorer/header/navigation';
-import type { ExplorerPreference } from '@affine/core/components/explorer/types';
-import { type Dispatch, type SetStateAction, useContext } from 'react';
+import { useLiveData } from '@toeverything/infra';
+import { useCallback, useContext } from 'react';
 
 import * as styles from './all-page-header.css';
 
@@ -27,7 +30,17 @@ const views = [
 ] satisfies RadioItem[];
 
 const ViewToggle = () => {
-  const { view, setView } = useContext(DocExplorerContext);
+  const explorerContextValue = useContext(DocExplorerContext);
+
+  const view = useLiveData(explorerContextValue.view$);
+
+  const handleViewChange = useCallback(
+    (view: DocListItemView) => {
+      explorerContextValue.view$?.next(view);
+    },
+    [explorerContextValue.view$]
+  );
+
   return (
     <RadioGroup
       itemHeight={24}
@@ -35,7 +48,7 @@ const ViewToggle = () => {
       padding={0}
       items={views}
       value={view}
-      onChange={setView}
+      onChange={handleViewChange}
       className={styles.viewToggle}
       borderRadius={4}
       indicatorClassName={styles.viewToggleIndicator}
@@ -51,24 +64,14 @@ const menuProps: Partial<MenuProps> = {
     sideOffset: 8,
   },
 };
-export const AllDocsHeader = ({
-  explorerPreference,
-  setExplorerPreference,
-}: {
-  explorerPreference: ExplorerPreference;
-  setExplorerPreference: Dispatch<SetStateAction<ExplorerPreference>>;
-}) => {
+export const AllDocsHeader = () => {
   return (
     <div className={styles.header}>
       <ExplorerNavigation active="docs" />
 
       <div className={styles.actions}>
         <ViewToggle />
-        <ExplorerDisplayMenuButton
-          preference={explorerPreference}
-          onChange={setExplorerPreference}
-          menuProps={menuProps}
-        />
+        <ExplorerDisplayMenuButton menuProps={menuProps} />
       </div>
     </div>
   );

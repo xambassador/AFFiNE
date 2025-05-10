@@ -144,6 +144,7 @@ export const CreatedByDocListInlineProperty = ({
       type="CreatedBy"
       size={20}
       emptyFallback={null}
+      showName={false}
     />
   );
 };
@@ -171,7 +172,7 @@ export const ModifiedByGroupHeader = ({
   return (
     <PlainTextDocGroupHeader groupId={groupId} docCount={docCount}>
       <div className={styles.userLabelContainer}>
-        <PublicUserLabel id={userId} size={20} />
+        <PublicUserLabel id={userId} size={20} showName={false} />
       </div>
     </PlainTextDocGroupHeader>
   );

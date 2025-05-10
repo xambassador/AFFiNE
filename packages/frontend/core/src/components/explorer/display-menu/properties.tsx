@@ -5,11 +5,11 @@ import {
 } from '@affine/core/modules/workspace-property';
 import { useI18n } from '@affine/i18n';
 import { useLiveData, useService } from '@toeverything/infra';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 
 import { WorkspacePropertyName } from '../../properties';
 import { WorkspacePropertyTypes } from '../../workspace-property-types';
-import type { ExplorerPreference } from '../types';
+import { DocExplorerContext } from '../context';
 import * as styles from './properties.css';
 
 export const filterDisplayProperties = <
@@ -29,20 +29,17 @@ export const filterDisplayProperties = <
     }));
 };
 
-export const DisplayProperties = ({
-  preference,
-  onChange,
-}: {
-  preference: ExplorerPreference;
-  onChange?: (preference: ExplorerPreference) => void;
-}) => {
+export const DisplayProperties = () => {
   const t = useI18n();
+  const explorerContextValue = useContext(DocExplorerContext);
   const workspacePropertyService = useService(WorkspacePropertyService);
   const propertyList = useLiveData(workspacePropertyService.properties$);
 
-  const displayProperties = preference.displayProperties;
-  const showIcon = preference.showDocIcon;
-  const showBody = preference.showDocPreview;
+  const displayProperties = useLiveData(
+    explorerContextValue.displayProperties$
+  );
+  const showIcon = useLiveData(explorerContextValue.showDocIcon$);
+  const showBody = useLiveData(explorerContextValue.showDocPreview$);
 
   const propertiesGroups = useMemo(
     () => [
@@ -60,12 +57,9 @@ export const DisplayProperties = ({
 
   const handleDisplayPropertiesChange = useCallback(
     (displayProperties: string[]) => {
-      onChange?.({
-        ...preference,
-        displayProperties,
-      });
+      explorerContextValue.displayProperties$?.next(displayProperties);
     },
-    [onChange, preference]
+    [explorerContextValue.displayProperties$]
   );
 
   const handlePropertyClick = useCallback(
@@ -80,18 +74,12 @@ export const DisplayProperties = ({
   );
 
   const toggleIcon = useCallback(() => {
-    onChange?.({
-      ...preference,
-      showDocIcon: !showIcon,
-    });
-  }, [onChange, preference, showIcon]);
+    explorerContextValue.showDocIcon$?.next(!showIcon);
+  }, [explorerContextValue.showDocIcon$, showIcon]);
 
   const toggleBody = useCallback(() => {
-    onChange?.({
-      ...preference,
-      showDocPreview: !showBody,
-    });
-  }, [onChange, preference, showBody]);
+    explorerContextValue.showDocPreview$?.next(!showBody);
+  }, [explorerContextValue.showDocPreview$, showBody]);
 
   return (
     <div className={styles.root}>

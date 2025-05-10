@@ -223,6 +223,7 @@ export const WorkspacePropertyTypes = {
     defaultFilter: { method: 'this-week' },
     showInDocList: 'inline',
     docListProperty: UpdatedDateDocListProperty,
+    groupHeader: CreatedGroupHeader,
   },
   createdAt: {
     icon: HistoryIcon,

@@ -56,6 +56,7 @@ export const PublicUserLabel = ({
         name={user?.name ?? ''}
         size={size}
         className={styles.publicUserLabelAvatar}
+        data-show-name={showName}
       />
       {showName && user?.name}
     </span>

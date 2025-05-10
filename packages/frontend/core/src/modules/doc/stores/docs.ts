@@ -108,7 +108,13 @@ export class DocsStore extends Store {
         if (pages instanceof YArray) {
           return pages.map(v => ({
             id: v.get('id') as string,
-            tags: (v.get('tags')?.toJSON() ?? []) as string[],
+            tags: (() => {
+              const tags = v.get('tags');
+              if (tags instanceof YArray) {
+                return tags.toJSON() as string[];
+              }
+              return (tags ?? []) as string[];
+            })(),
           }));
         } else {
           return [];

@@ -1,13 +1,9 @@
 import { Masonry, type MasonryGroup, useConfirmModal } from '@affine/component';
 import {
+  createDocExplorerContext,
   DocExplorerContext,
-  type DocExplorerContextType,
 } from '@affine/core/components/explorer/context';
-import {
-  DocListItem,
-  type DocListItemView,
-} from '@affine/core/components/explorer/docs-view/doc-list-item';
-import type { ExplorerPreference } from '@affine/core/components/explorer/types';
+import { DocListItem } from '@affine/core/components/explorer/docs-view/doc-list-item';
 import { Filters } from '@affine/core/components/filter';
 import { ListFloatingToolbar } from '@affine/core/components/page-list/components/list-floating-toolbar';
 import { WorkspacePropertyTypes } from '@affine/core/components/workspace-property-types';
@@ -49,9 +45,10 @@ const GroupHeader = memo(function GroupHeader({
   collapsed?: boolean;
   itemCount: number;
 }) {
-  const { groupBy } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
   const propertyService = useService(WorkspacePropertyService);
   const allProperties = useLiveData(propertyService.sortedProperties$);
+  const groupBy = useLiveData(contextValue.groupBy$);
 
   const groupType = groupBy?.type;
   const groupKey = groupBy?.key;
@@ -103,30 +100,17 @@ const DocListItemComponent = memo(function DocListItemComponent({
 export const AllPage = () => {
   const t = useI18n();
   const docsService = useService(DocsService);
-  const [view, setView] = useState<DocListItemView>('masonry');
-  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([]);
-  const [selectMode, setSelectMode] = useState(false);
-  const [selectedDocIds, setSelectedDocIds] = useState<string[]>([]);
-  const [prevCheckAnchorId, setPrevCheckAnchorId] = useState<string | null>(
-    null
-  );
 
-  const [explorerPreference, setExplorerPreference] =
-    useState<ExplorerPreference>({
-      filters: [
-        {
-          type: 'system',
-          key: 'trash',
-          value: 'false',
-          method: 'is',
-        },
-      ],
-      displayProperties: [],
-      showDocIcon: true,
-      showDocPreview: true,
-    });
+  const [explorerContextValue] = useState(createDocExplorerContext);
 
-  const [groups, setGroups] = useState<any>([]);
+  const view = useLiveData(explorerContextValue.view$);
+  const filters = useLiveData(explorerContextValue.filters$);
+  const groupBy = useLiveData(explorerContextValue.groupBy$);
+  const orderBy = useLiveData(explorerContextValue.orderBy$);
+  const groups = useLiveData(explorerContextValue.groups$);
+  const selectedDocIds = useLiveData(explorerContextValue.selectedDocIds$);
+  const collapsedGroups = useLiveData(explorerContextValue.collapsedGroups$);
+  const selectMode = useLiveData(explorerContextValue.selectMode$);
 
   const { openConfirmModal } = useConfirmModal();
 
@@ -159,14 +143,10 @@ export const AllPage = () => {
   const collectionRulesService = useService(CollectionRulesService);
   useEffect(() => {
     const subscription = collectionRulesService
-      .watch(
-        explorerPreference.filters ?? [],
-        explorerPreference.groupBy,
-        explorerPreference.orderBy
-      )
+      .watch(filters ?? [], groupBy, orderBy)
       .subscribe({
         next: result => {
-          setGroups(result.groups);
+          explorerContextValue.groups$.next(result.groups);
         },
         error: error => {
           console.error(error);
@@ -177,58 +157,38 @@ export const AllPage = () => {
     };
   }, [
     collectionRulesService,
-    explorerPreference.filters,
-    explorerPreference.groupBy,
-    explorerPreference.orderBy,
+    explorerContextValue.groups$,
+    filters,
+    groupBy,
+    orderBy,
   ]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        setSelectMode(false);
-        setSelectedDocIds([]);
-        setPrevCheckAnchorId(null);
+        explorerContextValue.selectMode$.next(false);
+        explorerContextValue.selectedDocIds$.next([]);
+        explorerContextValue.prevCheckAnchorId$.next(null);
       }
     };
     document.addEventListener('keydown', onKeyDown);
     return () => {
       document.removeEventListener('keydown', onKeyDown);
     };
-  }, []);
+  }, [explorerContextValue]);
 
-  const handleFilterChange = useCallback((filters: FilterParams[]) => {
-    setExplorerPreference(prev => ({
-      ...prev,
-      filters,
-    }));
-  }, []);
-
-  const toggleGroupCollapse = useCallback((groupId: string) => {
-    setCollapsedGroups(prev => {
-      return prev.includes(groupId)
-        ? prev.filter(id => id !== groupId)
-        : [...prev, groupId];
-    });
-  }, []);
-  const toggleDocSelect = useCallback((docId: string) => {
-    setSelectMode(true);
-    setSelectedDocIds(prev => {
-      return prev.includes(docId)
-        ? prev.filter(id => id !== docId)
-        : [...prev, docId];
-    });
-  }, []);
-  const onSelect = useCallback(
-    (...args: Parameters<typeof setSelectedDocIds>) => {
-      setSelectMode(true);
-      setSelectedDocIds(...args);
+  const handleFilterChange = useCallback(
+    (filters: FilterParams[]) => {
+      explorerContextValue.filters$.next(filters);
     },
-    []
+    [explorerContextValue]
   );
+
   const handleCloseFloatingToolbar = useCallback(() => {
-    setSelectMode(false);
-    setSelectedDocIds([]);
-  }, []);
+    explorerContextValue.selectMode$.next(false);
+    explorerContextValue.selectedDocIds$.next([]);
+  }, [explorerContextValue]);
+
   const handleMultiDelete = useCallback(() => {
     if (selectedDocIds.length === 0) {
       return;
@@ -257,54 +217,18 @@ export const AllPage = () => {
     });
   }, [docsService.list, openConfirmModal, selectedDocIds, t]);
 
-  const explorerContextValue = useMemo(
-    () =>
-      ({
-        ...explorerPreference,
-        view,
-        setView,
-        groups,
-        collapsed: collapsedGroups,
-        selectedDocIds,
-        selectMode,
-        prevCheckAnchorId,
-        setPrevCheckAnchorId,
-        onToggleCollapse: toggleGroupCollapse,
-        onToggleSelect: toggleDocSelect,
-        onSelect,
-      }) satisfies DocExplorerContextType,
-    [
-      collapsedGroups,
-      explorerPreference,
-      groups,
-      onSelect,
-      prevCheckAnchorId,
-      selectMode,
-      selectedDocIds,
-      toggleDocSelect,
-      toggleGroupCollapse,
-      view,
-    ]
-  );
-
   return (
     <DocExplorerContext.Provider value={explorerContextValue}>
       <ViewTitle title={t['All pages']()} />
       <ViewIcon icon="allDocs" />
       <ViewHeader>
-        <AllDocsHeader
-          explorerPreference={explorerPreference}
-          setExplorerPreference={setExplorerPreference}
-        />
+        <AllDocsHeader />
       </ViewHeader>
       <ViewBody>
         <div className={styles.body}>
           <div className={styles.filterArea}>
             <MigrationAllDocsDataNotification />
-            <Filters
-              filters={explorerPreference.filters ?? []}
-              onChange={handleFilterChange}
-            />
+            <Filters filters={filters ?? []} onChange={handleFilterChange} />
           </div>
           <div className={styles.scrollArea}>
             <Masonry

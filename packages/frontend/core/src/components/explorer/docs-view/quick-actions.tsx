@@ -24,7 +24,8 @@ export const QuickFavorite = memo(function QuickFavorite({
   doc,
   ...iconButtonProps
 }: QuickActionProps) {
-  const { quickFavorite } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+  const quickFavorite = useLiveData(contextValue.quickFavorite$);
 
   const favAdapter = useService(CompatibleFavoriteItemsAdapter);
   const favourite = useLiveData(favAdapter.isFavorite$(doc.id, 'doc'));
@@ -55,7 +56,8 @@ export const QuickTab = memo(function QuickTab({
   doc,
   ...iconButtonProps
 }: QuickActionProps) {
-  const { quickTab } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+  const quickTab = useLiveData(contextValue.quickTab$);
   const workbench = useService(WorkbenchService).workbench;
   const onOpenInNewTab = useCallback(
     (e: React.MouseEvent) => {
@@ -83,7 +85,8 @@ export const QuickSplit = memo(function QuickSplit({
   doc,
   ...iconButtonProps
 }: QuickActionProps) {
-  const { quickSplit } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+  const quickSplit = useLiveData(contextValue.quickSplit$);
   const workbench = useService(WorkbenchService).workbench;
 
   const onOpenInSplitView = useCallback(
@@ -115,7 +118,8 @@ export const QuickDelete = memo(function QuickDelete({
 }: QuickActionProps) {
   const t = useI18n();
   const { openConfirmModal } = useConfirmModal();
-  const { quickTrash } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+  const quickTrash = useLiveData(contextValue.quickTrash$);
 
   const onMoveToTrash = useCallback(
     (e: React.MouseEvent) => {
@@ -162,8 +166,9 @@ export const QuickSelect = memo(function QuickSelect({
   doc,
   ...iconButtonProps
 }: QuickActionProps) {
-  const { quickSelect, selectedDocIds, onToggleSelect } =
-    useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+  const quickSelect = useLiveData(contextValue.quickSelect$);
+  const selectedDocIds = useLiveData(contextValue.selectedDocIds$);
 
   const selected = selectedDocIds.includes(doc.id);
 
@@ -171,9 +176,13 @@ export const QuickSelect = memo(function QuickSelect({
     (e: React.MouseEvent) => {
       e.stopPropagation();
       e.preventDefault();
-      onToggleSelect(doc.id);
+      contextValue.selectedDocIds$?.next(
+        selected
+          ? selectedDocIds.filter(id => id !== doc.id)
+          : [...selectedDocIds, doc.id]
+      );
     },
-    [doc.id, onToggleSelect]
+    [contextValue, doc.id, selected, selectedDocIds]
   );
 
   if (!quickSelect) {

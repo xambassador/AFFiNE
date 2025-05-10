@@ -28,7 +28,8 @@ const cardInlinePropertyOrder: WorkspacePropertyType[] = [
 ];
 
 const useProperties = (docId: string, view: 'list' | 'card') => {
-  const { displayProperties } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+  const displayProperties = useLiveData(contextValue.displayProperties$);
   const docsService = useService(DocsService);
   const workspacePropertyService = useService(WorkspacePropertyService);
 

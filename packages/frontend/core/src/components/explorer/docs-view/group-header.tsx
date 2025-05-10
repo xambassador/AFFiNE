@@ -1,6 +1,7 @@
 import { Button, IconButton } from '@affine/component';
 import { useI18n } from '@affine/i18n';
 import { ToggleRightIcon } from '@blocksuite/icons/rc';
+import { useLiveData } from '@toeverything/infra';
 import clsx from 'clsx';
 import {
   type HTMLAttributes,
@@ -20,14 +21,12 @@ export const DocGroupHeader = ({
   groupId: string;
 }) => {
   const t = useI18n();
-  const {
-    selectMode,
-    collapsed,
-    groups,
-    selectedDocIds,
-    onToggleCollapse,
-    onSelect,
-  } = useContext(DocExplorerContext);
+  const contextValue = useContext(DocExplorerContext);
+
+  const groups = useLiveData(contextValue.groups$);
+  const selectedDocIds = useLiveData(contextValue.selectedDocIds$);
+  const collapsedGroups = useLiveData(contextValue.collapsedGroups$);
+  const selectMode = useLiveData(contextValue.selectMode$);
 
   const group = groups.find(g => g.key === groupId);
   const isGroupAllSelected = group?.items.every(id =>
@@ -35,24 +34,30 @@ export const DocGroupHeader = ({
   );
 
   const handleToggleCollapse = useCallback(() => {
-    onToggleCollapse(groupId);
-  }, [groupId, onToggleCollapse]);
+    const prev = contextValue.collapsedGroups$.value;
+    contextValue.collapsedGroups$.next(
+      prev.includes(groupId)
+        ? prev.filter(id => id !== groupId)
+        : [...prev, groupId]
+    );
+  }, [groupId, contextValue]);
 
   const handleSelectAll = useCallback(() => {
+    const prev = contextValue.selectedDocIds$.value;
     if (isGroupAllSelected) {
-      onSelect(prev => prev.filter(id => !group?.items.includes(id)));
+      contextValue.selectedDocIds$.next(
+        prev.filter(id => !group?.items.includes(id))
+      );
     } else {
-      onSelect(prev => {
-        const newSelected = [...prev];
-        group?.items.forEach(id => {
-          if (!newSelected.includes(id)) {
-            newSelected.push(id);
-          }
-        });
-        return newSelected;
+      const newSelected = [...prev];
+      group?.items.forEach(id => {
+        if (!newSelected.includes(id)) {
+          newSelected.push(id);
+        }
       });
+      contextValue.selectedDocIds$.next(newSelected);
     }
-  }, [group?.items, isGroupAllSelected, onSelect]);
+  }, [contextValue, group?.items, isGroupAllSelected]);
 
   const selectedCount = group?.items.filter(id =>
     selectedDocIds.includes(id)
@@ -61,7 +66,7 @@ export const DocGroupHeader = ({
   return (
     <div
       className={styles.groupHeader}
-      data-collapsed={collapsed.includes(groupId)}
+      data-collapsed={collapsedGroups.includes(groupId)}
     >
       <div className={clsx(styles.content, className)} {...props} />
       {selectMode ? (

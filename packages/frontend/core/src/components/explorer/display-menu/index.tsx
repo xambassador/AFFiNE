@@ -11,85 +11,63 @@ import type {
 } from '@affine/core/modules/collection-rules/types';
 import { useI18n } from '@affine/i18n';
 import { ArrowDownSmallIcon } from '@blocksuite/icons/rc';
+import { useLiveData } from '@toeverything/infra';
 import type React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useContext } from 'react';
 
-import type { ExplorerPreference } from '../types';
+import { DocExplorerContext } from '../context';
 import { GroupByList, GroupByName } from './group';
 import { OrderByList, OrderByName } from './order';
 import { DisplayProperties } from './properties';
 import { QuickActionsConfig } from './quick-actions';
 import * as styles from './styles.css';
 
-const ExplorerDisplayMenu = ({
-  preference,
-  onChange,
-}: {
-  preference: ExplorerPreference;
-  onChange?: (preference: ExplorerPreference) => void;
-}) => {
+const ExplorerDisplayMenu = () => {
   const t = useI18n();
+  const explorerContextValue = useContext(DocExplorerContext);
+  const groupBy = useLiveData(explorerContextValue.groupBy$);
+  const orderBy = useLiveData(explorerContextValue.orderBy$);
 
   const handleGroupByChange = useCallback(
     (groupBy: GroupByParams) => {
-      onChange?.({
-        ...preference,
-        groupBy,
-      });
+      explorerContextValue.groupBy$?.next(groupBy);
     },
-    [onChange, preference]
+    [explorerContextValue.groupBy$]
   );
 
   const handleOrderByChange = useCallback(
     (orderBy: OrderByParams) => {
-      onChange?.({
-        ...preference,
-        orderBy,
-      });
+      explorerContextValue.orderBy$?.next(orderBy);
     },
-    [onChange, preference]
+    [explorerContextValue.orderBy$]
   );
 
   return (
     <div className={styles.displayMenuContainer}>
       <MenuSub
-        items={
-          <GroupByList
-            groupBy={preference.groupBy}
-            onChange={handleGroupByChange}
-          />
-        }
+        items={<GroupByList groupBy={groupBy} onChange={handleGroupByChange} />}
       >
         <div className={styles.subMenuSelectorContainer}>
           <span>{t['com.affine.explorer.display-menu.grouping']()}</span>
           <span className={styles.subMenuSelectorSelected}>
-            {preference.groupBy ? (
-              <GroupByName groupBy={preference.groupBy} />
-            ) : null}
+            {groupBy ? <GroupByName groupBy={groupBy} /> : null}
           </span>
         </div>
       </MenuSub>
       <MenuSub
-        items={
-          <OrderByList
-            orderBy={preference.orderBy}
-            onChange={handleOrderByChange}
-          />
-        }
+        items={<OrderByList orderBy={orderBy} onChange={handleOrderByChange} />}
       >
         <div className={styles.subMenuSelectorContainer}>
           <span>{t['com.affine.explorer.display-menu.ordering']()}</span>
           <span className={styles.subMenuSelectorSelected}>
-            {preference.orderBy ? (
-              <OrderByName orderBy={preference.orderBy} />
-            ) : null}
+            {orderBy ? <OrderByName orderBy={orderBy} /> : null}
           </span>
         </div>
       </MenuSub>
       <Divider size="thinner" />
-      <DisplayProperties preference={preference} onChange={onChange} />
+      <DisplayProperties />
       <Divider size="thinner" />
-      <QuickActionsConfig preference={preference} onChange={onChange} />
+      <QuickActionsConfig />
     </div>
   );
 };
@@ -97,24 +75,15 @@ const ExplorerDisplayMenu = ({
 export const ExplorerDisplayMenuButton = ({
   style,
   className,
-  preference,
   menuProps,
-  onChange,
 }: {
   style?: React.CSSProperties;
   className?: string;
-  preference: ExplorerPreference;
-  onChange?: (preference: ExplorerPreference) => void;
   menuProps?: Omit<MenuProps, 'items' | 'children'>;
 }) => {
   const t = useI18n();
   return (
-    <Menu
-      items={
-        <ExplorerDisplayMenu preference={preference} onChange={onChange} />
-      }
-      {...menuProps}
-    >
+    <Menu items={<ExplorerDisplayMenu />} {...menuProps}>
       <Button
         className={className}
         style={style}
