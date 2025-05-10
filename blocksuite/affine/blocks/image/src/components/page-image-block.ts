@@ -51,6 +51,12 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
       background: ${unsafeCSSVarV2('loading/backgroundLayer')};
     }
 
+    affine-page-image .affine-image-status {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+    }
+
     affine-page-image .resizable-img {
       position: relative;
       max-width: 100%;
@@ -354,7 +360,7 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
       ? ImageSelectedRect(this._doc.readonly)
       : null;
 
-    const { loading, icon } = this.state;
+    const { loading, error, icon, description } = this.state;
 
     return html`
       <div class="resizable-img" style=${styleMap(imageSize)}>
@@ -371,6 +377,15 @@ export class ImageBlockPageComponent extends WithDisposable(ShadowlessElement) {
       </div>
 
       ${when(loading, () => html`<div class="loading">${icon}</div>`)}
+      ${when(
+        error && description,
+        () =>
+          html`<affine-resource-status
+            class="affine-image-status"
+            .message=${description}
+            .reload=${() => this.block.refreshData()}
+          ></affine-resource-status>`
+      )}
     `;
   }
 

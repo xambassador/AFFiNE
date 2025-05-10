@@ -42,6 +42,12 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
       background: ${unsafeCSSVarV2('loading/backgroundLayer')};
     }
 
+    affine-edgeless-image .affine-image-status {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+    }
+
     affine-edgeless-image .resizable-img,
     affine-edgeless-image .resizable-img img {
       width: 100%;
@@ -135,6 +141,15 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
             ${when(
               resovledState.loading,
               () => html`<div class="loading">${loadingIcon}</div>`
+            )}
+            ${when(
+              resovledState.error && resovledState.description,
+              () =>
+                html`<affine-resource-status
+                  class="affine-image-status"
+                  .message=${resovledState.description}
+                  .reload=${() => this.refreshData()}
+                ></affine-resource-status>`
             )}
           `,
           () =>
