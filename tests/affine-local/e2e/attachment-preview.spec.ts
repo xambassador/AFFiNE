@@ -316,7 +316,9 @@ test('should enable pointer event in pdf viewer', async ({ page }) => {
   await toolbar.getByLabel('Switch view').click();
   await toolbar.getByLabel('Embed view').click();
 
-  await attachment.locator('iframe').waitFor({ state: 'visible' });
+  await attachment
+    .locator('.affine-attachment-embed-container')
+    .waitFor({ state: 'visible' });
 
   const rect = await attachment.boundingBox();
   expect(rect).not.toBeNull();

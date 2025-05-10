@@ -214,7 +214,7 @@ export const AFFINE_FLAGS = {
     description:
       'com.affine.settings.workspace.experimental-features.enable-pdf-embed-preview.description',
     configurable: !isMobile,
-    defaultState: false,
+    defaultState: true,
   },
   enable_editor_rtl: {
     category: 'affine',
