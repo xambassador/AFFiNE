@@ -13,6 +13,7 @@ export function patchForPDFEmbedView(reactToLit: ReactToLit): ExtensionType {
     setup: di => {
       di.override(AttachmentEmbedConfigIdentifier('pdf'), () => ({
         name: 'pdf',
+        shouldShowStatus: true,
         check: (model, maxFileSize) =>
           model.props.type === 'application/pdf' &&
           model.props.size <= maxFileSize,
@@ -26,8 +27,8 @@ export function patchForPDFEmbedView(reactToLit: ReactToLit): ExtensionType {
             xywh: bound.serialize(),
           });
         },
-        template: (model, _blobUrl) =>
-          reactToLit(<AttachmentEmbedPreview model={model} />, false),
+        render: (model, _) =>
+          reactToLit(<AttachmentEmbedPreview model={model} />, true),
       }));
     },
   };
@@ -41,7 +42,7 @@ export function patchForAudioEmbedView(reactToLit: ReactToLit): ExtensionType {
         check: (model, maxFileSize) =>
           model.props.type.startsWith('audio/') &&
           model.props.size <= maxFileSize,
-        template: (model, _blobUrl) =>
+        render: (model, _) =>
           reactToLit(<AttachmentEmbedPreview model={model} />, false),
       }));
     },

@@ -77,13 +77,19 @@ export const attachmentViewDropdownMenu = {
         const model = ctx.getCurrentModelByType(AttachmentBlockModel);
         if (!model) return;
 
-        if (!ctx.hasSelectedSurfaceModels) {
+        const provider = ctx.std.get(AttachmentEmbedProvider);
+
+        // TODO(@fundon): should auto focus image block.
+        if (
+          provider.shouldBeConverted(model) &&
+          !ctx.hasSelectedSurfaceModels
+        ) {
           // Clears
           ctx.reset();
           ctx.select('note');
         }
 
-        ctx.std.get(AttachmentEmbedProvider).convertTo(model);
+        provider.convertTo(model);
 
         ctx.track('SelectedView', {
           ...trackBaseProps,
@@ -257,7 +263,7 @@ const builtinToolbarConfig = {
       icon: ResetIcon(),
       run(ctx) {
         const block = ctx.getCurrentBlockByType(AttachmentBlockComponent);
-        block?.refreshData();
+        block?.reload();
       },
     },
     {

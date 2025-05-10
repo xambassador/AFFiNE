@@ -28,17 +28,22 @@ import {
   WarningIcon,
 } from '@blocksuite/icons/lit';
 import { BlockSelection } from '@blocksuite/std';
-import { Slice } from '@blocksuite/store';
-import { computed } from '@preact/signals-core';
+import { nanoid, Slice } from '@blocksuite/store';
+import { computed, signal } from '@preact/signals-core';
 import { html, type TemplateResult } from 'lit';
 import { choose } from 'lit/directives/choose.js';
 import { type ClassInfo, classMap } from 'lit/directives/class-map.js';
+import { guard } from 'lit/directives/guard.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { when } from 'lit/directives/when.js';
 
 import { AttachmentEmbedProvider } from './embed';
 import { styles } from './styles';
 import { downloadAttachmentBlob, refreshData } from './utils';
+
+type AttachmentResolvedStateInfo = ResolvedStateInfo & {
+  kind?: TemplateResult;
+};
 
 @Peekable({
   enableOn: ({ model }: AttachmentBlockComponent) => {
@@ -103,15 +108,22 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
     window.open(blobUrl, '_blank');
   };
 
+  // Refreshes data.
   refreshData = () => {
     refreshData(this).catch(console.error);
   };
 
-  protected get embedView() {
-    return this.std
-      .get(AttachmentEmbedProvider)
-      .render(this.model, this.blobUrl ?? undefined, this._maxFileSize);
-  }
+  private readonly _refreshKey$ = signal<string | null>(null);
+
+  // Refreshes the embed component.
+  reload = () => {
+    if (this.model.props.embed) {
+      this._refreshKey$.value = nanoid();
+      return;
+    }
+
+    this.refreshData();
+  };
 
   private _selectBlock() {
     const selectionManager = this.host.selection;
@@ -195,68 +207,70 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
 
   protected renderWithHorizontal(
     classInfo: ClassInfo,
-    { icon, title, description, state }: ResolvedStateInfo,
-    kind: TemplateResult
+    { icon, title, description, kind, state }: AttachmentResolvedStateInfo
   ) {
-    return html`<div class=${classMap(classInfo)}>
-      <div class="affine-attachment-content">
-        <div class="affine-attachment-content-title">
-          <div class="affine-attachment-content-title-icon">${icon}</div>
-          <div class="affine-attachment-content-title-text truncate">
-            ${title}
+    return html`
+      <div class=${classMap(classInfo)}>
+        <div class="affine-attachment-content">
+          <div class="affine-attachment-content-title">
+            <div class="affine-attachment-content-title-icon">${icon}</div>
+            <div class="affine-attachment-content-title-text truncate">
+              ${title}
+            </div>
+          </div>
+
+          <div class="affine-attachment-content-description">
+            <div class="affine-attachment-content-info truncate">
+              ${description}
+            </div>
+            ${choose(state, [
+              ['error', this.renderReloadButton],
+              ['error:oversize', this.renderUpgradeButton],
+            ])}
           </div>
         </div>
 
-        <div class="affine-attachment-content-description">
+        <div class="affine-attachment-banner">${kind}</div>
+      </div>
+    `;
+  }
+
+  protected renderWithVertical(
+    classInfo: ClassInfo,
+    { icon, title, description, kind, state }: AttachmentResolvedStateInfo
+  ) {
+    return html`
+      <div class=${classMap(classInfo)}>
+        <div class="affine-attachment-content">
+          <div class="affine-attachment-content-title">
+            <div class="affine-attachment-content-title-icon">${icon}</div>
+            <div class="affine-attachment-content-title-text truncate">
+              ${title}
+            </div>
+          </div>
+
           <div class="affine-attachment-content-info truncate">
             ${description}
           </div>
+        </div>
+
+        <div class="affine-attachment-banner">
+          ${kind}
           ${choose(state, [
             ['error', this.renderReloadButton],
             ['error:oversize', this.renderUpgradeButton],
           ])}
         </div>
       </div>
-
-      <div class="affine-attachment-banner">${kind}</div>
-    </div>`;
+    `;
   }
 
-  protected renderWithVertical(
-    classInfo: ClassInfo,
-    { icon, title, description, state }: ResolvedStateInfo,
-    kind: TemplateResult
-  ) {
-    return html`<div class=${classMap(classInfo)}>
-      <div class="affine-attachment-content">
-        <div class="affine-attachment-content-title">
-          <div class="affine-attachment-content-title-icon">${icon}</div>
-          <div class="affine-attachment-content-title-text truncate">
-            ${title}
-          </div>
-        </div>
-
-        <div class="affine-attachment-content-info truncate">
-          ${description}
-        </div>
-      </div>
-
-      <div class="affine-attachment-banner">
-        ${kind}
-        ${choose(state, [
-          ['error', this.renderReloadButton],
-          ['error:oversize', this.renderUpgradeButton],
-        ])}
-      </div>
-    </div>`;
-  }
-
-  protected renderCard = () => {
+  protected resolvedState$ = computed<AttachmentResolvedStateInfo>(() => {
     const theme = this.std.get(ThemeProvider).theme$.value;
     const loadingIcon = getLoadingIconWith(theme);
 
-    const { name, size, style } = this.model.props;
-    const cardStyle = style ?? AttachmentBlockStyles[1];
+    const size = this.model.props.size;
+    const name = this.model.props.name$.value;
     const kind = getAttachmentFileIcon(name.split('.').pop() ?? '');
 
     const resolvedState = this.resourceController.resolveStateWith({
@@ -267,6 +281,13 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
       description: humanFileSize(size),
     });
 
+    return { ...resolvedState, kind };
+  });
+
+  protected renderCardView = () => {
+    const resolvedState = this.resolvedState$.value;
+    const cardStyle = this.model.props.style$.value ?? AttachmentBlockStyles[1];
+
     const classInfo = {
       'affine-attachment-card': true,
       [cardStyle]: true,
@@ -276,9 +297,43 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
 
     return when(
       cardStyle === 'cubeThick',
-      () => this.renderWithVertical(classInfo, resolvedState, kind),
-      () => this.renderWithHorizontal(classInfo, resolvedState, kind)
+      () => this.renderWithVertical(classInfo, resolvedState),
+      () => this.renderWithHorizontal(classInfo, resolvedState)
     );
+  };
+
+  protected renderEmbedView = () => {
+    const { model, blobUrl } = this;
+    if (!model.props.embed || !blobUrl) return null;
+
+    const { std, _maxFileSize } = this;
+    const provider = std.get(AttachmentEmbedProvider);
+
+    const render = provider.getRender(model, _maxFileSize);
+    if (!render) return null;
+
+    const enabled = provider.shouldShowStatus(model);
+
+    return html`
+      <div class="affine-attachment-embed-container">
+        ${guard([this._refreshKey$.value], () => render(model, blobUrl))}
+      </div>
+      ${when(enabled, () => {
+        const resolvedState = this.resolvedState$.value;
+        if (resolvedState.state !== 'error') return null;
+        // It should be an error messge.
+        const message = resolvedState.description;
+        if (!message) return null;
+
+        return html`
+          <affine-resource-status
+            class="affine-attachment-embed-status"
+            .message=${message}
+            .reload=${() => this.reload()}
+          ></affine-resource-status>
+        `;
+      })}
+    `;
   };
 
   private readonly _renderCitation = () => {
@@ -305,15 +360,7 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
         ${when(
           this.isCitation,
           () => this._renderCitation(),
-          () =>
-            when(
-              this.embedView,
-              () =>
-                html`<div class="affine-attachment-embed-container">
-                  ${this.embedView}
-                </div>`,
-              this.renderCard
-            )
+          () => this.renderEmbedView() ?? this.renderCardView()
         )}
       </div>
     `;

@@ -347,3 +347,42 @@ test('should enable pointer event in pdf viewer', async ({ page }) => {
 
   await expect(attachmentSelection).toBeHidden();
 });
+
+test('should re-render pdf viewer', async ({ page }) => {
+  await openHomePage(page);
+  await clickNewPageButton(page);
+  await waitForEmptyEditor(page);
+
+  const title = getBlockSuiteEditorTitle(page);
+  await title.click();
+  await page.keyboard.type('PDF preview');
+
+  await page.keyboard.press('Enter');
+
+  await importAttachment(page, 'lorem-ipsum.pdf');
+
+  const attachment = page.locator('affine-attachment');
+  await attachment.click();
+
+  const toolbar = locateToolbar(page);
+
+  // Switches to embed view
+  await toolbar.getByLabel('Switch view').click();
+  await toolbar.getByLabel('Embed view').click();
+
+  const portal = attachment.locator('lit-react-portal');
+  await expect(portal).toBeVisible();
+
+  const portalId = await portal.getAttribute('portalid');
+  expect(portalId).not.toBeNull();
+
+  const moreMenu = toolbar.getByLabel('More menu');
+  await moreMenu.click();
+
+  await toolbar.getByRole('button', { name: 'Reload' }).click();
+
+  const newPortalId = await portal.getAttribute('portalid');
+  expect(newPortalId).not.toBeNull();
+
+  expect(portalId).not.toEqual(newPortalId);
+});

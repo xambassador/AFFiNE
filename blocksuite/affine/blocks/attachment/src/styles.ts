@@ -143,6 +143,12 @@ export const styles = css`
     height: 100%;
   }
 
+  .affine-attachment-embed-status {
+    position: absolute;
+    left: 14px;
+    bottom: 64px;
+  }
+
   .affine-attachment-embed-event-mask {
     position: absolute;
     inset: 0;
