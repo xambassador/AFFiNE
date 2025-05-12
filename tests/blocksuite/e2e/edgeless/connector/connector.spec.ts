@@ -157,10 +157,6 @@ test('change connector line width', async ({ page }) => {
   await triggerComponentToolbarAction(page, 'changeConnectorStrokeStyles');
   await changeConnectorStrokeWidth(page, 5);
 
-  await waitNextFrame(page);
-
-  await triggerComponentToolbarAction(page, 'changeConnectorStrokeStyles');
-
   const pickedColor = await pickColorAtPoints(page, [
     [start.x + 5, start.y],
     [start.x + 10, start.y],

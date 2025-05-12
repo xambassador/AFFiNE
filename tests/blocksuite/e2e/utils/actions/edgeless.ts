@@ -670,7 +670,7 @@ export async function selectBrushSize(page: Page, size: string) {
     twelve: 6,
   };
   const sizeButton = page.locator(
-    `edgeless-pen-menu .line-width-panel .line-width-button:nth-child(${sizeIndexMap[size]})`
+    `edgeless-pen-menu edgeless-line-width-panel .point-button:nth-child(${sizeIndexMap[size]})`
   );
   await sizeButton.click();
 }
@@ -794,7 +794,7 @@ export async function updateExistedBrushElementSize(
 ) {
   // get the nth brush size button
   const btn = page.locator(
-    `.line-width-panel > div:nth-child(${nthSizeButton})`
+    `edgeless-line-width-panel .point-button:nth-child(${nthSizeButton})`
   );
 
   await btn.click();
@@ -1192,9 +1192,7 @@ export async function triggerComponentToolbarAction(
       break;
     }
     case 'changeConnectorStrokeStyles': {
-      const button = locatorComponentToolbar(page).getByRole('button', {
-        name: 'Stroke style',
-      });
+      const button = locatorComponentToolbar(page).getByLabel('Stroke style');
       await button.click();
       break;
     }
@@ -1438,8 +1436,7 @@ export async function resizeConnectorByStartCapitalHandler(
 export function getEdgelessLineWidthPanel(page: Page) {
   return page
     .locator('affine-toolbar-widget editor-toolbar')
-    .locator('edgeless-line-width-panel')
-    .locator('.line-width-panel');
+    .locator('edgeless-line-width-panel');
 }
 export async function changeShapeStrokeWidth(page: Page) {
   const lineWidthPanel = getEdgelessLineWidthPanel(page);
@@ -1501,7 +1498,7 @@ export function locatorConnectorStrokeWidthButton(
 ) {
   return locatorComponentToolbar(page)
     .locator('edgeless-line-width-panel')
-    .locator(`.line-width-button:nth-child(${buttonPosition})`);
+    .locator(`.point-button:nth-child(${buttonPosition})`);
 }
 export async function changeConnectorStrokeWidth(
   page: Page,
