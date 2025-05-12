@@ -30,7 +30,8 @@ export class HTMLPreview extends SignalWatcher(WithDisposable(LitElement)) {
       line-height: normal;
     }
 
-    .html-preview-error {
+    .html-preview-error,
+    .html-preview-fallback {
       color: ${unsafeCSSVarV2('button/error')};
       font-feature-settings:
         'liga' off,
@@ -49,13 +50,18 @@ export class HTMLPreview extends SignalWatcher(WithDisposable(LitElement)) {
   accessor model!: CodeBlockModel;
 
   @state()
-  accessor state: 'loading' | 'error' | 'finish' = 'loading';
+  accessor state: 'loading' | 'error' | 'finish' | 'fallback' = 'loading';
 
   @query('iframe')
   accessor iframe!: HTMLIFrameElement;
 
   override firstUpdated(_changedProperties: PropertyValues): void {
     const result = super.firstUpdated(_changedProperties);
+
+    if (!window.crossOriginIsolated) {
+      this.state = 'fallback';
+      return;
+    }
 
     this._link();
 
@@ -97,6 +103,14 @@ export class HTMLPreview extends SignalWatcher(WithDisposable(LitElement)) {
               html`<div class="html-preview-error">
                 Failed to render the preview. Please check your HTML code for
                 errors.
+              </div>`,
+          ],
+          [
+            'fallback',
+            () =>
+              html`<div class="html-preview-fallback">
+                This feature is not supported in your browser. Please download
+                the AFFiNE Desktop App to use it.
               </div>`,
           ],
         ])}
