@@ -157,6 +157,7 @@ jobs:
     runs-on: ubuntu-latest
     needs:
       - optimize_ci
+      - build-server-native
     if: needs.optimize_ci.outputs.skip == 'false'
     steps:
       - uses: actions/checkout@v4
@@ -165,13 +166,20 @@ jobs:
         with:
           full-cache: true
 
+      - name: Download server-native.node
+        uses: actions/download-artifact@v4
+        with:
+          name: server-native.node
+          path: ./packages/backend/native
+
       - name: Run Check
         run: |
           yarn affine init
           yarn affine gql build
           yarn affine i18n build
+          yarn affine server genconfig
           git status --porcelain | grep . && {
-            echo "Run 'yarn affine init && yarn affine gql build && yarn affine i18n build' and make sure all changes are submitted"
+            echo "Run 'yarn affine init && yarn affine gql build && yarn affine i18n build && yarn affine server genconfig' and make sure all changes are submitted"
             exit 1
           } || {
             echo "All changes are submitted"

@@ -54,17 +54,6 @@
       "desc": "The config for the strict throttler."
     }
   },
-  "websocket": {
-    "transports": {
-      "type": "Array",
-      "desc": "The enabled transports for accepting websocket traffics.",
-      "link": "https://docs.nestjs.com/websockets/gateways#transports"
-    },
-    "maxHttpBufferSize": {
-      "type": "Number",
-      "desc": "How many bytes or characters a message can be, before closing the session (to avoid DoS)."
-    }
-  },
   "auth": {
     "allowSignup": {
       "type": "Boolean",
@@ -145,6 +134,17 @@
     "blob.storage": {
       "type": "Object",
       "desc": "The config of storage for all uploaded blobs(images, videos, etc.)."
+    }
+  },
+  "websocket": {
+    "transports": {
+      "type": "Array",
+      "desc": "The enabled transports for accepting websocket traffics.",
+      "link": "https://docs.nestjs.com/websockets/gateways#transports"
+    },
+    "maxHttpBufferSize": {
+      "type": "Number",
+      "desc": "How many bytes or characters a message can be, before closing the session (to avoid DoS)."
     }
   },
   "server": {

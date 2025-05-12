@@ -123,32 +123,6 @@
         }
       }
     },
-    "websocket": {
-      "type": "object",
-      "description": "Configuration for websocket module",
-      "properties": {
-        "transports": {
-          "type": "array",
-          "description": "The enabled transports for accepting websocket traffics.\n@default [\"websocket\",\"polling\"]\n@link https://docs.nestjs.com/websockets/gateways#transports",
-          "items": {
-            "type": "string",
-            "enum": [
-              "websocket",
-              "polling"
-            ]
-          },
-          "default": [
-            "websocket",
-            "polling"
-          ]
-        },
-        "maxHttpBufferSize": {
-          "type": "number",
-          "description": "How many bytes or characters a message can be, before closing the session (to avoid DoS).\n@default 100000000",
-          "default": 100000000
-        }
-      }
-    },
     "auth": {
       "type": "object",
       "description": "Configuration for auth module",
@@ -501,6 +475,32 @@
         }
       }
     },
+    "websocket": {
+      "type": "object",
+      "description": "Configuration for websocket module",
+      "properties": {
+        "transports": {
+          "type": "array",
+          "description": "The enabled transports for accepting websocket traffics.\n@default [\"websocket\",\"polling\"]\n@link https://docs.nestjs.com/websockets/gateways#transports",
+          "items": {
+            "type": "string",
+            "enum": [
+              "websocket",
+              "polling"
+            ]
+          },
+          "default": [
+            "websocket",
+            "polling"
+          ]
+        },
+        "maxHttpBufferSize": {
+          "type": "number",
+          "description": "How many bytes or characters a message can be, before closing the session (to avoid DoS).\n@default 100000000",
+          "default": 100000000
+        }
+      }
+    },
     "server": {
       "type": "object",
       "description": "Configuration for server module",
@@ -634,9 +634,23 @@
             "apiKey": ""
           }
         },
+        "providers.anthropic": {
+          "type": "object",
+          "description": "The config for the anthropic provider.\n@default {\"apiKey\":\"\"}",
+          "default": {
+            "apiKey": ""
+          }
+        },
         "unsplash": {
           "type": "object",
           "description": "The config for the unsplash key.\n@default {\"key\":\"\"}",
+          "default": {
+            "key": ""
+          }
+        },
+        "exa": {
+          "type": "object",
+          "description": "The config for the exa web search key.\n@default {\"key\":\"\"}",
           "default": {
             "key": ""
           }
