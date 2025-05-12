@@ -98,7 +98,8 @@ const usePatchSpecs = (mode: DocMode) => {
       })
       .database(framework)
       .linkedDoc(framework)
-      .paragraph(enableAI).value;
+      .paragraph(enableAI)
+      .mobile(framework).value;
 
     if (BUILD_CONFIG.isMobileEdition) {
       if (mode === 'page') {

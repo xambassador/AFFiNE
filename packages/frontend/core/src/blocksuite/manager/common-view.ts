@@ -11,6 +11,7 @@ import { CopilotTool } from '@affine/core/blocksuite/ai/tool/copilot-tool';
 import { aiPanelWidget } from '@affine/core/blocksuite/ai/widgets/ai-panel/ai-panel';
 import { edgelessCopilotWidget } from '@affine/core/blocksuite/ai/widgets/edgeless-copilot';
 import { buildDocDisplayMetaExtension } from '@affine/core/blocksuite/extensions/display-meta';
+import { EdgelessClipboardAIChatConfig } from '@affine/core/blocksuite/extensions/edgeless-clipboard';
 import { patchFileSizeLimitExtension } from '@affine/core/blocksuite/extensions/file-size-limit';
 import { getFontConfigExtension } from '@affine/core/blocksuite/extensions/font-config';
 import { patchPeekViewService } from '@affine/core/blocksuite/extensions/peek-view-service';
@@ -41,15 +42,17 @@ export class AffineCommonViewExtension extends ViewExtensionProvider<
     context: ViewExtensionContext,
     framework: FrameworkProvider
   ) {
-    context.register(AIChatBlockSpec);
-    context.register(AITranscriptionBlockSpec);
-    context.register([
-      AICodeBlockWatcher,
-      ToolbarModuleExtension({
-        id: BlockFlavourIdentifier('custom:affine:image'),
-        config: imageToolbarAIEntryConfig(),
-      }),
-    ]);
+    context
+      .register(AIChatBlockSpec)
+      .register(AITranscriptionBlockSpec)
+      .register(EdgelessClipboardAIChatConfig)
+      .register(AICodeBlockWatcher)
+      .register(
+        ToolbarModuleExtension({
+          id: BlockFlavourIdentifier('custom:affine:image'),
+          config: imageToolbarAIEntryConfig(),
+        })
+      );
     if (context.scope === 'edgeless' || context.scope === 'page') {
       context.register([
         aiPanelWidget,

@@ -3,7 +3,6 @@ import { patchForAudioEmbedView } from '@affine/core/blocksuite/extensions/audio
 import { patchDatabaseBlockConfigService } from '@affine/core/blocksuite/extensions/database-block-config-service';
 import { patchDocModeService } from '@affine/core/blocksuite/extensions/doc-mode-service';
 import { patchDocUrlExtensions } from '@affine/core/blocksuite/extensions/doc-url';
-import { EdgelessClipboardAIChatConfig } from '@affine/core/blocksuite/extensions/edgeless-clipboard';
 import { patchForClipboardInElectron } from '@affine/core/blocksuite/extensions/electron-clipboard';
 import { patchNotificationService } from '@affine/core/blocksuite/extensions/notification-service';
 import { patchOpenDocExtension } from '@affine/core/blocksuite/extensions/open-doc';
@@ -28,13 +27,6 @@ import {
 import { FrameworkProvider } from '@toeverything/infra';
 import type { TemplateResult } from 'lit';
 import { z } from 'zod';
-
-import {
-  KeyboardToolbarExtension,
-  mobileCodeConfig,
-  mobileParagraphConfig,
-  MobileSpecsPatches,
-} from '../extensions/mobile-config';
 
 const optionsSchema = z.object({
   // services
@@ -106,7 +98,6 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
       reactToLit,
       confirmModal,
     } = options;
-    const isMobileEdition = BUILD_CONFIG.isMobileEdition;
     const isElectron = BUILD_CONFIG.isElectron;
 
     const docService = framework.get(DocService);
@@ -119,7 +110,6 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
       patchReferenceRenderer(reactToLit, referenceRenderer),
       patchNotificationService(confirmModal),
       patchOpenDocExtension(),
-      EdgelessClipboardAIChatConfig,
       patchSideBarService(framework),
       patchDocModeService(docService, docsService, editorService),
     ]);
@@ -129,14 +119,6 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
       patchDatabaseBlockConfigService(),
       patchForAudioEmbedView(reactToLit),
     ]);
-    if (isMobileEdition) {
-      context.register([
-        KeyboardToolbarExtension(framework),
-        MobileSpecsPatches,
-        mobileParagraphConfig,
-        mobileCodeConfig,
-      ]);
-    }
     if (isElectron) {
       context.register(patchForClipboardInElectron(framework));
     }

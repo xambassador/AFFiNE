@@ -1,49 +1,14 @@
 import { VirtualKeyboardProvider } from '@affine/core/mobile/modules/virtual-keyboard';
-import { CodeBlockConfigExtension } from '@blocksuite/affine/blocks/code';
-import { ParagraphBlockConfigExtension } from '@blocksuite/affine/blocks/paragraph';
 import type { Container } from '@blocksuite/affine/global/di';
 import { DisposableGroup } from '@blocksuite/affine/global/disposable';
 import {
-  FeatureFlagService,
   VirtualKeyboardProvider as BSVirtualKeyboardProvider,
   type VirtualKeyboardProviderWithAction,
 } from '@blocksuite/affine/shared/services';
-import { type BlockStdScope, LifeCycleWatcher } from '@blocksuite/affine/std';
+import { LifeCycleWatcher } from '@blocksuite/affine/std';
 import type { ExtensionType } from '@blocksuite/affine/store';
 import { batch, signal } from '@preact/signals-core';
 import type { FrameworkProvider } from '@toeverything/infra';
-
-export class MobileSpecsPatches extends LifeCycleWatcher {
-  static override key = 'mobile-patches';
-
-  constructor(std: BlockStdScope) {
-    super(std);
-    const featureFlagService = std.get(FeatureFlagService);
-
-    featureFlagService.setFlag('enable_mobile_keyboard_toolbar', true);
-    featureFlagService.setFlag('enable_mobile_linked_doc_menu', true);
-  }
-}
-
-export const mobileParagraphConfig = ParagraphBlockConfigExtension({
-  getPlaceholder: model => {
-    const placeholders = {
-      text: '',
-      h1: 'Heading 1',
-      h2: 'Heading 2',
-      h3: 'Heading 3',
-      h4: 'Heading 4',
-      h5: 'Heading 5',
-      h6: 'Heading 6',
-      quote: '',
-    };
-    return placeholders[model.props.type];
-  },
-});
-
-export const mobileCodeConfig = CodeBlockConfigExtension({
-  showLineNumbers: false,
-});
 
 export function KeyboardToolbarExtension(
   framework: FrameworkProvider
@@ -89,6 +54,7 @@ export function KeyboardToolbarExtension(
 
   if ('show' in affineVirtualKeyboardProvider) {
     const providerWithAction = affineVirtualKeyboardProvider;
+
     class BSVirtualKeyboardServiceWithShowAndHide
       extends BSVirtualKeyboardService
       implements VirtualKeyboardProviderWithAction
@@ -96,6 +62,7 @@ export function KeyboardToolbarExtension(
       show() {
         providerWithAction.show();
       }
+
       hide() {
         providerWithAction.hide();
       }

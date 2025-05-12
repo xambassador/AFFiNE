@@ -7,6 +7,7 @@ import {
 import { AffineEditorConfigViewExtension } from '@affine/core/blocksuite/extensions/editor-config';
 import { createDatabaseOptionsConfig } from '@affine/core/blocksuite/extensions/editor-config/database';
 import { createLinkedWidgetConfig } from '@affine/core/blocksuite/extensions/editor-config/linked';
+import { MobileViewExtension } from '@affine/core/blocksuite/extensions/mobile';
 import { PdfViewExtension } from '@affine/core/blocksuite/extensions/pdf';
 import { AffineThemeViewExtension } from '@affine/core/blocksuite/extensions/theme';
 import { TurboRendererViewExtension } from '@affine/core/blocksuite/extensions/turbo-renderer';
@@ -23,6 +24,25 @@ import { LinkedDocViewExtension } from '@blocksuite/affine/widgets/linked-doc/vi
 import type { FrameworkProvider } from '@toeverything/infra';
 
 import { CodeBlockPreviewViewExtension } from './code-block-preview';
+
+type Configure = {
+  init: () => Configure;
+
+  common: (framework?: FrameworkProvider, enableAI?: boolean) => Configure;
+  editorView: (options?: AffineEditorViewOptions) => Configure;
+  theme: (framework?: FrameworkProvider) => Configure;
+  editorConfig: (framework?: FrameworkProvider) => Configure;
+  edgelessBlockHeader: (options?: EdgelessBlockHeaderViewOptions) => Configure;
+  database: (framework?: FrameworkProvider) => Configure;
+  linkedDoc: (framework?: FrameworkProvider) => Configure;
+  paragraph: (enableAI?: boolean) => Configure;
+  cloud: (framework?: FrameworkProvider, enableCloud?: boolean) => Configure;
+  turboRenderer: (enableTurboRenderer?: boolean) => Configure;
+  pdf: (enablePDFEmbedPreview?: boolean, reactToLit?: ReactToLit) => Configure;
+  mobile: (framework?: FrameworkProvider) => Configure;
+
+  value: ViewExtensionManager;
+};
 
 class ViewProvider {
   static instance: ViewProvider | null = null;
@@ -48,6 +68,7 @@ class ViewProvider {
       TurboRendererViewExtension,
       CloudViewExtension,
       PdfViewExtension,
+      MobileViewExtension,
     ]);
   }
 
@@ -55,7 +76,7 @@ class ViewProvider {
     return this._manager;
   }
 
-  get config() {
+  get config(): Configure {
     return {
       init: this._initDefaultConfig,
       common: this._configureCommon,
@@ -69,6 +90,7 @@ class ViewProvider {
       cloud: this._configureCloud,
       turboRenderer: this._configureTurboRenderer,
       pdf: this._configurePdf,
+      mobile: this._configureMobile,
       value: this._manager,
     };
   }
@@ -85,7 +107,8 @@ class ViewProvider {
       .paragraph()
       .cloud()
       .turboRenderer()
-      .pdf();
+      .pdf()
+      .mobile();
 
     return this.config;
   };
@@ -146,7 +169,23 @@ class ViewProvider {
   };
 
   private readonly _configureParagraph = (enableAI?: boolean) => {
-    if (enableAI) {
+    if (BUILD_CONFIG.isMobileEdition) {
+      this._manager.configure(ParagraphViewExtension, {
+        getPlaceholder: model => {
+          const placeholders = {
+            text: '',
+            h1: 'Heading 1',
+            h2: 'Heading 2',
+            h3: 'Heading 3',
+            h4: 'Heading 4',
+            h5: 'Heading 5',
+            h6: 'Heading 6',
+            quote: '',
+          };
+          return placeholders[model.props.type] ?? '';
+        },
+      });
+    } else if (enableAI) {
       this._manager.configure(ParagraphViewExtension, {
         getPlaceholder: model => {
           const placeholders = {
@@ -191,6 +230,11 @@ class ViewProvider {
       enablePDFEmbedPreview,
       reactToLit,
     });
+    return this.config;
+  };
+
+  private readonly _configureMobile = (framework?: FrameworkProvider) => {
+    this._manager.configure(MobileViewExtension, { framework });
     return this.config;
   };
 }
