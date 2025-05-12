@@ -143,7 +143,25 @@ export const AllPage = () => {
   const collectionRulesService = useService(CollectionRulesService);
   useEffect(() => {
     const subscription = collectionRulesService
-      .watch(filters ?? [], groupBy, orderBy)
+      .watch(
+        [
+          ...(filters ?? []),
+          {
+            type: 'system',
+            key: 'empty-journal',
+            method: 'is',
+            value: 'false',
+          },
+          {
+            type: 'system',
+            key: 'trash',
+            method: 'is',
+            value: 'false',
+          },
+        ],
+        groupBy,
+        orderBy
+      )
       .subscribe({
         next: result => {
           explorerContextValue.groups$.next(result.groups);

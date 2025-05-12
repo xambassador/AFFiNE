@@ -9,6 +9,7 @@ import { CreatedAtFilterProvider } from './impls/filters/created-at';
 import { CreatedByFilterProvider } from './impls/filters/created-by';
 import { DatePropertyFilterProvider } from './impls/filters/date';
 import { DocPrimaryModeFilterProvider } from './impls/filters/doc-primary-mode';
+import { EmptyJournalFilterProvider } from './impls/filters/empty-journal';
 import { JournalFilterProvider } from './impls/filters/journal';
 import { PropertyFilterProvider } from './impls/filters/property';
 import { SystemFilterProvider } from './impls/filters/system';
@@ -112,6 +113,9 @@ export function configureCollectionRulesModule(framework: Framework) {
       DocsService,
     ])
     .impl(FilterProvider('system:updatedBy'), UpdatedByFilterProvider, [
+      DocsService,
+    ])
+    .impl(FilterProvider('system:empty-journal'), EmptyJournalFilterProvider, [
       DocsService,
     ])
     // --------------- Group By ---------------

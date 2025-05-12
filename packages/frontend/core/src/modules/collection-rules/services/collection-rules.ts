@@ -159,7 +159,7 @@ export class CollectionRulesService extends Service {
       }[];
       filterErrors: any[];
     }> = grouped$.pipe(
-      throttleTime(500), // throttle the results to avoid too many re-renders
+      throttleTime(300, undefined, { leading: false, trailing: true }), // throttle the results to avoid too many re-renders
       map(({ grouped, ordered, filtered, filterErrors }) => {
         const result: { key: string; items: string[] }[] = [];
 

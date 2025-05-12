@@ -27,14 +27,7 @@ export const createDocExplorerContext = () =>
     selectMode$: new LiveData<boolean>(false),
     selectedDocIds$: new LiveData<string[]>([]),
     prevCheckAnchorId$: new LiveData<string | null>(null),
-    filters$: new LiveData<ExplorerPreference['filters']>([
-      {
-        type: 'system',
-        key: 'trash',
-        value: 'false',
-        method: 'is',
-      },
-    ]),
+    filters$: new LiveData<ExplorerPreference['filters']>([]),
     groupBy$: new LiveData<ExplorerPreference['groupBy']>(undefined),
     orderBy$: new LiveData<ExplorerPreference['orderBy']>(undefined),
     displayProperties$: new LiveData<ExplorerPreference['displayProperties']>(

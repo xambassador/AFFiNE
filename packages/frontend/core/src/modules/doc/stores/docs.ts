@@ -147,7 +147,7 @@ export class DocsStore extends Store {
       this.workspaceService.workspace.rootYDoc.getMap('meta'),
       'pages'
     ).pipe(
-      switchMap(yjsObserveDeep),
+      switchMap(pages => yjsObservePath(pages, '*.trash')),
       map(meta => {
         if (meta instanceof YArray) {
           return meta
@@ -165,7 +165,7 @@ export class DocsStore extends Store {
       this.workspaceService.workspace.rootYDoc.getMap('meta'),
       'pages'
     ).pipe(
-      switchMap(yjsObserveDeep),
+      switchMap(pages => yjsObservePath(pages, '*.trash')),
       map(meta => {
         if (meta instanceof YArray) {
           return meta

@@ -106,7 +106,6 @@ export class DocCreatedByUpdatedBySyncService extends Service {
     .pipe(
       map(allDocsCreatedBy => {
         let missingCreatedBy = false;
-        console.log(allDocsCreatedBy);
         for (const createdBy of allDocsCreatedBy.values()) {
           if (!createdBy) {
             missingCreatedBy = true;

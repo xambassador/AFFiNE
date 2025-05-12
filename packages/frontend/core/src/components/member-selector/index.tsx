@@ -90,7 +90,6 @@ export const MemberSelector = ({
       if (value.length > 0) {
         setFocusedInlineIndex(selected.length);
       }
-      console.log('onInputChange', value);
       debouncedSearch(value.trim());
     },
     [debouncedSearch, selected.length]
