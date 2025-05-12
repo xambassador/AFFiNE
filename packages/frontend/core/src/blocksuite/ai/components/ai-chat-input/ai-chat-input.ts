@@ -426,7 +426,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
             ? html`<span class="chat-input-icon-label">Reason</span>`
             : nothing}
         </div>
-        ${status === 'transmitting'
+        ${status === 'transmitting' || status === 'loading'
           ? html`<div @click=${this._handleAbort} data-testid="chat-panel-stop">
               ${ChatAbortIcon}
             </div>`
