@@ -411,7 +411,7 @@ export class CodeBlockComponent extends CaptionedBlockComponent<CodeBlockModel> 
           })}
           .yText=${this.model.props.text.yText}
           .inlineEventSource=${this.topContenteditableElement ?? nothing}
-          .undoManager=${this.store.history}
+          .undoManager=${this.store.history.undoManager}
           .attributesSchema=${this.inlineManager.getSchema()}
           .attributeRenderer=${this.inlineManager.getRenderer()}
           .readonly=${this.store.readonly}
