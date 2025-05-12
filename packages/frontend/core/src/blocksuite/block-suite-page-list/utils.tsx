@@ -99,7 +99,7 @@ export const usePageHelper = (docCollection: Workspace) => {
       showImportModal({
         collection: docCollection,
         schema: getAFFiNEWorkspaceSchema(),
-        extensions: getStoreManager().get('store'),
+        extensions: getStoreManager().config.init().value.get('store'),
         onSuccess,
         onFail: message => {
           reject(new Error(message));

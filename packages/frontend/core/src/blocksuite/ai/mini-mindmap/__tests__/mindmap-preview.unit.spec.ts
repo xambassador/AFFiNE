@@ -7,7 +7,7 @@ import { markdownToMindmap } from '../mindmap-preview.js';
 
 const container = new Container();
 getStoreManager()
-  .get('store')
+  .value.get('store')
   .forEach(ext => {
     ext.setup(container);
   });

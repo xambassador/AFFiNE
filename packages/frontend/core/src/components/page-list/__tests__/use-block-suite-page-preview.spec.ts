@@ -13,7 +13,7 @@ import { beforeEach, describe, expect, test, vi } from 'vitest';
 import { useBlockSuitePagePreview } from '../use-block-suite-page-preview';
 let docCollection: TestWorkspace;
 
-const extensions = getStoreManager().get('store');
+const extensions = getStoreManager().config.init().value.get('store');
 
 beforeEach(async () => {
   vi.useFakeTimers({ toFake: ['requestIdleCallback'] });

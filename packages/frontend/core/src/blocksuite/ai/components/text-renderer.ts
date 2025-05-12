@@ -252,7 +252,8 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
       } else {
         const container = new Container();
         getStoreManager()
-          .get('store')
+          .config.init()
+          .value.get('store')
           .forEach(ext => {
             ext.setup(container);
           });

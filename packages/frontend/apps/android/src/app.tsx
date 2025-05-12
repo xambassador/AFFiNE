@@ -252,7 +252,8 @@ framework.scope(ServerScope).override(AuthProvider, resolver => {
 
     const container = new Container();
     getStoreManager()
-      .get('store')
+      .config.init()
+      .value.get('store')
       .forEach(ext => {
         ext.setup(container);
       });

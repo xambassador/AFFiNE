@@ -35,7 +35,7 @@ export class ImportClipperService extends Service {
       collection: workspace.docCollection,
       schema: getAFFiNEWorkspaceSchema(),
       markdown: clipperInput.contentMarkdown,
-      extensions: getStoreManager().get('store'),
+      extensions: getStoreManager().config.init().value.get('store'),
     });
     const docsService = workspace.scope.get(DocsService);
     if (docId) {
@@ -69,7 +69,7 @@ export class ImportClipperService extends Service {
           collection: docCollection,
           schema: getAFFiNEWorkspaceSchema(),
           markdown: clipperInput.contentMarkdown,
-          extensions: getStoreManager().get('store'),
+          extensions: getStoreManager().config.init().value.get('store'),
         });
       }
     );

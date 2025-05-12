@@ -1,3 +1,4 @@
+import type { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import type { Workspace as WorkspaceInterface } from '@blocksuite/affine/store';
 import { Entity, LiveData, yjsGetPath } from '@toeverything/infra';
 import type { Observable } from 'rxjs';
@@ -9,7 +10,10 @@ import type { WorkspaceScope } from '../scopes/workspace';
 import { WorkspaceEngineService } from '../services/engine';
 
 export class Workspace extends Entity {
-  constructor(public readonly scope: WorkspaceScope) {
+  constructor(
+    public readonly scope: WorkspaceScope,
+    public readonly featureFlagService: FeatureFlagService
+  ) {
     super();
   }
 
@@ -30,6 +34,7 @@ export class Workspace extends Entity {
       this._docCollection = new WorkspaceImpl({
         id: this.openOptions.metadata.id,
         rootDoc: this.rootYDoc,
+        featureFlagService: this.featureFlagService,
         blobSource: {
           get: async key => {
             const record = await this.engine.blob.get(key);

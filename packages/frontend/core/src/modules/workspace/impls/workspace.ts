@@ -19,6 +19,7 @@ import { Subject } from 'rxjs';
 import type { Awareness } from 'y-protocols/awareness.js';
 import type { Doc as YDoc } from 'yjs';
 
+import type { FeatureFlagService } from '../../feature-flag';
 import { DocImpl } from './doc';
 import { WorkspaceMetaImpl } from './meta';
 
@@ -29,6 +30,7 @@ type WorkspaceOptions = {
   onLoadDoc?: (doc: YDoc) => void;
   onLoadAwareness?: (awareness: Awareness) => void;
   onCreateDoc?: (docId?: string) => string;
+  featureFlagService?: FeatureFlagService;
 };
 
 export class WorkspaceImpl implements Workspace {
@@ -57,6 +59,7 @@ export class WorkspaceImpl implements Workspace {
   readonly onLoadDoc?: (doc: YDoc) => void;
   readonly onLoadAwareness?: (awareness: Awareness) => void;
   readonly onCreateDoc?: (docId?: string) => string;
+  readonly featureFlagService?: FeatureFlagService;
 
   constructor({
     id,
@@ -65,8 +68,10 @@ export class WorkspaceImpl implements Workspace {
     onLoadDoc,
     onLoadAwareness,
     onCreateDoc,
+    featureFlagService,
   }: WorkspaceOptions) {
     this.id = id || '';
+    this.featureFlagService = featureFlagService;
     this.doc = rootDoc;
     this.onLoadDoc = onLoadDoc;
     this.onLoadDoc?.(this.doc);

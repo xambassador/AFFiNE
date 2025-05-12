@@ -5,20 +5,21 @@ import {
   type ExtensionType,
   type GetStoreOptions,
   StoreContainer,
-  type Workspace,
   type YBlock,
 } from '@blocksuite/affine/store';
 import { Awareness } from 'y-protocols/awareness.js';
 import * as Y from 'yjs';
 
+import type { WorkspaceImpl } from './workspace';
+
 type DocOptions = {
   id: string;
-  collection: Workspace;
+  collection: WorkspaceImpl;
   doc: Y.Doc;
 };
 
 export class DocImpl implements Doc {
-  private readonly _collection: Workspace;
+  private readonly _collection: WorkspaceImpl;
 
   private readonly _storeContainer: StoreContainer;
 
@@ -136,7 +137,10 @@ export class DocImpl implements Doc {
     extensions,
     id,
   }: GetStoreOptions = {}) {
-    const storeExtensions = getStoreManager().get('store');
+    const storeExtensions = getStoreManager()
+      .config.init()
+      .featureFlag(this.workspace.featureFlagService)
+      .value.get('store');
     const exts = storeExtensions
       .concat(extensions ?? [])
       .concat(this.storeExtensions);

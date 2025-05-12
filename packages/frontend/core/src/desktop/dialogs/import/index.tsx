@@ -146,7 +146,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
           schema: getAFFiNEWorkspaceSchema(),
           markdown: text,
           fileName,
-          extensions: getStoreManager().get('store'),
+          extensions: getStoreManager().config.init().value.get('store'),
         });
         if (docId) docIds.push(docId);
       }
@@ -165,7 +165,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
         collection: docCollection,
         schema: getAFFiNEWorkspaceSchema(),
         imported: file,
-        extensions: getStoreManager().get('store'),
+        extensions: getStoreManager().config.init().value.get('store'),
       });
       return {
         docIds,
@@ -185,7 +185,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
         const docId = await HtmlTransformer.importHTMLToDoc({
           collection: docCollection,
           schema: getAFFiNEWorkspaceSchema(),
-          extensions: getStoreManager().get('store'),
+          extensions: getStoreManager().config.init().value.get('store'),
           html: text,
           fileName,
         });
@@ -207,7 +207,7 @@ const importConfigs: Record<ImportType, ImportConfig> = {
           collection: docCollection,
           schema: getAFFiNEWorkspaceSchema(),
           imported: file,
-          extensions: getStoreManager().get('store'),
+          extensions: getStoreManager().config.init().value.get('store'),
         });
       return {
         docIds: pageIds,
