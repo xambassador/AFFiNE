@@ -90,6 +90,15 @@ const builtinSurfaceToolbarConfig = {
               ? NoteDisplayMode.DocAndEdgeless
               : NoteDisplayMode.EdgelessOnly;
           setDisplayMode(ctx, firstModel, newMode);
+
+          ctx.track('BlockCreated', {
+            page: 'whiteboard editor',
+            module: 'toolbar',
+            segment: 'toolbar',
+            blockType: 'affine:note',
+            control: 'toolbar:general',
+            other: `display in page: ${newMode === NoteDisplayMode.EdgelessOnly ? 'off' : 'on'}`,
+          });
         };
 
         return {
