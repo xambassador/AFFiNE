@@ -33,18 +33,3 @@ export function patchForPDFEmbedView(reactToLit: ReactToLit): ExtensionType {
     },
   };
 }
-
-export function patchForAudioEmbedView(reactToLit: ReactToLit): ExtensionType {
-  return {
-    setup: di => {
-      di.override(AttachmentEmbedConfigIdentifier('audio'), () => ({
-        name: 'audio',
-        check: (model, maxFileSize) =>
-          model.props.type.startsWith('audio/') &&
-          model.props.size <= maxFileSize,
-        render: (model, _) =>
-          reactToLit(<AttachmentEmbedPreview model={model} />, false),
-      }));
-    },
-  };
-}

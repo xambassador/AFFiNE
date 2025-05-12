@@ -32,7 +32,9 @@ function getBaseWorkerConfigs(pkg: Package) {
     ),
     createWorkerTargetConfig(
       pkg,
-      core.srcPath.join('blocksuite/extensions/turbo-painter.worker.ts').value
+      core.srcPath.join(
+        'blocksuite/extensions/turbo-renderer/turbo-painter.worker.ts'
+      ).value
     ),
   ];
 }

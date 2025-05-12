@@ -1,8 +1,5 @@
 import type { ConfirmModalProps, ElementOrFactory } from '@affine/component';
-import {
-  patchForAudioEmbedView,
-  patchForPDFEmbedView,
-} from '@affine/core/blocksuite/extensions/attachment-embed-view';
+import { patchForAudioEmbedView } from '@affine/core/blocksuite/extensions/audio/audio-view';
 import { patchDatabaseBlockConfigService } from '@affine/core/blocksuite/extensions/database-block-config-service';
 import { patchDocModeService } from '@affine/core/blocksuite/extensions/doc-mode-service';
 import { patchDocUrlExtensions } from '@affine/core/blocksuite/extensions/doc-url';
@@ -16,18 +13,13 @@ import {
   type ReferenceReactRenderer,
 } from '@affine/core/blocksuite/extensions/reference-renderer';
 import { patchSideBarService } from '@affine/core/blocksuite/extensions/side-bar-service';
-import { turboRendererExtension } from '@affine/core/blocksuite/extensions/turbo-renderer';
-import { patchUserExtensions } from '@affine/core/blocksuite/extensions/user';
-import { patchUserListExtensions } from '@affine/core/blocksuite/extensions/user-list';
 import {
   AffinePageReference,
   AffineSharedPageReference,
 } from '@affine/core/components/affine/reference-link';
-import { PublicUserService } from '@affine/core/modules/cloud';
 import { DocService, DocsService } from '@affine/core/modules/doc';
 import { EditorService } from '@affine/core/modules/editor';
 import { toDocSearchParams } from '@affine/core/modules/navigation';
-import { MemberSearchService } from '@affine/core/modules/permissions';
 import { WorkspaceService } from '@affine/core/modules/workspace';
 import {
   type ViewExtensionContext,
@@ -45,14 +37,6 @@ import {
 } from '../extensions/mobile-config';
 
 const optionsSchema = z.object({
-  // env
-  isCloud: z.boolean(),
-  isInPeekView: z.boolean(),
-
-  // flags
-  enableTurboRenderer: z.boolean(),
-  enablePDFEmbedPreview: z.boolean(),
-
   // services
   framework: z.instanceof(FrameworkProvider),
 
@@ -117,25 +101,17 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
       return;
     }
     const {
-      isCloud,
-
-      enableTurboRenderer,
-      enablePDFEmbedPreview,
-
       framework,
 
       reactToLit,
       confirmModal,
     } = options;
-    const isEdgeless = this.isEdgeless(context.scope);
     const isMobileEdition = BUILD_CONFIG.isMobileEdition;
     const isElectron = BUILD_CONFIG.isElectron;
 
     const docService = framework.get(DocService);
     const docsService = framework.get(DocsService);
     const editorService = framework.get(EditorService);
-    const memberSearchService = framework.get(MemberSearchService);
-    const publicUserService = framework.get(PublicUserService);
 
     const referenceRenderer = this._getCustomReferenceRenderer(framework);
 
@@ -153,18 +129,6 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
       patchDatabaseBlockConfigService(),
       patchForAudioEmbedView(reactToLit),
     ]);
-    if (isCloud) {
-      context.register([
-        patchUserListExtensions(memberSearchService),
-        patchUserExtensions(publicUserService),
-      ]);
-    }
-    if (isEdgeless && enableTurboRenderer) {
-      context.register(turboRendererExtension);
-    }
-    if (enablePDFEmbedPreview) {
-      context.register(patchForPDFEmbedView(reactToLit));
-    }
     if (isMobileEdition) {
       context.register([
         KeyboardToolbarExtension(framework),

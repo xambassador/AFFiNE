@@ -84,14 +84,13 @@ const usePatchSpecs = (mode: DocMode) => {
       .theme(framework)
       .editorConfig(framework)
       .editorView({
-        isCloud,
-        isInPeekView,
-        enableTurboRenderer,
-        enablePDFEmbedPreview,
         framework,
         reactToLit,
         confirmModal,
       })
+      .cloud(framework, isCloud)
+      .turboRenderer(enableTurboRenderer)
+      .pdf(enablePDFEmbedPreview, reactToLit)
       .edgelessBlockHeader({
         framework,
         isInPeekView,

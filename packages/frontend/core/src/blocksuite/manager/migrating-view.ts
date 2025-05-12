@@ -1,3 +1,5 @@
+import type { ReactToLit } from '@affine/component';
+import { CloudViewExtension } from '@affine/core/blocksuite/extensions/cloud';
 import {
   EdgelessBlockHeaderConfigViewExtension,
   type EdgelessBlockHeaderViewOptions,
@@ -5,7 +7,9 @@ import {
 import { AffineEditorConfigViewExtension } from '@affine/core/blocksuite/extensions/editor-config';
 import { createDatabaseOptionsConfig } from '@affine/core/blocksuite/extensions/editor-config/database';
 import { createLinkedWidgetConfig } from '@affine/core/blocksuite/extensions/editor-config/linked';
+import { PdfViewExtension } from '@affine/core/blocksuite/extensions/pdf';
 import { AffineThemeViewExtension } from '@affine/core/blocksuite/extensions/theme';
+import { TurboRendererViewExtension } from '@affine/core/blocksuite/extensions/turbo-renderer';
 import { AffineCommonViewExtension } from '@affine/core/blocksuite/manager/common-view';
 import {
   AffineEditorViewExtension,
@@ -41,6 +45,9 @@ class ViewProvider {
       AffineEditorConfigViewExtension,
       CodeBlockPreviewViewExtension,
       EdgelessBlockHeaderConfigViewExtension,
+      TurboRendererViewExtension,
+      CloudViewExtension,
+      PdfViewExtension,
     ]);
   }
 
@@ -59,6 +66,9 @@ class ViewProvider {
       database: this._configureDatabase,
       linkedDoc: this._configureLinkedDoc,
       paragraph: this._configureParagraph,
+      cloud: this._configureCloud,
+      turboRenderer: this._configureTurboRenderer,
+      pdf: this._configurePdf,
       value: this._manager,
     };
   }
@@ -72,7 +82,10 @@ class ViewProvider {
       .edgelessBlockHeader()
       .database()
       .linkedDoc()
-      .paragraph();
+      .paragraph()
+      .cloud()
+      .turboRenderer()
+      .pdf();
 
     return this.config;
   };
@@ -150,6 +163,34 @@ class ViewProvider {
         },
       });
     }
+    return this.config;
+  };
+
+  private readonly _configureCloud = (
+    framework?: FrameworkProvider,
+    enableCloud?: boolean
+  ) => {
+    this._manager.configure(CloudViewExtension, { framework, enableCloud });
+    return this.config;
+  };
+
+  private readonly _configureTurboRenderer = (
+    enableTurboRenderer?: boolean
+  ) => {
+    this._manager.configure(TurboRendererViewExtension, {
+      enableTurboRenderer,
+    });
+    return this.config;
+  };
+
+  private readonly _configurePdf = (
+    enablePDFEmbedPreview?: boolean,
+    reactToLit?: ReactToLit
+  ) => {
+    this._manager.configure(PdfViewExtension, {
+      enablePDFEmbedPreview,
+      reactToLit,
+    });
     return this.config;
   };
 }
