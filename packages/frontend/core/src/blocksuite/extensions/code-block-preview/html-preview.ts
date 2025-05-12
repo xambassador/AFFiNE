@@ -44,6 +44,11 @@ export class HTMLPreview extends SignalWatcher(WithDisposable(LitElement)) {
       font-weight: 400;
       line-height: normal;
     }
+
+    .html-preview-iframe {
+      width: 100%;
+      height: 544px;
+    }
   `;
 
   @property({ attribute: false })
