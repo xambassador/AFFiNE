@@ -1057,7 +1057,7 @@ type Action =
   | 'sendBackward'
   | 'sendToBack'
   | 'copyAsPng'
-  | 'changeNoteColor'
+  | 'changeNoteStyle'
   | 'changeShapeStyle'
   | 'changeShapeColor'
   | 'changeShapeFillColor'
@@ -1253,10 +1253,10 @@ export async function triggerComponentToolbarAction(
       await button.click();
       break;
     }
-    case 'changeNoteColor': {
-      const button = locatorComponentToolbar(page).getByRole('button', {
-        name: 'Background',
-      });
+    case 'changeNoteStyle': {
+      const button = locatorComponentToolbar(page).locator(
+        'edgeless-note-style-panel'
+      );
       await button.click();
       break;
     }
@@ -1373,7 +1373,7 @@ export async function triggerComponentToolbarAction(
 
 export async function changeEdgelessNoteBackground(page: Page, label: string) {
   const colorButton = page
-    .locator('edgeless-color-picker-button')
+    .locator('edgeless-note-style-panel')
     .locator('edgeless-color-panel')
     .locator(`.color-unit[aria-label="${label}"]`);
   await colorButton.click();

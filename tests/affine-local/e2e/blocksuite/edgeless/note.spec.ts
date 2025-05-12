@@ -315,8 +315,9 @@ test.describe('edgeless note element toolbar', () => {
       },
     });
 
-    await toolbar.getByRole('button', { name: 'Shadow style' }).click();
-    await toolbar.getByTestId('affine-note-shadow-film').click();
+    await toolbar.getByRole('button', { name: 'Note Style' }).click();
+    const noteStylePanel = page.locator('edgeless-note-style-panel');
+    await noteStylePanel.getByTestId('affine-note-shadow-film').click();
 
     expect(await getNoteEdgelessProps(page, noteId)).toEqual({
       style: {
@@ -327,10 +328,11 @@ test.describe('edgeless note element toolbar', () => {
       },
     });
 
-    await toolbar.getByRole('button', { name: 'Border style' }).click();
-    await toolbar.locator('.mode-solid').click();
-    await toolbar.getByRole('button', { name: 'Border style' }).click();
-    await toolbar.locator('affine-slider').getByLabel('8').click();
+    const borderStylePanel = noteStylePanel.getByTestId(
+      'affine-note-border-style-panel'
+    );
+    await borderStylePanel.locator('.mode-solid').click();
+    await borderStylePanel.locator('affine-slider').getByLabel('8').click();
 
     expect(await getNoteEdgelessProps(page, noteId)).toEqual({
       style: {
@@ -341,12 +343,10 @@ test.describe('edgeless note element toolbar', () => {
       },
     });
 
-    await toolbar.getByRole('button', { name: 'Corners' }).click();
-    // TODO(@fundon): delete duplicate components
-    await toolbar
-      .locator('affine-size-dropdown-menu')
-      .getByText('Large')
-      .click();
+    const cornerPanel = noteStylePanel.getByTestId(
+      'affine-note-corner-radius-panel'
+    );
+    await cornerPanel.locator('affine-slider').getByLabel('24').click();
 
     expect(await getNoteEdgelessProps(page, noteId)).toEqual({
       style: {
@@ -356,6 +356,8 @@ test.describe('edgeless note element toolbar', () => {
         shadowType: '--affine-note-shadow-film',
       },
     });
+
+    await pressEscape(page);
 
     const headerToolbar = page.getByTestId('edgeless-page-block-header');
     const toggleButton = headerToolbar.getByTestId(
