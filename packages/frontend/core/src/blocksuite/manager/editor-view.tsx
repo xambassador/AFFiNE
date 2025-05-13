@@ -1,8 +1,10 @@
 import type { ConfirmModalProps, ElementOrFactory } from '@affine/component';
 import { patchForAudioEmbedView } from '@affine/core/blocksuite/extensions/audio/audio-view';
 import { patchDatabaseBlockConfigService } from '@affine/core/blocksuite/extensions/database-block-config-service';
+import { buildDocDisplayMetaExtension } from '@affine/core/blocksuite/extensions/display-meta';
 import { patchDocModeService } from '@affine/core/blocksuite/extensions/doc-mode-service';
 import { patchDocUrlExtensions } from '@affine/core/blocksuite/extensions/doc-url';
+import { patchFileSizeLimitExtension } from '@affine/core/blocksuite/extensions/file-size-limit';
 import { patchNotificationService } from '@affine/core/blocksuite/extensions/notification-service';
 import { patchOpenDocExtension } from '@affine/core/blocksuite/extensions/open-doc';
 import { patchQuickSearchService } from '@affine/core/blocksuite/extensions/quick-search-service';
@@ -111,6 +113,8 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
         patchOpenDocExtension(),
         patchSideBarService(framework),
         patchDocModeService(docService, docsService, editorService),
+        patchFileSizeLimitExtension(framework),
+        buildDocDisplayMetaExtension(framework),
       ])
       .register(patchDocUrlExtensions(framework))
       .register(patchQuickSearchService(framework))

@@ -80,7 +80,7 @@ const usePatchSpecs = (mode: DocMode) => {
   const patchedSpecs = useMemo(() => {
     const manager = getViewManager()
       .config.init()
-      .common(framework)
+      .foundation(framework)
       .ai(enableAI, framework)
       .theme(framework)
       .editorConfig(framework)

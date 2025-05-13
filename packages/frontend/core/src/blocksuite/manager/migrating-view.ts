@@ -14,7 +14,6 @@ import { MobileViewExtension } from '@affine/core/blocksuite/extensions/mobile';
 import { PdfViewExtension } from '@affine/core/blocksuite/extensions/pdf';
 import { AffineThemeViewExtension } from '@affine/core/blocksuite/extensions/theme';
 import { TurboRendererViewExtension } from '@affine/core/blocksuite/extensions/turbo-renderer';
-import { AffineCommonViewExtension } from '@affine/core/blocksuite/manager/common-view';
 import {
   AffineEditorViewExtension,
   type AffineEditorViewOptions,
@@ -41,7 +40,7 @@ import { CodeBlockPreviewViewExtension } from './code-block-preview';
 type Configure = {
   init: () => Configure;
 
-  common: (framework?: FrameworkProvider, enableAI?: boolean) => Configure;
+  foundation: (framework?: FrameworkProvider) => Configure;
   editorView: (options?: AffineEditorViewOptions) => Configure;
   theme: (framework?: FrameworkProvider) => Configure;
   editorConfig: (framework?: FrameworkProvider) => Configure;
@@ -78,7 +77,6 @@ class ViewProvider {
       ...getInternalViewExtensions(),
 
       AffineThemeViewExtension,
-      AffineCommonViewExtension,
       AffineEditorViewExtension,
       AffineEditorConfigViewExtension,
       CodeBlockPreviewViewExtension,
@@ -100,7 +98,7 @@ class ViewProvider {
   get config(): Configure {
     return {
       init: this._initDefaultConfig,
-      common: this._configureCommon,
+      foundation: this._configureFoundation,
       editorView: this._configureEditorView,
       theme: this._configureTheme,
       editorConfig: this._configureEditorConfig,
@@ -121,7 +119,7 @@ class ViewProvider {
 
   private readonly _initDefaultConfig = () => {
     this.config
-      .common()
+      .foundation()
       .theme()
       .editorView()
       .editorConfig()
@@ -140,7 +138,7 @@ class ViewProvider {
     return this.config;
   };
 
-  private readonly _configureCommon = (framework?: FrameworkProvider) => {
+  private readonly _configureFoundation = (framework?: FrameworkProvider) => {
     const peekViewService = framework?.get(PeekViewService);
 
     this._manager.configure(FoundationViewExtension, {
@@ -180,9 +178,6 @@ class ViewProvider {
           } satisfies BSPeekViewService),
     });
 
-    this._manager.configure(AffineCommonViewExtension, {
-      framework,
-    });
     return this.config;
   };
 
