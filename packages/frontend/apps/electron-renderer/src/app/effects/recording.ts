@@ -20,7 +20,7 @@ async function saveRecordingBlob(blobEngine: BlobEngine, filepath: string) {
     res.arrayBuffer()
   );
   const blob = new Blob([opusBuffer], {
-    type: 'audio/webm',
+    type: 'audio/mp4',
   });
   const blobId = await blobEngine.set(blob);
   logger.debug('Recording saved', blobId);

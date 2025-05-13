@@ -1,6 +1,6 @@
 import { DebugLogger } from '@affine/debug';
 import { apis } from '@affine/electron-api';
-import { ArrayBufferTarget, Muxer } from 'webm-muxer';
+import { ArrayBufferTarget, Muxer } from 'mp4-muxer';
 
 interface AudioEncodingConfig {
   sampleRate: number;
@@ -13,7 +13,7 @@ interface AudioEncodingResult {
   config: AudioEncodingConfig;
 }
 
-const logger = new DebugLogger('webm-encoding');
+const logger = new DebugLogger('opus-encoding');
 
 // Constants
 const DEFAULT_BITRATE = 64000;
@@ -134,9 +134,9 @@ async function encodeAudioFrames({
 }
 
 /**
- * Creates a WebM container with the encoded audio chunks
+ * Creates a mp4 container with the encoded audio chunks
  */
-export function muxToWebM(
+export function muxToMp4(
   encodedChunks: EncodedAudioChunk[],
   config: AudioEncodingConfig
 ): Uint8Array {
@@ -144,10 +144,11 @@ export function muxToWebM(
   const muxer = new Muxer({
     target,
     audio: {
-      codec: 'A_OPUS',
+      codec: 'opus',
       sampleRate: config.sampleRate,
       numberOfChannels: config.numberOfChannels,
     },
+    fastStart: 'in-memory',
   });
 
   for (const chunk of encodedChunks) {
@@ -185,7 +186,7 @@ async function encodeAudioBufferToOpus(
 }
 
 /**
- * Encodes raw audio data to Opus in WebM container.
+ * Encodes raw audio data to Opus in MP4 container.
  */
 export async function encodeRawBufferToOpus({
   filepath,
@@ -237,16 +238,16 @@ export async function encodeRawBufferToOpus({
     encoder,
   });
 
-  const webm = muxToWebM(encodedChunks, { sampleRate, numberOfChannels });
+  const mp4 = muxToMp4(encodedChunks, { sampleRate, numberOfChannels });
   logger.debug('Encoded raw buffer to Opus');
-  return webm;
+  return mp4;
 }
 
 /**
- * Encodes an audio file Blob to Opus in WebM container with specified bitrate.
+ * Encodes an audio file Blob to Opus in MP4 container with specified bitrate.
  * @param blob Input audio file blob (supports any browser-decodable format)
  * @param targetBitrate Target bitrate in bits per second (bps)
- * @returns Promise resolving to encoded WebM data as Uint8Array
+ * @returns Promise resolving to encoded MP4 data as Uint8Array
  */
 export async function encodeAudioBlobToOpus(
   blob: Blob | ArrayBuffer | Uint8Array,
@@ -263,9 +264,9 @@ export async function encodeAudioBlobToOpus(
       targetBitrate
     );
 
-    const webm = muxToWebM(encodedChunks, config);
+    const mp4 = muxToMp4(encodedChunks, config);
     logger.debug('Encoded audio blob to Opus');
-    return webm;
+    return mp4;
   } finally {
     await audioContext.close();
   }
@@ -371,14 +372,14 @@ export async function encodeAudioBlobToOpusSlices(
         encoder,
       });
 
-      // Mux to WebM and add to slices
-      const webm = muxToWebM(encodedChunks, {
+      // Mux to MP4 and add to slices
+      const mp4 = muxToMp4(encodedChunks, {
         sampleRate,
         numberOfChannels,
         bitrate: targetBitrate,
       });
 
-      slices.push(webm);
+      slices.push(mp4);
 
       // Move to next slice
       startSample = endSample;
@@ -471,7 +472,7 @@ export const createStreamEncoder = (
       logger.debug('Finishing encoding');
       await next();
       close();
-      const buffer = muxToWebM(encodedChunks, {
+      const buffer = muxToMp4(encodedChunks, {
         sampleRate: codecs.sampleRate,
         numberOfChannels: codecs.numberOfChannels,
         bitrate: codecs.targetBitrate,

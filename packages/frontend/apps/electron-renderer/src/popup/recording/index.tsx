@@ -5,7 +5,7 @@ import {
   createStreamEncoder,
   encodeRawBufferToOpus,
   type OpusStreamEncoder,
-} from '@affine/core/utils/webm-encoding';
+} from '@affine/core/utils/opus-encoding';
 import { apis, events } from '@affine/electron-api';
 import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
