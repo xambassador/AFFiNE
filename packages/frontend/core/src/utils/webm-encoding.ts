@@ -423,8 +423,11 @@ export const createStreamEncoder = (
   let isClosed = false;
 
   const next = async () => {
-    if (!apis || isClosed) {
+    if (!apis) {
       throw new Error('Electron API is not available');
+    }
+    if (isClosed) {
+      return;
     }
     const { buffer, nextCursor } = await apis.recording.getRawAudioBuffers(
       recordingId,
