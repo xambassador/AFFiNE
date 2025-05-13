@@ -19,12 +19,22 @@ import {
   AffineEditorViewExtension,
   type AffineEditorViewOptions,
 } from '@affine/core/blocksuite/manager/editor-view';
+import { PeekViewService } from '@affine/core/modules/peek-view';
+import { DebugLogger } from '@affine/debug';
+import { mixpanel } from '@affine/track';
 import { DatabaseViewExtension } from '@blocksuite/affine/blocks/database/view';
 import { ParagraphViewExtension } from '@blocksuite/affine/blocks/paragraph/view';
+import type {
+  PeekOptions,
+  PeekViewService as BSPeekViewService,
+} from '@blocksuite/affine/components/peek';
 import { ViewExtensionManager } from '@blocksuite/affine/ext-loader';
 import { getInternalViewExtensions } from '@blocksuite/affine/extensions/view';
+import { FoundationViewExtension } from '@blocksuite/affine/foundation/view';
+import { AffineCanvasTextFonts } from '@blocksuite/affine/shared/services';
 import { LinkedDocViewExtension } from '@blocksuite/affine/widgets/linked-doc/view';
 import type { FrameworkProvider } from '@toeverything/infra';
+import type { TemplateResult } from 'lit';
 
 import { CodeBlockPreviewViewExtension } from './code-block-preview';
 
@@ -49,6 +59,8 @@ type Configure = {
 
   value: ViewExtensionManager;
 };
+
+const peekViewLogger = new DebugLogger('affine::patch-peek-view-service');
 
 class ViewProvider {
   static instance: ViewProvider | null = null;
@@ -129,6 +141,45 @@ class ViewProvider {
   };
 
   private readonly _configureCommon = (framework?: FrameworkProvider) => {
+    const peekViewService = framework?.get(PeekViewService);
+
+    this._manager.configure(FoundationViewExtension, {
+      telemetry: {
+        track: (eventName, props) => {
+          mixpanel.track(eventName, props);
+        },
+      },
+      fontConfig: AffineCanvasTextFonts.map(font => ({
+        ...font,
+        url: environment.publicPath + 'fonts/' + font.url.split('/').pop(),
+      })),
+      peekView: !peekViewService
+        ? undefined
+        : ({
+            peek: (
+              element: {
+                target: HTMLElement;
+                docId: string;
+                blockIds?: string[];
+                template?: TemplateResult;
+              },
+              options?: PeekOptions
+            ) => {
+              peekViewLogger.debug('center peek', element);
+              const { template, target, ...props } = element;
+
+              return peekViewService.peekView.open(
+                {
+                  element: target,
+                  docRef: props,
+                },
+                template,
+                options?.abortSignal
+              );
+            },
+          } satisfies BSPeekViewService),
+    });
+
     this._manager.configure(AffineCommonViewExtension, {
       framework,
     });
