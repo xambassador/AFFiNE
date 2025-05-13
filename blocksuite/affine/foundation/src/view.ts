@@ -13,6 +13,8 @@ import {
   EmbedOptionService,
   FileSizeLimitService,
   FontLoaderService,
+  LinkPreviewCache,
+  LinkPreviewService,
   PageViewportServiceExtension,
   ThemeService,
   ToolbarRegistryExtension,
@@ -47,6 +49,8 @@ export class FoundationViewExtension extends ViewExtensionProvider {
       ToolbarRegistryExtension,
       AutoClearSelectionService,
       FileSizeLimitService,
+      LinkPreviewCache,
+      LinkPreviewService,
     ]);
     context.register(clipboardConfigs);
     if (this.isEdgeless(context.scope)) {

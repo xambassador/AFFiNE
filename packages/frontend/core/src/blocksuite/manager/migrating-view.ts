@@ -9,6 +9,7 @@ import { AffineEditorConfigViewExtension } from '@affine/core/blocksuite/extensi
 import { createDatabaseOptionsConfig } from '@affine/core/blocksuite/extensions/editor-config/database';
 import { createLinkedWidgetConfig } from '@affine/core/blocksuite/extensions/editor-config/linked';
 import { ElectronViewExtension } from '@affine/core/blocksuite/extensions/electron';
+import { AffineLinkPreviewExtension } from '@affine/core/blocksuite/extensions/link-preview-service';
 import { MobileViewExtension } from '@affine/core/blocksuite/extensions/mobile';
 import { PdfViewExtension } from '@affine/core/blocksuite/extensions/pdf';
 import { AffineThemeViewExtension } from '@affine/core/blocksuite/extensions/theme';
@@ -44,6 +45,7 @@ type Configure = {
   mobile: (framework?: FrameworkProvider) => Configure;
   ai: (enable?: boolean, framework?: FrameworkProvider) => Configure;
   electron: (framework?: FrameworkProvider) => Configure;
+  linkPreview: (framework?: FrameworkProvider) => Configure;
 
   value: ViewExtensionManager;
 };
@@ -75,6 +77,7 @@ class ViewProvider {
       MobileViewExtension,
       AIViewExtension,
       ElectronViewExtension,
+      AffineLinkPreviewExtension,
     ]);
   }
 
@@ -99,6 +102,7 @@ class ViewProvider {
       mobile: this._configureMobile,
       ai: this._configureAI,
       electron: this._configureElectron,
+      linkPreview: this._configureLinkPreview,
       value: this._manager,
     };
   }
@@ -118,7 +122,8 @@ class ViewProvider {
       .pdf()
       .mobile()
       .ai()
-      .electron();
+      .electron()
+      .linkPreview();
 
     return this.config;
   };
@@ -254,6 +259,11 @@ class ViewProvider {
 
   private readonly _configureElectron = (framework?: FrameworkProvider) => {
     this._manager.configure(ElectronViewExtension, { framework });
+    return this.config;
+  };
+
+  private readonly _configureLinkPreview = (framework?: FrameworkProvider) => {
+    this._manager.configure(AffineLinkPreviewExtension, { framework });
     return this.config;
   };
 }
