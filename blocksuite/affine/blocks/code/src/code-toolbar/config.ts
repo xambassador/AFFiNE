@@ -122,16 +122,28 @@ export const clipboardGroup: MenuItemGroup<CodeBlockToolbarContext> = {
     {
       type: 'wrap',
       generate: ({ blockComponent, close }) => {
-        const wrapped = blockComponent.model.props.wrap;
-        const label = wrapped ? 'Cancel wrap' : 'Wrap';
-        const icon = wrapped ? CancelWrapIcon : WrapIcon;
-
         return {
-          label,
-          icon,
-          action: () => {
-            blockComponent.setWrap(!wrapped);
-            close();
+          action: () => {},
+          render: () => {
+            const wrapped = blockComponent.model.props.wrap;
+            const label = wrapped ? 'Cancel wrap' : 'Wrap';
+            const icon = wrapped ? CancelWrapIcon : WrapIcon;
+            return html`
+              <editor-menu-action
+                @click=${() => {
+                  blockComponent.setWrap(!wrapped);
+                  close();
+                }}
+                aria-label=${label}
+              >
+                ${icon}
+                <span class="label">${label}</span>
+                <toggle-switch
+                  style="margin-left: auto;"
+                  .on="${wrapped}"
+                ></toggle-switch>
+              </editor-menu-action>
+            `;
           },
         };
       },
