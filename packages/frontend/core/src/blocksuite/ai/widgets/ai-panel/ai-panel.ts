@@ -113,7 +113,11 @@ export class AffineAIPanelWidget extends WidgetComponent {
   };
 
   private readonly _clickOutside = () => {
-    this._discardWithConfirmation();
+    if (this.state === 'generating') {
+      this._stopWithConfirmation();
+    } else {
+      this._discardWithConfirmation();
+    }
   };
 
   private _discardModalAbort: AbortController | null = null;
@@ -168,6 +172,16 @@ export class AffineAIPanelWidget extends WidgetComponent {
   private _stopAutoUpdate?: undefined | (() => void);
 
   ctx: unknown = null;
+
+  private readonly _stopWithConfirmation = () => {
+    this.showStopModal()
+      .then(stop => {
+        if (stop) {
+          this.stopGenerating();
+        }
+      })
+      .catch(console.error);
+  };
 
   private readonly _discardWithConfirmation = () => {
     if (this.state === 'hidden') {
@@ -273,6 +287,24 @@ export class AffineAIPanelWidget extends WidgetComponent {
   setState = (state: AffineAIPanelState, reference: Element) => {
     this.state = state;
     this._autoUpdatePosition(reference);
+  };
+
+  showStopModal = () => {
+    const notification = this.host.std.getOptional(NotificationProvider);
+    if (!notification) {
+      return Promise.resolve(true);
+    }
+    this._clearDiscardModal();
+    this._discardModalAbort = new AbortController();
+    return notification
+      .confirm({
+        title: 'Stop generating',
+        message: 'AI is generating content. Do you want to stop generating?',
+        cancelText: 'Cancel',
+        confirmText: 'Stop',
+        abort: this._abortController.signal,
+      })
+      .finally(() => (this._discardModalAbort = null));
   };
 
   showDiscardModal = () => {

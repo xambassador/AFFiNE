@@ -21,6 +21,21 @@ test.describe('AIChatWith/Text', () => {
     await expect(page.getByTestId('ai-generating')).not.toBeVisible();
   });
 
+  test('should support stop generating when click outside', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
+    await utils.editor.askAIWithText(page, 'Panda');
+    await page.getByTestId('action-generate-image').click();
+    await expect(page.getByTestId('ai-generating')).toBeVisible();
+    await page.mouse.click(0, 0);
+    await expect(
+      page.getByText('AI is generating content. Do you want to stop generating')
+    ).toBeVisible();
+    await page.getByTestId('confirm-modal-confirm').click();
+    await expect(page.getByTestId('ai-generating')).not.toBeVisible();
+  });
+
   test('should support copy answer', async ({ loggedInPage: page, utils }) => {
     const { translate } = await utils.editor.askAIWithText(page, 'Apple');
     const { answer } = await translate('German');
