@@ -191,7 +191,7 @@ export class CollectionStore extends Store {
     return filterList.map(filter => {
       const leftValue = filter.left.name;
       const method = filter.funcName;
-      const args = filter.args.map(arg => arg.value);
+      const args = filter.args.filter(arg => !!arg).map(arg => arg.value);
       const arg0 = args[0];
       if (leftValue === 'Created' || leftValue === 'Updated') {
         const key = leftValue === 'Created' ? 'createdAt' : 'updatedAt';
