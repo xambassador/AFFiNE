@@ -1,5 +1,5 @@
 import { Button, IconButton, Modal } from '@affine/component';
-import { getStoreManager } from '@affine/core/blocksuite/manager/migrating-store';
+import { getStoreManager } from '@affine/core/blocksuite/manager/store';
 import { useAsyncCallback } from '@affine/core/components/hooks/affine-async-hooks';
 import type {
   DialogComponentProps,

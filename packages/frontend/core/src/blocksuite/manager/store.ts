@@ -1,24 +1,9 @@
-import { FeatureFlagStoreExtension } from '@affine/core/blocksuite/extensions/feature-flag';
+import { AIStoreExtension } from '@affine/core/blocksuite/store-extensions/ai';
 import type { FeatureFlagService } from '@affine/core/modules/feature-flag';
-import {
-  type StoreExtensionContext,
-  StoreExtensionManager,
-  StoreExtensionProvider,
-} from '@blocksuite/affine/ext-loader';
+import { StoreExtensionManager } from '@blocksuite/affine/ext-loader';
 import { getInternalStoreExtensions } from '@blocksuite/affine/extensions/store';
 
-import { AIChatBlockSchemaExtension } from '../ai/blocks/ai-chat-block/model';
-import { TranscriptionBlockSchemaExtension } from '../ai/blocks/transcription-block/model';
-
-class MigratingAffineStoreExtension extends StoreExtensionProvider {
-  override name = 'affine-store-extensions';
-
-  override setup(context: StoreExtensionContext) {
-    super.setup(context);
-    context.register(AIChatBlockSchemaExtension);
-    context.register(TranscriptionBlockSchemaExtension);
-  }
-}
+import { FeatureFlagStoreExtension } from '../store-extensions/feature-flag';
 
 interface Configure {
   init: () => Configure;
@@ -42,7 +27,7 @@ class StoreProvider {
   constructor() {
     this._manager = new StoreExtensionManager([
       ...getInternalStoreExtensions(),
-      MigratingAffineStoreExtension,
+      AIStoreExtension,
       FeatureFlagStoreExtension,
     ]);
   }

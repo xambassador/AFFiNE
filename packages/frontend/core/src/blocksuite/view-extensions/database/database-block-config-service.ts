@@ -4,8 +4,8 @@ import {
 } from '@blocksuite/affine/blocks/database';
 import type { ExtensionType } from '@blocksuite/affine/store';
 
-import { groupByConfigList } from '../database-block/group-by';
-import { propertiesPresets } from '../database-block/properties';
+import { groupByConfigList } from '../../database-block/group-by';
+import { propertiesPresets } from '../../database-block/properties';
 
 export function patchDatabaseBlockConfigService(): ExtensionType {
   //TODO use service

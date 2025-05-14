@@ -6,7 +6,7 @@ import {
 import {
   CodeBlockHtmlPreview,
   effects as htmlPreviewEffects,
-} from '../extensions/code-block-preview/html-preview';
+} from './html-preview';
 
 export class CodeBlockPreviewViewExtension extends ViewExtensionProvider {
   override name = 'code-block-preview';

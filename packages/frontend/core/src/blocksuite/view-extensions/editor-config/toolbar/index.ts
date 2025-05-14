@@ -89,7 +89,7 @@ import { keyed } from 'lit/directives/keyed.js';
 import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
-import { openDocActions } from '../../open-doc';
+import { openDocActions } from '../../editor-view/open-doc';
 import { copyAsImage, createCopyAsPngMenuItem } from './copy-as-image';
 
 export function createToolbarMoreMenuConfig(framework: FrameworkProvider) {

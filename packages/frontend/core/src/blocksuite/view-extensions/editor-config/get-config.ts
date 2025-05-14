@@ -1,7 +1,7 @@
 import {
   createCustomToolbarExtension,
   createToolbarMoreMenuConfig,
-} from '@affine/core/blocksuite/extensions/editor-config/toolbar';
+} from '@affine/core/blocksuite/view-extensions/editor-config/toolbar';
 import { WorkspaceServerService } from '@affine/core/modules/cloud';
 import { EditorSettingService } from '@affine/core/modules/editor-setting';
 import { ToolbarMoreMenuConfigExtension } from '@blocksuite/affine/components/toolbar';

@@ -6,7 +6,7 @@ import {
   LitEdgelessEditor,
   type PageEditor,
 } from '@affine/core/blocksuite/editors';
-import { getViewManager } from '@affine/core/blocksuite/manager/migrating-view';
+import { getViewManager } from '@affine/core/blocksuite/manager/view';
 import { useEnableAI } from '@affine/core/components/hooks/affine/use-enable-ai';
 import type { DocCustomPropertyInfo } from '@affine/core/modules/db';
 import type {

@@ -2,7 +2,7 @@ import type { ElementOrFactory } from '@affine/component';
 import {
   patchForEdgelessNoteConfig,
   patchForEmbedSyncedDocConfig,
-} from '@affine/core/blocksuite/extensions/edgeless-block-header/patch';
+} from '@affine/core/blocksuite/view-extensions/edgeless-block-header/patch';
 import {
   type ViewExtensionContext,
   ViewExtensionProvider,

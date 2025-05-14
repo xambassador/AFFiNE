@@ -1,4 +1,4 @@
-import { getFeatureFlagSyncer } from '@affine/core/blocksuite/extensions/feature-flag/feature-flag-syncer';
+import { getFeatureFlagSyncer } from '@affine/core/blocksuite/store-extensions/feature-flag/feature-flag-syncer';
 import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import {
   type StoreExtensionContext,

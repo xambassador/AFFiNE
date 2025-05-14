@@ -1,5 +1,5 @@
-import { KeyboardToolbarExtension } from '@affine/core/blocksuite/extensions/mobile/keyboard-toolbar-extension';
-import { MobileFeatureFlagControl } from '@affine/core/blocksuite/extensions/mobile/mobile-feature-flag-control';
+import { KeyboardToolbarExtension } from '@affine/core/blocksuite/view-extensions/mobile/keyboard-toolbar-extension';
+import { MobileFeatureFlagControl } from '@affine/core/blocksuite/view-extensions/mobile/mobile-feature-flag-control';
 import {
   type ViewExtensionContext,
   ViewExtensionProvider,

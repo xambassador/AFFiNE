@@ -1,4 +1,9 @@
 import { Button, Divider, useLitPortalFactory } from '@affine/component';
+import { getViewManager } from '@affine/core/blocksuite/manager/view';
+import {
+  patchReferenceRenderer,
+  type ReferenceReactRenderer,
+} from '@affine/core/blocksuite/view-extensions/editor-view/reference-renderer';
 import { useGuard } from '@affine/core/components/guard';
 import { useEnableAI } from '@affine/core/components/hooks/affine/use-enable-ai';
 import { DocService } from '@affine/core/modules/doc';
@@ -41,11 +46,6 @@ import {
   AffineSharedPageReference,
 } from '../../components/affine/reference-link';
 import { LitTextRenderer } from '../ai/components/text-renderer';
-import {
-  patchReferenceRenderer,
-  type ReferenceReactRenderer,
-} from '../extensions/reference-renderer';
-import { getViewManager } from '../manager/migrating-view';
 import * as styles from './bi-directional-link-panel.css';
 
 const PREFIX = 'bi-directional-link-panel-collapse:';

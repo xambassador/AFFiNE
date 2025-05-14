@@ -1,4 +1,6 @@
 import { createReactComponentFromLit } from '@affine/component';
+import { getStoreManager } from '@affine/core/blocksuite/manager/store';
+import { getViewManager } from '@affine/core/blocksuite/manager/view';
 import type { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { Container, type ServiceProvider } from '@blocksuite/affine/global/di';
 import { WithDisposable } from '@blocksuite/affine/global/lit';
@@ -33,8 +35,6 @@ import { keyed } from 'lit/directives/keyed.js';
 import { literal } from 'lit/static-html.js';
 import React from 'react';
 
-import { getStoreManager } from '../../manager/migrating-store';
-import { getViewManager } from '../../manager/migrating-view';
 import { markDownToDoc } from '../../utils';
 import type {
   AffineAIPanelState,

@@ -1,4 +1,4 @@
-import { getStoreManager } from '@affine/core/blocksuite/manager/migrating-store';
+import { getStoreManager } from '@affine/core/blocksuite/manager/store';
 import { AffineContext } from '@affine/core/components/context';
 import { AppFallback } from '@affine/core/mobile/components/app-fallback';
 import { configureMobileModules } from '@affine/core/mobile/modules';

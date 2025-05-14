@@ -1,4 +1,4 @@
-import { getStoreManager } from '@affine/core/blocksuite/manager/migrating-store';
+import { getStoreManager } from '@affine/core/blocksuite/manager/store';
 import {
   AwarenessStore,
   type Doc,

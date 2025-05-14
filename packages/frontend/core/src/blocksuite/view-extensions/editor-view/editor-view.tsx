@@ -1,18 +1,4 @@
 import type { ConfirmModalProps, ElementOrFactory } from '@affine/component';
-import { patchForAudioEmbedView } from '@affine/core/blocksuite/extensions/audio/audio-view';
-import { patchDatabaseBlockConfigService } from '@affine/core/blocksuite/extensions/database-block-config-service';
-import { buildDocDisplayMetaExtension } from '@affine/core/blocksuite/extensions/display-meta';
-import { patchDocModeService } from '@affine/core/blocksuite/extensions/doc-mode-service';
-import { patchDocUrlExtensions } from '@affine/core/blocksuite/extensions/doc-url';
-import { patchFileSizeLimitExtension } from '@affine/core/blocksuite/extensions/file-size-limit';
-import { patchNotificationService } from '@affine/core/blocksuite/extensions/notification-service';
-import { patchOpenDocExtension } from '@affine/core/blocksuite/extensions/open-doc';
-import { patchQuickSearchService } from '@affine/core/blocksuite/extensions/quick-search-service';
-import {
-  patchReferenceRenderer,
-  type ReferenceReactRenderer,
-} from '@affine/core/blocksuite/extensions/reference-renderer';
-import { patchSideBarService } from '@affine/core/blocksuite/extensions/side-bar-service';
 import {
   AffinePageReference,
   AffineSharedPageReference,
@@ -28,6 +14,20 @@ import {
 import { FrameworkProvider } from '@toeverything/infra';
 import type { TemplateResult } from 'lit';
 import { z } from 'zod';
+
+import { patchForAudioEmbedView } from './audio/audio-view';
+import { buildDocDisplayMetaExtension } from './display-meta';
+import { patchDocModeService } from './doc-mode-service';
+import { patchDocUrlExtensions } from './doc-url';
+import { patchFileSizeLimitExtension } from './file-size-limit';
+import { patchNotificationService } from './notification-service';
+import { patchOpenDocExtension } from './open-doc';
+import { patchQuickSearchService } from './quick-search-service';
+import {
+  patchReferenceRenderer,
+  type ReferenceReactRenderer,
+} from './reference-renderer';
+import { patchSideBarService } from './side-bar-service';
 
 const optionsSchema = z.object({
   // services
@@ -115,12 +115,9 @@ export class AffineEditorViewExtension extends ViewExtensionProvider<AffineEdito
         patchDocModeService(docService, docsService, editorService),
         patchFileSizeLimitExtension(framework),
         buildDocDisplayMetaExtension(framework),
+        patchForAudioEmbedView(reactToLit),
       ])
       .register(patchDocUrlExtensions(framework))
-      .register(patchQuickSearchService(framework))
-      .register([
-        patchDatabaseBlockConfigService(),
-        patchForAudioEmbedView(reactToLit),
-      ]);
+      .register(patchQuickSearchService(framework));
   }
 }

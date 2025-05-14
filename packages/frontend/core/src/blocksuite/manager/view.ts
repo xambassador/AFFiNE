@@ -1,23 +1,25 @@
 import type { ReactToLit } from '@affine/component';
-import { AIViewExtension } from '@affine/core/blocksuite/extensions/ai';
-import { CloudViewExtension } from '@affine/core/blocksuite/extensions/cloud';
+import { AIViewExtension } from '@affine/core/blocksuite/view-extensions/ai';
+import { CloudViewExtension } from '@affine/core/blocksuite/view-extensions/cloud';
+import { CodeBlockPreviewViewExtension } from '@affine/core/blocksuite/view-extensions/code-block-preview';
+import { AffineDatabaseViewExtension } from '@affine/core/blocksuite/view-extensions/database';
 import {
   EdgelessBlockHeaderConfigViewExtension,
   type EdgelessBlockHeaderViewOptions,
-} from '@affine/core/blocksuite/extensions/edgeless-block-header';
-import { AffineEditorConfigViewExtension } from '@affine/core/blocksuite/extensions/editor-config';
-import { createDatabaseOptionsConfig } from '@affine/core/blocksuite/extensions/editor-config/database';
-import { createLinkedWidgetConfig } from '@affine/core/blocksuite/extensions/editor-config/linked';
-import { ElectronViewExtension } from '@affine/core/blocksuite/extensions/electron';
-import { AffineLinkPreviewExtension } from '@affine/core/blocksuite/extensions/link-preview-service';
-import { MobileViewExtension } from '@affine/core/blocksuite/extensions/mobile';
-import { PdfViewExtension } from '@affine/core/blocksuite/extensions/pdf';
-import { AffineThemeViewExtension } from '@affine/core/blocksuite/extensions/theme';
-import { TurboRendererViewExtension } from '@affine/core/blocksuite/extensions/turbo-renderer';
+} from '@affine/core/blocksuite/view-extensions/edgeless-block-header';
+import { AffineEditorConfigViewExtension } from '@affine/core/blocksuite/view-extensions/editor-config';
+import { createDatabaseOptionsConfig } from '@affine/core/blocksuite/view-extensions/editor-config/database';
+import { createLinkedWidgetConfig } from '@affine/core/blocksuite/view-extensions/editor-config/linked';
 import {
   AffineEditorViewExtension,
   type AffineEditorViewOptions,
-} from '@affine/core/blocksuite/manager/editor-view';
+} from '@affine/core/blocksuite/view-extensions/editor-view/editor-view';
+import { ElectronViewExtension } from '@affine/core/blocksuite/view-extensions/electron';
+import { AffineLinkPreviewExtension } from '@affine/core/blocksuite/view-extensions/link-preview-service';
+import { MobileViewExtension } from '@affine/core/blocksuite/view-extensions/mobile';
+import { PdfViewExtension } from '@affine/core/blocksuite/view-extensions/pdf';
+import { AffineThemeViewExtension } from '@affine/core/blocksuite/view-extensions/theme';
+import { TurboRendererViewExtension } from '@affine/core/blocksuite/view-extensions/turbo-renderer';
 import { PeekViewService } from '@affine/core/modules/peek-view';
 import { DebugLogger } from '@affine/debug';
 import { mixpanel } from '@affine/track';
@@ -34,8 +36,6 @@ import { AffineCanvasTextFonts } from '@blocksuite/affine/shared/services';
 import { LinkedDocViewExtension } from '@blocksuite/affine/widgets/linked-doc/view';
 import type { FrameworkProvider } from '@toeverything/infra';
 import type { TemplateResult } from 'lit';
-
-import { CodeBlockPreviewViewExtension } from './code-block-preview';
 
 type Configure = {
   init: () => Configure;
@@ -88,6 +88,7 @@ class ViewProvider {
       AIViewExtension,
       ElectronViewExtension,
       AffineLinkPreviewExtension,
+      AffineDatabaseViewExtension,
     ]);
   }
 

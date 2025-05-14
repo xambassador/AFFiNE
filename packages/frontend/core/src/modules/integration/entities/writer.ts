@@ -1,4 +1,4 @@
-import { getStoreManager } from '@affine/core/blocksuite/manager/migrating-store';
+import { getStoreManager } from '@affine/core/blocksuite/manager/store';
 import { MarkdownTransformer } from '@blocksuite/affine/widgets/linked-doc';
 import { Entity } from '@toeverything/infra';
 
