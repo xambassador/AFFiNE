@@ -312,7 +312,8 @@ export class MindMapDragExtension extends InteractivityExtension {
     mindmapNode: MindmapNode,
     pos: { x: number; y: number }
   ) {
-    const surfaceBlock = this.gfx.surfaceComponent as SurfaceBlockComponent;
+    const surfaceBlock = this.gfx
+      .surfaceComponent as SurfaceBlockComponent | null;
     const renderer = surfaceBlock?.renderer;
     const indicatorOverlay = this._indicatorOverlay;
 
