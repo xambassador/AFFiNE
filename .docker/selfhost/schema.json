@@ -70,6 +70,18 @@
             "concurrency": 1
           }
         },
+        "queues.indexer": {
+          "type": "object",
+          "description": "The config for indexer job queue\n@default {\"concurrency\":1}",
+          "properties": {
+            "concurrency": {
+              "type": "number"
+            }
+          },
+          "default": {
+            "concurrency": 1
+          }
+        },
         "queues.notification": {
           "type": "object",
           "description": "The config for notification job queue\n@default {\"concurrency\":10}",

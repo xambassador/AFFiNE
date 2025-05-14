@@ -61,6 +61,14 @@ defineModuleConfig('job', {
     schema,
   },
 
+  'queues.indexer': {
+    desc: 'The config for indexer job queue',
+    default: {
+      concurrency: 1,
+    },
+    schema,
+  },
+
   'queues.notification': {
     desc: 'The config for notification job queue',
     default: {

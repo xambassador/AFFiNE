@@ -158,14 +158,7 @@ export class DocModel extends BaseModel {
    * Get a doc by workspaceId and docId.
    */
   async get(workspaceId: string, docId: string): Promise<Doc | null> {
-    const row = await this.db.snapshot.findUnique({
-      where: {
-        workspaceId_id: {
-          workspaceId,
-          id: docId,
-        },
-      },
-    });
+    const row = await this.getSnapshot(workspaceId, docId);
     if (!row) {
       return null;
     }
@@ -176,6 +169,17 @@ export class DocModel extends BaseModel {
       timestamp: row.updatedAt.getTime(),
       editorId: row.updatedBy || undefined,
     };
+  }
+
+  async getSnapshot(workspaceId: string, docId: string) {
+    return await this.db.snapshot.findUnique({
+      where: {
+        workspaceId_id: {
+          workspaceId,
+          id: docId,
+        },
+      },
+    });
   }
 
   async getAuthors(workspaceId: string, docId: string) {

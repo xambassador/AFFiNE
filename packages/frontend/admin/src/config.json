@@ -31,6 +31,10 @@
       "type": "Object",
       "desc": "The config for doc job queue"
     },
+    "queues.indexer": {
+      "type": "Object",
+      "desc": "The config for indexer job queue"
+    },
     "queues.notification": {
       "type": "Object",
       "desc": "The config for notification job queue"

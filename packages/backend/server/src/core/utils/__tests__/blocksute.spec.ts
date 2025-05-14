@@ -1,0 +1,57 @@
+import test from 'ava';
+import { omit } from 'lodash-es';
+
+import { createModule } from '../../../__tests__/create-module';
+import { Mockers } from '../../../__tests__/mocks';
+import { Models } from '../../../models';
+import {
+  readAllBlocksFromDocSnapshot,
+  readAllDocIdsFromWorkspaceSnapshot,
+} from '../blocksuite';
+
+const module = await createModule({});
+const models = module.get(Models);
+
+const owner = await module.create(Mockers.User);
+const workspace = await module.create(Mockers.Workspace, {
+  snapshot: true,
+  owner,
+});
+
+const docSnapshot = await module.create(Mockers.DocSnapshot, {
+  workspaceId: workspace.id,
+  user: owner,
+});
+
+test.after.always(async () => {
+  await module.close();
+});
+
+test('can read all doc ids from workspace snapshot', async t => {
+  const rootDoc = await models.doc.get(workspace.id, workspace.id);
+  t.truthy(rootDoc);
+
+  const docIds = readAllDocIdsFromWorkspaceSnapshot(rootDoc!.blob);
+
+  t.deepEqual(docIds, ['5nS9BSp3Px']);
+  t.snapshot(docIds);
+});
+
+test('can read all blocks from doc snapshot', async t => {
+  const rootDoc = await models.doc.get(workspace.id, workspace.id);
+  t.truthy(rootDoc);
+  const doc = await models.doc.get(workspace.id, docSnapshot.id);
+  t.truthy(doc);
+
+  const result = await readAllBlocksFromDocSnapshot(
+    workspace.id,
+    rootDoc!.blob,
+    'doc-0',
+    docSnapshot.blob
+  );
+
+  t.snapshot({
+    ...result,
+    blocks: result!.blocks.map(block => omit(block, ['yblock'])),
+  });
+});
