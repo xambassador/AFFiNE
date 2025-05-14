@@ -143,9 +143,22 @@ export const AllPage = () => {
   const collectionRulesService = useService(CollectionRulesService);
   useEffect(() => {
     const subscription = collectionRulesService
-      .watch(
-        [
-          ...(filters ?? []),
+      .watch({
+        filters:
+          filters && filters.length > 0
+            ? filters
+            : [
+                // if no filters are present, match all non-trash documents
+                {
+                  type: 'system',
+                  key: 'trash',
+                  method: 'is',
+                  value: 'false',
+                },
+              ],
+        groupBy,
+        orderBy,
+        extraFilters: [
           {
             type: 'system',
             key: 'empty-journal',
@@ -159,9 +172,7 @@ export const AllPage = () => {
             value: 'false',
           },
         ],
-        groupBy,
-        orderBy
-      )
+      })
       .subscribe({
         next: result => {
           explorerContextValue.groups$.next(result.groups);

@@ -49,21 +49,23 @@ export const RulesMode = ({
 
   useEffect(() => {
     const subscription = collectionRulesService
-      .watch(
-        collection.rules.filters.length > 0
-          ? [
-              ...collection.rules.filters,
-              {
-                type: 'system',
-                key: 'trash',
-                method: 'is',
-                value: 'false',
-              },
-            ]
-          : [],
-        undefined,
-        undefined
-      )
+      .watch({
+        filters: collection.rules.filters,
+        extraFilters: [
+          {
+            type: 'system',
+            key: 'trash',
+            method: 'is',
+            value: 'false',
+          },
+          {
+            type: 'system',
+            key: 'empty-journal',
+            method: 'is',
+            value: 'false',
+          },
+        ],
+      })
       .subscribe(rules => {
         setRulesPageIds(rules.groups.flatMap(group => group.items));
       });
@@ -82,7 +84,8 @@ export const RulesMode = ({
     return allPageListConfig.allPages.filter(meta => {
       return (
         collection.allowList.includes(meta.id) &&
-        !rulesPageIds.includes(meta.id)
+        !rulesPageIds.includes(meta.id) &&
+        !meta.trash
       );
     });
   }, [allPageListConfig.allPages, collection.allowList, rulesPageIds]);
@@ -196,6 +199,7 @@ export const RulesMode = ({
                           <div
                             className={clsx(
                               styles.includeItemTitle,
+                              page?.trash && styles.trashTitle,
                               styles.ellipsis
                             )}
                           >

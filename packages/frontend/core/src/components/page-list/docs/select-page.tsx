@@ -114,21 +114,34 @@ export const SelectPage = ({
 
   useEffect(() => {
     const subscription = collectionRulesService
-      .watch([
-        ...filters,
-        {
-          type: 'system',
-          key: 'empty-journal',
-          method: 'is',
-          value: 'false',
-        },
-        {
-          type: 'system',
-          key: 'trash',
-          method: 'is',
-          value: 'false',
-        },
-      ])
+      .watch({
+        filters:
+          filters.length > 0
+            ? filters
+            : [
+                // if no filters are present, match all non-trash documents
+                {
+                  type: 'system',
+                  key: 'trash',
+                  method: 'is',
+                  value: 'false',
+                },
+              ],
+        extraFilters: [
+          {
+            type: 'system',
+            key: 'empty-journal',
+            method: 'is',
+            value: 'false',
+          },
+          {
+            type: 'system',
+            key: 'trash',
+            method: 'is',
+            value: 'false',
+          },
+        ],
+      })
       .subscribe(result => {
         setFilteredDocIds(result.groups.flatMap(group => group.items));
       });

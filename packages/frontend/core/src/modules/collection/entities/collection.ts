@@ -48,23 +48,24 @@ export class Collection extends Entity<{ id: string }> {
     return this.info$.pipe(
       switchMap(info => {
         return this.rulesService
-          .watch(
-            info.rules.filters.length > 0
-              ? [
-                  ...info.rules.filters,
-                  // if we have more than one filter, we need to add a system filter to exclude trash
-                  {
-                    type: 'system',
-                    key: 'trash',
-                    method: 'is',
-                    value: 'false',
-                  },
-                ]
-              : [], // If no filters are provided, an empty filter list will match no documents
-            undefined,
-            undefined,
-            info.allowList
-          )
+          .watch({
+            filters: info.rules.filters,
+            extraAllowList: info.allowList,
+            extraFilters: [
+              {
+                type: 'system',
+                key: 'trash',
+                method: 'is',
+                value: 'false',
+              },
+              {
+                type: 'system',
+                key: 'empty-journal',
+                method: 'is',
+                value: 'false',
+              },
+            ],
+          })
           .pipe(map(result => result.groups.map(group => group.items).flat()));
       })
     );

@@ -3,7 +3,6 @@ import {
   catchError,
   combineLatest,
   distinctUntilChanged,
-  firstValueFrom,
   map,
   type Observable,
   of,
@@ -19,27 +18,51 @@ export class CollectionRulesService extends Service {
     super();
   }
 
-  watch(
-    filters: FilterParams[],
-    groupBy?: GroupByParams,
-    orderBy?: OrderByParams,
-    extraAllowList?: string[]
-  ): Observable<{
+  watch(options: {
+    /**
+     * Primary filters
+     *
+     * If filters.length === 0, no items will be matched
+     */
+    filters?: FilterParams[];
+    groupBy?: GroupByParams;
+    orderBy?: OrderByParams;
+    /**
+     * Additional allowed items that bypass primary filters but are still subject to extraFilters
+     */
+    extraAllowList?: string[];
+    /**
+     * Additional filters that will be applied after the primary filters and extraAllowList
+     *
+     * Useful for applying system-level filters such as trash, empty journal, etc.
+     *
+     * Note: If the primary filters match no items, these extraFilters will not be applied.
+     */
+    extraFilters?: FilterParams[];
+  }): Observable<{
     groups: {
       key: string;
       items: string[];
     }[];
     filterErrors: any[];
   }> {
+    const {
+      filters = [],
+      groupBy,
+      orderBy,
+      extraAllowList,
+      extraFilters = [],
+    } = options;
+
     // STEP 1: FILTER
     const filterProviders = this.framework.getAll(FilterProvider);
-    const filtered$: Observable<{
+    const primaryFiltered$: Observable<{
       filtered: Set<string>;
       filterErrors: any[]; // errors from the filter providers
     }> =
       filters.length === 0
         ? of({
-            filtered: new Set<string>(extraAllowList ?? []),
+            filtered: new Set<string>([]),
             filterErrors: [],
           })
         : combineLatest(
@@ -75,16 +98,50 @@ export class CollectionRulesService extends Service {
               const filtered =
                 'error' in aggregated ? new Set<string>() : aggregated;
 
-              const finalSet = filtered.union(
-                new Set<string>(extraAllowList ?? [])
-              );
-
               return {
-                filtered: finalSet,
+                filtered: filtered,
                 filterErrors: results.map(i => ('error' in i ? i.error : null)),
               };
             })
           );
+
+    const extraFiltered$ =
+      extraFilters.length === 0
+        ? of(null)
+        : combineLatest(
+            extraFilters.map(filter => {
+              const provider = filterProviders.get(filter.type);
+              if (!provider) {
+                throw new Error(`Unsupported filter type: ${filter.type}`);
+              }
+              return provider.filter$(filter).pipe(
+                distinctUntilChanged((prev, curr) => {
+                  return prev.isSubsetOf(curr) && curr.isSubsetOf(prev);
+                })
+              );
+            })
+          ).pipe(
+            map(results => {
+              return results.reduce((acc, result) => {
+                return acc.intersection(result);
+              });
+            })
+          );
+
+    const finalFiltered$ = combineLatest([
+      primaryFiltered$,
+      extraFiltered$,
+    ]).pipe(
+      map(([primary, extra]) => ({
+        filtered:
+          extra === null
+            ? primary.filtered.union(new Set(extraAllowList ?? []))
+            : primary.filtered
+                .union(new Set(extraAllowList ?? []))
+                .intersection(extra),
+        filterErrors: primary.filterErrors,
+      }))
+    );
 
     // STEP 2: ORDER BY
     const orderByProvider = orderBy
@@ -94,7 +151,7 @@ export class CollectionRulesService extends Service {
       ordered: string[];
       filtered: Set<string>;
       filterErrors: any[];
-    }> = filtered$.pipe(last$ => {
+    }> = finalFiltered$.pipe(last$ => {
       if (orderBy && orderByProvider) {
         const shared$ = last$.pipe(share());
         const items$ = shared$.pipe(
@@ -171,7 +228,7 @@ export class CollectionRulesService extends Service {
       }[];
       filterErrors: any[];
     }> = grouped$.pipe(
-      throttleTime(300, undefined, { leading: false, trailing: true }), // throttle the results to avoid too many re-renders
+      throttleTime(300, undefined, { leading: true, trailing: true }), // throttle the results to avoid too many re-renders
       map(({ grouped, ordered, filtered, filterErrors }) => {
         const result: { key: string; items: string[] }[] = [];
 
@@ -215,16 +272,5 @@ export class CollectionRulesService extends Service {
     );
 
     return final$;
-  }
-
-  compute(
-    filters: FilterParams[],
-    groupBy?: GroupByParams,
-    orderBy?: OrderByParams,
-    extraAllowList?: string[]
-  ) {
-    return firstValueFrom(
-      this.watch(filters, groupBy, orderBy, extraAllowList)
-    );
   }
 }

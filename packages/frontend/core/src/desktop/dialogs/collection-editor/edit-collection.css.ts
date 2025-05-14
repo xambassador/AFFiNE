@@ -37,6 +37,9 @@ export const includeItemTitle = style({
   overflow: 'hidden',
   fontWeight: 600,
 });
+export const trashTitle = style({
+  textDecoration: 'line-through',
+});
 export const includeItemContentIs = style({
   padding: '0 8px',
   color: cssVar('textSecondaryColor'),
