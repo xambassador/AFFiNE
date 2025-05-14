@@ -105,6 +105,9 @@ export class OpentelemetryProvider {
 
   @OnEvent('config.init')
   async init(event: Events['config.init']) {
+    if (env.flavors.script) {
+      return;
+    }
     if (event.config.metrics.enabled) {
       await this.setup();
       registerCustomMetrics();

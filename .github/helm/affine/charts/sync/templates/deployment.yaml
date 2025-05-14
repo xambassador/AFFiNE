@@ -69,6 +69,17 @@ spec:
                 key: redis-password
           - name: REDIS_SERVER_DATABASE
             value: "{{ .Values.global.redis.database }}"
+          - name: AFFINE_INDEXER_SEARCH_PROVIDER
+            value: "{{ .Values.global.indexer.provider }}"
+          - name: AFFINE_INDEXER_SEARCH_ENDPOINT
+            value: "{{ .Values.global.indexer.endpoint }}"
+          - name: AFFINE_INDEXER_SEARCH_USERNAME
+            value: "{{ .Values.global.indexer.username }}"
+          - name: AFFINE_INDEXER_SEARCH_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: indexer
+                key: indexer-password
           - name: AFFINE_SERVER_PORT
             value: "{{ .Values.service.port }}"
           - name: AFFINE_SERVER_HOST
