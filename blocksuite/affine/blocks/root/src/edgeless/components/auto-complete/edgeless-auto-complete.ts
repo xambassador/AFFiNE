@@ -28,6 +28,7 @@ import {
   shapeMethods,
 } from '@blocksuite/affine-model';
 import { ToolbarRegistryIdentifier } from '@blocksuite/affine-shared/services';
+import type { SelectedRect } from '@blocksuite/affine-shared/types';
 import { handleNativeRangeAtPoint } from '@blocksuite/affine-shared/utils';
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import type { Bound, IVec } from '@blocksuite/global/gfx';
@@ -51,7 +52,6 @@ import { property, state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
 
-import type { SelectedRect } from '../rects/edgeless-selected-rect.js';
 import { EdgelessAutoCompletePanel } from './auto-complete-panel.js';
 import {
   createEdgelessElement,

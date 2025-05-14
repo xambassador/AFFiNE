@@ -28,10 +28,6 @@ export {
   SurfaceBlockSchema,
   SurfaceBlockSchemaExtension,
 } from './surface-model.js';
-export {
-  EdgelessSurfaceBlockSpec,
-  PageSurfaceBlockSpec,
-} from './surface-spec.js';
 export { SurfaceBlockTransformer } from './surface-transformer.js';
 export * from './tool/default-tool.js';
 export {

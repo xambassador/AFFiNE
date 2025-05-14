@@ -5,6 +5,7 @@ import {
   type RootBlockModel,
 } from '@blocksuite/affine-model';
 import { unsafeCSSVarV2 } from '@blocksuite/affine-shared/theme';
+import type { SelectedRect } from '@blocksuite/affine-shared/types';
 import {
   getSelectedRect,
   requestThrottledConnectedFrame,
@@ -29,16 +30,6 @@ import { type Subscription } from 'rxjs';
 import type { EdgelessRootBlockComponent } from '../../edgeless-root-block.js';
 import { RenderResizeHandles } from '../resize/resize-handles.js';
 import { generateCursorUrl, getRotatedResizeCursor } from '../utils.js';
-
-export type SelectedRect = {
-  left: number;
-  top: number;
-  width: number;
-  height: number;
-  borderWidth: number;
-  borderStyle: string;
-  rotate: number;
-};
 
 export const EDGELESS_SELECTED_RECT_WIDGET = 'edgeless-selected-rect';
 
