@@ -4,9 +4,9 @@ import remarkParse from 'remark-parse';
 import { unified } from 'unified';
 import { describe, expect, it } from 'vitest';
 
-import { remarkGfm } from '../../../adapters/markdown/gfm';
-import { remarkCallout } from '../../../adapters/markdown/remark-plugins';
-import type { MarkdownAST } from '../../../adapters/markdown/type';
+import { remarkGfm } from '../../../../adapters/markdown/gfm';
+import { remarkCallout } from '../../../../adapters/markdown/remark-plugins/remark-callout';
+import type { MarkdownAST } from '../../../../adapters/markdown/type';
 
 describe('remarkCallout plugin', () => {
   function isBlockQuote(node: MarkdownAST): node is Blockquote {
