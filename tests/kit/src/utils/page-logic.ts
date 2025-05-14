@@ -75,6 +75,20 @@ export const createLinkedPage = async (page: Page, pageName?: string) => {
     .click();
 };
 
+export const createSyncedPageInEdgeless = async (
+  page: Page,
+  pageName?: string
+) => {
+  await page.keyboard.type('@', { delay: 50 });
+  const cmdkPopover = page.locator('[data-testid="cmdk-quick-search"]');
+  await expect(cmdkPopover).toBeVisible();
+  await type(page, pageName || 'Untitled');
+
+  await cmdkPopover
+    .locator('[cmdk-item][data-value="creation:create-page"]')
+    .click();
+};
+
 export const createTodayPage = async (page: Page) => {
   // fixme: workaround for @ popover not showing up when editor is not ready
   await page.waitForTimeout(500);
