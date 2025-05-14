@@ -5,8 +5,6 @@ import { stopPropagation } from '@affine/core/utils';
 import { useI18n } from '@affine/i18n';
 import { EmbedSyncedDocBlockComponent } from '@blocksuite/affine/blocks/embed-doc';
 import { isPeekable, peek } from '@blocksuite/affine/components/peek';
-import { DisposableGroup } from '@blocksuite/affine/global/disposable';
-import { Bound } from '@blocksuite/affine/global/gfx';
 import type { EmbedSyncedDocModel } from '@blocksuite/affine-model';
 import {
   ArrowDownSmallIcon,
@@ -30,28 +28,10 @@ const ToggleButton = ({ model }: { model: EmbedSyncedDocModel }) => {
   const [isFolded, setIsFolded] = useState(model.isFolded);
   const t = useI18n();
 
-  useEffect(() => {
-    const disposables = new DisposableGroup();
-    disposables.add(
-      model.props.preFoldHeight$.subscribe(value => setIsFolded(!!value))
-    );
-    // the height may be changed by dragging selected rect
-    disposables.add(
-      model.xywh$.subscribe(value => {
-        const bound = Bound.deserialize(value);
-        const preFoldHeight = model.props.preFoldHeight$.peek();
-        if (
-          bound.h !== styles.headerHeight &&
-          preFoldHeight !== undefined &&
-          bound.h !== preFoldHeight
-        ) {
-          model.props.preFoldHeight$.value = 0;
-        }
-      })
-    );
-
-    return () => disposables.dispose();
-  }, [model.props.preFoldHeight$, model.xywh$]);
+  useEffect(
+    () => model.props.preFoldHeight$.subscribe(value => setIsFolded(!!value)),
+    [model.props.preFoldHeight$]
+  );
 
   const toggle = useCallback(() => {
     model.store.captureSync();

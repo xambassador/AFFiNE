@@ -11,9 +11,9 @@ import {
 } from './embed-linked-doc-block';
 import {
   EdgelessClipboardEmbedSyncedDocConfig,
-  EmbedSyncedDocInteraction,
   EmbedSyncedDocViewExtensions,
 } from './embed-synced-doc-block';
+import { EmbedSyncedDocInteraction } from './embed-synced-doc-block/configs/edgeless-interaction';
 
 export class EmbedDocViewExtension extends ViewExtensionProvider {
   override name = 'affine-embed-doc-block';

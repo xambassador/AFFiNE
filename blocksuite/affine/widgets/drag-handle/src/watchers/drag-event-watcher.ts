@@ -1089,7 +1089,7 @@ export class DragEventWatcher {
           block.flavour === 'affine:bookmark' ||
           block.flavour.startsWith('affine:embed-')
         ) {
-          const style = 'vertical' as EmbedCardStyle;
+          const style = (block.props.style ?? 'vertical') as EmbedCardStyle;
           block.props.style = style;
 
           blockBound.w = EMBED_CARD_WIDTH[style];
