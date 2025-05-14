@@ -58,7 +58,10 @@ export interface SingleView {
 
   propertyAdd(
     toAfterOfProperty: InsertToPosition,
-    type?: string
+    ops?: {
+      type?: string;
+      name?: string;
+    }
   ): string | undefined;
 
   serviceGet<T>(key: GeneralServiceIdentifier<T>): T | null;
@@ -236,8 +239,14 @@ export abstract class SingleViewBase<
     });
   }
 
-  propertyAdd(position: InsertToPosition, type?: string): string | undefined {
-    const id = this.dataSource.propertyAdd(position, type);
+  propertyAdd(
+    position: InsertToPosition,
+    ops?: {
+      type?: string;
+      name?: string;
+    }
+  ): string | undefined {
+    const id = this.dataSource.propertyAdd(position, ops);
     if (!id) {
       return;
     }

@@ -61,7 +61,10 @@ export interface DataSource {
   propertyMetaGet(type: string): PropertyMetaConfig | undefined;
   propertyAdd(
     insertToPosition: InsertToPosition,
-    type?: string
+    ops?: {
+      type?: string;
+      name?: string;
+    }
   ): string | undefined;
 
   propertyDuplicate(propertyId: string): string | undefined;
@@ -179,7 +182,10 @@ export abstract class DataSourceBase implements DataSource {
 
   abstract propertyAdd(
     insertToPosition: InsertToPosition,
-    type?: string
+    ops?: {
+      type?: string;
+      name?: string;
+    }
   ): string | undefined;
 
   abstract propertyDataGet(propertyId: string): Record<string, unknown>;

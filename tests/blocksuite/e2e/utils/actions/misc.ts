@@ -392,7 +392,9 @@ export async function initKanbanViewState(
         return rowId;
       });
       config.columns.forEach(column => {
-        const columnId = datasource.propertyAdd('end', column.type);
+        const columnId = datasource.propertyAdd('end', {
+          type: column.type,
+        });
         if (!columnId) {
           return;
         }

@@ -97,6 +97,7 @@ export const groupByConfigList = [
         },
       ];
     },
+    addToGroup: v => v,
     view: uniReactRoot.createUniComponent(MemberGroupView),
   }),
   createGroupByConfig({
@@ -122,7 +123,7 @@ export const groupByConfigList = [
       return [ungroups];
     },
     valuesGroup: (value, _type) => {
-      if (!Array.isArray(value)) {
+      if (!Array.isArray(value) || value.length === 0) {
         return [ungroups];
       }
       return value.map(id => ({

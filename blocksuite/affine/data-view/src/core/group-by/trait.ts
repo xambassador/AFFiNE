@@ -31,6 +31,7 @@ export class Group<
   Data extends Record<string, unknown> = Record<string, unknown>,
 > {
   rows: Row[] = [];
+
   constructor(
     public readonly key: string,
     public readonly value: JsonValue,
@@ -57,6 +58,7 @@ export class Group<
   get tType() {
     return this.groupInfo.tType;
   }
+
   get view() {
     return this.config.view;
   }
@@ -185,7 +187,10 @@ export class GroupTrait {
     if (!groupMap || !groupInfo) {
       return;
     }
-    const addTo = groupInfo.config.addToGroup ?? (value => value);
+    const addTo = groupInfo.config.addToGroup;
+    if (addTo === false) {
+      return;
+    }
     const v = groupMap[key]?.value;
     if (v != null) {
       const newValue = addTo(
@@ -268,8 +273,10 @@ export class GroupTrait {
           this.view.cellGetOrCreate(rowId, propertyId).jsonValue$.value
         );
       }
-      const addTo =
-        this.groupInfo$.value?.config.addToGroup ?? (value => value);
+      const addTo = this.groupInfo$.value?.config.addToGroup;
+      if (addTo === false || addTo == null) {
+        return;
+      }
       newValue = addTo(groupMap[toGroupKey]?.value ?? null, newValue);
       this.view.cellGetOrCreate(rowId, propertyId).jsonValueSet(newValue);
     }

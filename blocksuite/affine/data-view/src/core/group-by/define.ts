@@ -8,6 +8,7 @@ import { NumberGroupView } from './renderer/number-group.js';
 import { SelectGroupView } from './renderer/select-group.js';
 import { StringGroupView } from './renderer/string-group.js';
 import type { GroupByConfig } from './types.js';
+
 export const createGroupByConfig = <
   Data extends Record<string, unknown>,
   MatchType extends TypeInstance,
@@ -25,7 +26,7 @@ export const groupByMatchers = [
   createGroupByConfig({
     name: 'select',
     matchType: t.tag.instance(),
-    groupName: (type, value) => {
+    groupName: (type, value: string | null) => {
       if (t.tag.is(type) && type.data) {
         return type.data.find(v => v.id === value)?.value ?? '';
       }
@@ -54,6 +55,7 @@ export const groupByMatchers = [
         },
       ];
     },
+    addToGroup: v => v,
     view: createUniComponentFromWebComponent(SelectGroupView),
   }),
   createGroupByConfig({
@@ -106,7 +108,7 @@ export const groupByMatchers = [
   createGroupByConfig({
     name: 'text',
     matchType: t.string.instance(),
-    groupName: (_type, value) => {
+    groupName: (_type, value: string | null) => {
       return `${value ?? ''}`;
     },
     defaultKeys: _type => {
@@ -123,6 +125,7 @@ export const groupByMatchers = [
         },
       ];
     },
+    addToGroup: v => v,
     view: createUniComponentFromWebComponent(StringGroupView),
   }),
   createGroupByConfig({
@@ -151,7 +154,7 @@ export const groupByMatchers = [
   createGroupByConfig({
     name: 'boolean',
     matchType: t.boolean.instance(),
-    groupName: (_type, value) => {
+    groupName: (_type, value: boolean | null) => {
       return `${value?.toString() ?? ''}`;
     },
     defaultKeys: _type => {
@@ -176,6 +179,7 @@ export const groupByMatchers = [
         },
       ];
     },
+    addToGroup: v => v,
     view: createUniComponentFromWebComponent(BooleanGroupView),
   }),
 ];

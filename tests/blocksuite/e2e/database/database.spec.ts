@@ -90,7 +90,7 @@ test('edit column title', async ({ page }) => {
   expect(await column.innerText()).toBe('1');
 
   await undoByClick(page);
-  expect(await column.innerText()).toBe('Column 1');
+  expect(await column.innerText()).toBe('Column');
 });
 
 test('should modify the value when the input loses focus', async ({ page }) => {
@@ -359,7 +359,7 @@ test('should title column support quick renaming', async ({ page }) => {
   expect(await textElement.innerText()).toBe('123');
 
   await undoByClick(page);
-  expect(await textElement.innerText()).toBe('Column 1');
+  expect(await textElement.innerText()).toBe('Column');
   await textElement.click();
   await waitNextFrame(page);
   await selectAllByKeyboard(page);

@@ -16,11 +16,6 @@ export const createdByPropertyModelConfig = createdByColumnType.modelConfig({
     schema: zod.object({}),
     default: () => ({}),
   },
-  fixed: {
-    defaultData: {},
-    defaultOrder: 'end',
-    defaultShow: false,
-  },
   rawValue: {
     schema: zod.string().nullable(),
     default: () => null,
@@ -29,7 +24,7 @@ export const createdByPropertyModelConfig = createdByColumnType.modelConfig({
       return { value: null };
     },
     toJson: ({ value }) => value,
-    fromJson: ({ value }) => value,
+    setValue: () => {},
   },
   jsonValue: {
     schema: zod.string().nullable(),

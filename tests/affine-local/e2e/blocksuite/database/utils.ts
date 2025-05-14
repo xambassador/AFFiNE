@@ -79,8 +79,12 @@ export async function selectColumnType(
   const typeMenu = page.locator('affine-menu').getByText('Type');
   await page.waitForTimeout(100);
   await typeMenu.hover();
+  await page.mouse.move(0, 0);
   await page.waitForTimeout(100);
-  await page.keyboard.type(columnType);
+  for (const char of columnType.split('')) {
+    await page.keyboard.type(char);
+    await page.waitForTimeout(10);
+  }
   await page.waitForTimeout(100);
   for (let i = 0; i < nth; i++) {
     await page.keyboard.press('ArrowDown');
