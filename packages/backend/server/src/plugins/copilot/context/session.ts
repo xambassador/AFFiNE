@@ -52,12 +52,16 @@ export class ContextSession implements AsyncDisposable {
   }
 
   get files() {
-    return this.config.files.map(f => ({ ...f }));
+    return this.config.files.map(f => this.fulfillFile(f));
   }
 
   get docIds() {
     return Array.from(
-      new Set([this.config.docs, this.config.categories].flat().map(d => d.id))
+      new Set(
+        [this.config.docs, this.config.categories.flatMap(c => c.docs)]
+          .flat()
+          .map(d => d.id)
+      )
     );
   }
 
@@ -136,14 +140,25 @@ export class ContextSession implements AsyncDisposable {
     return true;
   }
 
-  async addFile(blobId: string, name: string): Promise<ContextFile> {
+  private fulfillFile(file: ContextFile): Required<ContextFile> {
+    return {
+      ...file,
+      mimeType: file.mimeType || 'application/octet-stream',
+    };
+  }
+
+  async addFile(
+    blobId: string,
+    name: string,
+    mimeType: string
+  ): Promise<Required<ContextFile>> {
     let fileId = nanoid();
     const existsBlob = this.config.files.find(f => f.blobId === blobId);
     if (existsBlob) {
       // use exists file id if the blob exists
       // we assume that the file content pointed to by the same blobId is consistent.
       if (existsBlob.status === ContextEmbedStatus.finished) {
-        return existsBlob;
+        return this.fulfillFile(existsBlob);
       }
       fileId = existsBlob.id;
     } else {
@@ -152,11 +167,12 @@ export class ContextSession implements AsyncDisposable {
         blobId,
         chunkSize: 0,
         name,
+        mimeType,
         error: null,
         createdAt: Date.now(),
       }));
     }
-    return this.getFile(fileId) as ContextFile;
+    return this.fulfillFile(this.getFile(fileId) as ContextFile);
   }
 
   getFile(fileId: string): ContextFile | undefined {
@@ -181,15 +197,14 @@ export class ContextSession implements AsyncDisposable {
    * @param threshold relevance threshold for the similarity score, higher threshold means more similar chunks, default 0.7, good enough based on prior experiments
    * @returns list of similar chunks
    */
-  async matchFileChunks(
+  async matchFiles(
     content: string,
     topK: number = 5,
     signal?: AbortSignal,
-    threshold: number = 0.85
+    scopedThreshold: number = 0.85,
+    threshold: number = 0.5
   ): Promise<FileChunkSimilarity[]> {
-    const embedding = await this.client
-      .getEmbeddings([content], signal)
-      .then(r => r?.[0]?.embedding);
+    const embedding = await this.client.getEmbedding(content, signal);
     if (!embedding) return [];
 
     const [context, workspace] = await Promise.all([
@@ -197,7 +212,7 @@ export class ContextSession implements AsyncDisposable {
         embedding,
         this.id,
         topK * 2,
-        threshold
+        scopedThreshold
       ),
       this.models.copilotWorkspace.matchFileEmbedding(
         this.workspaceId,
@@ -206,10 +221,21 @@ export class ContextSession implements AsyncDisposable {
         threshold
       ),
     ]);
+    const files = new Map(this.files.map(f => [f.id, f]));
 
     return this.client.reRank(
       content,
-      [...context, ...workspace],
+      [
+        ...context
+          .filter(f => files.has(f.fileId))
+          .map(c => {
+            const { blobId, name, mimeType } = files.get(
+              c.fileId
+            ) as Required<ContextFile>;
+            return { ...c, blobId, name, mimeType };
+          }),
+        ...workspace,
+      ],
       topK,
       signal
     );
@@ -223,16 +249,14 @@ export class ContextSession implements AsyncDisposable {
    * @param threshold relevance threshold for the similarity score, higher threshold means more similar chunks, default 0.7, good enough based on prior experiments
    * @returns list of similar chunks
    */
-  async matchWorkspaceChunks(
+  async matchWorkspaceDocs(
     content: string,
     topK: number = 5,
     signal?: AbortSignal,
-    scopedThreshold: number = 0.5,
-    threshold: number = 0.85
+    scopedThreshold: number = 0.85,
+    threshold: number = 0.5
   ) {
-    const embedding = await this.client
-      .getEmbeddings([content], signal)
-      .then(r => r?.[0]?.embedding);
+    const embedding = await this.client.getEmbedding(content, signal);
     if (!embedding) return [];
 
     const docIds = this.docIds;

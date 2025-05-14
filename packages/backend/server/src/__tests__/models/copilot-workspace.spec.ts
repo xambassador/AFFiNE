@@ -107,6 +107,7 @@ test('should insert and search embedding', async t => {
   {
     const { fileId } = await t.context.copilotWorkspace.addFile(workspace.id, {
       fileName: 'file1',
+      blobId: 'blob1',
       mimeType: 'text/plain',
       size: 1,
     });
@@ -129,8 +130,10 @@ test('should insert and search embedding', async t => {
         1,
         1
       );
-      t.is(ret.length, 1);
-      t.is(ret[0].content, 'content');
+      t.snapshot(
+        cleanObject(ret, ['fileId']),
+        'should match workspace file embedding'
+      );
     }
   }
 });

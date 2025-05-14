@@ -329,9 +329,12 @@ declare global {
         abortSignal: AbortSignal
       ) => Promise<void>;
       matchContext: (
-        contextId: string,
         content: string,
-        limit?: number
+        contextId?: string,
+        workspaceId?: string,
+        limit?: number,
+        scopedThreshold?: number,
+        threshold?: number
       ) => Promise<{
         files?: ContextMatchedFileChunk[];
         docs?: ContextMatchedDocChunk[];

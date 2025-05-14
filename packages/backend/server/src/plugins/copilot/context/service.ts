@@ -148,6 +148,48 @@ export class CopilotContextService implements OnApplicationBootstrap {
     return null;
   }
 
+  async matchWorkspaceFiles(
+    workspaceId: string,
+    content: string,
+    topK: number = 5,
+    signal?: AbortSignal,
+    threshold: number = 0.5
+  ) {
+    if (!this.embeddingClient) return [];
+    const embedding = await this.embeddingClient.getEmbedding(content, signal);
+    if (!embedding) return [];
+
+    const chunks = await this.models.copilotWorkspace.matchFileEmbedding(
+      workspaceId,
+      embedding,
+      topK * 2,
+      threshold
+    );
+
+    return this.embeddingClient.reRank(content, chunks, topK, signal);
+  }
+
+  async matchWorkspaceDocs(
+    workspaceId: string,
+    content: string,
+    topK: number = 5,
+    signal?: AbortSignal,
+    threshold: number = 0.5
+  ) {
+    if (!this.embeddingClient) return [];
+    const embedding = await this.embeddingClient.getEmbedding(content, signal);
+    if (!embedding) return [];
+
+    const workspace = await this.models.copilotContext.matchWorkspaceEmbedding(
+      embedding,
+      workspaceId,
+      topK * 2,
+      threshold
+    );
+
+    return this.embeddingClient.reRank(content, workspace, topK);
+  }
+
   @OnEvent('workspace.doc.embed.failed')
   async onDocEmbedFailed({
     contextId,

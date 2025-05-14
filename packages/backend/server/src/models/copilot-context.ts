@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
+import { Transactional } from '@nestjs-cls/transactional';
 import { Prisma } from '@prisma/client';
 
 import { CopilotSessionNotFound } from '../base';
@@ -179,9 +180,9 @@ export class CopilotContextModel extends BaseModel {
     contextId: string,
     topK: number,
     threshold: number
-  ): Promise<FileChunkSimilarity[]> {
+  ): Promise<Omit<FileChunkSimilarity, 'blobId' | 'name' | 'mimeType'>[]> {
     const similarityChunks = await this.db.$queryRaw<
-      Array<FileChunkSimilarity>
+      Array<Omit<FileChunkSimilarity, 'blobId' | 'name' | 'mimeType'>>
     >`
       SELECT "file_id" as "fileId", "chunk", "content", "embedding" <=> ${embedding}::vector as "distance" 
       FROM "ai_context_embeddings"
@@ -217,6 +218,7 @@ export class CopilotContextModel extends BaseModel {
     });
   }
 
+  @Transactional()
   async matchWorkspaceEmbedding(
     embedding: number[],
     workspaceId: string,
@@ -232,6 +234,18 @@ export class CopilotContextModel extends BaseModel {
       ORDER BY "distance" ASC
       LIMIT ${topK};
     `;
-    return similarityChunks.filter(c => Number(c.distance) <= threshold);
+
+    const matchedChunks = similarityChunks.filter(
+      c => Number(c.distance) <= threshold
+    );
+    const matchedDocIds = Array.from(new Set(matchedChunks.map(c => c.docId)));
+    if (!matchDocIds?.length && matchedDocIds.length) {
+      const ignoredDocs = await this.models.copilotWorkspace.checkIgnoredDocs(
+        workspaceId,
+        matchedDocIds
+      );
+      return matchedChunks.filter(c => !ignoredDocs.includes(c.docId));
+    }
+    return matchedChunks;
   }
 }

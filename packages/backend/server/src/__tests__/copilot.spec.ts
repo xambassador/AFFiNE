@@ -1316,7 +1316,11 @@ test('should be able to manage context', async t => {
     // file record
     {
       await storage.put(userId, session.workspaceId, 'blob', buffer);
-      const file = await session.addFile('blob', 'sample.pdf');
+      const file = await session.addFile(
+        'blob',
+        'sample.pdf',
+        'application/pdf'
+      );
 
       const handler = Sinon.spy(event, 'emit');
 
@@ -1345,7 +1349,7 @@ test('should be able to manage context', async t => {
         'should list file id'
       );
 
-      const result = await session.matchFileChunks('test', 1, undefined, 1);
+      const result = await session.matchFiles('test', 1, undefined, 1);
       t.is(result.length, 1, 'should match context');
       t.is(result[0].fileId, file.id, 'should match file id');
     }
@@ -1499,13 +1503,13 @@ test('should be able to manage workspace embedding', async t => {
     });
     const contextSession = await context.create(sessionId);
 
-    const ret = await contextSession.matchFileChunks('test', 1, undefined, 1);
+    const ret = await contextSession.matchFiles('test', 1, undefined, 1);
     t.is(ret.length, 1, 'should match workspace context');
     t.is(ret[0].content, 'content', 'should match content');
 
     await workspace.update(ws.id, { enableDocEmbedding: false });
 
-    const ret2 = await contextSession.matchFileChunks('test', 1, undefined, 1);
+    const ret2 = await contextSession.matchFiles('test', 1, undefined, 1);
     t.is(ret2.length, 0, 'should not match workspace context');
   }
 });

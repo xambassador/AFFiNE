@@ -69,10 +69,13 @@ type ContextMatchedDocChunk {
 }
 
 type ContextMatchedFileChunk {
+  blobId: String!
   chunk: SafeInt!
   content: String!
   distance: Float
   fileId: String!
+  mimeType: String!
+  name: String!
 }
 
 type ContextWorkspaceEmbeddingStatus {
@@ -107,10 +110,10 @@ type CopilotContext {
 
   """list files in context"""
   files: [CopilotContextFile!]!
-  id: ID!
+  id: ID
 
   """match file in context"""
-  matchFiles(content: String!, limit: SafeInt, threshold: Float): [ContextMatchedFileChunk!]!
+  matchFiles(content: String!, limit: SafeInt, scopedThreshold: Float, threshold: Float): [ContextMatchedFileChunk!]!
 
   """match workspace docs"""
   matchWorkspaceDocs(content: String!, limit: SafeInt, scopedThreshold: Float, threshold: Float): [ContextMatchedDocChunk!]!
@@ -140,6 +143,7 @@ type CopilotContextFile {
   createdAt: SafeInt!
   error: String
   id: ID!
+  mimeType: String!
   name: String!
   status: ContextEmbedStatus!
 }
@@ -167,6 +171,12 @@ type CopilotFailedToMatchContextDataType {
   content: String!
   contextId: String!
   message: String!
+}
+
+type CopilotFailedToMatchGlobalContextDataType {
+  content: String!
+  message: String!
+  workspaceId: String!
 }
 
 type CopilotFailedToModifyContextDataType {
@@ -280,6 +290,7 @@ type CopilotWorkspaceConfig {
 }
 
 type CopilotWorkspaceFile {
+  blobId: String!
   createdAt: DateTime!
   fileId: String!
   fileName: String!
@@ -464,7 +475,7 @@ type EditorType {
   name: String!
 }
 
-union ErrorDataUnion = AlreadyInSpaceDataType | BlobNotFoundDataType | CopilotContextFileNotSupportedDataType | CopilotDocNotFoundDataType | CopilotFailedToAddWorkspaceFileEmbeddingDataType | CopilotFailedToMatchContextDataType | CopilotFailedToModifyContextDataType | CopilotInvalidContextDataType | CopilotMessageNotFoundDataType | CopilotPromptNotFoundDataType | CopilotProviderSideErrorDataType | DocActionDeniedDataType | DocHistoryNotFoundDataType | DocNotFoundDataType | DocUpdateBlockedDataType | ExpectToGrantDocUserRolesDataType | ExpectToRevokeDocUserRolesDataType | ExpectToUpdateDocUserRoleDataType | GraphqlBadRequestDataType | HttpRequestErrorDataType | InvalidEmailDataType | InvalidHistoryTimestampDataType | InvalidLicenseToActivateDataType | InvalidLicenseUpdateParamsDataType | InvalidOauthCallbackCodeDataType | InvalidPasswordLengthDataType | InvalidRuntimeConfigTypeDataType | MemberNotFoundInSpaceDataType | MentionUserDocAccessDeniedDataType | MissingOauthQueryParameterDataType | NoMoreSeatDataType | NotInSpaceDataType | QueryTooLongDataType | RuntimeConfigNotFoundDataType | SameSubscriptionRecurringDataType | SpaceAccessDeniedDataType | SpaceNotFoundDataType | SpaceOwnerNotFoundDataType | SpaceShouldHaveOnlyOneOwnerDataType | SubscriptionAlreadyExistsDataType | SubscriptionNotExistsDataType | SubscriptionPlanNotFoundDataType | UnknownOauthProviderDataType | UnsupportedClientVersionDataType | UnsupportedSubscriptionPlanDataType | ValidationErrorDataType | VersionRejectedDataType | WorkspacePermissionNotFoundDataType | WrongSignInCredentialsDataType
+union ErrorDataUnion = AlreadyInSpaceDataType | BlobNotFoundDataType | CopilotContextFileNotSupportedDataType | CopilotDocNotFoundDataType | CopilotFailedToAddWorkspaceFileEmbeddingDataType | CopilotFailedToMatchContextDataType | CopilotFailedToMatchGlobalContextDataType | CopilotFailedToModifyContextDataType | CopilotInvalidContextDataType | CopilotMessageNotFoundDataType | CopilotPromptNotFoundDataType | CopilotProviderSideErrorDataType | DocActionDeniedDataType | DocHistoryNotFoundDataType | DocNotFoundDataType | DocUpdateBlockedDataType | ExpectToGrantDocUserRolesDataType | ExpectToRevokeDocUserRolesDataType | ExpectToUpdateDocUserRoleDataType | GraphqlBadRequestDataType | HttpRequestErrorDataType | InvalidEmailDataType | InvalidHistoryTimestampDataType | InvalidLicenseToActivateDataType | InvalidLicenseUpdateParamsDataType | InvalidOauthCallbackCodeDataType | InvalidPasswordLengthDataType | InvalidRuntimeConfigTypeDataType | MemberNotFoundInSpaceDataType | MentionUserDocAccessDeniedDataType | MissingOauthQueryParameterDataType | NoMoreSeatDataType | NotInSpaceDataType | QueryTooLongDataType | RuntimeConfigNotFoundDataType | SameSubscriptionRecurringDataType | SpaceAccessDeniedDataType | SpaceNotFoundDataType | SpaceOwnerNotFoundDataType | SpaceShouldHaveOnlyOneOwnerDataType | SubscriptionAlreadyExistsDataType | SubscriptionNotExistsDataType | SubscriptionPlanNotFoundDataType | UnknownOauthProviderDataType | UnsupportedClientVersionDataType | UnsupportedSubscriptionPlanDataType | ValidationErrorDataType | VersionRejectedDataType | WorkspacePermissionNotFoundDataType | WrongSignInCredentialsDataType
 
 enum ErrorNames {
   ACCESS_DENIED
@@ -491,6 +502,7 @@ enum ErrorNames {
   COPILOT_FAILED_TO_CREATE_MESSAGE
   COPILOT_FAILED_TO_GENERATE_TEXT
   COPILOT_FAILED_TO_MATCH_CONTEXT
+  COPILOT_FAILED_TO_MATCH_GLOBAL_CONTEXT
   COPILOT_FAILED_TO_MODIFY_CONTEXT
   COPILOT_INVALID_CONTEXT
   COPILOT_MESSAGE_NOT_FOUND

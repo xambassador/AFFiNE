@@ -700,11 +700,21 @@ Could you make a new website based on these notes and send back just the html fi
       }
     },
     matchContext: async (
-      contextId: string,
       content: string,
-      limit?: number
+      contextId?: string,
+      workspaceId?: string,
+      limit?: number,
+      scopedThreshold?: number,
+      threshold?: number
     ) => {
-      return client.matchContext(contextId, content, limit);
+      return client.matchContext(
+        content,
+        contextId,
+        workspaceId,
+        limit,
+        scopedThreshold,
+        threshold
+      );
     },
   });
 

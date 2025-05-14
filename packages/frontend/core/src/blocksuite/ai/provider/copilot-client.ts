@@ -241,7 +241,7 @@ export class CopilotClient {
         sessionId,
       },
     });
-    return res.currentUser?.copilot?.contexts?.[0]?.id;
+    return res.currentUser?.copilot?.contexts?.[0]?.id || undefined;
   }
 
   async addContextDoc(options: OptionsField<typeof addContextDocMutation>) {
@@ -333,13 +333,23 @@ export class CopilotClient {
     return res.currentUser?.copilot?.contexts?.[0];
   }
 
-  async matchContext(contextId: string, content: string, limit?: number) {
+  async matchContext(
+    content: string,
+    contextId?: string,
+    workspaceId?: string,
+    limit?: number,
+    scopedThreshold?: number,
+    threshold?: number
+  ) {
     const res = await this.gql({
       query: matchContextQuery,
       variables: {
-        contextId,
         content,
+        contextId,
+        workspaceId,
         limit,
+        scopedThreshold,
+        threshold,
       },
     });
     const { matchFiles: files, matchWorkspaceDocs: docs } =

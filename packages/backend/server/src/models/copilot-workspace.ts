@@ -17,13 +17,32 @@ import type {
 @Injectable()
 export class CopilotWorkspaceConfigModel extends BaseModel {
   @Transactional()
+  private async listIgnoredDocIds(
+    workspaceId: string,
+    options?: PaginationInput
+  ) {
+    return await this.db.aiWorkspaceIgnoredDocs.findMany({
+      where: {
+        workspaceId,
+      },
+      select: {
+        docId: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      skip: options?.offset,
+      take: options?.first,
+    });
+  }
+
+  @Transactional()
   async updateIgnoredDocs(
     workspaceId: string,
     add: string[] = [],
     remove: string[] = []
   ) {
     const removed = new Set(remove);
-    const ignored = await this.listIgnoredDocs(workspaceId).then(
+    const ignored = await this.listIgnoredDocIds(workspaceId).then(
       r => new Set(r.map(r => r.docId).filter(id => !removed.has(id)))
     );
     const added = add.filter(id => !ignored.has(id));
@@ -51,25 +70,11 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return added.length + ignored.size;
   }
 
-  @Transactional()
   async listIgnoredDocs(
     workspaceId: string,
-    options?: {
-      includeRead?: boolean;
-    } & PaginationInput
+    options?: PaginationInput
   ): Promise<IgnoredDoc[]> {
-    const row = await this.db.aiWorkspaceIgnoredDocs.findMany({
-      where: {
-        workspaceId,
-      },
-      select: {
-        docId: true,
-        createdAt: true,
-      },
-      orderBy: { createdAt: 'desc' },
-      skip: options?.offset,
-      take: options?.first,
-    });
+    const row = await this.listIgnoredDocIds(workspaceId, options);
     const ids = row.map(r => ({ workspaceId, docId: r.docId }));
     const docs = await this.models.doc.findMetas(ids);
     const docsMap = new Map(
@@ -106,7 +111,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
 
   @Transactional()
   async checkIgnoredDocs(workspaceId: string, docIds: string[]) {
-    const ignored = await this.listIgnoredDocs(workspaceId).then(
+    const ignored = await this.listIgnoredDocIds(workspaceId).then(
       r => new Set(r.map(r => r.docId))
     );
 
@@ -214,9 +219,19 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     const similarityChunks = await this.db.$queryRaw<
       Array<FileChunkSimilarity>
     >`
-      SELECT "file_id" as "fileId", "chunk", "content", "embedding" <=> ${embedding}::vector as "distance" 
-      FROM "ai_workspace_file_embeddings"
-      WHERE workspace_id = ${workspaceId}
+      SELECT
+        e."file_id" as "fileId",
+        f."file_name" as "name",
+        f."blob_id" as "blobId",
+        f."mime_type" as "mimeType",
+        e."chunk",
+        e."content",
+        e."embedding" <=> ${embedding}::vector as "distance" 
+      FROM "ai_workspace_file_embeddings" e
+      JOIN "ai_workspace_files" f
+        ON e."workspace_id" = f."workspace_id"
+        AND e."file_id" = f."file_id"
+      WHERE e.workspace_id = ${workspaceId}
       ORDER BY "distance" ASC
       LIMIT ${topK};
     `;

@@ -390,6 +390,7 @@ export const addContextFileMutation = {
     id
     createdAt
     name
+    mimeType
     chunkSize
     error
     status
@@ -423,6 +424,7 @@ export const listContextObjectQuery = {
         files {
           id
           name
+          mimeType
           blobId
           chunkSize
           error
@@ -473,17 +475,30 @@ export const listContextQuery = {
 export const matchContextQuery = {
   id: 'matchContextQuery' as const,
   op: 'matchContext',
-  query: `query matchContext($contextId: String!, $content: String!, $limit: SafeInt, $threshold: Float) {
+  query: `query matchContext($contextId: String, $workspaceId: String, $content: String!, $limit: SafeInt, $scopedThreshold: Float, $threshold: Float) {
   currentUser {
-    copilot {
+    copilot(workspaceId: $workspaceId) {
       contexts(contextId: $contextId) {
-        matchFiles(content: $content, limit: $limit, threshold: $threshold) {
+        matchFiles(
+          content: $content
+          limit: $limit
+          scopedThreshold: $scopedThreshold
+          threshold: $threshold
+        ) {
           fileId
+          blobId
+          name
+          mimeType
           chunk
           content
           distance
         }
-        matchWorkspaceDocs(content: $content, limit: $limit, threshold: $threshold) {
+        matchWorkspaceDocs(
+          content: $content
+          limit: $limit
+          scopedThreshold: $scopedThreshold
+          threshold: $threshold
+        ) {
           docId
           chunk
           content
@@ -498,9 +513,9 @@ export const matchContextQuery = {
 export const matchWorkspaceDocsQuery = {
   id: 'matchWorkspaceDocsQuery' as const,
   op: 'matchWorkspaceDocs',
-  query: `query matchWorkspaceDocs($contextId: String!, $content: String!, $limit: SafeInt, $scopedThreshold: Float, $threshold: Float) {
+  query: `query matchWorkspaceDocs($contextId: String, $workspaceId: String, $content: String!, $limit: SafeInt, $scopedThreshold: Float, $threshold: Float) {
   currentUser {
-    copilot {
+    copilot(workspaceId: $workspaceId) {
       contexts(contextId: $contextId) {
         matchWorkspaceDocs(
           content: $content
@@ -522,12 +537,18 @@ export const matchWorkspaceDocsQuery = {
 export const matchFilesQuery = {
   id: 'matchFilesQuery' as const,
   op: 'matchFiles',
-  query: `query matchFiles($contextId: String!, $content: String!, $limit: SafeInt, $threshold: Float) {
+  query: `query matchFiles($contextId: String, $workspaceId: String, $content: String!, $limit: SafeInt, $scopedThreshold: Float, $threshold: Float) {
   currentUser {
-    copilot {
+    copilot(workspaceId: $workspaceId) {
       contexts(contextId: $contextId) {
-        matchFiles(content: $content, limit: $limit, threshold: $threshold) {
+        matchFiles(
+          content: $content
+          limit: $limit
+          scopedThreshold: $scopedThreshold
+          threshold: $threshold
+        ) {
           fileId
+          blobId
           chunk
           content
           distance
@@ -750,6 +771,7 @@ export const addWorkspaceEmbeddingFilesMutation = {
   addWorkspaceEmbeddingFiles(workspaceId: $workspaceId, blob: $blob) {
     fileId
     fileName
+    blobId
     mimeType
     size
     createdAt
@@ -774,6 +796,7 @@ export const getWorkspaceEmbeddingFilesQuery = {
           node {
             fileId
             fileName
+            blobId
             mimeType
             size
             createdAt

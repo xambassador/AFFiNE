@@ -661,7 +661,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
     >();
 
     const { files: matchedFiles = [], docs: matchedDocs = [] } =
-      (await AIProvider.context?.matchContext(contextId, userInput)) ?? {};
+      (await AIProvider.context?.matchContext(userInput, contextId)) ?? {};
 
     matchedDocs.forEach(doc => {
       docContexts.set(doc.docId, {

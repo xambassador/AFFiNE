@@ -23,6 +23,7 @@ import {
   CallMetric,
   CopilotEmbeddingUnavailable,
   CopilotFailedToMatchContext,
+  CopilotFailedToMatchGlobalContext,
   CopilotFailedToModifyContext,
   CopilotSessionNotFound,
   EventBus,
@@ -117,8 +118,8 @@ class RemoveContextFileInput {
 
 @ObjectType('CopilotContext')
 export class CopilotContextType {
-  @Field(() => ID)
-  id!: string;
+  @Field(() => ID, { nullable: true })
+  id!: string | undefined;
 
   @Field(() => String)
   workspaceId!: string;
@@ -169,6 +170,9 @@ class CopilotContextFile implements ContextFile {
   @Field(() => String)
   name!: string;
 
+  @Field(() => String)
+  mimeType!: string;
+
   @Field(() => SafeIntResolver)
   chunkSize!: number;
 
@@ -189,6 +193,15 @@ class CopilotContextFile implements ContextFile {
 class ContextMatchedFileChunk implements FileChunkSimilarity {
   @Field(() => String)
   fileId!: string;
+
+  @Field(() => String)
+  blobId!: string;
+
+  @Field(() => String)
+  name!: string;
+
+  @Field(() => String)
+  mimeType!: string;
 
   @Field(() => SafeIntResolver)
   chunk!: number;
@@ -281,6 +294,15 @@ export class CopilotContextRootResolver {
         const context = await this.context.getBySessionId(sessionId);
         if (context) return [context];
       }
+    }
+
+    if (copilot.workspaceId) {
+      return [
+        {
+          id: undefined,
+          workspaceId: copilot.workspaceId,
+        },
+      ];
     }
 
     return [];
@@ -387,6 +409,9 @@ export class CopilotContextResolver {
   async collections(
     @Parent() context: CopilotContextType
   ): Promise<CopilotContextCategory[]> {
+    if (!context.id) {
+      return [];
+    }
     const session = await this.context.get(context.id);
     const collections = session.collections;
     await this.models.copilotContext.mergeDocStatus(
@@ -404,6 +429,9 @@ export class CopilotContextResolver {
   async tags(
     @Parent() context: CopilotContextType
   ): Promise<CopilotContextCategory[]> {
+    if (!context.id) {
+      return [];
+    }
     const session = await this.context.get(context.id);
     const tags = session.tags;
     await this.models.copilotContext.mergeDocStatus(
@@ -419,6 +447,9 @@ export class CopilotContextResolver {
   })
   @CallMetric('ai', 'context_file_list')
   async docs(@Parent() context: CopilotContextType): Promise<CopilotDocType[]> {
+    if (!context.id) {
+      return [];
+    }
     const session = await this.context.get(context.id);
     const docs = session.docs;
     await this.models.copilotContext.mergeDocStatus(session.workspaceId, docs);
@@ -433,6 +464,9 @@ export class CopilotContextResolver {
   async files(
     @Parent() context: CopilotContextType
   ): Promise<CopilotContextFile[]> {
+    if (!context.id) {
+      return [];
+    }
     const session = await this.context.get(context.id);
     return session.files;
   }
@@ -593,7 +627,11 @@ export class CopilotContextResolver {
     const session = await this.context.get(options.contextId);
 
     try {
-      const file = await session.addFile(options.blobId, content.filename);
+      const file = await session.addFile(
+        options.blobId,
+        content.filename,
+        content.mimetype
+      );
 
       const buffer = await readStream(content.createReadStream());
       await this.storage.put(
@@ -664,6 +702,8 @@ export class CopilotContextResolver {
     @Args('content') content: string,
     @Args('limit', { type: () => SafeIntResolver, nullable: true })
     limit?: number,
+    @Args('scopedThreshold', { type: () => Float, nullable: true })
+    scopedThreshold?: number,
     @Args('threshold', { type: () => Float, nullable: true })
     threshold?: number
   ): Promise<ContextMatchedFileChunk[]> {
@@ -671,22 +711,46 @@ export class CopilotContextResolver {
       return [];
     }
 
-    const session = await this.context.get(context.id);
-
     try {
-      return await session.matchFileChunks(
+      if (!context.id) {
+        return await this.context.matchWorkspaceFiles(
+          context.workspaceId,
+          content,
+          limit,
+          this.getSignal(ctx.req),
+          threshold
+        );
+      }
+
+      const session = await this.context.get(context.id);
+      return await session.matchFiles(
         content,
         limit,
         this.getSignal(ctx.req),
+        scopedThreshold,
         threshold
       );
     } catch (e: any) {
-      throw new CopilotFailedToMatchContext({
-        contextId: context.id,
-        // don't record the large content
-        content: content.slice(0, 512),
-        message: e.message,
-      });
+      // passthrough user friendly error
+      if (e instanceof UserFriendlyError) {
+        throw e;
+      }
+
+      if (context.id) {
+        throw new CopilotFailedToMatchContext({
+          contextId: context.id,
+          // don't record the large content
+          content: content.slice(0, 512),
+          message: e.message,
+        });
+      } else {
+        throw new CopilotFailedToMatchGlobalContext({
+          workspaceId: context.workspaceId,
+          // don't record the large content
+          content: content.slice(0, 512),
+          message: e.message,
+        });
+      }
     }
   }
 
@@ -711,20 +775,38 @@ export class CopilotContextResolver {
     }
 
     try {
-      const session = await this.context.get(context.id);
       await this.ac
         .user(user.id)
-        .workspace(session.workspaceId)
+        .workspace(context.workspaceId)
         .allowLocal()
         .assert('Workspace.Copilot');
       const allowEmbedding = await this.models.workspace.allowEmbedding(
-        session.workspaceId
+        context.workspaceId
       );
       if (!allowEmbedding) {
         return [];
       }
 
-      const chunks = await session.matchWorkspaceChunks(
+      if (!context.id) {
+        return await this.context.matchWorkspaceDocs(
+          context.workspaceId,
+          content,
+          limit,
+          this.getSignal(ctx.req),
+          threshold
+        );
+      }
+
+      const session = await this.context.get(context.id);
+      if (session.workspaceId !== context.workspaceId) {
+        throw new CopilotFailedToMatchContext({
+          contextId: context.id,
+          // don't record the large content
+          content: content.slice(0, 512),
+          message: 'context not in the same workspace',
+        });
+      }
+      const chunks = await session.matchWorkspaceDocs(
         content,
         limit,
         this.getSignal(ctx.req),
@@ -748,12 +830,22 @@ export class CopilotContextResolver {
       if (e instanceof UserFriendlyError) {
         throw e;
       }
-      throw new CopilotFailedToMatchContext({
-        contextId: context.id,
-        // don't record the large content
-        content: content.slice(0, 512),
-        message: e.message,
-      });
+
+      if (context.id) {
+        throw new CopilotFailedToMatchContext({
+          contextId: context.id,
+          // don't record the large content
+          content: content.slice(0, 512),
+          message: e.message,
+        });
+      } else {
+        throw new CopilotFailedToMatchGlobalContext({
+          workspaceId: context.workspaceId,
+          // don't record the large content
+          content: content.slice(0, 512),
+          message: e.message,
+        });
+      }
     }
   }
 }
