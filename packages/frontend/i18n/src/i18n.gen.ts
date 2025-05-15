@@ -5627,6 +5627,14 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.experimental-features.enable-ai-network-search.description"](): string;
     /**
+      * `Enable AI Model Switch`
+      */
+    ["com.affine.settings.workspace.experimental-features.enable-ai-model-switch.name"](): string;
+    /**
+      * `Enable or disable AI model switch feature.`
+      */
+    ["com.affine.settings.workspace.experimental-features.enable-ai-model-switch.description"](): string;
+    /**
       * `Database Full Width`
       */
     ["com.affine.settings.workspace.experimental-features.enable-database-full-width.name"](): string;

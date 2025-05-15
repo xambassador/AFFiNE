@@ -1405,6 +1405,8 @@
   "com.affine.settings.workspace.experimental-features.enable-ai.description": "Enable or disable ALL AI features.",
   "com.affine.settings.workspace.experimental-features.enable-ai-network-search.name": "Enable AI Network Search",
   "com.affine.settings.workspace.experimental-features.enable-ai-network-search.description": "Enable or disable AI Network Search feature.",
+  "com.affine.settings.workspace.experimental-features.enable-ai-model-switch.name": "Enable AI Model Switch",
+  "com.affine.settings.workspace.experimental-features.enable-ai-model-switch.description": "Enable or disable AI model switch feature.",
   "com.affine.settings.workspace.experimental-features.enable-database-full-width.name": "Database Full Width",
   "com.affine.settings.workspace.experimental-features.enable-database-full-width.description": "The database will be displayed in full-width mode.",
   "com.affine.settings.workspace.experimental-features.enable-database-attachment-note.name": "Database Attachment Note",

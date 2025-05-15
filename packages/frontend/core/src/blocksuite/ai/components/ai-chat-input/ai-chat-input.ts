@@ -1,4 +1,5 @@
 import { stopPropagation } from '@affine/core/utils';
+import type { CopilotSessionType } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
 import { unsafeCSSVar, unsafeCSSVarV2 } from '@blocksuite/affine/shared/theme';
 import { openFileOrFiles } from '@blocksuite/affine/shared/utils';
@@ -34,6 +35,7 @@ import type { ChatMessage } from '../ai-chat-messages';
 import { MAX_IMAGE_COUNT } from './const';
 import type {
   AIChatInputContext,
+  AIModelSwitchConfig,
   AINetworkSearchConfig,
   AIReasoningConfig,
 } from './type';
@@ -238,6 +240,9 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
   @property({ attribute: false })
   accessor host!: EditorHost;
 
+  @property({ attribute: false })
+  accessor session!: CopilotSessionType | undefined;
+
   @query('image-preview-grid')
   accessor imagePreviewGrid: HTMLDivElement | null = null;
 
@@ -249,6 +254,9 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
 
   @state()
   accessor focused = false;
+
+  @state()
+  accessor modelId: string | undefined = undefined;
 
   @property({ attribute: false })
   accessor chatContextValue!: AIChatInputContext;
@@ -273,6 +281,9 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
 
   @property({ attribute: false })
   accessor reasoningConfig!: AIReasoningConfig;
+
+  @property({ attribute: false })
+  accessor modelSwitchConfig!: AIModelSwitchConfig;
 
   @property({ attribute: false })
   accessor docDisplayConfig!: DocDisplayConfig;
@@ -392,6 +403,16 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
           ${ImageIcon()}
           <affine-tooltip>Upload</affine-tooltip>
         </div>
+        ${this.modelSwitchConfig.visible.value
+          ? html`
+              <ai-chat-models
+                class="chat-input-icon"
+                .modelId=${this.modelId}
+                .session=${this.session}
+                .onModelChange=${this._handleModelChange}
+              ></ai-chat-models>
+            `
+          : nothing}
         ${this.networkSearchConfig.visible.value
           ? html`
               <div
@@ -536,6 +557,10 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
     await this.send(value);
   };
 
+  private readonly _handleModelChange = (modelId: string) => {
+    this.modelId = modelId;
+  };
+
   send = async (text: string) => {
     try {
       const { status, markdown, images } = this.chatContextValue;
@@ -582,6 +607,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
         control: this.trackOptions.control,
         webSearch: this._isNetworkActive,
         reasoning: this._isReasoningActive,
+        modelId: this.modelId,
       });
 
       for await (const text of stream) {

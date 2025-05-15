@@ -26,6 +26,15 @@ export const AFFINE_FLAGS = {
     configurable: false,
     defaultState: true,
   },
+  enable_ai_model_switch: {
+    category: 'affine',
+    displayName:
+      'com.affine.settings.workspace.experimental-features.enable-ai-model-switch.name',
+    description:
+      'com.affine.settings.workspace.experimental-features.enable-ai-model-switch.description',
+    configurable: isCanaryBuild,
+    defaultState: isCanaryBuild,
+  },
   enable_edgeless_text: {
     category: 'blocksuite',
     bsFlag: 'enable_edgeless_text',

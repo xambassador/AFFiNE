@@ -135,7 +135,7 @@ export class AnthropicProvider
         messages: msgs,
         abortSignal: options.signal,
         providerOptions: {
-          anthropic: this.getAnthropicOptions(options),
+          anthropic: this.getAnthropicOptions(options, model),
         },
         tools: this.getTools(),
         maxSteps: this.MAX_STEPS,
@@ -167,7 +167,7 @@ export class AnthropicProvider
         messages: msgs,
         abortSignal: options.signal,
         providerOptions: {
-          anthropic: this.getAnthropicOptions(options),
+          anthropic: this.getAnthropicOptions(options, model),
         },
         tools: this.getTools(),
         maxSteps: this.MAX_STEPS,
@@ -256,9 +256,9 @@ export class AnthropicProvider
     };
   }
 
-  private getAnthropicOptions(options: CopilotChatOptions) {
+  private getAnthropicOptions(options: CopilotChatOptions, model: string) {
     const result: AnthropicProviderOptions = {};
-    if (options?.reasoning) {
+    if (options?.reasoning && this.isThinkingModel(model)) {
       result.thinking = {
         type: 'enabled',
         budgetTokens: 12000,
@@ -281,5 +281,9 @@ export class AnthropicProvider
 
   private markAsCallout(text: string) {
     return text.replaceAll('\n', '\n> ');
+  }
+
+  private isThinkingModel(model: string) {
+    return model.startsWith('claude-3-7-sonnet');
   }
 }

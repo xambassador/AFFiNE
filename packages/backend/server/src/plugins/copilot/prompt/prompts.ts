@@ -1066,6 +1066,7 @@ const chat: Prompt[] = [
     name: 'Chat With AFFiNE AI',
     model: 'gpt-4.1',
     optionalModels: [
+      'gpt-4.1',
       'o3',
       'o4-mini',
       'claude-3-7-sonnet-20250219',

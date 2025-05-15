@@ -3,6 +3,7 @@ import type {
   CopilotContextDoc,
   CopilotContextFile,
   CopilotDocType,
+  CopilotSessionType,
 } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
 import type { EditorHost } from '@blocksuite/affine/std';
@@ -26,6 +27,7 @@ import type {
 import { isCollectionChip, isDocChip, isTagChip } from '../ai-chat-chips';
 import type {
   AIChatInputContext,
+  AIModelSwitchConfig,
   AINetworkSearchConfig,
   AIReasoningConfig,
 } from '../ai-chat-input';
@@ -52,6 +54,9 @@ export class AIChatComposer extends SignalWatcher(
 
   @property({ attribute: false })
   accessor doc!: Store;
+
+  @property({ attribute: false })
+  accessor session!: CopilotSessionType | undefined;
 
   @property({ attribute: false })
   accessor getSessionId!: () => Promise<string | undefined>;
@@ -84,6 +89,9 @@ export class AIChatComposer extends SignalWatcher(
 
   @property({ attribute: false })
   accessor searchMenuConfig!: SearchMenuConfig;
+
+  @property({ attribute: false })
+  accessor modelSwitchConfig!: AIModelSwitchConfig;
 
   @property({ attribute: false })
   accessor onChatSuccess: (() => void) | undefined;
@@ -124,6 +132,7 @@ export class AIChatComposer extends SignalWatcher(
       <ai-chat-input
         .host=${this.host}
         .chips=${this.chips}
+        .session=${this.session}
         .getSessionId=${this.getSessionId}
         .createSessionId=${this.createSessionId}
         .getContextId=${this._getContextId}
@@ -131,6 +140,7 @@ export class AIChatComposer extends SignalWatcher(
         .updateContext=${this.updateContext}
         .networkSearchConfig=${this.networkSearchConfig}
         .reasoningConfig=${this.reasoningConfig}
+        .modelSwitchConfig=${this.modelSwitchConfig}
         .docDisplayConfig=${this.docDisplayConfig}
         .onChatSuccess=${this.onChatSuccess}
         .trackOptions=${this.trackOptions}

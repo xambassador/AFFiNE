@@ -1,7 +1,7 @@
 import './chat-panel-messages';
 
 import type { FeatureFlagService } from '@affine/core/modules/feature-flag';
-import type { ContextEmbedStatus } from '@affine/graphql';
+import type { ContextEmbedStatus, CopilotSessionType } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
 import type { EditorHost } from '@blocksuite/affine/std';
 import { ShadowlessElement } from '@blocksuite/affine/std';
@@ -18,6 +18,7 @@ import type {
   SearchMenuConfig,
 } from '../components/ai-chat-chips';
 import type {
+  AIModelSwitchConfig,
   AINetworkSearchConfig,
   AIReasoningConfig,
 } from '../components/ai-chat-input';
@@ -155,8 +156,8 @@ export class ChatPanel extends SignalWatcher(
   };
 
   private readonly _getSessionId = async () => {
-    if (this._sessionId) {
-      return this._sessionId;
+    if (this.session) {
+      return this.session.id;
     }
     const sessions = (
       (await AIProvider.session?.getSessions(
@@ -164,22 +165,33 @@ export class ChatPanel extends SignalWatcher(
         this.doc.id,
         { action: false }
       )) || []
-    ).filter(session => !session.parentSessionId);
-    const sessionId = sessions.at(-1)?.id;
-    this._sessionId = sessionId;
-    return this._sessionId;
+    ).filter(session => {
+      if (this.parentSessionId) {
+        return session.parentSessionId === this.parentSessionId;
+      } else {
+        return !session.parentSessionId;
+      }
+    });
+    this.session = sessions.at(-1);
+    return this.session?.id;
   };
 
   private readonly _createSessionId = async () => {
-    if (this._sessionId) {
-      return this._sessionId;
+    if (this.session) {
+      return this.session.id;
     }
-    this._sessionId = await AIProvider.session?.createSession({
+    const sessionId = await AIProvider.session?.createSession({
       docId: this.doc.id,
       workspaceId: this.doc.workspace.id,
       promptName: 'Chat With AFFiNE AI',
     });
-    return this._sessionId;
+    if (sessionId) {
+      this.session = await AIProvider.session?.getSession(
+        this.doc.workspace.id,
+        sessionId
+      );
+    }
+    return sessionId;
   };
 
   @property({ attribute: false })
@@ -193,6 +205,9 @@ export class ChatPanel extends SignalWatcher(
 
   @property({ attribute: false })
   accessor reasoningConfig!: AIReasoningConfig;
+
+  @property({ attribute: false })
+  accessor modelSwitchConfig!: AIModelSwitchConfig;
 
   @property({ attribute: false })
   accessor appSidebarConfig!: AppSidebarConfig;
@@ -209,6 +224,9 @@ export class ChatPanel extends SignalWatcher(
   @property({ attribute: false })
   accessor affineFeatureFlagService!: FeatureFlagService;
 
+  @property({ attribute: false })
+  accessor parentSessionId: string | undefined = undefined;
+
   @state()
   accessor isLoading = false;
 
@@ -218,10 +236,10 @@ export class ChatPanel extends SignalWatcher(
   @state()
   accessor embeddingProgress: [number, number] = [0, 0];
 
-  private _isInitialized = false;
+  @state()
+  accessor session: CopilotSessionType | undefined = undefined;
 
-  // always use getSessionId to get the sessionId
-  private _sessionId: string | undefined = undefined;
+  private _isInitialized = false;
 
   private _isSidebarOpen: Signal<boolean | undefined> = signal(false);
 
@@ -252,7 +270,7 @@ export class ChatPanel extends SignalWatcher(
   };
 
   private readonly _resetPanel = () => {
-    this._sessionId = undefined;
+    this.session = undefined;
     this.chatContextValue = DEFAULT_CHAT_CONTEXT_VALUE;
     this.isLoading = false;
     this._isInitialized = false;
@@ -408,6 +426,7 @@ export class ChatPanel extends SignalWatcher(
       <ai-chat-composer
         .host=${this.host}
         .doc=${this.doc}
+        .session=${this.session}
         .getSessionId=${this._getSessionId}
         .createSessionId=${this._createSessionId}
         .chatContextValue=${this.chatContextValue}
@@ -416,6 +435,7 @@ export class ChatPanel extends SignalWatcher(
         .isVisible=${this._isSidebarOpen}
         .networkSearchConfig=${this.networkSearchConfig}
         .reasoningConfig=${this.reasoningConfig}
+        .modelSwitchConfig=${this.modelSwitchConfig}
         .docDisplayConfig=${this.docDisplayConfig}
         .searchMenuConfig=${this.searchMenuConfig}
         .trackOptions=${{

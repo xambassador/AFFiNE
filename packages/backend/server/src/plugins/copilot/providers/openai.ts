@@ -200,8 +200,7 @@ export class OpenAIProvider
       for (const tool of options.tools) {
         switch (tool) {
           case 'webSearch': {
-            // o series reasoning models
-            if (model.startsWith('o')) {
+            if (this.isReasoningModel(model)) {
               tools.web_search_exa = createExaSearchTool(this.AFFiNEConfig);
               tools.web_crawl_exa = createExaCrawlTool(this.AFFiNEConfig);
             } else {
@@ -251,7 +250,7 @@ export class OpenAIProvider
         : await generateText({
             ...commonParams,
             providerOptions: {
-              openai: this.getOpenAIOptions(options),
+              openai: this.getOpenAIOptions(options, model),
             },
             tools: this.getTools(options, model),
             maxSteps: this.MAX_STEPS,
@@ -284,7 +283,7 @@ export class OpenAIProvider
         system,
         messages: msgs,
         providerOptions: {
-          openai: this.getOpenAIOptions(options),
+          openai: this.getOpenAIOptions(options, model),
         },
         tools: tools as OpenAITools,
         maxSteps: this.MAX_STEPS,
@@ -454,9 +453,9 @@ export class OpenAIProvider
     }
   }
 
-  private getOpenAIOptions(options: CopilotChatOptions) {
+  private getOpenAIOptions(options: CopilotChatOptions, model: string) {
     const result: OpenAIResponsesProviderOptions = {};
-    if (options?.reasoning) {
+    if (options?.reasoning && this.isReasoningModel(model)) {
       result.reasoningEffort = 'medium';
       result.reasoningSummary = 'detailed';
     }
@@ -480,5 +479,10 @@ export class OpenAIProvider
 
   private markAsCallout(text: string) {
     return text.replaceAll('\n', '\n> ');
+  }
+
+  private isReasoningModel(model: string) {
+    // o series reasoning models
+    return model.startsWith('o');
   }
 }
