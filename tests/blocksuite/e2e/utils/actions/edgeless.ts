@@ -4,7 +4,11 @@ import { ConnectorTool } from '@blocksuite/affine/gfx/connector';
 import { ShapeTool } from '@blocksuite/affine/gfx/shape';
 import type { IPoint, IVec } from '@blocksuite/affine/global/gfx';
 import { sleep } from '@blocksuite/affine/global/utils';
-import type { NoteBlockModel, NoteDisplayMode } from '@blocksuite/affine/model';
+import type {
+  ConnectorElementModel,
+  NoteBlockModel,
+  NoteDisplayMode,
+} from '@blocksuite/affine/model';
 import type { ToolOptions } from '@blocksuite/affine/std/gfx';
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
@@ -418,6 +422,23 @@ export async function assertEdgelessTool(page: Page, mode: string) {
   expect(type).toEqual(mode);
 }
 
+export async function getConnectorLabel(page: Page, id: string) {
+  const text = await page.evaluate(id => {
+    const container = document.querySelector('affine-edgeless-root');
+    if (!container) {
+      throw new Error('Missing edgeless page');
+    }
+    const connector = container.gfx.getElementById(id) as ConnectorElementModel;
+    if (!connector) {
+      throw new Error('Missing connector');
+    }
+
+    return connector.text?.toString() ?? '';
+  }, id);
+
+  return text;
+}
+
 export async function assertEdgelessConnectorToolMode(
   page: Page,
   mode: ConnectorMode
@@ -524,6 +545,7 @@ export async function addBasicConnectorElement(
 ) {
   await setEdgelessTool(page, 'connector');
   await dragBetweenCoords(page, start, end, { steps: 100 });
+  return (await getSelectedIds(page))[0];
 }
 
 export async function addBasicFrameElement(
