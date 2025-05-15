@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { Injectable } from '@nestjs/common';
-import { Transactional } from '@nestjs-cls/transactional';
 import { Prisma } from '@prisma/client';
 
 import { CopilotSessionNotFound } from '../base';
@@ -218,7 +217,6 @@ export class CopilotContextModel extends BaseModel {
     });
   }
 
-  @Transactional()
   async matchWorkspaceEmbedding(
     embedding: number[],
     workspaceId: string,
@@ -227,25 +225,23 @@ export class CopilotContextModel extends BaseModel {
     matchDocIds?: string[]
   ): Promise<DocChunkSimilarity[]> {
     const similarityChunks = await this.db.$queryRaw<Array<DocChunkSimilarity>>`
-      SELECT "doc_id" as "docId", "chunk", "content", "embedding" <=> ${embedding}::vector as "distance"
-      FROM "ai_workspace_embeddings"
-      WHERE "workspace_id" = ${workspaceId}
-      ${matchDocIds?.length ? Prisma.sql`AND "doc_id" IN (${Prisma.join(matchDocIds)})` : Prisma.empty}
+      SELECT
+        w."doc_id" as "docId",
+        w."chunk",
+        w."content",
+        w."embedding" <=> ${embedding}::vector as "distance"
+      FROM "ai_workspace_embeddings" w
+      LEFT JOIN "ai_workspace_ignored_docs" i
+        ON i."workspace_id" = w."workspace_id"
+          AND i."doc_id" = w."doc_id"
+          ${matchDocIds?.length ? Prisma.sql`AND w."doc_id" NOT IN (${Prisma.join(matchDocIds)})` : Prisma.empty}
+      WHERE
+        w."workspace_id" = ${workspaceId}
+        AND i."doc_id" IS NULL
       ORDER BY "distance" ASC
       LIMIT ${topK};
     `;
 
-    const matchedChunks = similarityChunks.filter(
-      c => Number(c.distance) <= threshold
-    );
-    const matchedDocIds = Array.from(new Set(matchedChunks.map(c => c.docId)));
-    if (!matchDocIds?.length && matchedDocIds.length) {
-      const ignoredDocs = await this.models.copilotWorkspace.checkIgnoredDocs(
-        workspaceId,
-        matchedDocIds
-      );
-      return matchedChunks.filter(c => !ignoredDocs.includes(c.docId));
-    }
-    return matchedChunks;
+    return similarityChunks.filter(c => Number(c.distance) <= threshold);
   }
 }

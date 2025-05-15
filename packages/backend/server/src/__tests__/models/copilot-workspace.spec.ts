@@ -74,7 +74,7 @@ test('should manage copilot workspace ignored docs', async t => {
       workspace.id,
       [docId]
     );
-    t.is(count, 1, 'should not add ignored doc again');
+    t.snapshot(count, 'should not change if ignored doc exists');
 
     const ret = await t.context.copilotWorkspace.listIgnoredDocs(workspace.id);
     t.snapshot(cleanObject(ret), 'should not add ignored doc again');

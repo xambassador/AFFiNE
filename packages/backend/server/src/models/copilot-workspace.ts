@@ -16,7 +16,6 @@ import type {
 
 @Injectable()
 export class CopilotWorkspaceConfigModel extends BaseModel {
-  @Transactional()
   private async listIgnoredDocIds(
     workspaceId: string,
     options?: PaginationInput
@@ -47,16 +46,15 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     );
     const added = add.filter(id => !ignored.has(id));
 
-    if (added.length) {
+    const { count: addedCount } =
       await this.db.aiWorkspaceIgnoredDocs.createMany({
         data: added.map(docId => ({
           workspaceId,
           docId,
         })),
       });
-    }
 
-    if (removed.size) {
+    const { count: removedCount } =
       await this.db.aiWorkspaceIgnoredDocs.deleteMany({
         where: {
           workspaceId,
@@ -65,11 +63,11 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
           },
         },
       });
-    }
 
-    return added.length + ignored.size;
+    return addedCount + removedCount;
   }
 
+  @Transactional()
   async listIgnoredDocs(
     workspaceId: string,
     options?: PaginationInput
@@ -100,6 +98,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     });
   }
 
+  @Transactional()
   async countIgnoredDocs(workspaceId: string): Promise<number> {
     const count = await this.db.aiWorkspaceIgnoredDocs.count({
       where: {
