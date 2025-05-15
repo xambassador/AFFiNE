@@ -19,7 +19,7 @@ import {
   metrics,
   UserFriendlyError,
 } from '../../../base';
-import { createExaSearchTool } from '../tools';
+import { createExaCrawlTool, createExaSearchTool } from '../tools';
 import { CopilotProvider } from './provider';
 import {
   ChatMessageRole,
@@ -46,6 +46,7 @@ export type OpenAIConfig = {
 type OpenAITools = {
   web_search_preview: ReturnType<typeof openai.tools.webSearchPreview>;
   web_search_exa: ReturnType<typeof createExaSearchTool>;
+  web_crawl_exa: ReturnType<typeof createExaCrawlTool>;
 };
 
 export class OpenAIProvider
@@ -202,6 +203,7 @@ export class OpenAIProvider
             // o series reasoning models
             if (model.startsWith('o')) {
               tools.web_search_exa = createExaSearchTool(this.AFFiNEConfig);
+              tools.web_crawl_exa = createExaCrawlTool(this.AFFiNEConfig);
             } else {
               tools.web_search_preview = openai.tools.webSearchPreview();
             }
@@ -330,10 +332,18 @@ export class OpenAIProvider
                   `\nSearching the web "${chunk.args.query}"\n`
                 );
               }
+              if (chunk.toolName === 'web_crawl_exa') {
+                yield this.markAsCallout(
+                  `\nCrawling the web "${chunk.args.url}"\n`
+                );
+              }
               break;
             }
             case 'tool-result': {
-              if (chunk.toolName === 'web_search_exa') {
+              if (
+                chunk.toolName === 'web_search_exa' &&
+                Array.isArray(chunk.result)
+              ) {
                 yield this.markAsCallout(
                   `\n${this.getWebSearchLinks(chunk.result)}\n`
                 );

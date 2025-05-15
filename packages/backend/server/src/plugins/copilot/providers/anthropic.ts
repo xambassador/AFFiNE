@@ -11,7 +11,7 @@ import {
   metrics,
   UserFriendlyError,
 } from '../../../base';
-import { createExaSearchTool } from '../tools';
+import { createExaCrawlTool, createExaSearchTool } from '../tools';
 import { CopilotProvider } from './provider';
 import {
   ChatMessageRole,
@@ -207,15 +207,23 @@ export class AnthropicProvider
               yield prefix;
               prefix = null;
             }
-            if (chunk.toolName === 'web_search') {
+            if (chunk.toolName === 'web_search_exa') {
               yield this.markAsCallout(
                 `\nSearching the web "${chunk.args.query}"\n`
+              );
+            }
+            if (chunk.toolName === 'web_crawl_exa') {
+              yield this.markAsCallout(
+                `\nCrawling the web "${chunk.args.url}"\n`
               );
             }
             break;
           }
           case 'tool-result': {
-            if (chunk.toolName === 'web_search') {
+            if (
+              chunk.toolName === 'web_search_exa' &&
+              Array.isArray(chunk.result)
+            ) {
               if (prefix) {
                 yield prefix;
                 prefix = null;
@@ -243,7 +251,8 @@ export class AnthropicProvider
 
   private getTools() {
     return {
-      web_search: createExaSearchTool(this.AFFiNEConfig),
+      web_search_exa: createExaSearchTool(this.AFFiNEConfig),
+      web_crawl_exa: createExaCrawlTool(this.AFFiNEConfig),
     };
   }
 
