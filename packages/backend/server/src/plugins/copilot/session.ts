@@ -307,9 +307,7 @@ export class ChatSessionService {
     });
   }
 
-  private async getSession(
-    sessionId: string
-  ): Promise<ChatSessionState | undefined> {
+  async getSession(sessionId: string): Promise<ChatSessionState | undefined> {
     return await this.db.aiSession
       .findUnique({
         where: { id: sessionId, deletedAt: null },
@@ -414,13 +412,7 @@ export class ChatSessionService {
     workspaceId: string,
     docId?: string,
     options?: { action?: boolean }
-  ): Promise<
-    Array<{
-      id: string;
-      parentSessionId: string | null;
-      promptName: string;
-    }>
-  > {
+  ): Promise<Omit<ChatSessionState, 'messages'>[]> {
     return await this.db.aiSession
       .findMany({
         where: {
@@ -434,17 +426,31 @@ export class ChatSessionService {
         },
         select: {
           id: true,
+          userId: true,
+          workspaceId: true,
+          docId: true,
           parentSessionId: true,
           promptName: true,
         },
       })
-      .then(sessions =>
-        sessions.map(({ id, parentSessionId, promptName }) => ({
-          id,
-          parentSessionId: parentSessionId || null,
-          promptName,
-        }))
-      );
+      .then(sessions => {
+        return Promise.all(
+          sessions.map(async session => {
+            const prompt = await this.prompt.get(session.promptName);
+            if (!prompt)
+              throw new CopilotPromptNotFound({ name: session.promptName });
+
+            return {
+              sessionId: session.id,
+              userId: session.userId,
+              workspaceId: session.workspaceId,
+              docId: session.docId,
+              parentSessionId: session.parentSessionId,
+              prompt,
+            };
+          })
+        );
+      });
   }
 
   async listHistories(

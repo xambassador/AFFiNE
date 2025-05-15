@@ -380,6 +380,10 @@ declare global {
         docId?: string,
         options?: { action?: boolean }
       ) => Promise<CopilotSessionType[] | undefined>;
+      getSession: (
+        workspaceId: string,
+        sessionId: string
+      ) => Promise<CopilotSessionType | undefined>;
       updateSession: (sessionId: string, promptName: string) => Promise<string>;
     }
 

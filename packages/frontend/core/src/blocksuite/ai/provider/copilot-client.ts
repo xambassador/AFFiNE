@@ -11,6 +11,7 @@ import {
   forkCopilotSessionMutation,
   getCopilotHistoriesQuery,
   getCopilotHistoryIdsQuery,
+  getCopilotSessionQuery,
   getCopilotSessionsQuery,
   type GraphQLQuery,
   listContextObjectQuery,
@@ -131,6 +132,18 @@ export class CopilotClient {
         },
       });
       return res.createCopilotMessage;
+    } catch (err) {
+      throw resolveError(err);
+    }
+  }
+
+  async getSession(workspaceId: string, sessionId: string) {
+    try {
+      const res = await this.gql({
+        query: getCopilotSessionQuery,
+        variables: { sessionId, workspaceId },
+      });
+      return res.currentUser?.copilot?.session;
     } catch (err) {
       throw resolveError(err);
     }

@@ -740,6 +740,24 @@ export const forkCopilotSessionMutation = {
 }`,
 };
 
+export const getCopilotSessionQuery = {
+  id: 'getCopilotSessionQuery' as const,
+  op: 'getCopilotSession',
+  query: `query getCopilotSession($workspaceId: String!, $sessionId: String!) {
+  currentUser {
+    copilot(workspaceId: $workspaceId) {
+      session(sessionId: $sessionId) {
+        id
+        parentSessionId
+        promptName
+        model
+        optionalModels
+      }
+    }
+  }
+}`,
+};
+
 export const updateCopilotSessionMutation = {
   id: 'updateCopilotSessionMutation' as const,
   op: 'updateCopilotSession',
@@ -758,6 +776,8 @@ export const getCopilotSessionsQuery = {
         id
         parentSessionId
         promptName
+        model
+        optionalModels
       }
     }
   }

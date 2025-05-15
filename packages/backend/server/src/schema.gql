@@ -133,6 +133,9 @@ type Copilot {
   """Get the quota of the user in the workspace"""
   quota: CopilotQuota!
 
+  """Get the session by id"""
+  session(sessionId: String!): CopilotSessionType!
+
   """Get the session id list in the workspace"""
   sessionIds(docId: String, options: QueryChatSessionsInput): [String!]! @deprecated(reason: "Use `sessions` instead")
 
@@ -318,6 +321,8 @@ type CopilotQuota {
 
 type CopilotSessionType {
   id: ID!
+  model: String!
+  optionalModels: [String!]!
   parentSessionId: ID
   promptName: String!
 }

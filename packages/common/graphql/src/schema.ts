@@ -174,6 +174,8 @@ export interface Copilot {
   histories: Array<CopilotHistories>;
   /** Get the quota of the user in the workspace */
   quota: CopilotQuota;
+  /** Get the session by id */
+  session: CopilotSessionType;
   /**
    * Get the session id list in the workspace
    * @deprecated Use `sessions` instead
@@ -197,6 +199,10 @@ export interface CopilotContextsArgs {
 export interface CopilotHistoriesArgs {
   docId?: InputMaybe<Scalars['String']['input']>;
   options?: InputMaybe<QueryChatHistoriesInput>;
+}
+
+export interface CopilotSessionArgs {
+  sessionId: Scalars['String']['input'];
 }
 
 export interface CopilotSessionIdsArgs {
@@ -415,6 +421,8 @@ export interface CopilotQuota {
 export interface CopilotSessionType {
   __typename?: 'CopilotSessionType';
   id: Scalars['ID']['output'];
+  model: Scalars['String']['output'];
+  optionalModels: Array<Scalars['String']['output']>;
   parentSessionId: Maybe<Scalars['ID']['output']>;
   promptName: Scalars['String']['output'];
 }
@@ -3453,6 +3461,29 @@ export type ForkCopilotSessionMutation = {
   forkCopilotSession: string;
 };
 
+export type GetCopilotSessionQueryVariables = Exact<{
+  workspaceId: Scalars['String']['input'];
+  sessionId: Scalars['String']['input'];
+}>;
+
+export type GetCopilotSessionQuery = {
+  __typename?: 'Query';
+  currentUser: {
+    __typename?: 'UserType';
+    copilot: {
+      __typename?: 'Copilot';
+      session: {
+        __typename?: 'CopilotSessionType';
+        id: string;
+        parentSessionId: string | null;
+        promptName: string;
+        model: string;
+        optionalModels: Array<string>;
+      };
+    };
+  } | null;
+};
+
 export type UpdateCopilotSessionMutationVariables = Exact<{
   options: UpdateChatSessionInput;
 }>;
@@ -3479,6 +3510,8 @@ export type GetCopilotSessionsQuery = {
         id: string;
         parentSessionId: string | null;
         promptName: string;
+        model: string;
+        optionalModels: Array<string>;
       }>;
     };
   } | null;
@@ -4996,6 +5029,11 @@ export type Queries =
       name: 'copilotQuotaQuery';
       variables: CopilotQuotaQueryVariables;
       response: CopilotQuotaQuery;
+    }
+  | {
+      name: 'getCopilotSessionQuery';
+      variables: GetCopilotSessionQueryVariables;
+      response: GetCopilotSessionQuery;
     }
   | {
       name: 'getCopilotSessionsQuery';

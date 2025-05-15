@@ -579,6 +579,9 @@ Could you make a new website based on these notes and send back just the html fi
 
   AIProvider.provide('session', {
     createSession,
+    getSession: async (workspaceId: string, sessionId: string) => {
+      return client.getSession(workspaceId, sessionId);
+    },
     getSessions: async (
       workspaceId: string,
       docId?: string,

@@ -41,6 +41,7 @@ import {
   AvailableModels,
   type ChatHistory,
   type ChatMessage,
+  type ChatSessionState,
   type ListHistoriesOptions,
   SubmittedMessage,
 } from './types';
@@ -277,7 +278,7 @@ class CopilotPromptType {
 }
 
 @ObjectType()
-class CopilotSessionType {
+export class CopilotSessionType {
   @Field(() => ID)
   id!: string;
 
@@ -286,6 +287,12 @@ class CopilotSessionType {
 
   @Field(() => String)
   promptName!: string;
+
+  @Field(() => String)
+  model!: string;
+
+  @Field(() => [String])
+  optionalModels!: string[];
 }
 
 // ================== Resolver ==================
@@ -329,6 +336,30 @@ export class CopilotResolver {
     return (await this.sessions(copilot, user, docId, options)).map(s => s.id);
   }
 
+  @ResolveField(() => CopilotSessionType, {
+    description: 'Get the session by id',
+    complexity: 2,
+  })
+  async session(
+    @Parent() copilot: CopilotType,
+    @CurrentUser() user: CurrentUser,
+    @Args('sessionId') sessionId: string
+  ): Promise<CopilotSessionType> {
+    if (!copilot.workspaceId) {
+      throw new NotFoundException('Workspace not found');
+    }
+    await this.ac
+      .user(user.id)
+      .workspace(copilot.workspaceId)
+      .allowLocal()
+      .assert('Workspace.Copilot');
+    const session = await this.chatSession.getSession(sessionId);
+    if (!session) {
+      throw new NotFoundException('Session not found');
+    }
+    return this.transformToSessionType(session);
+  }
+
   @ResolveField(() => [CopilotSessionType], {
     description: 'Get the session list in the workspace',
     complexity: 2,
@@ -339,18 +370,21 @@ export class CopilotResolver {
     @Args('docId', { nullable: true }) docId?: string,
     @Args('options', { nullable: true }) options?: QueryChatSessionsInput
   ): Promise<CopilotSessionType[]> {
-    if (!copilot.workspaceId) return [];
+    if (!copilot.workspaceId) {
+      throw new NotFoundException('Workspace not found');
+    }
     await this.ac
       .user(user.id)
       .workspace(copilot.workspaceId)
       .allowLocal()
       .assert('Workspace.Copilot');
-    return await this.chatSession.listSessions(
+    const sessions = await this.chatSession.listSessions(
       user.id,
       copilot.workspaceId,
       docId,
       options
     );
+    return sessions.map(this.transformToSessionType);
   }
 
   @ResolveField(() => [CopilotHistoriesType], {})
@@ -555,6 +589,18 @@ export class CopilotResolver {
     } catch (e: any) {
       throw new CopilotFailedToCreateMessage(e.message);
     }
+  }
+
+  private transformToSessionType(
+    session: Omit<ChatSessionState, 'messages'>
+  ): CopilotSessionType {
+    return {
+      id: session.sessionId,
+      parentSessionId: session.parentSessionId,
+      promptName: session.prompt.name,
+      model: session.prompt.model,
+      optionalModels: session.prompt.optionalModels,
+    };
   }
 }
 

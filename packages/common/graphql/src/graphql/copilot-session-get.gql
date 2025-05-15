@@ -1,11 +1,10 @@
-query getCopilotSessions(
+query getCopilotSession(
   $workspaceId: String!
-  $docId: String
-  $options: QueryChatSessionsInput
+  $sessionId: String!
 ) {
   currentUser {
     copilot(workspaceId: $workspaceId) {
-      sessions(docId: $docId, options: $options) {
+      session(sessionId: $sessionId) {
         id
         parentSessionId
         promptName
