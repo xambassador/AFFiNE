@@ -2,38 +2,52 @@ import { randomUUID } from 'node:crypto';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-import test from 'ava';
+import _test from 'ava';
 import { omit, pick } from 'lodash-es';
 
-import { createModule } from '../../../../__tests__/create-module';
+import {
+  createModule,
+  TestingModule,
+} from '../../../../__tests__/create-module';
 import { Mockers } from '../../../../__tests__/mocks';
 import { ConfigModule } from '../../../../base/config';
+import { User, Workspace } from '../../../../models';
 import { IndexerModule } from '../../';
 import { SearchProviderType } from '../../config';
 import { AggregateQueryDSL, ElasticsearchProvider } from '../../providers';
 import { blockMapping, docMapping, SearchTable } from '../../tables';
 
-const module = await createModule({
-  imports: [
-    IndexerModule,
-    ConfigModule.override({
-      indexer: {
-        provider: {
-          type: SearchProviderType.Elasticsearch,
-          endpoint: 'http://localhost:9200',
-          username: 'elastic',
-          password: 'affine',
-        },
-      },
-    }),
-  ],
-  providers: [ElasticsearchProvider],
-});
-const searchProvider = module.get(ElasticsearchProvider);
-const user = await module.create(Mockers.User);
-const workspace = await module.create(Mockers.Workspace);
+const test =
+  process.env.AFFINE_INDEXER_SEARCH_PROVIDER === 'elasticsearch'
+    ? _test
+    : _test.skip;
 
-test.before(async () => {
+let module: TestingModule;
+let searchProvider: ElasticsearchProvider;
+let user: User;
+let workspace: Workspace;
+
+_test.before(async () => {
+  module = await createModule({
+    imports: [
+      IndexerModule,
+      ConfigModule.override({
+        indexer: {
+          provider: {
+            type: SearchProviderType.Elasticsearch,
+            endpoint: 'http://localhost:9200',
+            username: 'elastic',
+            password: 'affine',
+          },
+        },
+      }),
+    ],
+    providers: [ElasticsearchProvider],
+  });
+  searchProvider = module.get(ElasticsearchProvider);
+  user = await module.create(Mockers.User);
+  workspace = await module.create(Mockers.Workspace);
+
   await searchProvider.createTable(
     SearchTable.block,
     JSON.stringify(blockMapping)
@@ -159,7 +173,7 @@ test.before(async () => {
   });
 });
 
-test.after.always(async () => {
+_test.after.always(async () => {
   await searchProvider.deleteByQuery(
     SearchTable.block,
     {
@@ -182,6 +196,7 @@ test.after.always(async () => {
       refresh: true,
     }
   );
+
   await module.close();
 });
 
