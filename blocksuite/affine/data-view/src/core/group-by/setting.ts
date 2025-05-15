@@ -155,7 +155,7 @@ export class GroupSetting extends SignalWatcher(
             >
               <div class="group-item-drag-bar"></div>
               <div
-                style="padding: 0 4px;position:relative;pointer-events: none"
+                style="padding: 0 4px;position:relative;pointer-events: none;max-width: 330px"
               >
                 ${renderUniLit(group.view, props)}
                 <div

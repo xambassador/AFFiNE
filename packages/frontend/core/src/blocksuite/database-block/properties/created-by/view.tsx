@@ -113,7 +113,7 @@ const CreatedByCell = forwardRef(CreatedByCellComponent);
 
 export const createdByPropertyConfig =
   createdByPropertyModelConfig.createPropertyMeta({
-    icon: createIcon('UserIcon'),
+    icon: createIcon('MemberIcon'),
     cellRenderer: {
       view: uniReactRoot.createUniComponent(CreatedByCell),
     },
