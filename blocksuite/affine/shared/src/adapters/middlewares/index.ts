@@ -1,3 +1,4 @@
+export * from './callout-export-options';
 export * from './code';
 export * from './copy';
 export * from './doc-link';
