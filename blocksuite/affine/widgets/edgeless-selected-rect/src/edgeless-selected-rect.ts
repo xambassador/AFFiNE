@@ -1,5 +1,8 @@
 import { type FrameOverlay } from '@blocksuite/affine-block-frame';
-import { OverlayIdentifier } from '@blocksuite/affine-block-surface';
+import {
+  EdgelessLegacySlotIdentifier,
+  OverlayIdentifier,
+} from '@blocksuite/affine-block-surface';
 import {
   ConnectorElementModel,
   type RootBlockModel,
@@ -27,16 +30,12 @@ import { repeat } from 'lit/directives/repeat.js';
 import { styleMap } from 'lit/directives/style-map.js';
 import { type Subscription } from 'rxjs';
 
-import type { EdgelessRootBlockComponent } from '../../edgeless-root-block.js';
-import { RenderResizeHandles } from '../resize/resize-handles.js';
-import { generateCursorUrl, getRotatedResizeCursor } from '../utils.js';
+import { RenderResizeHandles } from './resize-handles.js';
+import { generateCursorUrl, getRotatedResizeCursor } from './utils.js';
 
 export const EDGELESS_SELECTED_RECT_WIDGET = 'edgeless-selected-rect';
 
-export class EdgelessSelectedRectWidget extends WidgetComponent<
-  RootBlockModel,
-  EdgelessRootBlockComponent
-> {
+export class EdgelessSelectedRectWidget extends WidgetComponent<RootBlockModel> {
   // disable change-in-update warning
   static override enabledWarnings = [];
 
@@ -469,10 +468,6 @@ export class EdgelessSelectedRectWidget extends WidgetComponent<
     };
   }, this);
 
-  get edgelessSlots() {
-    return this.block?.slots;
-  }
-
   get frameOverlay() {
     return this.std.get(OverlayIdentifier('frame')) as FrameOverlay;
   }
@@ -504,7 +499,7 @@ export class EdgelessSelectedRectWidget extends WidgetComponent<
   }
 
   override firstUpdated() {
-    const { _disposables, block, selection, gfx } = this;
+    const { _disposables, selection, gfx } = this;
 
     _disposables.add(
       // viewport zooming / scrolling
@@ -531,15 +526,13 @@ export class EdgelessSelectedRectWidget extends WidgetComponent<
       selection.slots.updated.subscribe(this._updateOnSelectionChange)
     );
 
-    if (block) {
-      _disposables.add(
-        block.slots.readonlyUpdated.subscribe(() => this.requestUpdate())
-      );
+    _disposables.add(
+      this._slots.readonlyUpdated.subscribe(() => this.requestUpdate())
+    );
 
-      _disposables.add(
-        block.slots.elementResizeEnd.subscribe(() => (this._isResizing = false))
-      );
-    }
+    _disposables.add(
+      this._slots.elementResizeEnd.subscribe(() => (this._isResizing = false))
+    );
 
     if (this._interaction) {
       _disposables.add(
@@ -554,9 +547,9 @@ export class EdgelessSelectedRectWidget extends WidgetComponent<
           this._isResizing = newVal;
 
           if (newVal) {
-            block?.slots.elementResizeStart.next();
+            this._slots.elementResizeStart.next();
           } else {
-            block?.slots.elementResizeEnd.next();
+            this._slots.elementResizeEnd.next();
           }
         })
       );
@@ -569,6 +562,10 @@ export class EdgelessSelectedRectWidget extends WidgetComponent<
 
   private get _interaction() {
     return this.std.getOptional(InteractivityIdentifier);
+  }
+
+  private get _slots() {
+    return this.std.get(EdgelessLegacySlotIdentifier);
   }
 
   private _renderHandles() {

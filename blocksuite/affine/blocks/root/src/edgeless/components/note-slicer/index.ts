@@ -12,6 +12,7 @@ import {
 import { EDGELESS_BLOCK_CHILD_PADDING } from '@blocksuite/affine-shared/consts';
 import { TelemetryProvider } from '@blocksuite/affine-shared/services';
 import { getRectByBlockComponent } from '@blocksuite/affine-shared/utils';
+import type { EdgelessSelectedRectWidget } from '@blocksuite/affine-widget-edgeless-selected-rect';
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import { deserializeXYWH, Point, serializeXYWH } from '@blocksuite/global/gfx';
 import { ScissorsIcon } from '@blocksuite/icons/lit';
@@ -21,8 +22,6 @@ import { css, html, nothing, type PropertyValues } from 'lit';
 import { state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
-
-import type { EdgelessSelectedRectWidget } from '../rects/edgeless-selected-rect';
 
 const DIVIDING_LINE_OFFSET = 4;
 const NEW_NOTE_GAP = 40;

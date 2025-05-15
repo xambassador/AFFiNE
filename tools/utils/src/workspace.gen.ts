@@ -53,6 +53,7 @@ export const PackageList = [
       'blocksuite/affine/shared',
       'blocksuite/affine/widgets/drag-handle',
       'blocksuite/affine/widgets/edgeless-auto-connect',
+      'blocksuite/affine/widgets/edgeless-selected-rect',
       'blocksuite/affine/widgets/edgeless-toolbar',
       'blocksuite/affine/widgets/edgeless-zoom-toolbar',
       'blocksuite/affine/widgets/frame-title',
@@ -372,6 +373,7 @@ export const PackageList = [
       'blocksuite/affine/model',
       'blocksuite/affine/rich-text',
       'blocksuite/affine/shared',
+      'blocksuite/affine/widgets/edgeless-selected-rect',
       'blocksuite/affine/widgets/edgeless-toolbar',
       'blocksuite/affine/data-view',
       'blocksuite/framework/global',
@@ -852,6 +854,24 @@ export const PackageList = [
       'blocksuite/affine/blocks/surface',
       'blocksuite/affine/components',
       'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/shared',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+    ],
+  },
+  {
+    location: 'blocksuite/affine/widgets/edgeless-selected-rect',
+    name: '@blocksuite/affine-widget-edgeless-selected-rect',
+    workspaceDependencies: [
+      'blocksuite/affine/blocks/frame',
+      'blocksuite/affine/blocks/note',
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/gfx/connector',
+      'blocksuite/affine/gfx/shape',
+      'blocksuite/affine/gfx/text',
       'blocksuite/affine/model',
       'blocksuite/affine/shared',
       'blocksuite/framework/global',
@@ -1450,6 +1470,7 @@ export type PackageName =
   | '@blocksuite/affine-shared'
   | '@blocksuite/affine-widget-drag-handle'
   | '@blocksuite/affine-widget-edgeless-auto-connect'
+  | '@blocksuite/affine-widget-edgeless-selected-rect'
   | '@blocksuite/affine-widget-edgeless-toolbar'
   | '@blocksuite/affine-widget-edgeless-zoom-toolbar'
   | '@blocksuite/affine-widget-frame-title'

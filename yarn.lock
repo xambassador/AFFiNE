@@ -2888,6 +2888,7 @@ __metadata:
     "@blocksuite/affine-model": "workspace:*"
     "@blocksuite/affine-rich-text": "workspace:*"
     "@blocksuite/affine-shared": "workspace:*"
+    "@blocksuite/affine-widget-edgeless-selected-rect": "workspace:*"
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*"
     "@blocksuite/data-view": "workspace:*"
     "@blocksuite/global": "workspace:*"
@@ -3790,6 +3791,32 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@blocksuite/affine-widget-edgeless-selected-rect@workspace:*, @blocksuite/affine-widget-edgeless-selected-rect@workspace:blocksuite/affine/widgets/edgeless-selected-rect":
+  version: 0.0.0-use.local
+  resolution: "@blocksuite/affine-widget-edgeless-selected-rect@workspace:blocksuite/affine/widgets/edgeless-selected-rect"
+  dependencies:
+    "@blocksuite/affine-block-frame": "workspace:*"
+    "@blocksuite/affine-block-note": "workspace:*"
+    "@blocksuite/affine-block-surface": "workspace:*"
+    "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
+    "@blocksuite/affine-gfx-connector": "workspace:*"
+    "@blocksuite/affine-gfx-shape": "workspace:*"
+    "@blocksuite/affine-gfx-text": "workspace:*"
+    "@blocksuite/affine-model": "workspace:*"
+    "@blocksuite/affine-shared": "workspace:*"
+    "@blocksuite/global": "workspace:*"
+    "@blocksuite/icons": "npm:^2.2.12"
+    "@blocksuite/std": "workspace:*"
+    "@lit/context": "npm:^1.1.2"
+    "@preact/signals-core": "npm:^1.8.0"
+    "@toeverything/theme": "npm:^1.1.14"
+    lit: "npm:^3.2.0"
+    rxjs: "npm:^7.8.1"
+    yjs: "npm:^13.6.21"
+  languageName: unknown
+  linkType: soft
+
 "@blocksuite/affine-widget-edgeless-toolbar@workspace:*, @blocksuite/affine-widget-edgeless-toolbar@workspace:blocksuite/affine/widgets/edgeless-toolbar":
   version: 0.0.0-use.local
   resolution: "@blocksuite/affine-widget-edgeless-toolbar@workspace:blocksuite/affine/widgets/edgeless-toolbar"
@@ -4102,6 +4129,7 @@ __metadata:
     "@blocksuite/affine-shared": "workspace:*"
     "@blocksuite/affine-widget-drag-handle": "workspace:*"
     "@blocksuite/affine-widget-edgeless-auto-connect": "workspace:*"
+    "@blocksuite/affine-widget-edgeless-selected-rect": "workspace:*"
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*"
     "@blocksuite/affine-widget-edgeless-zoom-toolbar": "workspace:*"
     "@blocksuite/affine-widget-frame-title": "workspace:*"

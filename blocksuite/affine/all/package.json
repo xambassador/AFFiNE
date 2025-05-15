@@ -58,6 +58,7 @@
     "@blocksuite/affine-shared": "workspace:*",
     "@blocksuite/affine-widget-drag-handle": "workspace:*",
     "@blocksuite/affine-widget-edgeless-auto-connect": "workspace:*",
+    "@blocksuite/affine-widget-edgeless-selected-rect": "workspace:*",
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*",
     "@blocksuite/affine-widget-edgeless-zoom-toolbar": "workspace:*",
     "@blocksuite/affine-widget-frame-title": "workspace:*",

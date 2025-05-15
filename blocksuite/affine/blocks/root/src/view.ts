@@ -21,7 +21,6 @@ import { EdgelessElementToolbarExtension } from './edgeless/configs/toolbar';
 import {
   edgelessDraggingAreaWidget,
   EdgelessLocker,
-  edgelessSelectedRectWidget,
   noteSlicerWidget,
 } from './edgeless/edgeless-root-spec';
 import { AltCloneExtension } from './edgeless/interact-extensions/clone-ext';
@@ -92,7 +91,6 @@ export class RootViewExtension extends ViewExtensionProvider {
       BlockViewExtension('affine:page', literal`affine-edgeless-root`),
       edgelessDraggingAreaWidget,
       noteSlicerWidget,
-      edgelessSelectedRectWidget,
       EdgelessClipboardController,
       AltCloneExtension,
     ]);

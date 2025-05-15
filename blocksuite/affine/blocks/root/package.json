@@ -35,6 +35,7 @@
     "@blocksuite/affine-model": "workspace:*",
     "@blocksuite/affine-rich-text": "workspace:*",
     "@blocksuite/affine-shared": "workspace:*",
+    "@blocksuite/affine-widget-edgeless-selected-rect": "workspace:*",
     "@blocksuite/affine-widget-edgeless-toolbar": "workspace:*",
     "@blocksuite/data-view": "workspace:*",
     "@blocksuite/global": "workspace:*",
