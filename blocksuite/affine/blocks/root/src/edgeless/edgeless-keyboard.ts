@@ -467,6 +467,9 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
         const selection = gfx.selection;
 
         if (event.code === 'Space' && !event.repeat) {
+          const currentToolName =
+            this.rootComponent.gfx.tool.currentToolName$.peek();
+          if (currentToolName === 'frameNavigator') return false;
           this._space(event);
         } else if (
           !selection.editing &&
@@ -504,8 +507,12 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
       ctx => {
         const event = ctx.get('keyboardState').raw;
         if (event.code === 'Space' && !event.repeat) {
+          const currentToolName =
+            this.rootComponent.gfx.tool.currentToolName$.peek();
+          if (currentToolName === 'frameNavigator') return false;
           this._space(event);
         }
+        return false;
       },
       { global: true }
     );
