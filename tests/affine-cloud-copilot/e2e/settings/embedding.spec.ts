@@ -4,7 +4,7 @@ import { test } from '../base/base-test';
 
 test.describe.configure({ mode: 'serial' });
 
-test.describe.skip('AISettings/Embedding', () => {
+test.describe('AISettings/Embedding', () => {
   test.beforeEach(async ({ loggedInPage: page, utils }) => {
     await utils.testUtils.setupTestEnvironment(page);
     await utils.chatPanel.openChatPanel(page);

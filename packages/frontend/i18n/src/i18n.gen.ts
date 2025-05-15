@@ -6188,6 +6188,58 @@ export function useAFFiNEI18N(): {
         time: string;
     }>): string;
     /**
+      * `Indexer & Embedding`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.title"](): string;
+    /**
+      * `Manage AFFiNE indexing and AFFiNE AI Embedding for local content processing`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.description"](): string;
+    /**
+      * `Embedding`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.title"](): string;
+    /**
+      * `Embedding allows AI to retrieve your content. If the indexer uses local settings, it may affect some of the results of the Embedding.`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.description"](): string;
+    /**
+      * `Select doc`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.select-doc"](): string;
+    /**
+      * `Workspace Embedding`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.switch.title"](): string;
+    /**
+      * `AI can call files embedded in the workspace.`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.switch.description"](): string;
+    /**
+      * `Ignore Docs`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.title"](): string;
+    /**
+      * `The Ignored docs will not be embedded into the current workspace.`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.description"](): string;
+    /**
+      * `Additional attachments`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.title"](): string;
+    /**
+      * `The uploaded file will be embedded in the current workspace.`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.description"](): string;
+    /**
+      * `Remove the attachment from embedding?`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.title"](): string;
+    /**
+      * `Attachment will be removed. AI will not continue to extract content from this attachment.`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.description"](): string;
+    /**
       * `Sharing doc requires AFFiNE Cloud.`
       */
     ["com.affine.share-menu.EnableCloudDescription"](): string;

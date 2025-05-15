@@ -20,17 +20,8 @@ import { ChatAbortIcon, ChatSendIcon } from '../../_common/icons';
 import { type AIError, AIProvider } from '../../provider';
 import { reportResponse } from '../../utils/action-reporter';
 import { readBlobAsURL } from '../../utils/image';
-import type {
-  ChatChip,
-  DocDisplayConfig,
-  FileChip,
-} from '../ai-chat-chips/type';
-import {
-  isCollectionChip,
-  isDocChip,
-  isFileChip,
-  isTagChip,
-} from '../ai-chat-chips/utils';
+import type { ChatChip, DocDisplayConfig } from '../ai-chat-chips/type';
+import { isDocChip } from '../ai-chat-chips/utils';
 import type { ChatMessage } from '../ai-chat-messages';
 import { MAX_IMAGE_COUNT } from './const';
 import type {
@@ -588,7 +579,6 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
 
       const sessionId = await this.createSessionId();
       let contexts = await this._getMatchedContexts(userInput);
-      contexts = this._filterContexts(contexts);
       if (abortController.signal.aborted) {
         return;
       }
@@ -673,9 +663,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
 
   private async _getMatchedContexts(userInput: string) {
     const contextId = await this.getContextId();
-    if (!contextId) {
-      return { files: [], docs: [] };
-    }
+    const workspaceId = this.host.store.workspace.id;
 
     const docContexts = new Map<
       string,
@@ -687,7 +675,11 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
     >();
 
     const { files: matchedFiles = [], docs: matchedDocs = [] } =
-      (await AIProvider.context?.matchContext(userInput, contextId)) ?? {};
+      (await AIProvider.context?.matchContext(
+        userInput,
+        contextId,
+        workspaceId
+      )) ?? {};
 
     matchedDocs.forEach(doc => {
       docContexts.set(doc.docId, {
@@ -701,17 +693,12 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
       if (context) {
         context.fileContent += `\n${file.content}`;
       } else {
-        const fileChip = this.chips.find(
-          chip => isFileChip(chip) && chip.fileId === file.fileId
-        ) as FileChip | undefined;
-        if (fileChip && fileChip.blobId) {
-          fileContexts.set(file.fileId, {
-            blobId: fileChip.blobId,
-            fileName: fileChip.file.name,
-            fileType: fileChip.file.type,
-            fileContent: file.content,
-          });
-        }
+        fileContexts.set(file.fileId, {
+          blobId: file.blobId,
+          fileName: file.name,
+          fileType: file.mimeType,
+          fileContent: file.content,
+        });
       }
     });
 
@@ -751,42 +738,6 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
     return {
       docs,
       files: Array.from(fileContexts.values()),
-    };
-  }
-
-  // TODO: remove this function after workspace embedding is ready
-  private _filterContexts(contexts: {
-    docs: BlockSuitePresets.AIDocContextOption[];
-    files: BlockSuitePresets.AIFileContextOption[];
-  }) {
-    const docIds = this.chips.reduce((acc, chip) => {
-      if (isDocChip(chip)) {
-        acc.push(chip.docId);
-      }
-      if (isTagChip(chip)) {
-        const docIds = this.docDisplayConfig.getTagPageIds(chip.tagId);
-        acc.push(...docIds);
-      }
-      if (isCollectionChip(chip)) {
-        const docIds = this.docDisplayConfig.getCollectionPageIds(
-          chip.collectionId
-        );
-        acc.push(...docIds);
-      }
-      return acc;
-    }, [] as string[]);
-
-    const fileIds = this.chips.reduce((acc, chip) => {
-      if (isFileChip(chip) && chip.blobId) {
-        acc.push(chip.blobId);
-      }
-      return acc;
-    }, [] as string[]);
-
-    const { docs, files } = contexts;
-    return {
-      docs: docs.filter(doc => docIds.includes(doc.docId)),
-      files: files.filter(file => fileIds.includes(file.blobId)),
     };
   }
 }

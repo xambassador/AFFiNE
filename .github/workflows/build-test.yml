@@ -1081,6 +1081,7 @@ jobs:
               - 'packages/backend/server/src/plugins/copilot/**'
               - 'packages/backend/server/tests/copilot.*'
               - 'packages/frontend/core/src/blocksuite/ai/**'
+              - 'packages/frontend/core/src/modules/workspace-indexer-embedding/**'
               - 'tests/affine-cloud-copilot/**'
 
       - name: Setup Node.js

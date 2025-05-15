@@ -58,6 +58,7 @@ import { configureThemeEditorModule } from './theme-editor';
 import { configureUrlModule } from './url';
 import { configureUserspaceModule } from './userspace';
 import { configureWorkspaceModule } from './workspace';
+import { configureIndexerEmbeddingModule } from './workspace-indexer-embedding';
 import { configureWorkspacePropertyModule } from './workspace-property';
 
 export function configureCommonModules(framework: Framework) {
@@ -116,4 +117,5 @@ export function configureCommonModules(framework: Framework) {
   configureIntegrationModule(framework);
   configureWorkspacePropertyModule(framework);
   configureCollectionRulesModule(framework);
+  configureIndexerEmbeddingModule(framework);
 }
