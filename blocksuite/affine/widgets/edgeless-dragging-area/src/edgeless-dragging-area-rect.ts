@@ -3,11 +3,12 @@ import {
   DefaultTool,
 } from '@blocksuite/affine-block-surface';
 import type { RootBlockModel } from '@blocksuite/affine-model';
-import { WidgetComponent } from '@blocksuite/std';
+import { WidgetComponent, WidgetViewExtension } from '@blocksuite/std';
 import { GfxControllerIdentifier } from '@blocksuite/std/gfx';
 import { cssVarV2 } from '@toeverything/theme/v2';
 import { css, html, nothing, unsafeCSS } from 'lit';
 import { styleMap } from 'lit/directives/style-map.js';
+import { literal, unsafeStatic } from 'lit/static-html.js';
 
 export const EDGELESS_DRAGGING_AREA_WIDGET = 'edgeless-dragging-area-rect';
 
@@ -59,3 +60,9 @@ export class EdgelessDraggingAreaRectWidget extends WidgetComponent<RootBlockMod
     `;
   }
 }
+
+export const edgelessDraggingAreaWidget = WidgetViewExtension(
+  'affine:page',
+  EDGELESS_DRAGGING_AREA_WIDGET,
+  literal`${unsafeStatic(EDGELESS_DRAGGING_AREA_WIDGET)}`
+);

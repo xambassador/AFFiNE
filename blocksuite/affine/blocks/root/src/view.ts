@@ -18,11 +18,7 @@ import { PageClipboard, ReadOnlyClipboard } from './clipboard';
 import { builtinToolbarConfig } from './configs/toolbar';
 import { EdgelessClipboardController, EdgelessRootService } from './edgeless';
 import { EdgelessElementToolbarExtension } from './edgeless/configs/toolbar';
-import {
-  edgelessDraggingAreaWidget,
-  EdgelessLocker,
-  noteSlicerWidget,
-} from './edgeless/edgeless-root-spec';
+import { EdgelessLocker } from './edgeless/edgeless-root-spec';
 import { AltCloneExtension } from './edgeless/interact-extensions/clone-ext';
 import { effects } from './effects';
 import { fallbackKeymap } from './keyboard/keymap';
@@ -89,8 +85,6 @@ export class RootViewExtension extends ViewExtensionProvider {
     }
     context.register([
       BlockViewExtension('affine:page', literal`affine-edgeless-root`),
-      edgelessDraggingAreaWidget,
-      noteSlicerWidget,
       EdgelessClipboardController,
       AltCloneExtension,
     ]);

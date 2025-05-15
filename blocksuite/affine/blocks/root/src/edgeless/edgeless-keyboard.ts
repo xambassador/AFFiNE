@@ -1,7 +1,11 @@
 import { insertLinkByQuickSearchCommand } from '@blocksuite/affine-block-bookmark';
 import { EdgelessTextBlockComponent } from '@blocksuite/affine-block-edgeless-text';
 import { FrameTool } from '@blocksuite/affine-block-frame';
-import { DefaultTool, isNoteBlock } from '@blocksuite/affine-block-surface';
+import {
+  DefaultTool,
+  EdgelessLegacySlotIdentifier,
+  isNoteBlock,
+} from '@blocksuite/affine-block-surface';
 import { toast } from '@blocksuite/affine-components/toast';
 import {
   BrushTool,
@@ -47,6 +51,7 @@ import { SurfaceSelection, TextSelection } from '@blocksuite/std';
 import {
   type BaseTool,
   GfxBlockElementModel,
+  GfxControllerIdentifier,
   type GfxPrimitiveElementModel,
   isGfxGroupCompatibleModel,
   type ToolOptions,
@@ -66,7 +71,15 @@ import { isCanvasElement } from './utils/query.js';
 
 export class EdgelessPageKeyboardManager extends PageKeyboardManager {
   get gfx() {
-    return this.rootComponent.gfx;
+    return this.std.get(GfxControllerIdentifier);
+  }
+
+  get slots() {
+    return this.std.get(EdgelessLegacySlotIdentifier);
+  }
+
+  get std() {
+    return this.rootComponent.std;
   }
 
   constructor(override rootComponent: EdgelessRootBlockComponent) {
@@ -118,7 +131,7 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
               NoteBlockModel,
             ])
           ) {
-            rootComponent.slots.toggleNoteSlicer.next();
+            this.slots.toggleNoteSlicer.next();
           }
         },
         f: () => {
@@ -153,7 +166,7 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
             elements.length === 1 &&
             isNoteBlock(elements[0])
           ) {
-            rootComponent.slots.toggleNoteSlicer.next();
+            this.slots.toggleNoteSlicer.next();
           }
         },
         '@': () => {
@@ -705,7 +718,7 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
       }
       this._setEdgelessTool(PanTool, { panning: false });
 
-      edgeless.dispatcher.disposables.addFromEvent(
+      this.std.event.disposables.addFromEvent(
         document,
         'keyup',
         revertToPrevTool

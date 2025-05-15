@@ -16,12 +16,13 @@ import type { EdgelessSelectedRectWidget } from '@blocksuite/affine-widget-edgel
 import { DisposableGroup } from '@blocksuite/global/disposable';
 import { deserializeXYWH, Point, serializeXYWH } from '@blocksuite/global/gfx';
 import { ScissorsIcon } from '@blocksuite/icons/lit';
-import { WidgetComponent } from '@blocksuite/std';
+import { WidgetComponent, WidgetViewExtension } from '@blocksuite/std';
 import { GfxControllerIdentifier } from '@blocksuite/std/gfx';
 import { css, html, nothing, type PropertyValues } from 'lit';
 import { state } from 'lit/decorators.js';
 import { classMap } from 'lit/directives/class-map.js';
 import { styleMap } from 'lit/directives/style-map.js';
+import { literal, unsafeStatic } from 'lit/static-html.js';
 
 const DIVIDING_LINE_OFFSET = 4;
 const NEW_NOTE_GAP = 40;
@@ -442,3 +443,9 @@ export class NoteSlicer extends WidgetComponent<RootBlockModel> {
   @state()
   private accessor _isResizing = false;
 }
+
+export const noteSlicerWidget = WidgetViewExtension(
+  'affine:page',
+  NOTE_SLICER_WIDGET,
+  literal`${unsafeStatic(NOTE_SLICER_WIDGET)}`
+);

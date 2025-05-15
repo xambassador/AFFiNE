@@ -53,12 +53,14 @@ export const PackageList = [
       'blocksuite/affine/shared',
       'blocksuite/affine/widgets/drag-handle',
       'blocksuite/affine/widgets/edgeless-auto-connect',
+      'blocksuite/affine/widgets/edgeless-dragging-area',
       'blocksuite/affine/widgets/edgeless-selected-rect',
       'blocksuite/affine/widgets/edgeless-toolbar',
       'blocksuite/affine/widgets/edgeless-zoom-toolbar',
       'blocksuite/affine/widgets/frame-title',
       'blocksuite/affine/widgets/keyboard-toolbar',
       'blocksuite/affine/widgets/linked-doc',
+      'blocksuite/affine/widgets/note-slicer',
       'blocksuite/affine/widgets/page-dragging-area',
       'blocksuite/affine/widgets/remote-selection',
       'blocksuite/affine/widgets/scroll-anchoring',
@@ -861,6 +863,20 @@ export const PackageList = [
     ],
   },
   {
+    location: 'blocksuite/affine/widgets/edgeless-dragging-area',
+    name: '@blocksuite/affine-widget-edgeless-dragging-area',
+    workspaceDependencies: [
+      'blocksuite/affine/blocks/note',
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/shared',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
+    ],
+  },
+  {
     location: 'blocksuite/affine/widgets/edgeless-selected-rect',
     name: '@blocksuite/affine-widget-edgeless-selected-rect',
     workspaceDependencies: [
@@ -963,6 +979,21 @@ export const PackageList = [
       'blocksuite/framework/global',
       'blocksuite/framework/std',
       'blocksuite/framework/store',
+    ],
+  },
+  {
+    location: 'blocksuite/affine/widgets/note-slicer',
+    name: '@blocksuite/affine-widget-note-slicer',
+    workspaceDependencies: [
+      'blocksuite/affine/blocks/note',
+      'blocksuite/affine/blocks/surface',
+      'blocksuite/affine/components',
+      'blocksuite/affine/ext-loader',
+      'blocksuite/affine/model',
+      'blocksuite/affine/shared',
+      'blocksuite/affine/widgets/edgeless-selected-rect',
+      'blocksuite/framework/global',
+      'blocksuite/framework/std',
     ],
   },
   {
@@ -1470,12 +1501,14 @@ export type PackageName =
   | '@blocksuite/affine-shared'
   | '@blocksuite/affine-widget-drag-handle'
   | '@blocksuite/affine-widget-edgeless-auto-connect'
+  | '@blocksuite/affine-widget-edgeless-dragging-area'
   | '@blocksuite/affine-widget-edgeless-selected-rect'
   | '@blocksuite/affine-widget-edgeless-toolbar'
   | '@blocksuite/affine-widget-edgeless-zoom-toolbar'
   | '@blocksuite/affine-widget-frame-title'
   | '@blocksuite/affine-widget-keyboard-toolbar'
   | '@blocksuite/affine-widget-linked-doc'
+  | '@blocksuite/affine-widget-note-slicer'
   | '@blocksuite/affine-widget-page-dragging-area'
   | '@blocksuite/affine-widget-remote-selection'
   | '@blocksuite/affine-widget-scroll-anchoring'

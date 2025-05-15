@@ -25,13 +25,9 @@ import { css, html } from 'lit';
 import { query, state } from 'lit/decorators.js';
 import { type StyleInfo, styleMap } from 'lit/directives/style-map.js';
 
-import type { EdgelessRootService } from './edgeless-root-service.js';
-import { isCanvasElement } from './utils/query.js';
+import { isCanvasElement } from '../edgeless/utils/query';
 
-export class EdgelessRootPreviewBlockComponent extends BlockComponent<
-  RootBlockModel,
-  EdgelessRootService
-> {
+export class EdgelessRootPreviewBlockComponent extends BlockComponent<RootBlockModel> {
   static override styles = css`
     affine-edgeless-root-preview {
       pointer-events: none;
@@ -66,9 +62,13 @@ export class EdgelessRootPreviewBlockComponent extends BlockComponent<
     }
   `;
 
+  private get _viewport() {
+    return this._gfx.viewport;
+  }
+
   private readonly _refreshLayerViewport = requestThrottledConnectedFrame(
     () => {
-      const { zoom, translateX, translateY } = this.service.viewport;
+      const { zoom, translateX, translateY } = this._viewport;
       const gap = getBgGridGap(zoom);
 
       this.backgroundStyle = {
@@ -80,10 +80,6 @@ export class EdgelessRootPreviewBlockComponent extends BlockComponent<
   );
 
   private _resizeObserver: ResizeObserver | null = null;
-
-  get dispatcher() {
-    return this.service?.uiEventDispatcher;
-  }
 
   private get _gfx() {
     return this.std.get(GfxControllerIdentifier);
