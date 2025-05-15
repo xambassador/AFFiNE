@@ -7,6 +7,7 @@ import {
   getSelectedXYWH,
   locateEditorContainer,
   resizeElementByHandle,
+  scaleElementByHandle,
 } from '@affine-test/kit/utils/editor';
 import { pressEnter } from '@affine-test/kit/utils/keyboard';
 import { openHomePage } from '@affine-test/kit/utils/load-page';
@@ -105,6 +106,10 @@ test.describe('edgeless', () => {
   });
 
   test.describe('size adjustment of embed synced doc', () => {
+    test.beforeEach(async ({ page }) => {
+      await scaleElementByHandle(page, [10, 10], 'bottom-right');
+    });
+
     test('should fold embed synced doc when adjust height to smallest', async ({
       page,
     }) => {

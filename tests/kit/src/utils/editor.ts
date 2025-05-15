@@ -476,6 +476,25 @@ export async function resizeElementByHandle(
   await dragView(page, from, to, editorIndex);
 }
 
+export async function scaleElementByHandle(
+  page: Page,
+  delta: IVec,
+  corner:
+    | 'right'
+    | 'left'
+    | 'top'
+    | 'bottom'
+    | 'top-left'
+    | 'top-right'
+    | 'bottom-right'
+    | 'bottom-left' = 'top-left',
+  editorIndex = 0
+) {
+  await page.keyboard.down('Shift');
+  await resizeElementByHandle(page, delta, corner, editorIndex);
+  await page.keyboard.up('Shift');
+}
+
 /**
  * Create a not block in canvas
  * @param position the position or xwyh of the note block in canvas

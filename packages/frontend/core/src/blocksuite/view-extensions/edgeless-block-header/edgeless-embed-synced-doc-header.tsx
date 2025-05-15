@@ -43,7 +43,7 @@ const ToggleButton = ({ model }: { model: EmbedSyncedDocModel }) => {
         model.props.preFoldHeight$.value = 0;
       } else {
         model.props.preFoldHeight$.value = h;
-        model.props.xywh$.value = `[${x},${y},${w},${styles.headerHeight}]`;
+        model.props.xywh$.value = `[${x},${y},${w},${styles.headerHeight * (model.props.scale ?? 1)}]`;
       }
     });
   }, [model]);

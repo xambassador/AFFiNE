@@ -76,6 +76,8 @@ export function calcSyncedDocFullHeight(block: BlockComponent) {
   const bottomPadding = 8;
 
   return (
-    (headerHeight + contentHeight + bottomPadding) / block.gfx.viewport.zoom
+    (headerHeight + contentHeight + bottomPadding) /
+    block.gfx.viewport.zoom /
+    (block.model.props.scale ?? 1)
   );
 }

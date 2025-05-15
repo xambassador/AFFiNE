@@ -52,23 +52,25 @@ export const EmbedSyncedDocInteraction =
               scale = newBound.w / realWidth;
             }
 
-            const newWidth = newBound.w / scale;
-
             newBound.w =
-              clamp(newWidth, constraint.minWidth, constraint.maxWidth) * scale;
+              clamp(
+                newBound.w / scale,
+                constraint.minWidth,
+                constraint.maxWidth
+              ) * scale;
             newBound.h =
-              clamp(newBound.h, constraint.minHeight, constraint.maxHeight) *
-              scale;
+              clamp(
+                newBound.h / scale,
+                constraint.minHeight,
+                constraint.maxHeight
+              ) * scale;
 
             const newHeight = newBound.h / scale;
 
-            // only adjust height check the fold state
-            if (originalBound.w === newBound.w) {
-              let preFoldHeight = 0;
-              if (newHeight === constraint.minHeight) {
-                preFoldHeight = initHeight;
-              }
-              model.props.preFoldHeight = preFoldHeight;
+            if (model.isFolded && newHeight > constraint.minHeight) {
+              model.props.preFoldHeight = 0;
+            } else if (!model.isFolded && newHeight <= constraint.minHeight) {
+              model.props.preFoldHeight = initHeight;
             }
 
             model.props.scale = scale;
