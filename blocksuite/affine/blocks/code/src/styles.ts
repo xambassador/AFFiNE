@@ -50,6 +50,10 @@ export const codeBlockStyles = css`
     user-select: none;
   }
 
+  .affine-code-block-container.disable-line-numbers .line-number {
+    display: none;
+  }
+
   affine-code .affine-code-block-preview {
     padding: 12px;
   }

@@ -321,6 +321,34 @@ test('undo code block wrap can work', async ({ page }, testInfo) => {
   );
 });
 
+test('toggle code block line number can work', async ({ page }) => {
+  await enterPlaygroundRoom(page);
+  await initEmptyCodeBlockState(page);
+  await focusRichText(page);
+
+  const lineNumber = page.locator('affine-code .line-number');
+
+  await expect(lineNumber).toBeVisible();
+
+  const codeBlockController = getCodeBlock(page);
+
+  await codeBlockController.codeBlock.hover();
+  await (await codeBlockController.openMore()).cancelLineNumberButton.click();
+
+  await expect(lineNumber).toBeHidden();
+
+  await undoByKeyboard(page);
+  await expect(lineNumber).toBeVisible();
+
+  await redoByKeyboard(page);
+  await expect(lineNumber).toBeHidden();
+
+  await codeBlockController.codeBlock.hover();
+  await (await codeBlockController.openMore()).lineNumberButton.click();
+
+  await expect(lineNumber).toBeVisible();
+});
+
 test('code block toolbar widget can appear and disappear during mousemove', async ({
   page,
 }) => {
