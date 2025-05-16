@@ -1,6 +1,7 @@
 import { DomRenderer } from '@blocksuite/affine-block-surface';
 import { beforeEach, describe, expect, test } from 'vitest';
 
+import { wait } from '../utils/common.js';
 import { getSurface } from '../utils/edgeless.js';
 import { setupEditor } from '../utils/setup.js';
 
@@ -38,6 +39,27 @@ describe('Shape rendering with DOM renderer', () => {
 
     expect(shapeElement).not.toBeNull();
     expect(shapeElement).toBeInstanceOf(HTMLElement);
+  });
+
+  test('should correctly apply percentage-based border radius', async () => {
+    const surfaceView = getSurface(window.doc, window.editor);
+    const surfaceModel = surfaceView.model;
+    const shapeProps = {
+      type: 'shape',
+      subType: 'rectangle',
+      xywh: '[150, 150, 80, 60]', // width: 80, height: 60
+      radius: 0.1, // 10% of min(width, height) = 10% of 60 = 6
+      fill: '#ff0000',
+      stroke: '#000000',
+    };
+    const shapeId = surfaceModel.addElement(shapeProps);
+    await wait(100);
+    const shapeElement = surfaceView?.renderRoot.querySelector<HTMLElement>(
+      `[data-element-id="${shapeId}"]`
+    );
+
+    expect(shapeElement).not.toBeNull();
+    expect(shapeElement?.style.borderRadius).toBe('6px');
   });
 
   test('should remove shape DOM node when element is deleted', async () => {

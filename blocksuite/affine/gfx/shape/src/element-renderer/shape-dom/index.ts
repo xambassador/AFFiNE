@@ -6,10 +6,16 @@ import { manageClassNames, setStyles } from './utils';
 
 function applyShapeSpecificStyles(
   model: ShapeElementModel,
-  element: HTMLElement
+  element: HTMLElement,
+  zoom: number
 ) {
   if (model.shapeType === 'rect') {
-    element.style.borderRadius = `${model.radius ?? 0}px`;
+    const w = model.w * zoom;
+    const h = model.h * zoom;
+    const r = model.radius ?? 0;
+    const borderRadius =
+      r < 1 ? `${Math.min(w * r, h * r)}px` : `${r * zoom}px`;
+    element.style.borderRadius = borderRadius;
   } else if (model.shapeType === 'ellipse') {
     element.style.borderRadius = '50%';
   } else {
@@ -20,11 +26,12 @@ function applyShapeSpecificStyles(
 function applyBorderStyles(
   model: ShapeElementModel,
   element: HTMLElement,
-  strokeColor: string
+  strokeColor: string,
+  zoom: number
 ) {
   element.style.border =
     model.strokeStyle !== 'none'
-      ? `${model.strokeWidth}px ${model.strokeStyle === 'dash' ? 'dashed' : 'solid'} ${strokeColor}`
+      ? `${model.strokeWidth * zoom}px ${model.strokeStyle === 'dash' ? 'dashed' : 'solid'} ${strokeColor}`
       : 'none';
 }
 
@@ -85,11 +92,11 @@ export const shapeDomRenderer = (
   element.style.width = `${model.w * zoom}px`;
   element.style.height = `${model.h * zoom}px`;
 
-  applyShapeSpecificStyles(model, element);
+  applyShapeSpecificStyles(model, element, zoom);
 
   element.style.backgroundColor = model.filled ? fillColor : 'transparent';
 
-  applyBorderStyles(model, element, strokeColor);
+  applyBorderStyles(model, element, strokeColor, zoom);
   applyTransformStyles(model, element);
 
   element.style.boxSizing = 'border-box';
