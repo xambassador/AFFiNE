@@ -1886,6 +1886,7 @@ export async function createConnectorElement(
     { x: start[0], y: start[1] },
     { x: end[0], y: end[1] }
   );
+  return (await getSelectedIds(page))[0];
 }
 
 export async function createFrameElement(

@@ -278,7 +278,13 @@ export class ConnectorElementModel extends GfxPrimitiveElementModel<ConnectorEle
   }
 
   hasLabel() {
-    return Boolean(!this.lableEditing && this.labelDisplay && this.labelXYWH);
+    return Boolean(
+      !this.labelEditing &&
+        this.labelDisplay &&
+        this.labelXYWH &&
+        this.text &&
+        this.text.length
+    );
   }
 
   override includesPoint(
@@ -450,7 +456,7 @@ export class ConnectorElementModel extends GfxPrimitiveElementModel<ConnectorEle
    * Local control display and hide, mainly used in editing scenarios.
    */
   @local()
-  accessor lableEditing: boolean = false;
+  accessor labelEditing: boolean = false;
 
   @field()
   accessor mode: ConnectorMode = DEFAULT_CONNECTOR_MODE;

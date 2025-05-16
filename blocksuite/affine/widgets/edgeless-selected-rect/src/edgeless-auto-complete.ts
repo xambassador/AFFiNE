@@ -744,7 +744,7 @@ export class EdgelessAutoComplete extends WithDisposable(LitElement) {
 
     if (
       this._isMoving ||
-      (this._isHover && !isShape && this._canAutoComplete())
+      (this._isHover && !isShape && !this._canAutoComplete())
     ) {
       this.removeOverlay();
       return nothing;
