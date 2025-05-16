@@ -180,6 +180,7 @@ jobs:
       - name: Testflight
         if: ${{ env.BUILD_TYPE != 'stable' }}
         working-directory: packages/frontend/apps/ios/App
+        continue-on-error: true
         run: |
           echo -n "${{ env.BUILD_PROVISION_PROFILE }}" | base64 --decode -o $PP_PATH
           mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
