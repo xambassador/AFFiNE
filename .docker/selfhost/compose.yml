@@ -23,6 +23,7 @@ services:
     environment:
       - REDIS_SERVER_HOST=redis
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@postgres:5432/${DB_DATABASE:-affine}
+      - AFFINE_INDEXER_SEARCH_ENDPOINT=http://indexer:9308
     restart: unless-stopped
 
   affine_migration:
@@ -38,6 +39,7 @@ services:
     environment:
       - REDIS_SERVER_HOST=redis
       - DATABASE_URL=postgresql://${DB_USERNAME}:${DB_PASSWORD}@postgres:5432/${DB_DATABASE:-affine}
+      - AFFINE_INDEXER_SEARCH_ENDPOINT=http://indexer:9308
     depends_on:
       postgres:
         condition: service_healthy
