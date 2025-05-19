@@ -917,7 +917,6 @@ __metadata:
     "@aws-sdk/s3-request-presigner": "npm:^3.779.0"
     "@faker-js/faker": "npm:^9.6.0"
     "@fal-ai/serverless-client": "npm:^0.15.0"
-    "@google-cloud/opentelemetry-cloud-monitoring-exporter": "npm:^0.20.0"
     "@google-cloud/opentelemetry-cloud-trace-exporter": "npm:^2.4.1"
     "@google-cloud/opentelemetry-resource-util": "npm:^2.4.0"
     "@nestjs-cls/transactional": "npm:^2.6.1"
@@ -5988,23 +5987,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@google-cloud/opentelemetry-cloud-monitoring-exporter@npm:^0.20.0":
-  version: 0.20.0
-  resolution: "@google-cloud/opentelemetry-cloud-monitoring-exporter@npm:0.20.0"
-  dependencies:
-    "@google-cloud/opentelemetry-resource-util": "npm:^2.4.0"
-    "@google-cloud/precise-date": "npm:^4.0.0"
-    google-auth-library: "npm:^9.0.0"
-    googleapis: "npm:^137.0.0"
-  peerDependencies:
-    "@opentelemetry/api": ^1.0.0
-    "@opentelemetry/core": ^1.0.0
-    "@opentelemetry/resources": ^1.0.0
-    "@opentelemetry/sdk-metrics": ^1.0.0
-  checksum: 10/b71f9335e32e9f5caf9b3c9511eb7029db5cc1d3d86c8e35f5ea25a47ee39ef8bb1fb635d2f454c933f229351841f08453cb6f89a41f0bd6dab2011c783b2c4b
-  languageName: node
-  linkType: hard
-
 "@google-cloud/opentelemetry-cloud-trace-exporter@npm:^2.4.1":
   version: 2.4.1
   resolution: "@google-cloud/opentelemetry-cloud-trace-exporter@npm:2.4.1"
@@ -6031,13 +6013,6 @@ __metadata:
   peerDependencies:
     "@opentelemetry/resources": ^1.0.0
   checksum: 10/119116a19549ea1a5c43d50f880959e2fe512860e316a1aa15e3e8088696629995c09c0287e7fcca42baa65fcacc5d3cd74eb3f6b0b9984dc523962d6cb36265
-  languageName: node
-  linkType: hard
-
-"@google-cloud/precise-date@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "@google-cloud/precise-date@npm:4.0.0"
-  checksum: 10/7c897bcad6a40efd77df165fca8a57bd3fbb84e6ace848085b16233c1086c32c06258caa88b9c9aaf7d4029ded13d01b57d1b5fd808dc5722cf57626ac4a386b
   languageName: node
   linkType: hard
 
@@ -22725,16 +22700,6 @@ __metadata:
     url-template: "npm:^2.0.8"
     uuid: "npm:^9.0.0"
   checksum: 10/4b914be6681f2a5a02bd0954a4a5cee1725d8623cb9d0a7c2fd7132de110e8d5707566cba39784e58147be39e74bc5513ad30fdcdaa6edcbb47ecf687003cb6c
-  languageName: node
-  linkType: hard
-
-"googleapis@npm:^137.0.0":
-  version: 137.1.0
-  resolution: "googleapis@npm:137.1.0"
-  dependencies:
-    google-auth-library: "npm:^9.0.0"
-    googleapis-common: "npm:^7.0.0"
-  checksum: 10/5d7cee8a7293701a19db3ee515272fbb932c343d1640ca21a3996dc717649817a6d169cd8370ee6e535bd2d48cb70f0b426abe691b22830d588419ebe95b5740
   languageName: node
   linkType: hard
 
