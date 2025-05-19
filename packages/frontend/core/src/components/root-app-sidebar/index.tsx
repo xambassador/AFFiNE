@@ -50,7 +50,7 @@ import { SidebarAudioPlayer } from './sidebar-audio-player';
 import { TemplateDocEntrance } from './template-doc-entrance';
 import { TrashButton } from './trash-button';
 import { UpdaterButton } from './updater-button';
-import { UserInfo } from './user-info';
+import UserInfo from './user-info';
 
 export type RootAppSidebarProps = {
   isPublicWorkspace: boolean;
@@ -103,9 +103,17 @@ export const RootAppSidebar = memo((): ReactElement => {
   const t = useI18n();
   const workspaceDialogService = useService(WorkspaceDialogService);
   const workbench = workbenchService.workbench;
+  const workspaceSelectorOpen = useLiveData(workbench.workspaceSelectorOpen$);
   const onOpenQuickSearchModal = useCallback(() => {
     cMDKQuickSearchService.toggle();
   }, [cMDKQuickSearchService]);
+
+  const onWorkspaceSelectorOpenChange = useCallback(
+    (open: boolean) => {
+      workbench.setWorkspaceSelectorOpen(open);
+    },
+    [workbench]
+  );
 
   const onOpenSettingModal = useCallback(() => {
     workspaceDialogService.open('setting', {
@@ -153,7 +161,12 @@ export const RootAppSidebar = memo((): ReactElement => {
       <SidebarContainer>
         <div className={workspaceAndUserWrapper}>
           <div className={workspaceWrapper}>
-            <WorkspaceNavigator showEnableCloudButton showSyncStatus />
+            <WorkspaceNavigator
+              showEnableCloudButton
+              showSyncStatus
+              open={workspaceSelectorOpen}
+              onOpenChange={onWorkspaceSelectorOpenChange}
+            />
           </div>
           <UserInfo />
         </div>
