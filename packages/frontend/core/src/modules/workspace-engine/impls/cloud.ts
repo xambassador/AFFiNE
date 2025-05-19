@@ -1,3 +1,4 @@
+import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { DebugLogger } from '@affine/debug';
 import {
   createWorkspaceMutation,
@@ -85,6 +86,7 @@ const logger = new DebugLogger('affine:cloud-workspace-flavour-provider');
 class CloudWorkspaceFlavourProvider implements WorkspaceFlavourProvider {
   private readonly authService: AuthService;
   private readonly graphqlService: GraphQLService;
+  private readonly featureFlagService: FeatureFlagService;
   private readonly unsubscribeAccountChanged: () => void;
 
   constructor(
@@ -93,6 +95,7 @@ class CloudWorkspaceFlavourProvider implements WorkspaceFlavourProvider {
   ) {
     this.authService = server.scope.get(AuthService);
     this.graphqlService = server.scope.get(GraphQLService);
+    this.featureFlagService = server.scope.get(FeatureFlagService);
     this.unsubscribeAccountChanged = this.server.scope.eventBus.on(
       AccountChanged,
       () => {
@@ -474,14 +477,24 @@ class CloudWorkspaceFlavourProvider implements WorkspaceFlavourProvider {
             id: `${this.flavour}:${workspaceId}`,
           },
         },
-        indexer: {
-          name: 'IndexedDBIndexerStorage',
-          opts: {
-            flavour: this.flavour,
-            type: 'workspace',
-            id: workspaceId,
-          },
-        },
+        indexer: this.featureFlagService.flags.enable_cloud_indexer.value
+          ? {
+              name: 'CloudIndexerStorage',
+              opts: {
+                flavour: this.flavour,
+                type: 'workspace',
+                id: workspaceId,
+                serverBaseUrl: this.server.serverMetadata.baseUrl,
+              },
+            }
+          : {
+              name: 'IndexedDBIndexerStorage',
+              opts: {
+                flavour: this.flavour,
+                type: 'workspace',
+                id: workspaceId,
+              },
+            },
         indexerSync: {
           name: 'IndexedDBIndexerSyncStorage',
           opts: {
