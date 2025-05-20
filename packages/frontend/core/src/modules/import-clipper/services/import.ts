@@ -44,8 +44,8 @@ export class ImportClipperService extends Service {
       docsService.list.setPrimaryMode(docId, 'page');
       workspace.engine.doc.addPriority(workspace.id, 100);
       workspace.engine.doc.addPriority(docId, 100);
-      await workspace.engine.doc.waitForDocSynced(workspace.id);
-      await workspace.engine.doc.waitForDocSynced(docId);
+      await workspace.engine.doc.waitForSynced(workspace.id);
+      await workspace.engine.doc.waitForSynced(docId);
       disposeWorkspace();
       return docId;
     } else {

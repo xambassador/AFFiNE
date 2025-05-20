@@ -2,6 +2,7 @@ import { readAllDocsFromRootDoc } from '@affine/reader';
 import {
   filter,
   first,
+  lastValueFrom,
   Observable,
   ReplaySubject,
   share,
@@ -71,60 +72,37 @@ export class IndexerSyncImpl implements IndexerSync {
 
   state$ = this.status.state$.pipe(
     // throttle the state to 1 second to avoid spamming the UI
-    throttleTime(1000)
+    throttleTime(1000, undefined, {
+      leading: true,
+      trailing: true,
+    })
   );
   docState$(docId: string) {
     return this.status.docState$(docId).pipe(
       // throttle the state to 1 second to avoid spamming the UI
-      throttleTime(1000)
+      throttleTime(1000, undefined, { leading: true, trailing: true })
     );
   }
 
-  waitForCompleted(signal?: AbortSignal) {
-    return new Promise<void>((resolve, reject) => {
-      this.status.state$
-        .pipe(
-          filter(state => state.completed),
-          takeUntilAbort(signal),
-          first()
-        )
-        .subscribe({
-          next: () => {
-            resolve();
-          },
-          error: err => {
-            reject(err);
-          },
-        });
-    });
-  }
-
-  waitForDocCompleted(docId: string, signal?: AbortSignal) {
-    return new Promise<void>((resolve, reject) => {
-      this.status
-        .docState$(docId)
-        .pipe(
-          filter(state => state.completed),
-          takeUntilAbort(signal),
-          first()
-        )
-        .subscribe({
-          next: () => {
-            resolve();
-          },
-          error: err => {
-            reject(err);
-          },
-        });
-    });
-  }
-
-  readonly interval = () =>
-    new Promise<void>(resolve =>
-      requestIdleCallback(() => resolve(), {
-        timeout: 200,
-      })
+  async waitForCompleted(signal?: AbortSignal) {
+    await lastValueFrom(
+      this.status.state$.pipe(
+        filter(state => state.completed),
+        takeUntilAbort(signal),
+        first()
+      )
     );
+  }
+
+  async waitForDocCompleted(docId: string, signal?: AbortSignal) {
+    await lastValueFrom(
+      this.status.docState$(docId).pipe(
+        filter(state => state.completed),
+        takeUntilAbort(signal),
+        first()
+      )
+    );
+  }
 
   constructor(
     readonly doc: DocStorage,
