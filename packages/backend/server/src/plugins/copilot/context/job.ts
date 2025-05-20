@@ -224,7 +224,8 @@ export class CopilotContextDocJob {
     try {
       const content = await this.doc.getFullDocContent(workspaceId, docId);
       if (content) {
-        // no need to check if embeddings is empty, will throw internally
+        // fast fall for empty doc, journal is easily to create a empty doc
+        if (!content.summary) return;
         const embeddings = await this.embeddingClient.getFileEmbeddings(
           new File([content.summary], `${content.title || 'Untitled'}.md`)
         );
