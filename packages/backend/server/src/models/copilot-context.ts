@@ -119,6 +119,11 @@ export class CopilotContextModel extends BaseModel {
   }
 
   async hasWorkspaceEmbedding(workspaceId: string, docIds: string[]) {
+    const canEmbedding = await this.checkEmbeddingAvailable();
+    if (!canEmbedding) {
+      return new Set();
+    }
+
     const existsIds = await this.db.aiWorkspaceEmbedding
       .findMany({
         where: {
@@ -238,10 +243,11 @@ export class CopilotContextModel extends BaseModel {
       WHERE
         w."workspace_id" = ${workspaceId}
         AND i."doc_id" IS NULL
+        AND (w."embedding" <=> ${embedding}::vector) <= ${threshold}
       ORDER BY "distance" ASC
       LIMIT ${topK};
     `;
 
-    return similarityChunks.filter(c => Number(c.distance) <= threshold);
+    return similarityChunks;
   }
 }

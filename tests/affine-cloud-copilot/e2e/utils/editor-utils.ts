@@ -334,6 +334,8 @@ export class EditorUtils {
         await page.keyboard.press('Enter');
       }
     }
+    // sleep 1 sec to wait the doc sync
+    await page.waitForTimeout(1000);
   }
 
   public static async createTagAndDoc(
@@ -362,6 +364,8 @@ export class EditorUtils {
         await page.keyboard.press('Enter');
       }
     }
+    // sleep 1 sec to wait the doc sync
+    await page.waitForTimeout(1000);
   }
 
   public static async selectElementInEdgeless(page: Page, elements: string[]) {

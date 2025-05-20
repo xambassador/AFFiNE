@@ -4,6 +4,7 @@ import {
   AFFiNELogger,
   BlobNotFound,
   Config,
+  DocNotFound,
   EventBus,
   JobQueue,
   mapAnyError,
@@ -87,11 +88,37 @@ export class CopilotContextDocJob {
     }
   }
 
-  // @OnEvent('doc.indexer.updated')
-  async addDocEmbeddingQueueFromEvent(
-    // TODO(@darkskygit): replace this with real event type
-    doc: { workspaceId: string; docId: string } //Events['doc.indexer.updated'],
-  ) {
+  @OnEvent('workspace.updated')
+  async onWorkspaceConfigUpdate({
+    id,
+    enableDocEmbedding,
+  }: Events['workspace.updated']) {
+    if (enableDocEmbedding) {
+      // trigger workspace embedding
+      this.event.emit('workspace.embedding', {
+        workspaceId: id,
+      });
+    }
+  }
+
+  @OnEvent('workspace.embedding')
+  async addWorkspaceEmbeddingQueue({
+    workspaceId,
+  }: Events['workspace.embedding']) {
+    if (!this.supportEmbedding) return;
+
+    const toBeEmbedDocIds =
+      await this.models.copilotWorkspace.findDocsToEmbed(workspaceId);
+    for (const docId of toBeEmbedDocIds) {
+      await this.queue.add('copilot.embedding.docs', {
+        workspaceId,
+        docId,
+      });
+    }
+  }
+
+  @OnEvent('doc.indexer.updated')
+  async addDocEmbeddingQueueFromEvent(doc: Events['doc.indexer.updated']) {
     if (!this.supportEmbedding) return;
 
     await this.queue.add('copilot.embedding.docs', {
@@ -100,11 +127,10 @@ export class CopilotContextDocJob {
     });
   }
 
-  // @OnEvent('doc.indexer.deleted')
-  async deleteDocEmbeddingQueueFromEvent(
-    // TODO(@darkskygit): replace this with real event type
-    doc: { workspaceId: string; docId: string } //Events['doc.indexer.deleted'],
-  ) {
+  @OnEvent('doc.indexer.deleted')
+  async deleteDocEmbeddingQueueFromEvent(doc: Events['doc.indexer.deleted']) {
+    if (!this.supportEmbedding) return;
+
     await this.models.copilotContext.deleteWorkspaceEmbedding(
       doc.workspaceId,
       doc.docId
@@ -193,13 +219,14 @@ export class CopilotContextDocJob {
     docId,
   }: Jobs['copilot.embedding.docs']) {
     if (!this.supportEmbedding) return;
+    if (workspaceId === docId || docId.includes('$')) return;
 
     try {
       const content = await this.doc.getFullDocContent(workspaceId, docId);
       if (content) {
         // no need to check if embeddings is empty, will throw internally
         const embeddings = await this.embeddingClient.getFileEmbeddings(
-          new File([content.summary], `${content.title}.md`)
+          new File([content.summary], `${content.title || 'Untitled'}.md`)
         );
 
         for (const chunks of embeddings) {
@@ -209,6 +236,8 @@ export class CopilotContextDocJob {
             chunks
           );
         }
+      } else if (contextId) {
+        throw new DocNotFound({ spaceId: workspaceId, docId });
       }
     } catch (error: any) {
       if (contextId) {

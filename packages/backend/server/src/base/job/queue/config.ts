@@ -48,7 +48,7 @@ defineModuleConfig('job', {
   'queues.copilot': {
     desc: 'The config for copilot job queue',
     default: {
-      concurrency: 1,
+      concurrency: 5,
     },
     schema,
   },
