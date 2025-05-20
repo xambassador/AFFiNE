@@ -17,6 +17,20 @@ test.describe('AIBasic/Chat', () => {
     await expect(page.getByTestId('ai-onboarding')).toBeVisible();
   });
 
+  test('should display embedding status tooltip', async ({
+    loggedInPage: page,
+  }) => {
+    const check = await page.getByTestId(
+      'ai-chat-embedding-status-tooltip-check'
+    );
+    await expect(check).toBeVisible();
+
+    await check.hover();
+    const tooltip = await page.getByTestId('ai-chat-embedding-status-tooltip');
+    await expect(tooltip).toBeVisible();
+    await expect(tooltip).toHaveText(/Results will improve after embedding/i);
+  });
+
   test(`should send message and receive AI response:
         - send message
         - AI is loading

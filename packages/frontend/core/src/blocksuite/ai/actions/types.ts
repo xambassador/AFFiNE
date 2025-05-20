@@ -13,6 +13,7 @@ import type { EditorHost } from '@blocksuite/affine/std';
 import type { GfxModel } from '@blocksuite/affine/std/gfx';
 import type { BlockModel } from '@blocksuite/affine/store';
 
+import type { AIEmbeddingStatus } from '../provider';
 import type { PromptKey } from '../provider/prompt';
 
 export const translateLangs = [
@@ -421,6 +422,10 @@ declare global {
         height: number;
         query: string;
       }): Promise<string[]>;
+    }
+
+    interface AIEmbeddingService {
+      getEmbeddingStatus(workspaceId: string): Promise<AIEmbeddingStatus>;
     }
   }
 }

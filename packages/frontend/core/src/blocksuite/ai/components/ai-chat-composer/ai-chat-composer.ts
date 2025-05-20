@@ -39,13 +39,18 @@ export class AIChatComposer extends SignalWatcher(
   static override styles = css`
     .chat-panel-footer {
       margin: 8px 0px;
-      height: 20px;
       display: flex;
+      flex-direction: column;
       gap: 4px;
-      align-items: center;
       color: var(--affine-text-secondary-color);
       font-size: 12px;
       user-select: none;
+    }
+
+    .ai-misleading-info {
+      display: flex;
+      align-items: center;
+      gap: 4px;
     }
   `;
 
@@ -148,8 +153,8 @@ export class AIChatComposer extends SignalWatcher(
         .addImages=${this.addImages}
       ></ai-chat-input>
       <div class="chat-panel-footer">
-        ${InformationIcon()}
-        <div>AI outputs can be misleading or wrong</div>
+        <div class="ai-misleading-info">${InformationIcon()} AI outputs can be misleading or wrong</div>
+        <ai-chat-embedding-status-tooltip .host=${this.host} />
       </div>
     </div>`;
   }

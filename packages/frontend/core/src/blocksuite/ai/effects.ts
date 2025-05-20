@@ -38,6 +38,7 @@ import { ChatPanelFileChip } from './components/ai-chat-chips/file-chip';
 import { ChatPanelTagChip } from './components/ai-chat-chips/tag-chip';
 import { AIChatComposer } from './components/ai-chat-composer';
 import { AIChatInput } from './components/ai-chat-input';
+import { AIChatEmbeddingStatusTooltip } from './components/ai-chat-input/embedding-status-tooltip';
 import { AIChatModels } from './components/ai-chat-models/ai-chat-models';
 import { AIHistoryClear } from './components/ai-history-clear';
 import { effects as componentAiItemEffects } from './components/ai-item';
@@ -98,6 +99,10 @@ export function registerAIEffects() {
   customElements.define('chat-panel-messages', ChatPanelMessages);
   customElements.define('chat-panel', ChatPanel);
   customElements.define('ai-chat-input', AIChatInput);
+  customElements.define(
+    'ai-chat-embedding-status-tooltip',
+    AIChatEmbeddingStatusTooltip
+  );
   customElements.define('ai-chat-composer', AIChatComposer);
   customElements.define('chat-panel-chips', ChatPanelChips);
   customElements.define('ai-history-clear', AIHistoryClear);

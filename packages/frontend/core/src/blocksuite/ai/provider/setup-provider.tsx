@@ -796,6 +796,12 @@ Could you make a new website based on these notes and send back just the html fi
     return client.forkSession(options);
   });
 
+  AIProvider.provide('embedding', {
+    getEmbeddingStatus: (workspaceId: string) => {
+      return client.getEmbeddingStatus(workspaceId);
+    },
+  });
+
   const disposeRequestLoginHandler = AIProvider.slots.requestLogin.subscribe(
     () => {
       globalDialogService.open('sign-in', {});

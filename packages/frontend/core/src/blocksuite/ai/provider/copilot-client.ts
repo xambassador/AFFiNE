@@ -13,6 +13,7 @@ import {
   getCopilotHistoryIdsQuery,
   getCopilotSessionQuery,
   getCopilotSessionsQuery,
+  getWorkspaceEmbeddingStatusQuery,
   type GraphQLQuery,
   listContextObjectQuery,
   listContextQuery,
@@ -459,5 +460,12 @@ export class CopilotClient {
       }
     });
     return queryString.toString();
+  }
+
+  getEmbeddingStatus(workspaceId: string) {
+    return this.gql({
+      query: getWorkspaceEmbeddingStatusQuery,
+      variables: { workspaceId },
+    }).then(res => res.queryWorkspaceEmbeddingStatus);
   }
 }
