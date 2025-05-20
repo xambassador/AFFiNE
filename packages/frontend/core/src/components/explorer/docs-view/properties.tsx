@@ -36,14 +36,16 @@ const useProperties = (view: 'list' | 'card') => {
 
   const stackProperties = useMemo(
     () =>
-      explorerPropertyList.filter(
-        property =>
-          (property.systemProperty &&
-            property.systemProperty.showInDocList === 'stack') ||
-          (property.workspaceProperty &&
-            WorkspacePropertyTypes[property.workspaceProperty.type]
-              .showInDocList === 'stack')
-      ),
+      explorerPropertyList
+        .filter(
+          property =>
+            (property.systemProperty &&
+              property.systemProperty.showInDocList === 'stack') ||
+            (property.workspaceProperty &&
+              WorkspacePropertyTypes[property.workspaceProperty.type]
+                .showInDocList === 'stack')
+        )
+        .filter(p => p.systemProperty?.type !== 'tags'),
     [explorerPropertyList]
   );
 
@@ -191,50 +193,7 @@ export const CardViewProperties = ({ docId }: { docId: string }) => {
   }
 
   return (
-    <>
-      {/* stack properties */}
-      <div className={styles.stackContainer}>
-        <div className={styles.stackProperties}>
-          {stackProperties.map(({ systemProperty, workspaceProperty }) => {
-            const displayKeys = [
-              systemProperty ? `system:${systemProperty.type}` : null,
-              workspaceProperty ? `property:${workspaceProperty.id}` : null,
-            ];
-            if (
-              !displayKeys.some(key => key && displayProperties?.includes(key))
-            ) {
-              return null;
-            }
-            if (systemProperty) {
-              return (
-                <SystemPropertyRenderer
-                  doc={doc}
-                  config={SystemPropertyTypes[systemProperty.type]}
-                  key={systemProperty.type}
-                />
-              );
-            } else if (workspaceProperty) {
-              return (
-                <WorkspacePropertyRenderer
-                  key={workspaceProperty.id}
-                  doc={doc}
-                  property={workspaceProperty}
-                  config={WorkspacePropertyTypes[workspaceProperty.type]}
-                />
-              );
-            }
-            return null;
-          })}
-        </div>
-        {displayProperties?.includes('system:tags') ? (
-          <div className={styles.stackProperties}>
-            <SystemPropertyRenderer
-              doc={doc}
-              config={SystemPropertyTypes.tags}
-            />
-          </div>
-        ) : null}
-      </div>
+    <div className={styles.cardProperties}>
       {/* inline properties */}
       {inlineProperties.map(({ systemProperty, workspaceProperty }) => {
         const displayKeys = [
@@ -265,7 +224,39 @@ export const CardViewProperties = ({ docId }: { docId: string }) => {
         }
         return null;
       })}
-    </>
+      {/* stack properties */}
+      {stackProperties.map(({ systemProperty, workspaceProperty }) => {
+        const displayKeys = [
+          systemProperty ? `system:${systemProperty.type}` : null,
+          workspaceProperty ? `property:${workspaceProperty.id}` : null,
+        ];
+        if (!displayKeys.some(key => key && displayProperties?.includes(key))) {
+          return null;
+        }
+        if (systemProperty) {
+          return (
+            <SystemPropertyRenderer
+              doc={doc}
+              config={SystemPropertyTypes[systemProperty.type]}
+              key={systemProperty.type}
+            />
+          );
+        } else if (workspaceProperty) {
+          return (
+            <WorkspacePropertyRenderer
+              key={workspaceProperty.id}
+              doc={doc}
+              property={workspaceProperty}
+              config={WorkspacePropertyTypes[workspaceProperty.type]}
+            />
+          );
+        }
+        return null;
+      })}
+      {displayProperties?.includes('system:tags') ? (
+        <SystemPropertyRenderer doc={doc} config={SystemPropertyTypes.tags} />
+      ) : null}
+    </div>
   );
 };
 
