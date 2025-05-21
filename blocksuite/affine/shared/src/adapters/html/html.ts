@@ -40,6 +40,7 @@ import {
   HtmlDeltaConverter,
   InlineDeltaToHtmlAdapterMatcherIdentifier,
 } from './delta-converter';
+import { rehypeInlineToBlock } from './rehype-plugins';
 
 export type Html = string;
 
@@ -195,7 +196,9 @@ export class HtmlAdapter extends BaseAdapter<Html> {
   }
 
   private _htmlToAst(html: Html) {
-    return unified().use(rehypeParse).parse(html);
+    const processor = unified().use(rehypeParse).use(rehypeInlineToBlock);
+    const ast = processor.parse(html);
+    return processor.runSync(ast);
   }
 
   override async fromBlockSnapshot(
