@@ -267,7 +267,8 @@
   "indexer": {
     "enabled": {
       "type": "Boolean",
-      "desc": "Enable indexer plugin"
+      "desc": "Enable indexer plugin",
+      "env": "AFFINE_INDEXER_ENABLED"
     },
     "provider.type": {
       "type": "String",

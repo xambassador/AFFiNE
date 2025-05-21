@@ -3,10 +3,24 @@ import { Transactional } from '@nestjs-cls/transactional';
 import type { Update } from '@prisma/client';
 import { Prisma } from '@prisma/client';
 
-import { PaginationInput } from '../base';
+import { EventBus, PaginationInput } from '../base';
 import { DocIsNotPublic } from '../base/error';
 import { BaseModel } from './base';
 import { Doc, DocRole, PublicDocMode, publicUserSelect } from './common';
+
+declare global {
+  interface Events {
+    'doc.created': {
+      workspaceId: string;
+      docId: string;
+      editor?: string;
+    };
+    'doc.updated': {
+      workspaceId: string;
+      docId: string;
+    };
+  }
+}
 
 export type DocMetaUpsertInput = Omit<
   Prisma.WorkspaceDocUncheckedCreateInput,
@@ -24,6 +38,10 @@ export type DocMetaUpsertInput = Omit<
  */
 @Injectable()
 export class DocModel extends BaseModel {
+  constructor(private readonly event: EventBus) {
+    super();
+  }
+
   // #region Update
 
   private updateToDocRecord(row: Update): Doc {
@@ -338,7 +356,7 @@ export class DocModel extends BaseModel {
     docId: string,
     data?: DocMetaUpsertInput
   ) {
-    return await this.db.workspaceDoc.upsert({
+    const doc = await this.db.workspaceDoc.upsert({
       where: {
         workspaceId_docId: {
           workspaceId,
@@ -354,6 +372,11 @@ export class DocModel extends BaseModel {
         docId,
       },
     });
+    this.event.emit('doc.updated', {
+      workspaceId,
+      docId,
+    });
+    return doc;
   }
 
   /**

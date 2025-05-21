@@ -812,7 +812,7 @@
       "properties": {
         "enabled": {
           "type": "boolean",
-          "description": "Enable indexer plugin\n@default true",
+          "description": "Enable indexer plugin\n@default true\n@environment `AFFINE_INDEXER_ENABLED`",
           "default": true
         },
         "provider.type": {

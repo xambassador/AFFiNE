@@ -31,6 +31,7 @@ defineModuleConfig('indexer', {
   enabled: {
     desc: 'Enable indexer plugin',
     default: true,
+    env: ['AFFINE_INDEXER_ENABLED', 'boolean'],
   },
   'provider.type': {
     desc: 'Indexer search service provider name',

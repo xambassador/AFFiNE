@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { JobQueue, OnEvent } from '../../base';
+import { OnEvent } from '../../base';
 import { Models } from '../../models';
 import { PgWorkspaceDocStorageAdapter } from './adapters/workspace';
 import { DocReader } from './reader';
@@ -10,8 +10,7 @@ export class DocEventsListener {
   constructor(
     private readonly docReader: DocReader,
     private readonly models: Models,
-    private readonly workspace: PgWorkspaceDocStorageAdapter,
-    private readonly queue: JobQueue
+    private readonly workspace: PgWorkspaceDocStorageAdapter
   ) {}
 
   @OnEvent('doc.snapshot.updated')
@@ -29,17 +28,6 @@ export class DocEventsListener {
         return;
       }
       await this.models.doc.upsertMeta(workspaceId, docId, content);
-      await this.queue.add(
-        'indexer.indexDoc',
-        {
-          workspaceId,
-          docId,
-        },
-        {
-          jobId: `indexDoc/${workspaceId}/${docId}`,
-          priority: 100,
-        }
-      );
     } else {
       // update workspace content to database
       const content = this.docReader.parseWorkspaceContent(blob);
@@ -47,16 +35,6 @@ export class DocEventsListener {
         return;
       }
       await this.models.workspace.update(workspaceId, content);
-      await this.queue.add(
-        'indexer.indexWorkspace',
-        {
-          workspaceId,
-        },
-        {
-          jobId: `indexWorkspace/${workspaceId}`,
-          priority: 100,
-        }
-      );
     }
   }
 
@@ -64,16 +42,6 @@ export class DocEventsListener {
   async clearUserWorkspaces(payload: Events['user.deleted']) {
     for (const workspace of payload.ownedWorkspaces) {
       await this.workspace.deleteSpace(workspace);
-      await this.queue.add(
-        'indexer.deleteWorkspace',
-        {
-          workspaceId: workspace,
-        },
-        {
-          jobId: `deleteWorkspace/${workspace}`,
-          priority: 0,
-        }
-      );
     }
   }
 }

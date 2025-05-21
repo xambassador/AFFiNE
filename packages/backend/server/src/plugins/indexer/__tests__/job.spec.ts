@@ -175,10 +175,3 @@ test('should not index workspace if snapshot not exists', async t => {
 
   t.is(module.queue.count('indexer.indexWorkspace'), count);
 });
-
-test('should schedule auto index workspaces', async t => {
-  await indexerJob.scheduleAutoIndexWorkspaces();
-
-  const { payload } = await module.queue.waitFor('indexer.autoIndexWorkspaces');
-  t.is(payload.lastIndexedWorkspaceSid, undefined);
-});

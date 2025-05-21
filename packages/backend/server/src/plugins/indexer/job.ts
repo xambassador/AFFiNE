@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 
 import { Config, JOB_SIGNAL, JobQueue, OnJob } from '../../base';
 import { readAllDocIdsFromWorkspaceSnapshot } from '../../core/utils/blocksuite';
@@ -183,21 +182,5 @@ export class IndexerJob {
     // update the lastIndexedWorkspaceSid in the payload and repeat the job after 30 seconds
     payload.lastIndexedWorkspaceSid = nextSid;
     return JOB_SIGNAL.Repeat;
-  }
-
-  @Cron(CronExpression.EVERY_30_SECONDS)
-  async scheduleAutoIndexWorkspaces() {
-    if (!this.config.indexer.enabled) {
-      return;
-    }
-    await this.queue.add(
-      'indexer.autoIndexWorkspaces',
-      {},
-      {
-        // make sure only one job is running at a time
-        delay: 30 * 1000,
-        jobId: 'autoIndexWorkspaces',
-      }
-    );
   }
 }

@@ -4,6 +4,7 @@ import { Module } from '@nestjs/common';
 
 import { ServerConfigModule } from '../../core/config';
 import { PermissionModule } from '../../core/permission';
+import { IndexerEvent } from './event';
 import { SearchProviderFactory } from './factory';
 import { IndexerJob } from './job';
 import { SearchProviders } from './providers';
@@ -16,6 +17,7 @@ import { IndexerService } from './service';
     IndexerResolver,
     IndexerService,
     IndexerJob,
+    IndexerEvent,
     SearchProviderFactory,
     ...SearchProviders,
   ],
