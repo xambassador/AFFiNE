@@ -121,7 +121,7 @@ export class IndexerJob {
         indexed: true,
       });
     }
-    this.logger.debug(
+    this.logger.log(
       `indexed workspace ${workspaceId} with ${missingDocIds.length} missing docs and ${deletedDocIds.length} deleted docs`
     );
   }
@@ -138,7 +138,10 @@ export class IndexerJob {
   @OnJob('indexer.autoIndexWorkspaces')
   async autoIndexWorkspaces(payload: Jobs['indexer.autoIndexWorkspaces']) {
     const startSid = payload.lastIndexedWorkspaceSid ?? 0;
-    const workspaces = await this.models.workspace.listAfterSid(startSid, 100);
+    const workspaces = await this.models.workspace.listAfterSid(
+      startSid,
+      this.config.indexer.autoIndex.batchSize
+    );
     if (workspaces.length === 0) {
       // Keep the current sid value when repeating
       return JOB_SIGNAL.Repeat;

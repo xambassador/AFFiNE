@@ -289,6 +289,10 @@
       "type": "String",
       "desc": "Indexer search service auth password, if not set, basic auth will be disabled. Optional for elasticsearch",
       "env": "AFFINE_INDEXER_SEARCH_PASSWORD"
+    },
+    "autoIndex.batchSize": {
+      "type": "Number",
+      "desc": "Number of workspaces automatically indexed per batch"
     }
   },
   "oauth": {

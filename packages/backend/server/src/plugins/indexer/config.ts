@@ -19,6 +19,9 @@ declare global {
         username: string;
         password: string;
       };
+      autoIndex: {
+        batchSize: number;
+      };
     };
   }
 }
@@ -57,5 +60,10 @@ defineModuleConfig('indexer', {
     desc: 'Indexer search service auth password, if not set, basic auth will be disabled. Optional for elasticsearch',
     default: '',
     env: ['AFFINE_INDEXER_SEARCH_PASSWORD', 'string'],
+  },
+  'autoIndex.batchSize': {
+    desc: 'Number of workspaces automatically indexed per batch',
+    default: 10,
+    shape: z.number().int().positive().max(1000),
   },
 });
