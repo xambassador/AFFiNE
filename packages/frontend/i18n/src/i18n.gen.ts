@@ -6216,6 +6216,22 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.switch.description"](): string;
     /**
+      * `Embedding progress`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.progress.title"](): string;
+    /**
+      * `Syncing`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.progress.syncing"](): string;
+    /**
+      * `Synced`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.progress.synced"](): string;
+    /**
+      * `Loading sync status...`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.progress.loading-sync-status"](): string;
+    /**
       * `Ignore Docs`
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.title"](): string;
