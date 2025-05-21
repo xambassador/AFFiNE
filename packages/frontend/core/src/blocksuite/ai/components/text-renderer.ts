@@ -2,8 +2,10 @@ import { createReactComponentFromLit } from '@affine/component';
 import { getStoreManager } from '@affine/core/blocksuite/manager/store';
 import { getViewManager } from '@affine/core/blocksuite/manager/view';
 import type { FeatureFlagService } from '@affine/core/modules/feature-flag';
+import { PeekViewProvider } from '@blocksuite/affine/components/peek';
 import { Container, type ServiceProvider } from '@blocksuite/affine/global/di';
 import { WithDisposable } from '@blocksuite/affine/global/lit';
+import { RefNodeSlotsProvider } from '@blocksuite/affine/inlines/reference';
 import {
   codeBlockWrapMiddleware,
   defaultImageProxyMiddleware,
@@ -34,6 +36,7 @@ import { classMap } from 'lit/directives/class-map.js';
 import { keyed } from 'lit/directives/keyed.js';
 import { literal } from 'lit/static-html.js';
 import React from 'react';
+import { filter } from 'rxjs/operators';
 
 import { markDownToDoc } from '../../utils';
 import type {
@@ -240,6 +243,28 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
 
   private _timer?: ReturnType<typeof setInterval> | null = null;
 
+  private readonly _subscribeDocLinkClicked = () => {
+    const refNodeSlots = this.host?.std.getOptional(RefNodeSlotsProvider);
+    if (!refNodeSlots) return;
+    this.disposables.add(
+      refNodeSlots.docLinkClicked
+        .pipe(
+          filter(
+            options => !!this._previewHost && options.host === this._previewHost
+          )
+        )
+        .subscribe(options => {
+          // Open the doc in center peek
+          this.host?.std
+            .getOptional(PeekViewProvider)
+            ?.peek({
+              docId: options.pageId,
+            })
+            .catch(console.error);
+        })
+    );
+  };
+
   private readonly _updateDoc = () => {
     if (this._answers.length > 0) {
       const latestAnswer = this._answers.pop();
@@ -309,6 +334,10 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
     if (this.state === 'generating') {
       this._timer = setInterval(this._updateDoc, 600);
     }
+  }
+
+  override firstUpdated() {
+    this._subscribeDocLinkClicked();
   }
 
   private disposeDoc() {
@@ -381,6 +410,9 @@ export class TextRenderer extends WithDisposable(ShadowlessElement) {
 
   @query('.text-renderer-container')
   private accessor _container!: HTMLDivElement;
+
+  @query('.text-renderer-container editor-host')
+  private accessor _previewHost: EditorHost | null = null;
 
   @property({ attribute: false })
   accessor answer!: string;
