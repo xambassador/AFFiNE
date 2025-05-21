@@ -1,3 +1,4 @@
+import { toast } from '@affine/component';
 import { stopPropagation } from '@affine/core/utils';
 import type { CopilotSessionType } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
@@ -531,6 +532,10 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
       multiple: true,
     });
     if (!images) return;
+    if (this.chatContextValue.images.length + images.length > MAX_IMAGE_COUNT) {
+      toast(`You can only upload up to ${MAX_IMAGE_COUNT} images`);
+      return;
+    }
     this.addImages(images);
   };
 

@@ -7,16 +7,19 @@ import { repeat } from 'lit/directives/repeat.js';
 export class ImagePreviewGrid extends LitElement {
   static override styles = css`
     .image-preview-wrapper {
-      overflow: hidden scroll;
-      max-height: 128px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-height: 80px;
+      white-space: nowrap;
     }
 
     ${scrollbarStyle('.image-preview-wrapper')}
 
     .images-container {
       display: flex;
+      flex-direction: row;
       gap: 4px;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       position: relative;
     }
 
@@ -31,6 +34,7 @@ export class ImagePreviewGrid extends LitElement {
       display: flex;
       justify-content: center;
       align-items: center;
+      flex: 0 0 auto;
     }
 
     .image-container img {

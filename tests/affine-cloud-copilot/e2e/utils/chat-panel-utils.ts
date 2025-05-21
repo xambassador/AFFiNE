@@ -236,10 +236,9 @@ export class ChatPanelUtils {
     await this.makeChat(page, text);
   }
 
-  public static async chatWithImages(
+  public static async uploadImages(
     page: Page,
-    images: { name: string; mimeType: string; buffer: Buffer }[],
-    text: string
+    images: { name: string; mimeType: string; buffer: Buffer }[]
   ) {
     await page.evaluate(() => {
       delete window.showOpenFilePicker;
@@ -251,6 +250,14 @@ export class ChatPanelUtils {
 
     const fileChooser = await fileChooserPromise;
     await fileChooser.setFiles(images);
+  }
+
+  public static async chatWithImages(
+    page: Page,
+    images: { name: string; mimeType: string; buffer: Buffer }[],
+    text: string
+  ) {
+    await this.uploadImages(page, images);
 
     await page.waitForSelector('ai-chat-input img');
     await this.makeChat(page, text);
