@@ -38,6 +38,9 @@ export class CodeBlockPreviewViewExtension extends ViewExtensionProvider {
       framework.get(FeatureFlagService).flags.enable_code_block_html_preview.$
         .value;
     if (!flag) return;
+
+    if (!window.crossOriginIsolated) return;
+
     context.register(CodeBlockHtmlPreview);
   }
 }

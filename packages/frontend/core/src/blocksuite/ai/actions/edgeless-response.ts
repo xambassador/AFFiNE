@@ -1,3 +1,4 @@
+import { CodeBlockPreviewIdentifier } from '@blocksuite/affine/blocks/code';
 import { addImages } from '@blocksuite/affine/blocks/image';
 import { getSurfaceBlock } from '@blocksuite/affine/blocks/surface';
 import { LightLoadingIcon } from '@blocksuite/affine/components/icons';
@@ -19,6 +20,7 @@ import {
 import { TelemetryProvider } from '@blocksuite/affine/shared/services';
 import type { EditorHost } from '@blocksuite/affine/std';
 import { GfxControllerIdentifier } from '@blocksuite/affine/std/gfx';
+import { Text } from '@blocksuite/affine/store';
 import {
   AFFINE_TOOLBAR_WIDGET,
   type AffineToolbarWidget,
@@ -490,15 +492,34 @@ function responseToMakeItReal(host: EditorHost, ctx: AIContext) {
   aiPanel.hide();
 
   host.store.transact(() => {
-    host.store.addBlock(
-      'affine:embed-html',
-      {
-        html,
-        design: 'ai:makeItReal', // as tag
-        xywh: bounds.serialize(),
-      },
-      surface.id
+    const ifUseCodeBlock = host.std.getOptional(
+      CodeBlockPreviewIdentifier('html')
     );
+
+    if (ifUseCodeBlock) {
+      const note = host.store.addBlock(
+        'affine:note',
+        {
+          xywh: bounds.serialize(),
+        },
+        host.store.root
+      );
+      host.store.addBlock(
+        'affine:code',
+        { text: new Text(html), language: 'html', preview: true },
+        note
+      );
+    } else {
+      host.store.addBlock(
+        'affine:embed-html',
+        {
+          html,
+          design: 'ai:makeItReal', // as tag
+          xywh: bounds.serialize(),
+        },
+        surface.id
+      );
+    }
   });
 }
 
