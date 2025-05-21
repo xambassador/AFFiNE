@@ -48,6 +48,7 @@ export class HTMLPreview extends SignalWatcher(WithDisposable(LitElement)) {
     .html-preview-iframe {
       width: 100%;
       height: 544px;
+      border: none;
     }
   `;
 
