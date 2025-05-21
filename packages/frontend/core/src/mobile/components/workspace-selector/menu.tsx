@@ -78,6 +78,20 @@ export const WorkspaceList = (props: WorkspaceListProps) => {
   ));
 };
 
+const CloudSignIn = ({ onClick }: { onClick: () => void }) => {
+  const t = useI18n();
+  return (
+    <li className={styles.wsItem}>
+      <button className={styles.wsCard} onClick={onClick}>
+        <div className={styles.signInIcon}>
+          <AccountIcon />
+        </div>
+        <div className={styles.wsName}>{t['Sign in']()}</div>
+      </button>
+    </li>
+  );
+};
+
 const WorkspaceServerInfo = ({
   server,
   name,
@@ -85,7 +99,6 @@ const WorkspaceServerInfo = ({
   accountStatus,
   onDeleteServer,
   onSignOut,
-  onSignIn,
 }: {
   server: string;
   name: string;
@@ -93,7 +106,6 @@ const WorkspaceServerInfo = ({
   accountStatus?: 'authenticated' | 'unauthenticated';
   onDeleteServer?: () => void;
   onSignOut?: () => void;
-  onSignIn?: () => void;
 }) => {
   const t = useI18n();
   const isCloud = server !== 'local';
@@ -121,17 +133,8 @@ const WorkspaceServerInfo = ({
             {t['Sign out']()}
           </MenuItem>
         ),
-        accountStatus === 'unauthenticated' && (
-          <MenuItem
-            prefixIcon={<AccountIcon />}
-            key="sign-in"
-            onClick={onSignIn}
-          >
-            {t['Sign in']()}
-          </MenuItem>
-        ),
       ].filter(Boolean),
-    [accountStatus, onDeleteServer, onSignIn, onSignOut, server, t]
+    [accountStatus, onDeleteServer, onSignOut, server, t]
   );
 
   return (
@@ -243,13 +246,16 @@ const CloudWorkSpaceList = ({
         accountStatus={accountStatus}
         onDeleteServer={handleDeleteServer}
         onSignOut={handleSignOut}
-        onSignIn={handleSignIn}
       />
-      <WorkspaceList
-        items={workspaces}
-        onClick={onClickWorkspace}
-        onEnableCloudClick={onClickEnableCloud}
-      />
+      {accountStatus === 'unauthenticated' ? (
+        <CloudSignIn onClick={handleSignIn} />
+      ) : (
+        <WorkspaceList
+          items={workspaces}
+          onClick={onClickWorkspace}
+          onEnableCloudClick={onClickEnableCloud}
+        />
+      )}
     </>
   );
 };
