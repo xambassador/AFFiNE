@@ -1,4 +1,4 @@
-import { PropertyValue } from '@affine/component';
+import { type MenuRef, PropertyValue } from '@affine/component';
 import { PublicUserLabel } from '@affine/core/modules/cloud/views/public-user';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { type DocRecord, DocService } from '@affine/core/modules/doc';
@@ -6,7 +6,7 @@ import { WorkspaceService } from '@affine/core/modules/workspace';
 import { useI18n } from '@affine/i18n';
 import { useLiveData, useService } from '@toeverything/infra';
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { type ReactNode, useCallback, useMemo } from 'react';
+import { type ReactNode, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
 import type { GroupHeaderProps } from '../explorer/types';
@@ -100,12 +100,23 @@ export const UpdatedByValue = () => {
 
 export const CreatedByUpdatedByFilterValue = ({
   filter,
+  isDraft,
+  onDraftCompleted,
   onChange,
 }: {
   filter: FilterParams;
-  onChange: (filter: FilterParams) => void;
+  isDraft?: boolean;
+  onDraftCompleted?: () => void;
+  onChange?: (filter: FilterParams) => void;
 }) => {
   const t = useI18n();
+  const menuRef = useRef<MenuRef>(null);
+
+  useEffect(() => {
+    if (isDraft) {
+      menuRef.current?.changeOpen(true);
+    }
+  }, [isDraft]);
 
   const selected = useMemo(
     () => filter.value?.split(',').filter(Boolean) ?? [],
@@ -114,7 +125,7 @@ export const CreatedByUpdatedByFilterValue = ({
 
   const handleChange = useCallback(
     (selected: string[]) => {
-      onChange({
+      onChange?.({
         ...filter,
         value: selected.join(','),
       });
@@ -131,6 +142,8 @@ export const CreatedByUpdatedByFilterValue = ({
       }
       selected={selected}
       onChange={handleChange}
+      ref={menuRef}
+      onEditorClose={onDraftCompleted}
     />
   );
 };

@@ -324,7 +324,8 @@ export const WorkspacePropertyTypes = {
     filterMethod?: { [key in WorkspacePropertyFilter<type>]: I18nString };
     filterValue?: React.FC<{
       filter: FilterParams;
-      onChange: (filter: FilterParams) => void;
+      isDraft?: boolean;
+      onChange?: (filter: FilterParams) => void;
     }>;
     defaultFilter?: Omit<FilterParams, 'type' | 'key'>;
     /**

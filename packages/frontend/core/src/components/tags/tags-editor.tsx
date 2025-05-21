@@ -2,17 +2,26 @@ import {
   Divider,
   IconButton,
   Menu,
+  MenuItem,
+  type MenuRef,
   RowInput,
   Scrollable,
 } from '@affine/component';
 import { TagService, useDeleteTagConfirmModal } from '@affine/core/modules/tag';
 import { useI18n } from '@affine/i18n';
-import { MoreHorizontalIcon } from '@blocksuite/icons/rc';
+import { DoneIcon, MoreHorizontalIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import clsx from 'clsx';
 import { clamp } from 'lodash-es';
 import type { KeyboardEvent, ReactNode } from 'react';
-import { useCallback, useMemo, useReducer, useRef, useState } from 'react';
+import {
+  useCallback,
+  useImperativeHandle,
+  useMemo,
+  useReducer,
+  useRef,
+  useState,
+} from 'react';
 
 import { useAsyncCallback } from '../hooks/affine-async-hooks';
 import { ConfigModal } from '../mobile';
@@ -44,6 +53,8 @@ export interface TagsInlineEditorProps extends TagsEditorProps {
   modalMenu?: boolean;
   menuClassName?: string;
   style?: React.CSSProperties;
+  ref?: React.Ref<MenuRef>;
+  onEditorClose?: () => void;
 }
 
 type TagOption = TagLike | { readonly create: true; readonly value: string };
@@ -269,10 +280,17 @@ export const TagsEditor = ({
             placeholder="Type here ..."
           />
         </InlineTagList>
+
         {BUILD_CONFIG.isMobileEdition ? null : (
-          <Divider size="thinner" className={styles.tagDivider} />
+          <MenuItem
+            className={styles.tagsEditorDoneButton}
+            prefixIcon={<DoneIcon />}
+          />
         )}
       </div>
+      {BUILD_CONFIG.isMobileEdition ? null : (
+        <Divider size="thinner" className={styles.tagDivider} />
+      )}
       <div className={styles.tagsEditorTagsSelector}>
         <div className={styles.tagsEditorTagsSelectorHeader}>
           {t['com.affine.page-properties.tags.selector-header-title']()}
@@ -350,9 +368,24 @@ const MobileInlineEditor = ({
   className,
   title,
   style,
+  onEditorClose,
+  ref,
   ...props
 }: TagsInlineEditorProps) => {
   const [editing, setEditing] = useState(false);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      changeOpen: (open: boolean) => {
+        setEditing(open);
+        if (!open) {
+          onEditorClose?.();
+        }
+      },
+    }),
+    [onEditorClose]
+  );
 
   const empty = !props.selectedTags || props.selectedTags.length === 0;
   const selectedTags = useMemo(() => {
@@ -366,7 +399,10 @@ const MobileInlineEditor = ({
         title={title}
         open={editing}
         onOpenChange={setEditing}
-        onBack={() => setEditing(false)}
+        onBack={() => {
+          setEditing(false);
+          onEditorClose?.();
+        }}
       >
         <TagsEditor {...props} />
       </ConfigModal>
@@ -394,6 +430,8 @@ const DesktopTagsInlineEditor = ({
   modalMenu,
   menuClassName,
   style,
+  ref,
+  onEditorClose,
   ...props
 }: TagsInlineEditorProps) => {
   const empty = !props.selectedTags || props.selectedTags.length === 0;
@@ -404,6 +442,7 @@ const DesktopTagsInlineEditor = ({
   }, [props.selectedTags, props.tags]);
   return (
     <Menu
+      ref={ref}
       contentOptions={{
         side: 'bottom',
         align: 'start',
@@ -416,6 +455,7 @@ const DesktopTagsInlineEditor = ({
       }}
       rootOptions={{
         modal: modalMenu,
+        onClose: onEditorClose,
       }}
       items={<TagsEditor {...props} />}
     >
@@ -447,6 +487,8 @@ export const TagsInlineEditor = BUILD_CONFIG.isMobileEdition
 export const WorkspaceTagsInlineEditor = ({
   selectedTags,
   onDeselectTag,
+  ref,
+  onEditorClose,
   ...otherProps
 }: Omit<
   TagsInlineEditorProps,
@@ -505,6 +547,8 @@ export const WorkspaceTagsInlineEditor = ({
       onCreateTag={onCreateTag}
       onDeleteTag={onDeleteTag}
       onTagChange={onTagChange}
+      ref={ref}
+      onEditorClose={onEditorClose}
       {...otherProps}
     />
   );

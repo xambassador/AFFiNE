@@ -3,6 +3,7 @@ import {
   DatePicker,
   Menu,
   MenuItem,
+  type MenuRef,
   PropertyValue,
 } from '@affine/component';
 import { MobileJournalConflictList } from '@affine/core/mobile/pages/workspace/detail/menu/journal-conflicts';
@@ -182,18 +183,34 @@ export const JournalValue = ({ readonly }: PropertyValueProps) => {
 
 export const JournalFilterValue = ({
   filter,
+  isDraft,
+  onDraftCompleted,
   onChange,
 }: {
   filter: FilterParams;
-  onChange: (filter: FilterParams) => void;
+  isDraft?: boolean;
+  onDraftCompleted?: () => void;
+  onChange?: (filter: FilterParams) => void;
 }) => {
+  const menuRef = useRef<MenuRef>(null);
+
+  useEffect(() => {
+    if (isDraft) {
+      menuRef.current?.changeOpen(true);
+    }
+  }, [isDraft]);
+
   return (
     <Menu
+      ref={menuRef}
+      rootOptions={{
+        onClose: onDraftCompleted,
+      }}
       items={
         <>
           <MenuItem
             onClick={() => {
-              onChange({
+              onChange?.({
                 ...filter,
                 value: 'true',
               });
@@ -204,7 +221,7 @@ export const JournalFilterValue = ({
           </MenuItem>
           <MenuItem
             onClick={() => {
-              onChange({
+              onChange?.({
                 ...filter,
                 value: 'false',
               });

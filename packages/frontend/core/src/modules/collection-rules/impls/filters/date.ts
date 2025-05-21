@@ -139,8 +139,8 @@ function isAfter(
     : referenceDate;
 
   return (
-    targetYear >= refYear ||
-    (targetYear === refYear && targetMonth >= refMonth) ||
+    targetYear > refYear ||
+    (targetYear === refYear && targetMonth > refMonth) ||
     (targetYear === refYear && targetMonth === refMonth && targetDay >= refDay)
   );
 }
@@ -153,8 +153,8 @@ function isBefore(
   const [refYear, refMonth, refDay] = referenceDate;
 
   return (
-    targetYear <= refYear ||
-    (targetYear === refYear && targetMonth <= refMonth) ||
+    targetYear < refYear ||
+    (targetYear === refYear && targetMonth < refMonth) ||
     (targetYear === refYear && targetMonth === refMonth && targetDay <= refDay)
   );
 }

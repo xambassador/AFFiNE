@@ -92,6 +92,8 @@ export const AllPage = () => {
   );
 
   const [tempFilters, setTempFilters] = useState<FilterParams[] | null>(null);
+  const [tempFiltersInitial, setTempFiltersInitial] =
+    useState<FilterParams | null>(null);
 
   const [explorerContextValue] = useState(() =>
     createDocExplorerContext(initialState)
@@ -281,7 +283,8 @@ export const AllPage = () => {
 
   const handleNewTempFilter = useCallback((params: FilterParams) => {
     setSelectedCollectionId(null);
-    setTempFilters([params]);
+    setTempFilters([]);
+    setTempFiltersInitial(params);
   }, []);
 
   const handleDisplayPreferenceChange = useCallback(
@@ -320,6 +323,7 @@ export const AllPage = () => {
                 className={styles.filters}
                 filters={tempFilters}
                 onChange={handleFilterChange}
+                defaultDraftFilter={tempFiltersInitial}
               />
               <Button
                 variant="plain"

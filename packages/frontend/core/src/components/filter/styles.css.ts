@@ -20,6 +20,11 @@ export const filterItemStyle = style({
   justifyContent: 'space-between',
   userSelect: 'none',
   alignItems: 'center',
+  selectors: {
+    '&[data-draft="true"]': {
+      borderStyle: 'dashed',
+    },
+  },
 });
 
 export const filterItemCloseStyle = style({

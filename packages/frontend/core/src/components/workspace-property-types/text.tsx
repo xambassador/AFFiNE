@@ -1,4 +1,4 @@
-import { Input, Menu, PropertyValue } from '@affine/component';
+import { Input, Menu, type MenuRef, PropertyValue } from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { useI18n } from '@affine/i18n';
 import { TextIcon, TextTypeIcon } from '@blocksuite/icons/rc';
@@ -177,14 +177,25 @@ export const TextValue = BUILD_CONFIG.isMobileWeb
 
 export const TextFilterValue = ({
   filter,
+  isDraft,
+  onDraftCompleted,
   onChange,
 }: {
   filter: FilterParams;
-  onChange: (filter: FilterParams) => void;
+  isDraft?: boolean;
+  onDraftCompleted?: () => void;
+  onChange?: (filter: FilterParams) => void;
 }) => {
   const [tempValue, setTempValue] = useState(filter.value || '');
   const [valueMenuOpen, setValueMenuOpen] = useState(false);
+  const menuRef = useRef<MenuRef>(null);
   const t = useI18n();
+
+  useEffect(() => {
+    if (isDraft) {
+      menuRef.current?.changeOpen(true);
+    }
+  }, [isDraft]);
 
   useEffect(() => {
     // update temp value with new filter value
@@ -193,7 +204,7 @@ export const TextFilterValue = ({
 
   const submitTempValue = useCallback(() => {
     if (tempValue !== (filter.value || '')) {
-      onChange({
+      onChange?.({
         ...filter,
         value: tempValue,
       });
@@ -216,9 +227,11 @@ export const TextFilterValue = ({
 
   return filter.method !== 'is-not-empty' && filter.method !== 'is-empty' ? (
     <Menu
+      ref={menuRef}
       rootOptions={{
         open: valueMenuOpen,
         onOpenChange: setValueMenuOpen,
+        onClose: onDraftCompleted,
       }}
       contentOptions={{
         onPointerDownOutside: submitTempValue,

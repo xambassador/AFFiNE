@@ -1,8 +1,14 @@
-import { Checkbox, Menu, MenuItem, PropertyValue } from '@affine/component';
+import {
+  Checkbox,
+  Menu,
+  MenuItem,
+  type MenuRef,
+  PropertyValue,
+} from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { useI18n } from '@affine/i18n';
 import { CheckBoxCheckLinearIcon } from '@blocksuite/icons/rc';
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
 import { StackProperty } from '../explorer/docs-view/stack-property';
@@ -40,18 +46,34 @@ export const CheckboxValue = ({
 
 export const CheckboxFilterValue = ({
   filter,
+  isDraft,
+  onDraftCompleted,
   onChange,
 }: {
   filter: FilterParams;
-  onChange: (filter: FilterParams) => void;
+  isDraft?: boolean;
+  onDraftCompleted?: () => void;
+  onChange?: (filter: FilterParams) => void;
 }) => {
+  const menuRef = useRef<MenuRef>(null);
+
+  useEffect(() => {
+    if (isDraft) {
+      menuRef.current?.changeOpen(true);
+    }
+  }, [isDraft]);
+
   return (
     <Menu
+      ref={menuRef}
+      rootOptions={{
+        onClose: onDraftCompleted,
+      }}
       items={
         <>
           <MenuItem
             onClick={() => {
-              onChange({
+              onChange?.({
                 ...filter,
                 value: 'true',
               });
@@ -62,7 +84,7 @@ export const CheckboxFilterValue = ({
           </MenuItem>
           <MenuItem
             onClick={() => {
-              onChange({
+              onChange?.({
                 ...filter,
                 value: 'false',
               });

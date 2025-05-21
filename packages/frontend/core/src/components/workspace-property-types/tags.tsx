@@ -1,4 +1,4 @@
-import { PropertyValue } from '@affine/component';
+import { type MenuRef, PropertyValue } from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { type DocRecord, DocService } from '@affine/core/modules/doc';
 import { type Tag, TagService } from '@affine/core/modules/tag';
@@ -7,7 +7,7 @@ import { useI18n } from '@affine/i18n';
 import { TagsIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { PlainTextDocGroupHeader } from '../explorer/docs-view/group-header';
 import { StackProperty } from '../explorer/docs-view/stack-property';
@@ -51,14 +51,25 @@ export const TagsValue = ({ readonly }: PropertyValueProps) => {
 
 export const TagsFilterValue = ({
   filter,
+  isDraft,
+  onDraftCompleted,
   onChange,
 }: {
   filter: FilterParams;
+  isDraft?: boolean;
+  onDraftCompleted?: () => void;
   onChange: (filter: FilterParams) => void;
 }) => {
   const t = useI18n();
   const tagService = useService(TagService);
   const allTagMetas = useLiveData(tagService.tagList.tagMetas$);
+  const menuRef = useRef<MenuRef>(null);
+
+  useEffect(() => {
+    if (isDraft) {
+      menuRef.current?.changeOpen(true);
+    }
+  }, [isDraft]);
 
   const selectedTags = useMemo(
     () =>
@@ -98,6 +109,8 @@ export const TagsFilterValue = ({
       onSelectTag={handleSelectTag}
       onDeselectTag={handleDeselectTag}
       tagMode="inline-tag"
+      ref={menuRef}
+      onEditorClose={onDraftCompleted}
     />
   ) : undefined;
 };
