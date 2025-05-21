@@ -231,6 +231,7 @@ export const AllPage = () => {
       }
       setSelectedCollectionId(collectionId);
       setTempFilters(collection.info$.value.rules.filters);
+      setTempFiltersInitial(null);
     },
     [collectionService]
   );
@@ -320,6 +321,8 @@ export const AllPage = () => {
           {tempFilters !== null && (
             <div className={styles.filterArea}>
               <Filters
+                // When the selected collection changes, the filters internal state should be reset
+                key={selectedCollectionId ?? 'all'}
                 className={styles.filters}
                 filters={tempFilters}
                 onChange={handleFilterChange}
