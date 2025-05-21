@@ -16,7 +16,7 @@ import { Models } from '../../../models';
 import { CopilotStorage } from '../storage';
 import { readStream } from '../utils';
 import { OpenAIEmbeddingClient } from './embedding';
-import { EmbeddingClient } from './types';
+import { EMBEDDING_DIMENSIONS, EmbeddingClient } from './types';
 
 @Injectable()
 export class CopilotContextDocJob {
@@ -225,16 +225,29 @@ export class CopilotContextDocJob {
       const content = await this.doc.getFullDocContent(workspaceId, docId);
       if (content) {
         // fast fall for empty doc, journal is easily to create a empty doc
-        if (!content.summary) return;
-        const embeddings = await this.embeddingClient.getFileEmbeddings(
-          new File([content.summary], `${content.title || 'Untitled'}.md`)
-        );
+        if (content.summary) {
+          const embeddings = await this.embeddingClient.getFileEmbeddings(
+            new File([content.summary], `${content.title || 'Untitled'}.md`)
+          );
 
-        for (const chunks of embeddings) {
+          for (const chunks of embeddings) {
+            await this.models.copilotContext.insertWorkspaceEmbedding(
+              workspaceId,
+              docId,
+              chunks
+            );
+          }
+        } else {
+          // for empty doc, insert empty embedding
+          const emptyEmbedding = {
+            index: 0,
+            content: '',
+            embedding: Array.from({ length: EMBEDDING_DIMENSIONS }, () => 0),
+          };
           await this.models.copilotContext.insertWorkspaceEmbedding(
             workspaceId,
             docId,
-            chunks
+            [emptyEmbedding]
           );
         }
       } else if (contextId) {

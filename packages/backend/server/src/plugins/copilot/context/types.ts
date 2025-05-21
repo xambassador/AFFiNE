@@ -57,6 +57,8 @@ export type Chunk = {
   content: string;
 };
 
+export const EMBEDDING_DIMENSIONS = 1024;
+
 export abstract class EmbeddingClient {
   async getFileEmbeddings(
     file: File,

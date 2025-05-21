@@ -7,7 +7,12 @@ import { chunk } from 'lodash-es';
 
 import { ChunkSimilarity, Embedding } from '../../../models';
 import { OpenAIConfig } from '../providers/openai';
-import { EmbeddingClient, getReRankSchema, ReRankResult } from './types';
+import {
+  EMBEDDING_DIMENSIONS,
+  EmbeddingClient,
+  getReRankSchema,
+  ReRankResult,
+} from './types';
 
 const RERANK_MODEL = 'gpt-4.1-mini';
 
@@ -24,7 +29,7 @@ export class OpenAIEmbeddingClient extends EmbeddingClient {
 
   async getEmbeddings(input: string[]): Promise<Embedding[]> {
     const modelInstance = this.#instance.embedding('text-embedding-3-large', {
-      dimensions: 1024,
+      dimensions: EMBEDDING_DIMENSIONS,
     });
 
     const { embeddings } = await embedMany({
@@ -124,7 +129,9 @@ export class MockEmbeddingClient extends EmbeddingClient {
     return input.map((_, i) => ({
       index: i,
       content: input[i],
-      embedding: Array.from({ length: 1024 }, () => Math.random()),
+      embedding: Array.from({ length: EMBEDDING_DIMENSIONS }, () =>
+        Math.random()
+      ),
     }));
   }
 }
