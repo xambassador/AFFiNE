@@ -16,6 +16,7 @@ declare global {
       provider: {
         type: SearchProviderType;
         endpoint: string;
+        apiKey: string;
         username: string;
         password: string;
       };
@@ -49,6 +50,12 @@ defineModuleConfig('indexer', {
 
       return z.string().url().safeParse(val);
     },
+  },
+  'provider.apiKey': {
+    desc: 'Indexer search service api key. Optional for elasticsearch',
+    link: 'https://www.elastic.co/guide/server/current/api-key.html',
+    default: '',
+    env: ['AFFINE_INDEXER_SEARCH_API_KEY', 'string'],
   },
   'provider.username': {
     desc: 'Indexer search service auth username, if not set, basic auth will be disabled. Optional for elasticsearch',

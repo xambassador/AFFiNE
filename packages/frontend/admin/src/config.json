@@ -279,6 +279,12 @@
       "desc": "Indexer search service endpoint",
       "env": "AFFINE_INDEXER_SEARCH_ENDPOINT"
     },
+    "provider.apiKey": {
+      "type": "String",
+      "desc": "Indexer search service api key. Optional for elasticsearch",
+      "link": "https://www.elastic.co/guide/server/current/api-key.html",
+      "env": "AFFINE_INDEXER_SEARCH_API_KEY"
+    },
     "provider.username": {
       "type": "String",
       "desc": "Indexer search service auth username, if not set, basic auth will be disabled. Optional for elasticsearch",

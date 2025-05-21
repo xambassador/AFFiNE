@@ -18,8 +18,7 @@ const {
   STATIC_IP_NAME,
   AFFINE_INDEXER_SEARCH_PROVIDER,
   AFFINE_INDEXER_SEARCH_ENDPOINT,
-  AFFINE_INDEXER_SEARCH_USERNAME,
-  AFFINE_INDEXER_SEARCH_PASSWORD,
+  AFFINE_INDEXER_SEARCH_API_KEY,
 } = process.env;
 
 const buildType = BUILD_TYPE || 'canary';
@@ -88,8 +87,7 @@ const createHelmCommand = ({ isDryRun }) => {
   const indexerOptions = [
     `--set-string global.indexer.provider="${AFFINE_INDEXER_SEARCH_PROVIDER}"`,
     `--set-string global.indexer.endpoint="${AFFINE_INDEXER_SEARCH_ENDPOINT}"`,
-    `--set-string global.indexer.username="${AFFINE_INDEXER_SEARCH_USERNAME}"`,
-    `--set-string global.indexer.password="${AFFINE_INDEXER_SEARCH_PASSWORD}"`,
+    `--set-string global.indexer.apiKey="${AFFINE_INDEXER_SEARCH_API_KEY}"`,
   ];
   const serviceAnnotations = [
     `--set-json   web.serviceAccount.annotations="{ \\"iam.gke.io/gcp-service-account\\": \\"${APP_IAM_ACCOUNT}\\" }"`,

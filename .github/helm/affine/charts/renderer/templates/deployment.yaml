@@ -73,13 +73,11 @@ spec:
             value: "{{ .Values.global.indexer.provider }}"
           - name: AFFINE_INDEXER_SEARCH_ENDPOINT
             value: "{{ .Values.global.indexer.endpoint }}"
-          - name: AFFINE_INDEXER_SEARCH_USERNAME
-            value: "{{ .Values.global.indexer.username }}"
-          - name: AFFINE_INDEXER_SEARCH_PASSWORD
+          - name: AFFINE_INDEXER_SEARCH_API_KEY
             valueFrom:
               secretKeyRef:
                 name: indexer
-                key: indexer-password
+                key: indexer-apiKey
           - name: AFFINE_SERVER_PORT
             value: "{{ .Values.service.port }}"
           - name: AFFINE_SERVER_SUB_PATH

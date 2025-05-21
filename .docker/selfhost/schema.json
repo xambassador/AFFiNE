@@ -825,6 +825,11 @@
           "description": "Indexer search service endpoint\n@default \"http://localhost:9308\"\n@environment `AFFINE_INDEXER_SEARCH_ENDPOINT`",
           "default": "http://localhost:9308"
         },
+        "provider.apiKey": {
+          "type": "string",
+          "description": "Indexer search service api key. Optional for elasticsearch\n@default \"\"\n@environment `AFFINE_INDEXER_SEARCH_API_KEY`\n@link https://www.elastic.co/guide/server/current/api-key.html",
+          "default": ""
+        },
         "provider.username": {
           "type": "string",
           "description": "Indexer search service auth username, if not set, basic auth will be disabled. Optional for elasticsearch\n@default \"\"\n@environment `AFFINE_INDEXER_SEARCH_USERNAME`\n@link https://www.elastic.co/guide/en/elasticsearch/reference/current/http-clients.html",

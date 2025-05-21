@@ -248,7 +248,9 @@ export class ElasticsearchProvider extends SearchProvider {
     const headers = {
       'Content-Type': contentType,
     } as Record<string, string>;
-    if (this.config.provider.password) {
+    if (this.config.provider.apiKey) {
+      headers.Authorization = `ApiKey ${this.config.provider.apiKey}`;
+    } else if (this.config.provider.password) {
       headers.Authorization = `Basic ${Buffer.from(`${this.config.provider.username}:${this.config.provider.password}`).toString('base64')}`;
     }
     const response = await fetch(url, {
