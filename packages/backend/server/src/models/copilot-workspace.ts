@@ -144,6 +144,37 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
     return docIds.filter(id => ignored.has(id));
   }
 
+  @Transactional()
+  async getWorkspaceEmbeddingStatus(workspaceId: string) {
+    const ignoredDocIds = (await this.listIgnoredDocIds(workspaceId)).map(
+      d => d.docId
+    );
+    const snapshotCondition = {
+      workspaceId,
+      AND: [
+        { id: { notIn: ignoredDocIds } },
+        { id: { not: workspaceId } },
+        { id: { not: { contains: '$' } } },
+      ],
+    };
+
+    const [docTotal, docEmbedded, fileTotal, fileEmbedded] = await Promise.all([
+      this.db.snapshot.count({ where: snapshotCondition }),
+      this.db.snapshot.count({
+        where: { ...snapshotCondition, embedding: { some: {} } },
+      }),
+      this.db.aiWorkspaceFiles.count({ where: { workspaceId } }),
+      this.db.aiWorkspaceFiles.count({
+        where: { workspaceId, embeddings: { some: {} } },
+      }),
+    ]);
+
+    return {
+      total: docTotal + fileTotal,
+      embedded: docEmbedded + fileEmbedded,
+    };
+  }
+
   // ================ embeddings ================
 
   async checkEmbeddingAvailable(): Promise<boolean> {

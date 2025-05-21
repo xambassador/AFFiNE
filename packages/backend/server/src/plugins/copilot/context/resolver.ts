@@ -13,7 +13,6 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { PrismaClient } from '@prisma/client';
 import type { Request } from 'express';
 import { SafeIntResolver } from 'graphql-scalars';
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
@@ -241,12 +240,12 @@ class ContextMatchedDocChunk implements DocChunkSimilarity {
 @Resolver(() => CopilotType)
 export class CopilotContextRootResolver {
   constructor(
-    private readonly db: PrismaClient,
     private readonly ac: AccessController,
     private readonly event: EventBus,
     private readonly mutex: RequestMutex,
     private readonly chatSession: ChatSessionService,
-    private readonly context: CopilotContextService
+    private readonly context: CopilotContextService,
+    private readonly models: Models
   ) {}
 
   private async checkChatSession(
@@ -369,10 +368,10 @@ export class CopilotContextRootResolver {
       .assert('Workspace.Copilot');
 
     if (this.context.canEmbedding) {
-      const total = await this.db.snapshot.count({ where: { workspaceId } });
-      const embedded = await this.db.snapshot.count({
-        where: { workspaceId, embedding: { some: {} } },
-      });
+      const { total, embedded } =
+        await this.models.copilotWorkspace.getWorkspaceEmbeddingStatus(
+          workspaceId
+        );
       return { total, embedded };
     }
 
