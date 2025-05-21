@@ -182,6 +182,13 @@ type MeetingEvents =
 type MentionEvents = 'mentionMember' | 'noAccessPrompted';
 // END SECTION
 
+// SECTION: workspace embedding
+type WorkspaceEmbeddingEvents =
+  | 'toggleWorkspaceEmbedding'
+  | 'addAdditionalDocs'
+  | 'addIgnoredDocs';
+// END SECTION
+
 type UserEvents =
   | GeneralEvents
   | AppEvents
@@ -204,7 +211,8 @@ type UserEvents =
   | NotificationEvents
   | IntegrationEvents
   | MeetingEvents
-  | MentionEvents;
+  | MentionEvents
+  | WorkspaceEmbeddingEvents;
 
 interface PageDivision {
   [page: string]: {
@@ -283,6 +291,11 @@ interface PageEvents extends PageDivision {
         'completeIntegrationImport',
       ];
       meetings: ['toggleMeetingFeatureFlag'];
+      indexerEmbedding: [
+        'toggleWorkspaceEmbedding',
+        'addAdditionalDocs',
+        'addIgnoredDocs',
+      ];
     };
     cmdk: {
       recent: ['recentDocs'];
@@ -723,6 +736,21 @@ export type EventArgs = {
     docId: string;
     time: number;
     success: boolean;
+  };
+  toggleWorkspaceEmbedding: {
+    type: 'Embedding';
+    control: 'Workspace embedding';
+    option: 'on' | 'off';
+  };
+  addAdditionalDocs: {
+    type: 'Embedding';
+    control: 'Select doc';
+    docType: string;
+  };
+  addIgnoredDocs: {
+    type: 'Embedding';
+    control: 'Additional docs';
+    result: 'success' | 'failure';
   };
 };
 

@@ -7,6 +7,7 @@ import {
 import { Upload } from '@affine/core/components/pure/file-upload';
 import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
 import { useI18n } from '@affine/i18n';
+import track from '@affine/track';
 import { useLiveData, useService } from '@toeverything/infra';
 import type React from 'react';
 import { useCallback, useEffect, useMemo } from 'react';
@@ -43,6 +44,11 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
 
   const handleEmbeddingToggle = useCallback(
     (checked: boolean) => {
+      track.$.settingsPanel.indexerEmbedding.toggleWorkspaceEmbedding({
+        type: 'Embedding',
+        control: 'Workspace embedding',
+        option: checked ? 'on' : 'off',
+      });
       embeddingService.embedding.setEnabled(checked);
     },
     [embeddingService.embedding]
@@ -50,6 +56,11 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
 
   const handleAttachmentUpload = useCallback(
     (file: File) => {
+      track.$.settingsPanel.indexerEmbedding.addAdditionalDocs({
+        type: 'Embedding',
+        control: 'Select doc',
+        docType: file.type,
+      });
       embeddingService.embedding.addAttachments([file]);
     },
     [embeddingService.embedding]
@@ -86,6 +97,11 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         if (selectedIds === undefined) {
           return;
         }
+        track.$.settingsPanel.indexerEmbedding.addIgnoredDocs({
+          type: 'Embedding',
+          control: 'Additional docs',
+          result: 'success',
+        });
         const add = selectedIds.filter(id => !initialIds?.includes(id));
         const remove = initialIds?.filter(id => !selectedIds.includes(id));
         embeddingService.embedding.updateIgnoredDocs({ add, remove });
