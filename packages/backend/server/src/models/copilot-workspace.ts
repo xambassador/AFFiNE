@@ -47,7 +47,7 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
         where: {
           workspaceId,
           embedding: {
-            is: null,
+            none: {},
           },
         },
         select: { id: true },

@@ -312,7 +312,7 @@ model Snapshot {
   // we need to clear all hanging updates and snapshots before enable the foreign key on workspaceId
   // workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
 
-  embedding AiWorkspaceEmbedding?
+  embedding AiWorkspaceEmbedding[]
 
   @@id([workspaceId, id])
   @@index([workspaceId, updatedAt])
@@ -394,18 +394,18 @@ model AiPromptMessage {
 }
 
 model AiPrompt {
-  id        Int      @id @default(autoincrement()) @db.Integer
-  name      String   @unique @db.VarChar(32)
+  id             Int      @id @default(autoincrement()) @db.Integer
+  name           String   @unique @db.VarChar(32)
   // an mark identifying which view to use to display the session
   // it is only used in the frontend and does not affect the backend
-  action    String?  @db.VarChar
-  model     String   @db.VarChar
-  optionalModels String[] @default([]) @db.VarChar @map("optional_models")
-  config    Json?    @db.Json
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
+  action         String?  @db.VarChar
+  model          String   @db.VarChar
+  optionalModels String[] @default([]) @map("optional_models") @db.VarChar
+  config         Json?    @db.Json
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime @default(now()) @map("updated_at") @db.Timestamptz(3)
   // whether the prompt is modified by the admin panel
-  modified  Boolean  @default(false)
+  modified       Boolean  @default(false)
 
   messages AiPromptMessage[]
   sessions AiSession[]
@@ -500,8 +500,7 @@ model AiWorkspaceEmbedding {
   // so we can match this record with the snapshot one by one
   snapshot Snapshot @relation(fields: [workspaceId, docId], references: [workspaceId, id], onDelete: Cascade)
 
-  @@id([workspaceId, docId])
-  @@unique([workspaceId, docId, chunk])
+  @@id([workspaceId, docId, chunk])
   @@index([embedding], map: "ai_workspace_embeddings_idx")
   @@map("ai_workspace_embeddings")
 }
@@ -521,7 +520,7 @@ model AiWorkspaceIgnoredDocs {
 model AiWorkspaceFiles {
   workspaceId String @map("workspace_id") @db.VarChar
   fileId      String @map("file_id") @db.VarChar
-  blobId      String @map("blob_id") @db.VarChar @default("")
+  blobId      String @default("") @map("blob_id") @db.VarChar
   fileName    String @map("file_name") @db.VarChar
   mimeType    String @map("mime_type") @db.VarChar
   size        Int    @db.Integer
@@ -548,8 +547,7 @@ model AiWorkspaceFileEmbedding {
 
   file AiWorkspaceFiles @relation(fields: [workspaceId, fileId], references: [workspaceId, fileId], onDelete: Cascade)
 
-  @@id([workspaceId, fileId])
-  @@unique([workspaceId, fileId, chunk])
+  @@id([workspaceId, fileId, chunk])
   @@index([embedding], map: "ai_workspace_file_embeddings_idx")
   @@map("ai_workspace_file_embeddings")
 }

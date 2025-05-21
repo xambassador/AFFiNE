@@ -210,9 +210,12 @@ export class CopilotContextModel extends BaseModel {
     );
     await this.db.$executeRaw`
       INSERT INTO "ai_workspace_embeddings"
-      ("workspace_id", "doc_id", "chunk", "content", "embedding", "updated_at") VALUES ${values}
-      ON CONFLICT (workspace_id, doc_id, chunk) DO UPDATE SET
-      embedding = EXCLUDED.embedding, updated_at = excluded.updated_at;
+        ("workspace_id", "doc_id", "chunk", "content", "embedding", "updated_at")
+      VALUES ${values}
+      ON CONFLICT (workspace_id, doc_id, chunk)
+      DO UPDATE SET
+        embedding = EXCLUDED.embedding,
+        updated_at = excluded.updated_at;
     `;
   }
 

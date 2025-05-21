@@ -371,7 +371,7 @@ export class CopilotContextRootResolver {
     if (this.context.canEmbedding) {
       const total = await this.db.snapshot.count({ where: { workspaceId } });
       const embedded = await this.db.snapshot.count({
-        where: { workspaceId, embedding: { isNot: null } },
+        where: { workspaceId, embedding: { some: {} } },
       });
       return { total, embedded };
     }
