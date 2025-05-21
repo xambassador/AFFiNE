@@ -2,27 +2,13 @@ import type { Root } from 'hast';
 import type { Plugin } from 'unified';
 import { visit } from 'unist-util-visit';
 
+import { HastUtils } from '../../utils/hast';
+
 /**
  * The content copied from google docs will be wrapped in <b> tag
  * To handle this case, we need to convert the <b> tag to a <div> tag
  */
 const inlineElements = new Set(['b']);
-
-const blockElements = new Set([
-  'div',
-  'p',
-  'h1',
-  'h2',
-  'h3',
-  'h4',
-  'h5',
-  'h6',
-  'ul',
-  'ol',
-  'li',
-  'blockquote',
-  'pre',
-]);
 
 export const rehypeInlineToBlock: Plugin<[], Root> = () => {
   return tree => {
@@ -31,7 +17,8 @@ export const rehypeInlineToBlock: Plugin<[], Root> = () => {
       if (inlineElements.has(node.tagName)) {
         // Check if the node has a block element child
         const hasBlockChild = node.children.some(
-          child => child.type === 'element' && blockElements.has(child.tagName)
+          child =>
+            child.type === 'element' && HastUtils.isTagBlock(child.tagName)
         );
 
         if (hasBlockChild) {
