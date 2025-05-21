@@ -1,5 +1,6 @@
 import { Button, Switch } from '@affine/component';
 import {
+  SettingHeader,
   SettingRow,
   SettingWrapper,
 } from '@affine/component/setting-components';
@@ -94,86 +95,85 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
   ]);
 
   return (
-    <SettingWrapper
-      title={t[
-        'com.affine.settings.workspace.indexer-embedding.embedding.title'
-      ]()}
-      testId="workspace-embedding-setting-wrapper"
-    >
-      <SettingRow
-        name=""
-        desc={t[
+    <>
+      <SettingHeader
+        title={t[
+          'com.affine.settings.workspace.indexer-embedding.embedding.title'
+        ]()}
+        subtitle={t[
           'com.affine.settings.workspace.indexer-embedding.embedding.description'
         ]()}
-      ></SettingRow>
-      <SettingRow
-        name={t[
-          'com.affine.settings.workspace.indexer-embedding.embedding.switch.title'
-        ]()}
-        desc={t[
-          'com.affine.settings.workspace.indexer-embedding.embedding.switch.description'
-        ]()}
-      >
-        <Switch
-          data-testid="workspace-embedding-setting-switch"
-          checked={embeddingEnabled}
-          onChange={handleEmbeddingToggle}
-        />
-      </SettingRow>
-
-      <SettingRow
-        name={t[
-          'com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.title'
-        ]()}
-        desc={t[
-          'com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.description'
-        ]()}
-      >
-        <Upload fileChange={handleAttachmentUpload}>
-          <Button
-            data-testid="workspace-embedding-setting-upload-button"
-            variant="primary"
-          >
-            {t['Upload']()}
-          </Button>
-        </Upload>
-      </SettingRow>
-
-      {attachmentNodes.length > 0 && (
-        <Attachments
-          attachments={attachmentNodes}
-          isLoading={isAttachmentsLoading}
-          onDelete={handleAttachmentsDelete}
-          totalCount={attachments.totalCount}
-          onPageChange={handleAttachmentsPageChange}
-        />
-      )}
-
-      <SettingRow
-        name={t[
-          'com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.title'
-        ]()}
-        desc={t[
-          'com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.description'
-        ]()}
-      >
-        <Button
-          data-testid="workspace-embedding-setting-ignore-docs-button"
-          variant="primary"
-          onClick={handleSelectDoc}
-        >
-          {t[
-            'com.affine.settings.workspace.indexer-embedding.embedding.select-doc'
+      />
+      <SettingWrapper title={''} testId="workspace-embedding-setting-wrapper">
+        <SettingRow
+          name={t[
+            'com.affine.settings.workspace.indexer-embedding.embedding.switch.title'
           ]()}
-        </Button>
-      </SettingRow>
+          desc={t[
+            'com.affine.settings.workspace.indexer-embedding.embedding.switch.description'
+          ]()}
+        >
+          <Switch
+            data-testid="workspace-embedding-setting-switch"
+            checked={embeddingEnabled}
+            onChange={handleEmbeddingToggle}
+          />
+        </SettingRow>
 
-      {ignoredDocNodes.length > 0 && (
-        <IgnoredDocs
-          ignoredDocs={ignoredDocNodes}
-          isLoading={isIgnoredDocsLoading}
-        />
-      )}
-    </SettingWrapper>
+        <SettingRow
+          name={t[
+            'com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.title'
+          ]()}
+          desc={t[
+            'com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.description'
+          ]()}
+        >
+          <Upload fileChange={handleAttachmentUpload}>
+            <Button
+              data-testid="workspace-embedding-setting-upload-button"
+              variant="primary"
+            >
+              {t['Upload']()}
+            </Button>
+          </Upload>
+        </SettingRow>
+
+        {attachmentNodes.length > 0 && (
+          <Attachments
+            attachments={attachmentNodes}
+            isLoading={isAttachmentsLoading}
+            onDelete={handleAttachmentsDelete}
+            totalCount={attachments.totalCount}
+            onPageChange={handleAttachmentsPageChange}
+          />
+        )}
+
+        <SettingRow
+          name={t[
+            'com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.title'
+          ]()}
+          desc={t[
+            'com.affine.settings.workspace.indexer-embedding.embedding.ignore-docs.description'
+          ]()}
+        >
+          <Button
+            data-testid="workspace-embedding-setting-ignore-docs-button"
+            variant="primary"
+            onClick={handleSelectDoc}
+          >
+            {t[
+              'com.affine.settings.workspace.indexer-embedding.embedding.select-doc'
+            ]()}
+          </Button>
+        </SettingRow>
+
+        {ignoredDocNodes.length > 0 && (
+          <IgnoredDocs
+            ignoredDocs={ignoredDocNodes}
+            isLoading={isIgnoredDocsLoading}
+          />
+        )}
+      </SettingWrapper>
+    </>
   );
 };

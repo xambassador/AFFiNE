@@ -4,11 +4,9 @@ const WORKSPACE_EMBEDDING_SWITCH_TEST_ID = 'workspace-embedding-setting-switch';
 
 export class SettingsPanelUtils {
   public static async openSettingsPanel(page: Page) {
-    if (
-      await page.getByTestId('workspace-setting:indexer-embedding').isHidden()
-    ) {
+    if (await page.getByTestId('workspace-setting:embedding').isHidden()) {
       await page.getByTestId('slider-bar-workspace-setting-button').click();
-      await page.getByTestId('workspace-setting:indexer-embedding').click();
+      await page.getByTestId('workspace-setting:embedding').click();
       await page.getByTestId('workspace-embedding-setting-wrapper').waitFor({
         state: 'visible',
       });

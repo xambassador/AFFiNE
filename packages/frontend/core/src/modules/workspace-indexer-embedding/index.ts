@@ -17,4 +17,4 @@ export function configureIndexerEmbeddingModule(framework: Framework) {
     .entity(Embedding, [WorkspaceService, EmbeddingStore]);
 }
 
-export { IndexerEmbeddingSettings } from './view';
+export { EmbeddingSettings } from './view';
