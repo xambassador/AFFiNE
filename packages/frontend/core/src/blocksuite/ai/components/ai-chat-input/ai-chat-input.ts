@@ -274,7 +274,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
   accessor reasoningConfig!: AIReasoningConfig;
 
   @property({ attribute: false })
-  accessor modelSwitchConfig!: AIModelSwitchConfig;
+  accessor modelSwitchConfig: AIModelSwitchConfig | undefined = undefined;
 
   @property({ attribute: false })
   accessor docDisplayConfig!: DocDisplayConfig;
@@ -394,7 +394,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
           ${ImageIcon()}
           <affine-tooltip>Upload</affine-tooltip>
         </div>
-        ${this.modelSwitchConfig.visible.value
+        ${this.modelSwitchConfig?.visible.value
           ? html`
               <ai-chat-models
                 class="chat-input-icon"
