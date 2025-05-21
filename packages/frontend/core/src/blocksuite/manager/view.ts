@@ -55,6 +55,7 @@ type Configure = {
   ai: (enable?: boolean, framework?: FrameworkProvider) => Configure;
   electron: (framework?: FrameworkProvider) => Configure;
   linkPreview: (framework?: FrameworkProvider) => Configure;
+  codeBlockHtmlPreview: (framework?: FrameworkProvider) => Configure;
 
   value: ViewExtensionManager;
 };
@@ -114,6 +115,7 @@ class ViewProvider {
       ai: this._configureAI,
       electron: this._configureElectron,
       linkPreview: this._configureLinkPreview,
+      codeBlockHtmlPreview: this._configureCodeBlockHtmlPreview,
       value: this._manager,
     };
   }
@@ -134,7 +136,8 @@ class ViewProvider {
       .mobile()
       .ai()
       .electron()
-      .linkPreview();
+      .linkPreview()
+      .codeBlockHtmlPreview();
 
     return this.config;
   };
@@ -311,6 +314,13 @@ class ViewProvider {
 
   private readonly _configureLinkPreview = (framework?: FrameworkProvider) => {
     this._manager.configure(AffineLinkPreviewExtension, { framework });
+    return this.config;
+  };
+
+  private readonly _configureCodeBlockHtmlPreview = (
+    framework?: FrameworkProvider
+  ) => {
+    this._manager.configure(CodeBlockPreviewViewExtension, { framework });
     return this.config;
   };
 }

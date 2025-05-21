@@ -325,6 +325,15 @@ export const AFFINE_FLAGS = {
     configurable: isBetaBuild || isCanaryBuild,
     defaultState: false,
   },
+  enable_code_block_html_preview: {
+    category: 'affine',
+    displayName:
+      'com.affine.settings.workspace.experimental-features.enable-code-block-html-preview.name',
+    description:
+      'com.affine.settings.workspace.experimental-features.enable-code-block-html-preview.description',
+    configurable: isCanaryBuild,
+    defaultState: true,
+  },
 } satisfies { [key in string]: FlagInfo };
 
 // oxlint-disable-next-line no-redeclare

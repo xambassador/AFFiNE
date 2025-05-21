@@ -61,7 +61,8 @@ export const EdgelessSnapshot = (props: Props) => {
       .foundation(framework)
       .theme(framework)
       .database(framework)
-      .linkedDoc(framework).value;
+      .linkedDoc(framework)
+      .codeBlockHtmlPreview(framework).value;
     return manager
       .get('preview-edgeless')
       .concat([ViewportElementExtension('.ref-viewport')]);

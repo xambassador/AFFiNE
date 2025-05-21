@@ -102,7 +102,8 @@ const usePatchSpecs = (mode: DocMode) => {
       .paragraph(enableAI)
       .mobile(framework)
       .electron(framework)
-      .linkPreview(framework).value;
+      .linkPreview(framework)
+      .codeBlockHtmlPreview(framework).value;
 
     if (BUILD_CONFIG.isMobileEdition) {
       if (mode === 'page') {

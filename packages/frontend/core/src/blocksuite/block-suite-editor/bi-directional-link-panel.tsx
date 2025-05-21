@@ -171,7 +171,8 @@ const usePreviewExtensions = () => {
       .database(framework)
       .linkedDoc(framework)
       .paragraph(enableAI)
-      .linkPreview(framework).value;
+      .linkPreview(framework)
+      .codeBlockHtmlPreview(framework).value;
     const specs = manager.get('preview-page');
     return [...specs, patchReferenceRenderer(reactToLit, referenceRenderer)];
   }, [reactToLit, referenceRenderer, framework, enableAI]);
