@@ -210,17 +210,29 @@ export function createTextActions<
           ) ?? resolveColor(defaultColor, theme);
 
         const onPick = (e: PickColorEvent) => {
-          if (e.type === 'pick') {
-            const color = e.detail.value;
-            for (const model of models) {
-              const props = packColor(field, color);
-              update(ctx, model, props);
-            }
-            return;
-          }
-
-          for (const model of models) {
-            stash(model, e.type === 'start' ? 'stash' : 'pop', field);
+          switch (e.type) {
+            case 'pick':
+              {
+                const color = e.detail.value;
+                const props = packColor(field, color);
+                models.forEach(model => {
+                  update(ctx, model, props);
+                });
+              }
+              break;
+            case 'start':
+              ctx.store.captureSync();
+              models.forEach(model => {
+                stash(model, 'stash', field);
+              });
+              break;
+            case 'end':
+              ctx.store.transact(() => {
+                models.forEach(model => {
+                  stash(model, 'pop', field);
+                });
+              });
+              break;
           }
         };
 
