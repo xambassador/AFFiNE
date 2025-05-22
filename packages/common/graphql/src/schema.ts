@@ -2811,10 +2811,6 @@ export type GetUserByEmailQuery = {
   } | null;
 };
 
-export type GetUsersCountQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetUsersCountQuery = { __typename?: 'Query'; usersCount: number };
-
 export type ImportUsersMutationVariables = Exact<{
   input: ImportUsersInput;
 }>;
@@ -2833,6 +2829,7 @@ export type ListUsersQueryVariables = Exact<{
 
 export type ListUsersQuery = {
   __typename?: 'Query';
+  usersCount: number;
   users: Array<{
     __typename?: 'UserType';
     id: string;
@@ -4968,11 +4965,6 @@ export type Queries =
       name: 'getUserByEmailQuery';
       variables: GetUserByEmailQueryVariables;
       response: GetUserByEmailQuery;
-    }
-  | {
-      name: 'getUsersCountQuery';
-      variables: GetUsersCountQueryVariables;
-      response: GetUsersCountQuery;
     }
   | {
       name: 'listUsersQuery';
