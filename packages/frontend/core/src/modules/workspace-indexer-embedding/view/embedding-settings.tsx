@@ -10,7 +10,7 @@ import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
 import { useLiveData, useService } from '@toeverything/infra';
 import type React from 'react';
-import { useCallback, useEffect, useMemo } from 'react';
+import { useCallback, useEffect } from 'react';
 
 import { EmbeddingService } from '../services/embedding';
 import { Attachments } from './attachments';
@@ -23,7 +23,12 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
   const t = useI18n();
   const embeddingService = useService(EmbeddingService);
   const embeddingEnabled = useLiveData(embeddingService.embedding.enabled$);
-  const attachments = useLiveData(embeddingService.embedding.attachments$);
+  const { pageInfo, totalCount } = useLiveData(
+    embeddingService.embedding.attachments$
+  );
+  const attachments = useLiveData(
+    embeddingService.embedding.mergedAttachments$
+  );
   const ignoredDocs = useLiveData(embeddingService.embedding.ignoredDocs$);
   const embeddingProgress = useLiveData(
     embeddingService.embedding.embeddingProgress$
@@ -32,14 +37,6 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
   const isIgnoredDocsLoading = useLiveData(
     embeddingService.embedding.isIgnoredDocsLoading$
   );
-  const isAttachmentsLoading = useLiveData(
-    embeddingService.embedding.isAttachmentsLoading$
-  );
-  const attachmentNodes = useMemo(
-    () => attachments.edges.map(edge => edge.node),
-    [attachments]
-  );
-  const ignoredDocNodes = ignoredDocs;
   const workspaceDialogService = useService(WorkspaceDialogService);
 
   const handleEmbeddingToggle = useCallback(
@@ -77,17 +74,17 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
     (offset: number) => {
       embeddingService.embedding.getAttachments({
         offset,
-        after: attachments.pageInfo.endCursor,
+        after: pageInfo.endCursor,
       });
     },
-    [embeddingService.embedding, attachments.pageInfo.endCursor]
+    [embeddingService.embedding, pageInfo.endCursor]
   );
 
   const handleSelectDoc = useCallback(() => {
     if (isIgnoredDocsLoading) {
       return;
     }
-    const initialIds = ignoredDocNodes.map(doc => doc.docId);
+    const initialIds = ignoredDocs.map(doc => doc.docId);
     workspaceDialogService.open(
       'doc-selector',
       {
@@ -108,7 +105,7 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
       }
     );
   }, [
-    ignoredDocNodes,
+    ignoredDocs,
     isIgnoredDocsLoading,
     workspaceDialogService,
     embeddingService.embedding,
@@ -174,12 +171,11 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
           </Upload>
         </SettingRow>
 
-        {attachmentNodes.length > 0 && (
+        {attachments.length > 0 && (
           <Attachments
-            attachments={attachmentNodes}
-            isLoading={isAttachmentsLoading}
+            attachments={attachments}
             onDelete={handleAttachmentsDelete}
-            totalCount={attachments.totalCount}
+            totalCount={totalCount}
             onPageChange={handleAttachmentsPageChange}
           />
         )}
@@ -203,9 +199,9 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
           </Button>
         </SettingRow>
 
-        {ignoredDocNodes.length > 0 && (
+        {ignoredDocs.length > 0 && (
           <IgnoredDocs
-            ignoredDocs={ignoredDocNodes}
+            ignoredDocs={ignoredDocs}
             isLoading={isIgnoredDocsLoading}
           />
         )}
