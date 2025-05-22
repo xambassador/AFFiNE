@@ -47,6 +47,7 @@ export const QuickFavorite = memo(function QuickFavorite({
     <IconButton
       icon={<IsFavoriteIcon favorite={favourite} />}
       onClick={toggleFavorite}
+      data-testid="doc-list-operation-favorite"
       {...iconButtonProps}
     />
   );
@@ -157,6 +158,7 @@ export const QuickDelete = memo(function QuickDelete({
       onClick={onMoveToTrash}
       icon={<DeleteIcon />}
       variant="danger"
+      data-testid="doc-list-operation-trash"
       {...iconButtonProps}
     />
   );

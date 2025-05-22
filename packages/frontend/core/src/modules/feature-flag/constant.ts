@@ -311,13 +311,6 @@ export const AFFINE_FLAGS = {
     configurable: false,
     defaultState: isCanaryBuild,
   },
-  enable_new_all_docs_page: {
-    category: 'affine',
-    displayName: 'Enable New All Docs Page',
-    description: 'Use new all docs page',
-    configurable: isCanaryBuild,
-    defaultState: false,
-  },
   enable_cloud_indexer: {
     category: 'affine',
     displayName: 'Enable Cloud Indexer',

@@ -4,6 +4,7 @@ import type { apis } from '@affine/electron-api';
 import { test } from '@affine-test/kit/electron';
 import {
   getBlockSuiteEditorTitle,
+  getPageByTitle,
   waitForEditorLoad,
 } from '@affine-test/kit/utils/page-logic';
 import {
@@ -102,7 +103,7 @@ test('export then add', async ({ page, appInfo, workspace }) => {
   await page.waitForTimeout(1000);
 
   // find button which has the title "test1"
-  await page.getByTestId('page-list-item').getByText('test1').click();
+  await getPageByTitle(page, 'test1').click();
   await waitForEditorLoad(page);
   const title = page.locator('[data-block-is-title] >> text="test1"');
   await expect(title).toBeVisible();

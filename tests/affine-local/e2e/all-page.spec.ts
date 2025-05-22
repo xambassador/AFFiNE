@@ -4,7 +4,6 @@ import { getPagesCount } from '@affine-test/kit/utils/filter';
 import { openHomePage } from '@affine-test/kit/utils/load-page';
 import {
   clickNewPageButton,
-  clickPageMoreActions,
   getAllPage,
   getBlockSuiteEditorTitle,
   waitForAllPagesLoad,
@@ -50,40 +49,37 @@ test('enable selection and use ESC to disable selection', async ({ page }) => {
   // there should be no checkbox in the page list by default
   expect(
     await page
-      .locator('[data-testid="page-list-item"] [data-testid="affine-checkbox"]')
+      .locator('[data-testid="doc-list-item-select"][data-select-mode="true"]')
       .count()
   ).toBe(0);
 
-  // by clicking [data-testid="page-list-header-selection-checkbox"], checkboxes should appear
+  // by shift + clicking [data-testid="doc-list-item"], checkboxes should appear
   await page
-    .locator('[data-testid="page-list-header-selection-checkbox"]')
-    .click();
-
-  // there should be checkboxes in the page list now
-  expect(
-    await page
-      .locator('[data-testid="page-list-item"] [data-testid="affine-checkbox"]')
-      .count()
-  ).toBeGreaterThan(0);
-
-  // by ESC, checkboxes should NOT disappear (because it is too early)
-  await page.keyboard.press('Escape');
-
-  expect(
-    await page
-      .locator('[data-testid="page-list-item"] [data-testid="affine-checkbox"]')
-      .count()
-  ).toBeGreaterThan(0);
+    .locator('[data-testid="doc-list-item"]')
+    .first()
+    .click({
+      modifiers: ['Shift'],
+    });
 
   // wait for 500ms
   await page.waitForTimeout(500);
 
+  // there should be checkboxes in the page list now
+  expect(
+    await page
+      .locator('[data-testid="doc-list-item-select"][data-select-mode="true"]')
+      .count()
+  ).toBeGreaterThan(0);
+
   // esc again, checkboxes should disappear
   await page.keyboard.press('Escape');
 
+  // wait for 500ms
+  await page.waitForTimeout(500);
+
   expect(
     await page
-      .locator('[data-testid="page-list-item"] [data-testid="affine-checkbox"]')
+      .locator('[data-testid="doc-list-item-select"][data-select-mode="true"]')
       .count()
   ).toBe(0);
 });
@@ -97,21 +93,16 @@ test('select two pages and delete', async ({ page }) => {
 
   const pageCount = await getPagesCount(page);
 
-  // by clicking [data-testid="page-list-header-selection-checkbox"], checkboxes should appear
+  // by shift + clicking [data-testid="doc-list-item"], checkboxes should appear, and first doc be selected
   await page
-    .locator('[data-testid="page-list-header-selection-checkbox"]')
-    .click();
+    .locator('[data-testid="doc-list-item"]')
+    .first()
+    .click({
+      modifiers: ['Shift'],
+    });
 
   // select the first two pages
-  await page
-    .locator('[data-testid="page-list-item"] [data-testid="affine-checkbox"]')
-    .nth(0)
-    .click();
-
-  await page
-    .locator('[data-testid="page-list-item"] [data-testid="affine-checkbox"]')
-    .nth(1)
-    .click();
+  await page.locator('[data-testid="doc-list-item"]').nth(1).click();
 
   // the floating popover should appear
   await expect(page.locator('[data-testid="floating-toolbar"]')).toBeVisible();
@@ -131,153 +122,6 @@ test('select two pages and delete', async ({ page }) => {
   await page.waitForTimeout(300);
 
   expect(await getPagesCount(page)).toBe(pageCount - 2);
-});
-test('select two pages and permanently delete', async ({ page }) => {
-  await openHomePage(page);
-  await waitForEditorLoad(page);
-  await clickNewPageButton(page);
-  await clickSideBarAllPageButton(page);
-  await waitForAllPagesLoad(page);
-
-  const pageCount = await getPagesCount(page);
-
-  await page.keyboard.down('Shift');
-  await page.locator('[data-testid="page-list-item"]').nth(0).click();
-
-  await page.locator('[data-testid="page-list-item"]').nth(1).click();
-  await page.keyboard.up('Shift');
-
-  // the floating popover should appear
-  await expect(page.locator('[data-testid="floating-toolbar"]')).toBeVisible();
-  await expect(page.locator('[data-testid="floating-toolbar"]')).toHaveText(
-    '2 doc(s) selected'
-  );
-
-  // click delete button
-  await page.locator('[data-testid="list-toolbar-delete"]').click();
-
-  // the confirm dialog should appear
-  await expect(page.getByText('Delete 2 docs?')).toBeVisible();
-
-  await page.getByRole('button', { name: 'Delete' }).click();
-
-  // check the page count again
-  await page.waitForTimeout(300);
-
-  expect(await getPagesCount(page)).toBe(pageCount - 2);
-
-  await page.getByTestId('trash-page').click();
-  await page.waitForTimeout(300);
-  const trashPageCount = await getPagesCount(page);
-
-  expect(trashPageCount).toBe(2);
-
-  await page.keyboard.down('Shift');
-  await page.locator('[data-testid="page-list-item"]').nth(0).click();
-
-  await page.locator('[data-testid="page-list-item"]').nth(1).click();
-  await page.keyboard.up('Shift');
-
-  await expect(page.locator('[data-testid="floating-toolbar"]')).toBeVisible();
-  await expect(page.locator('[data-testid="floating-toolbar"]')).toHaveText(
-    '2 doc(s) selected'
-  );
-
-  await page.locator('[data-testid="list-toolbar-delete"]').click();
-
-  await page.getByRole('button', { name: 'Delete' }).click();
-
-  await page.waitForTimeout(300);
-
-  expect(await getPagesCount(page)).toBe(trashPageCount - 2);
-});
-
-test('select a group of items by clicking "Select All" in group header', async ({
-  page,
-}) => {
-  await openHomePage(page);
-  await waitForEditorLoad(page);
-  await clickNewPageButton(page);
-  await clickSideBarAllPageButton(page);
-  await waitForAllPagesLoad(page);
-
-  // Select All will appear when hovering the header
-  await page.hover('[data-testid="page-list-group-header"]');
-
-  // click Select All
-  await page.getByRole('button', { name: 'Select All' }).click();
-
-  const selectedItemCount = await page
-    .locator('[data-testid="page-list-group-header"]')
-    .getAttribute('data-group-selected-items-count');
-
-  const selectedGroupItemTotalCount = await page
-    .locator('[data-testid="page-list-group-header"]')
-    .getAttribute('data-group-items-count');
-  expect(selectedItemCount).toBe(selectedGroupItemTotalCount);
-
-  // check the selected count is equal to the one displayed in the floating toolbar
-  await expect(page.locator('[data-testid="floating-toolbar"]')).toHaveText(
-    `${selectedItemCount} doc(s) selected`
-  );
-});
-
-test('click display button to group pages', async ({ page }) => {
-  await openHomePage(page);
-  await waitForEditorLoad(page);
-  await clickNewPageButton(page);
-  await getBlockSuiteEditorTitle(page).click();
-  await getBlockSuiteEditorTitle(page).fill('this is a new page to favorite');
-
-  await clickPageMoreActions(page);
-  const favoriteBtn = page.getByTestId('editor-option-menu-favorite');
-  await favoriteBtn.click();
-
-  await clickSideBarAllPageButton(page);
-  await waitForAllPagesLoad(page);
-  // click the display button
-  await page.locator('[data-testid="page-display-menu-button"]').click();
-
-  // click grouping menu item and wait for submenu
-
-  await page.locator('[data-testid="page-display-grouping-menuItem"]').click();
-
-  // don't know why the `page.getByTestId('group-by-favourites').click()` will make the submenu disappear and failed
-  await page.getByTestId('group-by-favourites').evaluate((el: HTMLElement) => {
-    el.click();
-  });
-
-  // the group header should appear
-  await expect(
-    page.locator('[data-testid="group-label-favourited"]')
-  ).toBeVisible();
-
-  await expect(
-    page.locator('[data-testid="group-label-notFavourited"]')
-  ).toBeVisible();
-});
-
-test('select display properties to hide bodyNotes', async ({ page }) => {
-  await openHomePage(page);
-  await waitForEditorLoad(page);
-  await clickNewPageButton(page);
-  await getBlockSuiteEditorTitle(page).click();
-  await getBlockSuiteEditorTitle(page).fill(
-    'this is a new page to test display properties'
-  );
-  await page.keyboard.press('Enter', { delay: 10 });
-  await page.keyboard.insertText('DRAGON BALL: Sparking! ZERO');
-  await clickSideBarAllPageButton(page);
-  await waitForAllPagesLoad(page);
-  const cell = page
-    .getByTestId('page-list-item')
-    .getByText('DRAGON BALL: Sparking! ZERO');
-  await expect(cell).toBeVisible();
-  await page.locator('[data-testid="page-display-menu-button"]').click();
-  await page.locator('[data-testid="property-bodyNotes"]').click();
-  await expect(cell).not.toBeVisible();
-  await page.locator('[data-testid="property-bodyNotes"]').click();
-  await expect(cell).toBeVisible();
 });
 
 test('select three pages with shiftKey and delete', async ({ page }) => {
@@ -291,9 +135,9 @@ test('select three pages with shiftKey and delete', async ({ page }) => {
 
   const pageCount = await getPagesCount(page);
   await page.keyboard.down('Shift');
-  await page.locator('[data-testid="page-list-item"]').nth(0).click();
+  await page.locator('[data-testid="doc-list-item"]').nth(0).click();
 
-  await page.locator('[data-testid="page-list-item"]').nth(2).click();
+  await page.locator('[data-testid="doc-list-item"]').nth(2).click();
   await page.keyboard.up('Shift');
 
   // the floating popover should appear
@@ -314,40 +158,6 @@ test('select three pages with shiftKey and delete', async ({ page }) => {
   await page.waitForTimeout(300);
 
   expect(await getPagesCount(page)).toBe(pageCount - 3);
-});
-
-test('create a collection and delete it', async ({ page }) => {
-  await openHomePage(page);
-  await waitForEditorLoad(page);
-  await clickNewPageButton(page);
-  await clickSideBarAllPageButton(page);
-  await waitForAllPagesLoad(page);
-  await page.getByTestId('workspace-collections-button').click();
-
-  // create a collection
-  await page.getByTestId('all-collection-new-button').click();
-  await expect(page.getByTestId('prompt-modal-input')).toBeVisible();
-  await page.getByTestId('prompt-modal-input').fill('test collection');
-  await page.getByTestId('prompt-modal-confirm').click();
-
-  // check the collection is created
-  await clickSideBarAllPageButton(page);
-  await waitForAllPagesLoad(page);
-  await page.getByTestId('workspace-collections-button').click();
-  const cell = page
-    .getByTestId('collection-list-item')
-    .getByText('test collection');
-  await expect(cell).toBeVisible();
-
-  // delete the collection
-  await page.getByTestId('collection-item-operation-button').click();
-  await page.getByTestId('delete-collection').click();
-  await page.waitForURL(url => url.pathname.endsWith('collection'));
-
-  const newCell = page
-    .getByTestId('collection-list-item')
-    .getByText('test collection');
-  await expect(newCell).not.toBeVisible();
 });
 
 test('create a tag and delete it', async ({ page }) => {

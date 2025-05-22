@@ -104,6 +104,7 @@ export const AllDocsHeader = ({
           onCreatePage={e => createPage('page', { at: inferOpenMode(e) })}
           onCreateDoc={e => createPage(undefined, { at: inferOpenMode(e) })}
           onImportFile={onImportFile}
+          data-testid="new-page-button-trigger"
         >
           <span className={styles.newPageButtonLabel}>{t['New Page']()}</span>
         </PageListNewPageButton>

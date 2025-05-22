@@ -3,6 +3,7 @@ import { openHomePage } from '@affine-test/kit/utils/load-page';
 import {
   clickNewPageButton,
   getBlockSuiteEditorTitle,
+  getPageByTitle,
   waitForEditorLoad,
 } from '@affine-test/kit/utils/page-logic';
 import {
@@ -15,9 +16,18 @@ import { expect } from '@playwright/test';
 
 const removeOnboardingPages = async (page: Page) => {
   await page.getByTestId('all-pages').click();
-  await page.getByTestId('page-list-header-selection-checkbox').click();
-  // click again to select all
-  await page.getByTestId('page-list-header-selection-checkbox').click();
+  await page
+    .getByTestId('doc-list-item')
+    .first()
+    .click({
+      modifiers: ['Shift'],
+    });
+  await page
+    .getByTestId('doc-list-item')
+    .last()
+    .click({
+      modifiers: ['Shift'],
+    });
   await page.getByTestId('list-toolbar-delete').click();
   // confirm delete
   await page.getByTestId('confirm-modal-confirm').click();
@@ -57,7 +67,7 @@ const createAndPinCollection = async (
 
   await page.getByTestId('all-pages').click();
 
-  const cell = page.getByTestId('page-list-item-title').getByText('test page');
+  const cell = page.getByTestId('doc-list-item-title').getByText('test page');
   await expect(cell).toBeVisible();
 };
 
@@ -137,7 +147,7 @@ test('add collection from sidebar', async ({ page }) => {
   await getBlockSuiteEditorTitle(page).click();
   await getBlockSuiteEditorTitle(page).fill('test page');
   await page.getByTestId('all-pages').click();
-  const cell = page.getByTestId('page-list-item-title').getByText('test page');
+  const cell = await getPageByTitle(page, 'test page');
   await expect(cell).toBeVisible();
   await page
     .getByTestId('navigation-panel-collections')

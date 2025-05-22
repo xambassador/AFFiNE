@@ -15,6 +15,8 @@ const DefaultDisplayPreference: ExplorerDisplayPreference = {
   showDocIcon: true,
   showDocPreview: true,
   quickFavorite: true,
+  showDragHandle: true,
+  showMoreOperation: true,
 };
 
 export type DocExplorerContextType = {
@@ -84,6 +86,12 @@ export const createDocExplorerContext = (
     ),
     quickTab$: displayPreference$.selector(
       displayPreference => displayPreference.quickTab
+    ),
+    showMoreOperation$: displayPreference$.selector(
+      displayPreference => displayPreference.showMoreOperation
+    ),
+    showDragHandle$: displayPreference$.selector(
+      displayPreference => displayPreference.showDragHandle
     ),
   } satisfies DocExplorerContextType;
 };

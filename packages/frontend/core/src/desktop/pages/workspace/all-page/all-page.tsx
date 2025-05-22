@@ -12,7 +12,6 @@ import {
 } from '@affine/core/modules/collection';
 import { CollectionRulesService } from '@affine/core/modules/collection-rules';
 import type { FilterParams } from '@affine/core/modules/collection-rules/types';
-import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { WorkspaceLocalState } from '@affine/core/modules/workspace';
 import { useI18n } from '@affine/i18n';
 import { useLiveData, useService } from '@toeverything/infra';
@@ -24,7 +23,6 @@ import {
   ViewIcon,
   ViewTitle,
 } from '../../../../modules/workbench';
-import { AllPage as AllPageOld } from '../all-page-old/all-page';
 import { AllDocSidebarTabs } from '../layouts/all-doc-sidebar-tabs';
 import * as styles from './all-page.css';
 import { AllDocsHeader } from './all-page-header';
@@ -350,10 +348,5 @@ export const AllPage = () => {
 };
 
 export const Component = () => {
-  const featureFlagService = useService(FeatureFlagService);
-  const enableNewAllDocsPage = useLiveData(
-    featureFlagService.flags.enable_new_all_docs_page.$
-  );
-
-  return enableNewAllDocsPage ? <AllPage /> : <AllPageOld />;
+  return <AllPage />;
 };

@@ -100,7 +100,7 @@ export const CollectionListHeader = ({
         <Button onClick={handleEdit}>{t['Edit']()}</Button>
         <PageListNewPageButton
           size="small"
-          testId="new-page-button-trigger"
+          data-testid="new-page-button-trigger"
           onCreateDoc={onCreateDoc}
           onCreateEdgeless={onCreateEdgeless}
           onCreatePage={onCreatePage}

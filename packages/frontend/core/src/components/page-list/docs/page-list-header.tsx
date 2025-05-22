@@ -92,7 +92,7 @@ export const PageListHeader = () => {
       <div className={styles.docListHeaderTitle}>{title}</div>
       <PageListNewPageButton
         size="small"
-        testId="new-page-button-trigger"
+        data-testid="new-page-button-trigger"
         onCreateEdgeless={e => createEdgeless({ at: inferOpenMode(e) })}
         onCreatePage={e =>
           createPage('page' as DocMode, { at: inferOpenMode(e) })
@@ -194,7 +194,7 @@ export const CollectionPageListHeader = ({
         <Button onClick={handleEdit}>{t['Edit']()}</Button>
         <PageListNewPageButton
           size="small"
-          testId="new-page-button-trigger"
+          data-testid="new-page-button-trigger"
           onCreateDoc={onCreateDoc}
           onCreateEdgeless={onCreateEdgeless}
           onCreatePage={onCreatePage}

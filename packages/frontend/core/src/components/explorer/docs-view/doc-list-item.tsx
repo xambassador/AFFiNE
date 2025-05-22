@@ -8,7 +8,6 @@ import { DocsService } from '@affine/core/modules/doc';
 import { DocDisplayMetaService } from '@affine/core/modules/doc-display-meta';
 import { WorkbenchLink } from '@affine/core/modules/workbench';
 import type { AffineDNDData } from '@affine/core/types/dnd';
-import { useI18n } from '@affine/i18n';
 import {
   AutoTidyUpIcon,
   PropertyIcon,
@@ -146,20 +145,45 @@ export const DocListItem = ({ ...props }: DocListItemProps) => {
     [contextValue, handleMultiSelect, prevCheckAnchorId, props, selectMode]
   );
 
+  const { dragRef, CustomDragPreview } = useDraggable<AffineDNDData>(
+    () => ({
+      canDrag: true,
+      data: {
+        entity: {
+          type: 'doc',
+          id: props.docId as string,
+        },
+        from: {
+          at: 'all-docs:list',
+        },
+      },
+    }),
+    [props.docId]
+  );
+
   return (
-    <WorkbenchLink
-      draggable={false}
-      to={`/${props.docId}`}
-      onClick={handleClick}
-      data-selected={selectedDocIds.includes(props.docId)}
-      className={styles.root}
-    >
-      {view === 'list' ? (
-        <ListViewDoc {...props} />
-      ) : (
-        <CardViewDoc {...props} />
-      )}
-    </WorkbenchLink>
+    <>
+      <WorkbenchLink
+        ref={dragRef}
+        draggable={false}
+        to={`/${props.docId}`}
+        onClick={handleClick}
+        data-selected={selectedDocIds.includes(props.docId)}
+        className={styles.root}
+        data-testid={`doc-list-item`}
+        data-doc-id={props.docId}
+      >
+        {view === 'list' ? (
+          <ListViewDoc {...props} />
+        ) : (
+          <CardViewDoc {...props} />
+        )}
+      </WorkbenchLink>
+      <CustomDragPreview>
+        <RawDocIcon id={props.docId} />
+        <RawDocTitle id={props.docId} />
+      </CustomDragPreview>
+    </>
   );
 };
 
@@ -172,10 +196,9 @@ const RawDocIcon = memo(function RawDocIcon({
   return <Icon {...props} />;
 });
 const RawDocTitle = memo(function RawDocTitle({ id }: { id: string }) {
-  const i18n = useI18n();
   const docDisplayMetaService = useService(DocDisplayMetaService);
   const title = useLiveData(docDisplayMetaService.title$(id));
-  return i18n.t(title);
+  return title;
 });
 const RawDocPreview = memo(function RawDocPreview({
   id,
@@ -188,47 +211,20 @@ const RawDocPreview = memo(function RawDocPreview({
 });
 const DragHandle = memo(function DragHandle({
   id,
-  preview,
   ...props
-}: HTMLProps<HTMLDivElement> & { preview?: ReactNode }) {
+}: HTMLProps<HTMLDivElement>) {
   const contextValue = useContext(DocExplorerContext);
   const selectMode = useLiveData(contextValue.selectMode$);
   const showDragHandle = useLiveData(contextValue.showDragHandle$);
-
-  const { dragRef, CustomDragPreview } = useDraggable<AffineDNDData>(
-    () => ({
-      canDrag: true,
-      data: {
-        entity: {
-          type: 'doc',
-          id: id as string,
-        },
-        from: {
-          at: 'all-docs:list',
-        },
-      },
-    }),
-    [id]
-  );
 
   if (selectMode || !id || !showDragHandle) {
     return null;
   }
 
   return (
-    <>
-      <div ref={dragRef} {...props}>
-        <DragHandleIcon />
-      </div>
-      <CustomDragPreview>
-        {preview ?? (
-          <>
-            <RawDocIcon id={id} />
-            <RawDocTitle id={id} />
-          </>
-        )}
-      </CustomDragPreview>
-    </>
+    <div {...props}>
+      <DragHandleIcon />
+    </div>
   );
 });
 const Select = memo(function Select({
@@ -248,7 +244,11 @@ const Select = memo(function Select({
   }
 
   return (
-    <div data-select-mode={selectMode} {...props}>
+    <div
+      data-select-mode={selectMode}
+      data-testid={`doc-list-item-select`}
+      {...props}
+    >
       <Checkbox
         checked={selectedDocIds.includes(id)}
         onChange={handleSelectChange}
@@ -323,7 +323,11 @@ export const ListViewDoc = ({ docId }: DocListItemProps) => {
       <Select id={docId} className={styles.listSelect} />
       <DocIcon id={docId} className={styles.listIcon} />
       <div className={styles.listBrief}>
-        <DocTitle id={docId} className={styles.listTitle} />
+        <DocTitle
+          id={docId}
+          className={styles.listTitle}
+          data-testid="doc-list-item-title"
+        />
         <DocPreview
           id={docId}
           className={styles.listPreview}
@@ -370,7 +374,11 @@ export const CardViewDoc = ({ docId }: DocListItemProps) => {
     <li className={styles.cardViewRoot}>
       <header className={styles.cardViewHeader}>
         <DocIcon id={docId} className={styles.cardViewIcon} />
-        <DocTitle id={docId} className={styles.cardViewTitle} />
+        <DocTitle
+          id={docId}
+          className={styles.cardViewTitle}
+          data-testid="doc-list-item-title"
+        />
         {quickActions.map(action => {
           return <action.Component size="16" key={action.key} doc={doc} />;
         })}

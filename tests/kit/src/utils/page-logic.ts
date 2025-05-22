@@ -30,13 +30,10 @@ export async function waitForEditorLoad(page: Page) {
 }
 
 export async function waitForAllPagesLoad(page: Page) {
-  // if page-list-header-selection-checkbox is rendered, we believe all_pages is ready
-  await page.waitForSelector(
-    '[data-testid="page-list-header-selection-checkbox"]',
-    {
-      timeout: 20000,
-    }
-  );
+  // if doc-list-item is rendered, we believe all_pages is ready
+  await page.waitForSelector('[data-testid="doc-list-item"]', {
+    timeout: 20000,
+  });
 }
 
 export async function clickNewPageButton(page: Page, title?: string) {
@@ -112,15 +109,19 @@ export async function clickPageMoreActions(page: Page) {
 }
 
 export const getPageOperationButton = (page: Page, id: string) => {
-  return getPageItem(page, id).getByTestId('page-list-operation-button');
+  return getPageItem(page, id).getByTestId('doc-list-operation-button');
 };
 
 export const getPageItem = (page: Page, id: string) => {
-  return page.locator(`[data-page-id="${id}"][data-testid="page-list-item"]`);
+  return page.locator(`[data-doc-id="${id}"][data-testid="doc-list-item"]`);
 };
 
 export const getPageByTitle = (page: Page, title: string) => {
-  return page.getByTestId('page-list-item').getByText(title);
+  return page.getByTestId('doc-list-item').filter({
+    has: page.locator(
+      `[data-testid="doc-list-item-title"]:has-text("${title}")`
+    ),
+  });
 };
 
 export type DragLocation =

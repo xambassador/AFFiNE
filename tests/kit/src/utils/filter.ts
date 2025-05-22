@@ -2,17 +2,8 @@ import type { Page } from '@playwright/test';
 
 // fixme: there could be multiple page lists in the Page
 export const getPagesCount = async (page: Page) => {
-  const locator = page.locator('[data-testid="virtualized-page-list"]');
-  const pageListCount = await locator.count();
-
-  if (pageListCount === 0) {
-    return 0;
-  }
-
-  // locator is not a HTMLElement, so we can't use dataset
-  // oxlint-disable-next-line unicorn/prefer-dom-node-dataset
-  const count = await locator.getAttribute('data-total-count');
-  return count ? parseInt(count) : 0;
+  const locator = page.locator('[data-testid="doc-list-item"]');
+  return await locator.count();
 };
 
 export async function selectTag(page: Page, name: string | RegExp) {
