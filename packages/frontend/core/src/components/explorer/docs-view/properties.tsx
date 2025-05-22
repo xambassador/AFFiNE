@@ -113,7 +113,7 @@ export const ListViewProperties = ({ docId }: { docId: string }) => {
             if (!displayKey || !displayProperties?.includes(displayKey)) {
               return null;
             }
-            if (systemProperty) {
+            if (systemProperty && systemProperty.showInDocList) {
               return (
                 <SystemPropertyRenderer
                   doc={doc}
@@ -121,7 +121,10 @@ export const ListViewProperties = ({ docId }: { docId: string }) => {
                   key={systemProperty.type}
                 />
               );
-            } else if (workspaceProperty) {
+            } else if (
+              workspaceProperty &&
+              WorkspacePropertyTypes[workspaceProperty.type]?.showInDocList
+            ) {
               return (
                 <WorkspacePropertyRenderer
                   key={workspaceProperty.id}

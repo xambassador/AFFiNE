@@ -5,6 +5,7 @@ import { useLiveData, useService } from '@toeverything/infra';
 import { useCallback, useMemo } from 'react';
 
 import { WorkspacePropertyName } from '../../properties';
+import { WorkspacePropertyTypes } from '../../workspace-property-types';
 import { generateExplorerPropertyList } from '../properties';
 import type { ExplorerDisplayPreference } from '../types';
 import * as styles from './properties.css';
@@ -147,7 +148,12 @@ const PropertyRenderer = ({
       : null;
   const isActive = activeKey && displayProperties.includes(activeKey);
 
-  if (!key) {
+  const showInDocList =
+    systemProperty?.showInDocList ||
+    (workspaceProperty &&
+      WorkspacePropertyTypes[workspaceProperty.type]?.showInDocList);
+
+  if (!key || !showInDocList) {
     return null;
   }
   return (
