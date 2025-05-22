@@ -39,6 +39,7 @@ export const Condition = ({
       <FilterOptionsGroup
         isDraft={isDraft}
         onDraftCompleted={onDraftCompleted}
+        initialStep={methods && methods.length > 1 ? 0 : 1}
         items={[
           methods &&
             (({ onDraftCompleted, menuRef }) => {

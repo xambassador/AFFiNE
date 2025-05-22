@@ -13,10 +13,12 @@ export const FilterOptionsGroup = ({
   isDraft,
   onDraftCompleted,
   items,
+  initialStep = 0,
 }: {
   isDraft?: boolean;
   onDraftCompleted?: () => void;
   items?: FilterOptionsGroupChildren[];
+  initialStep?: number;
 }) => {
   const stepCount =
     items?.filter(v => {
@@ -27,7 +29,7 @@ export const FilterOptionsGroup = ({
     }).length ?? 0;
 
   const childRefs = useRef<(MenuRef | null)[]>([]);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(initialStep);
 
   const handleNextStep = useCallback(() => {
     // Add a small delay between steps to prevent the next menu from automatically closing due to the previous menu's close event
