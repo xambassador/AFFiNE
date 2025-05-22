@@ -1,10 +1,13 @@
 package app.affine.pro
 
 import android.content.res.ColorStateList
+import android.os.Bundle
 import android.view.Gravity
 import android.view.View
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updateMargins
 import androidx.lifecycle.lifecycleScope
 import app.affine.pro.ai.AIActivity
@@ -64,6 +67,16 @@ class MainActivity : BridgeActivity(), AIButtonPlugin.Callback, AffineThemePlugi
         }
     }
 
+    private var naviHeight = 0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { v, insets ->
+            naviHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+            ViewCompat.onApplyWindowInsets(v, insets)
+        }
+    }
+
     override fun load() {
         super.load()
         AuthInitializer.initialize(bridge)
@@ -94,6 +107,10 @@ class MainActivity : BridgeActivity(), AIButtonPlugin.Callback, AffineThemePlugi
                 )
             )
         }
+    }
+
+    override fun getSystemNaviBarHeight(): Int {
+        return naviHeight
     }
 
     override fun onClick(v: View) {

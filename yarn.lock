@@ -260,7 +260,6 @@ __metadata:
     "@capacitor/core": "npm:^7.0.0"
     "@capacitor/keyboard": "npm:^7.0.0"
     "@capacitor/status-bar": "npm:^7.0.0"
-    "@capawesome/capacitor-android-edge-to-edge-support": "npm:^7.0.0"
     "@capgo/inappbrowser": "npm:^7.1.0"
     "@sentry/react": "npm:^9.2.0"
     "@toeverything/infra": "workspace:*"
@@ -4524,15 +4523,6 @@ __metadata:
   peerDependencies:
     "@capacitor/core": ">=7.0.0"
   checksum: 10/b634f7b98f38fa411a928923a7898ad4b04a3cce0d669a1af2ac32800f4d6a7ae3a8712d92da8f4db1e556a3e704a3c2bab8436332ebbab91082d3551ba0202d
-  languageName: node
-  linkType: hard
-
-"@capawesome/capacitor-android-edge-to-edge-support@npm:^7.0.0":
-  version: 7.2.1
-  resolution: "@capawesome/capacitor-android-edge-to-edge-support@npm:7.2.1"
-  peerDependencies:
-    "@capacitor/core": ">=7.0.0"
-  checksum: 10/6d84de3a7e8bc6dcd11809b00a295cc7269963e695b73ca036fbc7a60688cdbf8835a6e811709aeeb0cf15c8c1ac10f0ff597dee673a7597864aadafb879ca2e
   languageName: node
   linkType: hard
 

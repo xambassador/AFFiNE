@@ -40,7 +40,6 @@ import {
 import { App as CapacitorApp } from '@capacitor/app';
 import { Keyboard } from '@capacitor/keyboard';
 import { StatusBar, Style } from '@capacitor/status-bar';
-import { EdgeToEdge } from '@capawesome/capacitor-android-edge-to-edge-support';
 import { InAppBrowser } from '@capgo/inappbrowser';
 import { Framework, FrameworkRoot, getCurrentStore } from '@toeverything/infra';
 import { OpClient } from '@toeverything/infra/op';
@@ -328,9 +327,6 @@ const ThemeProvider = () => {
           : resolvedTheme === 'light'
             ? Style.Light
             : Style.Default,
-    }).catch(console.error);
-    EdgeToEdge.setBackgroundColor({
-      color: resolvedTheme === 'dark' ? '#000000' : '#F5F5F5',
     }).catch(console.error);
     AffineTheme.onThemeChanged({
       darkMode: resolvedTheme === 'dark',
