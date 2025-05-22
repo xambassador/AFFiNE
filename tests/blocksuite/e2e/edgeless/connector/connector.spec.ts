@@ -2,15 +2,18 @@ import { expect } from '@playwright/test';
 
 import {
   addBasicConnectorElement,
+  assertEdgelessConnectorToolMode,
   changeConnectorStrokeColor,
   changeConnectorStrokeStyle,
   changeConnectorStrokeWidth,
+  ConnectorMode,
   createConnectorElement,
   createShapeElement,
   dragBetweenViewCoords,
   edgelessCommonSetup as commonSetup,
   getConnectorPath,
   getConnectorPathWithInOut,
+  locatorComponentToolbar,
   pickColorAtPoints,
   rotateElementByHandle,
   selectElementInEdgeless,
@@ -21,7 +24,11 @@ import {
   triggerComponentToolbarAction,
   triggerShapeSwitch,
 } from '../../utils/actions/edgeless.js';
-import { pressBackspace, waitNextFrame } from '../../utils/actions/index.js';
+import {
+  clickView,
+  pressBackspace,
+  waitNextFrame,
+} from '../../utils/actions/index.js';
 import {
   assertConnectorPath,
   assertEdgelessNonSelectedRect,
@@ -184,6 +191,28 @@ test('change connector stroke style', async ({ page }) => {
 
   const pickedColor = await pickColorAtPoints(page, [[start.x + 20, start.y]]);
   expect(pickedColor[0]).toBe('#000000');
+});
+
+test('should record previous connector mode', async ({ page }) => {
+  await commonSetup(page);
+  await setEdgelessTool(page, 'connector');
+  await assertEdgelessConnectorToolMode(page, ConnectorMode.Curve);
+  await page.keyboard.press('c');
+  await assertEdgelessConnectorToolMode(page, ConnectorMode.Orthogonal);
+  await page.keyboard.press('c');
+  await assertEdgelessConnectorToolMode(page, ConnectorMode.Straight);
+
+  await dragBetweenViewCoords(page, [100, 100], [200, 200]);
+  await page.keyboard.press('c');
+  await assertEdgelessConnectorToolMode(page, ConnectorMode.Straight);
+
+  await setEdgelessTool(page, 'default');
+  await clickView(page, [150, 150]);
+  await triggerComponentToolbarAction(page, 'changeConnectorShape');
+  await locatorComponentToolbar(page).getByLabel('Curve').click();
+
+  await page.keyboard.press('c');
+  await assertEdgelessConnectorToolMode(page, ConnectorMode.Curve);
 });
 
 test.describe('quick connect', () => {

@@ -31,7 +31,7 @@ import { mountShapeTextEditor, ShapeTool } from '@blocksuite/affine-gfx-shape';
 import { TextTool } from '@blocksuite/affine-gfx-text';
 import {
   ConnectorElementModel,
-  ConnectorMode,
+  type ConnectorMode,
   EdgelessTextBlockModel,
   GroupElementModel,
   LayoutType,
@@ -93,10 +93,18 @@ export class EdgelessPageKeyboardManager extends PageKeyboardManager {
           this._setEdgelessTool(TextTool);
         },
         c: () => {
-          const mode = ConnectorMode.Curve;
-          rootComponent.std.get(EditPropsStore).recordLastProps('connector', {
-            mode,
-          });
+          const editPropsStore = this.std.get(EditPropsStore);
+
+          let mode: ConnectorMode;
+          if (
+            this.gfx.tool.currentToolName$.peek() === ConnectorTool.toolName
+          ) {
+            mode = this.gfx.tool.get(ConnectorTool).getNextMode();
+            editPropsStore.recordLastProps('connector', { mode });
+          } else {
+            mode = editPropsStore.lastProps$.peek().connector.mode;
+          }
+
           this._setEdgelessTool(ConnectorTool, { mode });
         },
         h: () => {

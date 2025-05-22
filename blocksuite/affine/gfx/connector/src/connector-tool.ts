@@ -3,12 +3,10 @@ import {
   DefaultTool,
   OverlayIdentifier,
 } from '@blocksuite/affine-block-surface';
-import type {
-  Connection,
-  ConnectorElementModel,
-  ConnectorMode,
-} from '@blocksuite/affine-model';
 import {
+  type Connection,
+  type ConnectorElementModel,
+  ConnectorMode,
   GroupElementModel,
   ShapeElementModel,
   ShapeType,
@@ -222,5 +220,16 @@ export class ConnectorTool extends BaseTool<ConnectorToolOptions> {
     }
 
     this.findTargetByPoint(point);
+  }
+
+  getNextMode() {
+    switch (this.activatedOption.mode) {
+      case ConnectorMode.Curve:
+        return ConnectorMode.Orthogonal;
+      case ConnectorMode.Orthogonal:
+        return ConnectorMode.Straight;
+      case ConnectorMode.Straight:
+        return ConnectorMode.Curve;
+    }
   }
 }
