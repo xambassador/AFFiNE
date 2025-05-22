@@ -69,6 +69,14 @@ export function locateDocTitle(page: Page, editorIndex = 0) {
   return locateEditorContainer(page, editorIndex).locator('doc-title');
 }
 
+export function isDocTitleFocused(page: Page, editorIndex = 0) {
+  return locateDocTitle(page, editorIndex)
+    .locator('.inline-editor')
+    .evaluate(inlineEditor => {
+      return document.activeElement === inlineEditor;
+    });
+}
+
 export async function focusDocTitle(page: Page, editorIndex = 0) {
   await locateDocTitle(page, editorIndex).locator('.inline-editor').focus();
 }

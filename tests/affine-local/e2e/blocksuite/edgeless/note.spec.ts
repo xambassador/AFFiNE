@@ -7,6 +7,7 @@ import {
   getEdgelessSelectedIds,
   getPageMode,
   getSelectedXYWH,
+  isDocTitleFocused,
   locateEditorContainer,
   locateModeSwitchButton,
   locateToolbar,
@@ -426,6 +427,14 @@ test.describe('note block rendering', () => {
       note,
       'should show collapsed content when dragging is finished'
     ).toHaveCSS('overflow-y', 'visible');
+  });
+
+  test('cursor should not jump to page block title from note block', async ({
+    page,
+  }) => {
+    await createEdgelessNoteBlock(page, [50, 50]);
+    await pressBackspace(page);
+    expect(await isDocTitleFocused(page)).toBeFalsy();
   });
 });
 
