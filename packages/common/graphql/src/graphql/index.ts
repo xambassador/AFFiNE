@@ -75,7 +75,6 @@ export const getPromptsQuery = {
     model
     action
     config {
-      jsonMode
       frequencyPenalty
       presencePenalty
       temperature
@@ -99,7 +98,6 @@ export const updatePromptMutation = {
     model
     action
     config {
-      jsonMode
       frequencyPenalty
       presencePenalty
       temperature

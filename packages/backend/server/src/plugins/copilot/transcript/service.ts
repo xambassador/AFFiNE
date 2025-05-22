@@ -16,9 +16,9 @@ import {
 import { Models } from '../../../models';
 import { PromptService } from '../prompt';
 import {
-  CopilotCapability,
+  CopilotProvider,
   CopilotProviderFactory,
-  CopilotTextProvider,
+  ModelOutputType,
   PromptMessage,
 } from '../providers';
 import { CopilotStorage } from '../storage';
@@ -154,11 +154,16 @@ export class CopilotTranscriptionService {
     return ret;
   }
 
-  private async getProvider(model: string): Promise<CopilotTextProvider> {
-    let provider = await this.providerFactory.getProviderByCapability(
-      CopilotCapability.TextToText,
-      { model }
-    );
+  private async getProvider(
+    modelId: string,
+    structured: boolean
+  ): Promise<CopilotProvider> {
+    let provider = await this.providerFactory.getProvider({
+      outputType: structured
+        ? ModelOutputType.Structured
+        : ModelOutputType.Text,
+      modelId,
+    });
 
     if (!provider) {
       throw new NoCopilotProviderAvailable();
@@ -177,12 +182,20 @@ export class CopilotTranscriptionService {
       throw new CopilotPromptNotFound({ name: promptName });
     }
 
-    const provider = await this.getProvider(prompt.model);
-    return provider.generateText(
-      [...prompt.finish({ schema }), { role: 'user', content: '', ...message }],
-      prompt.model,
-      Object.assign({}, prompt.config)
-    );
+    const cond = { modelId: prompt.model };
+    const msg = { role: 'user' as const, content: '', ...message };
+    const config = Object.assign({}, prompt.config);
+    if (schema) {
+      const provider = await this.getProvider(prompt.model, true);
+      return provider.structure(
+        cond,
+        [...prompt.finish({ schema }), msg],
+        config
+      );
+    } else {
+      const provider = await this.getProvider(prompt.model, false);
+      return provider.text(cond, [...prompt.finish({}), msg], config);
+    }
   }
 
   // TODO(@darkskygit): remove after old server down

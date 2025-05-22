@@ -228,9 +228,6 @@ registerEnumType(AiPromptRole, {
 @InputType('CopilotPromptConfigInput')
 @ObjectType()
 class CopilotPromptConfigType {
-  @Field(() => Boolean, { nullable: true })
-  jsonMode!: boolean | null;
-
   @Field(() => Float, { nullable: true })
   frequencyPenalty!: number | null;
 

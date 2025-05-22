@@ -10,6 +10,7 @@ declare global {
   interface Events {
     'workspace.embedding': {
       workspaceId: string;
+      enableDocEmbedding: boolean;
     };
 
     'workspace.doc.embedding': Array<{
@@ -103,14 +104,20 @@ export abstract class EmbeddingClient {
     });
   }
 
-  async generateEmbeddings(chunks: Chunk[]): Promise<Embedding[]> {
+  async generateEmbeddings(
+    chunks: Chunk[],
+    signal?: AbortSignal
+  ): Promise<Embedding[]> {
     const retry = 3;
 
     let embeddings: Embedding[] = [];
     let error = null;
     for (let i = 0; i < retry; i++) {
       try {
-        embeddings = await this.getEmbeddings(chunks.map(c => c.content));
+        embeddings = await this.getEmbeddings(
+          chunks.map(c => c.content),
+          signal
+        );
         break;
       } catch (e) {
         error = e;

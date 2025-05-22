@@ -6,6 +6,38 @@ import { fromModelName } from '../../native';
 import type { ChatPrompt } from './prompt';
 import { PromptMessageSchema, PureMessageSchema } from './providers';
 
+const takeFirst = (v: unknown) => (Array.isArray(v) ? v[0] : v);
+
+const zBool = z.preprocess(val => {
+  const s = String(takeFirst(val)).toLowerCase();
+  return ['true', '1', 'yes'].includes(s);
+}, z.boolean().default(false));
+
+const zMaybeString = z.preprocess(val => {
+  const s = takeFirst(val);
+  return s === '' || s == null ? undefined : s;
+}, z.string().min(1).optional());
+
+export const ChatQuerySchema = z
+  .object({
+    messageId: zMaybeString,
+    modelId: zMaybeString,
+    retry: zBool,
+    reasoning: zBool,
+    webSearch: zBool,
+  })
+  .catchall(z.string())
+  .transform(
+    ({ messageId, modelId, retry, reasoning, webSearch, ...params }) => ({
+      messageId,
+      modelId,
+      retry,
+      reasoning,
+      webSearch,
+      params,
+    })
+  );
+
 export enum AvailableModels {
   // text to text
   Gpt4Omni = 'gpt-4o',

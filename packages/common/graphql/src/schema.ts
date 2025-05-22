@@ -357,7 +357,6 @@ export enum CopilotModels {
 
 export interface CopilotPromptConfigInput {
   frequencyPenalty?: InputMaybe<Scalars['Float']['input']>;
-  jsonMode?: InputMaybe<Scalars['Boolean']['input']>;
   presencePenalty?: InputMaybe<Scalars['Float']['input']>;
   temperature?: InputMaybe<Scalars['Float']['input']>;
   topP?: InputMaybe<Scalars['Float']['input']>;
@@ -366,7 +365,6 @@ export interface CopilotPromptConfigInput {
 export interface CopilotPromptConfigType {
   __typename?: 'CopilotPromptConfigType';
   frequencyPenalty: Maybe<Scalars['Float']['output']>;
-  jsonMode: Maybe<Scalars['Boolean']['output']>;
   presencePenalty: Maybe<Scalars['Float']['output']>;
   temperature: Maybe<Scalars['Float']['output']>;
   topP: Maybe<Scalars['Float']['output']>;
@@ -403,6 +401,12 @@ export interface CopilotPromptType {
   messages: Array<CopilotPromptMessageType>;
   model: Scalars['String']['output'];
   name: Scalars['String']['output'];
+}
+
+export interface CopilotProviderNotSupportedDataType {
+  __typename?: 'CopilotProviderNotSupportedDataType';
+  kind: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
 }
 
 export interface CopilotProviderSideErrorDataType {
@@ -650,6 +654,7 @@ export type ErrorDataUnion =
   | CopilotInvalidContextDataType
   | CopilotMessageNotFoundDataType
   | CopilotPromptNotFoundDataType
+  | CopilotProviderNotSupportedDataType
   | CopilotProviderSideErrorDataType
   | DocActionDeniedDataType
   | DocHistoryNotFoundDataType
@@ -723,6 +728,7 @@ export enum ErrorNames {
   COPILOT_MESSAGE_NOT_FOUND = 'COPILOT_MESSAGE_NOT_FOUND',
   COPILOT_PROMPT_INVALID = 'COPILOT_PROMPT_INVALID',
   COPILOT_PROMPT_NOT_FOUND = 'COPILOT_PROMPT_NOT_FOUND',
+  COPILOT_PROVIDER_NOT_SUPPORTED = 'COPILOT_PROVIDER_NOT_SUPPORTED',
   COPILOT_PROVIDER_SIDE_ERROR = 'COPILOT_PROVIDER_SIDE_ERROR',
   COPILOT_QUOTA_EXCEEDED = 'COPILOT_QUOTA_EXCEEDED',
   COPILOT_SESSION_DELETED = 'COPILOT_SESSION_DELETED',
@@ -2708,7 +2714,6 @@ export type GetPromptsQuery = {
     action: string | null;
     config: {
       __typename?: 'CopilotPromptConfigType';
-      jsonMode: boolean | null;
       frequencyPenalty: number | null;
       presencePenalty: number | null;
       temperature: number | null;
@@ -2737,7 +2742,6 @@ export type UpdatePromptMutation = {
     action: string | null;
     config: {
       __typename?: 'CopilotPromptConfigType';
-      jsonMode: boolean | null;
       frequencyPenalty: number | null;
       presencePenalty: number | null;
       temperature: number | null;
