@@ -21,15 +21,9 @@ import type {
   CopilotChatOptions,
   CopilotImageOptions,
   ModelConditions,
-  ModelFullConditions,
   PromptMessage,
 } from './types';
-import {
-  ChatMessageRole,
-  CopilotProviderType,
-  ModelInputType,
-  ModelOutputType,
-} from './types';
+import { CopilotProviderType, ModelInputType, ModelOutputType } from './types';
 import { chatToGPTMessage } from './utils';
 
 export const DEFAULT_DIMENSIONS = 256;
@@ -98,53 +92,6 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
     });
   }
 
-  protected async checkParams({
-    cond,
-    messages,
-    embeddings,
-  }: {
-    cond: ModelFullConditions;
-    messages?: PromptMessage[];
-    embeddings?: string[];
-    options?: CopilotChatOptions;
-  }) {
-    if (!(await this.match(cond))) {
-      throw new CopilotPromptInvalid(`Invalid model: ${cond.modelId}`);
-    }
-    if (Array.isArray(messages) && messages.length > 0) {
-      if (
-        messages.some(
-          m =>
-            // check non-object
-            typeof m !== 'object' ||
-            !m ||
-            // check content
-            typeof m.content !== 'string' ||
-            // content and attachments must exist at least one
-            ((!m.content || !m.content.trim()) &&
-              (!Array.isArray(m.attachments) || !m.attachments.length))
-        )
-      ) {
-        throw new CopilotPromptInvalid('Empty message content');
-      }
-      if (
-        messages.some(
-          m =>
-            typeof m.role !== 'string' ||
-            !m.role ||
-            !ChatMessageRole.includes(m.role)
-        )
-      ) {
-        throw new CopilotPromptInvalid('Invalid message role');
-      }
-    } else if (
-      Array.isArray(embeddings) &&
-      embeddings.some(e => typeof e !== 'string' || !e || !e.trim())
-    ) {
-      throw new CopilotPromptInvalid('Invalid embedding');
-    }
-  }
-
   private handleError(e: any) {
     if (e instanceof UserFriendlyError) {
       return e;
@@ -200,7 +147,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
     options: CopilotChatOptions = {}
   ): Promise<string> {
     const fullCond = { ...cond, outputType: ModelOutputType.Structured };
-    await this.checkParams({ cond: fullCond, messages });
+    await this.checkParams({ cond: fullCond, messages, options });
     const model = this.selectModel(fullCond);
 
     try {
@@ -249,7 +196,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
     options: CopilotChatOptions | CopilotImageOptions = {}
   ): AsyncIterable<string> {
     const fullCond = { ...cond, outputType: ModelOutputType.Text };
-    await this.checkParams({ cond: fullCond, messages });
+    await this.checkParams({ cond: fullCond, messages, options });
     const model = this.selectModel(fullCond);
 
     try {
