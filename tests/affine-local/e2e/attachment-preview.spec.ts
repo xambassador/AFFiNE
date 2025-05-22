@@ -355,7 +355,6 @@ test('should re-render pdf viewer', async ({ page }) => {
 
   const title = getBlockSuiteEditorTitle(page);
   await title.click();
-  await page.keyboard.type('PDF preview');
 
   await page.keyboard.press('Enter');
 
@@ -385,4 +384,79 @@ test('should re-render pdf viewer', async ({ page }) => {
   expect(newPortalId).not.toBeNull();
 
   expect(portalId).not.toEqual(newPortalId);
+});
+
+test('should display status when an error is thrown in peek view', async ({
+  context,
+  page,
+}) => {
+  await openHomePage(page);
+  await clickNewPageButton(page);
+  await waitForEmptyEditor(page);
+
+  const title = getBlockSuiteEditorTitle(page);
+  await title.click();
+
+  await page.keyboard.press('Enter');
+
+  await importAttachment(page, 'lorem-ipsum.pdf');
+
+  const attachment = page.locator('affine-attachment');
+  await attachment.click();
+
+  const toolbar = locateToolbar(page);
+
+  // Switches to embed view
+  await toolbar.getByLabel('Switch view').click();
+  await toolbar.getByLabel('Embed view').click();
+
+  await context.setOffline(true);
+
+  await attachment.dblclick();
+
+  // Peek view
+  const pdfViewer = page.getByTestId('pdf-viewer');
+  await expect(pdfViewer).toBeHidden();
+
+  const statusWrapper = page.getByTestId('pdf-viewer-status-wrapper');
+  await expect(statusWrapper).toBeVisible();
+});
+
+test('should display 404 when attachment is not found', async ({ page }) => {
+  await openHomePage(page);
+  await clickNewPageButton(page);
+  await waitForEmptyEditor(page);
+
+  const title = getBlockSuiteEditorTitle(page);
+  await title.click();
+
+  await page.keyboard.press('Enter');
+
+  await importAttachment(page, 'lorem-ipsum.pdf');
+
+  const attachment = page.locator('affine-attachment');
+  await attachment.click();
+
+  const toolbar = locateToolbar(page);
+
+  // Switches to embed view
+  await toolbar.getByLabel('Switch view').click();
+  await toolbar.getByLabel('Embed view').click();
+
+  await attachment.dblclick();
+
+  // Peek view
+  const pdfViewer = page.getByTestId('pdf-viewer');
+  await expect(pdfViewer).toBeVisible();
+
+  const statusWrapper = page.getByTestId('pdf-viewer-status-wrapper');
+  await expect(statusWrapper).toBeHidden();
+
+  await clickPeekViewControl(page, 1);
+
+  await page.goto(page.url() + 'test');
+
+  await expect(pdfViewer).toBeHidden();
+
+  await expect(page.getByTestId('not-found')).toBeVisible();
 });
