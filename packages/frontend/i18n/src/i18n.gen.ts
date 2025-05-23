@@ -6264,6 +6264,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.description"](): string;
     /**
+      * `Delete File`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.tooltip"](): string;
+    /**
       * `Sharing doc requires AFFiNE Cloud.`
       */
     ["com.affine.share-menu.EnableCloudDescription"](): string;

@@ -1565,6 +1565,7 @@
   "com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.description": "The uploaded file will be embedded in the current workspace.",
   "com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.title": "Remove the attachment from embedding?",
   "com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.description": "Attachment will be removed. AI will not continue to extract content from this attachment.",
+  "com.affine.settings.workspace.indexer-embedding.embedding.additional-attachments.remove-attachment.tooltip": "Delete File",
   "com.affine.share-menu.EnableCloudDescription": "Sharing doc requires AFFiNE Cloud.",
   "com.affine.share-menu.ShareMode": "Share mode",
   "com.affine.share-menu.SharePage": "Share doc",
