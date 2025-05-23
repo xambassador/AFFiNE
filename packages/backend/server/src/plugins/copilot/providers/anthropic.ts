@@ -232,7 +232,7 @@ export class AnthropicProvider extends CopilotProvider<AnthropicConfig> {
 
   private getAnthropicOptions(options: CopilotChatOptions, model: string) {
     const result: AnthropicProviderOptions = {};
-    if (options?.reasoning && this.isThinkingModel(model)) {
+    if (options?.reasoning && this.isReasoningModel(model)) {
       result.thinking = {
         type: 'enabled',
         budgetTokens: 12000,
@@ -257,7 +257,8 @@ export class AnthropicProvider extends CopilotProvider<AnthropicConfig> {
     return text.replaceAll('\n', '\n> ');
   }
 
-  private isThinkingModel(model: string) {
+  private isReasoningModel(model: string) {
+    // only claude 3.7 sonnet supports reasoning config
     return model.startsWith('claude-3-7-sonnet');
   }
 }

@@ -1,6 +1,7 @@
 import {
   createGoogleGenerativeAI,
   type GoogleGenerativeAIProvider,
+  type GoogleGenerativeAIProviderOptions,
 } from '@ai-sdk/google';
 import {
   AISDKError,
@@ -53,8 +54,22 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
       ],
     },
     {
+      name: 'Gemini 2.5 Flash',
+      id: 'gemini-2.5-flash-preview-04-17',
+      capabilities: [
+        {
+          input: [
+            ModelInputType.Text,
+            ModelInputType.Image,
+            ModelInputType.Audio,
+          ],
+          output: [ModelOutputType.Text, ModelOutputType.Structured],
+        },
+      ],
+    },
+    {
       name: 'Gemini 2.5 Pro',
-      id: 'gemini-2.5-pro-preview-03-25',
+      id: 'gemini-2.5-pro-preview-05-06',
       capabilities: [
         {
           input: [
@@ -77,6 +92,10 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
       ],
     },
   ];
+
+  private readonly MAX_STEPS = 20;
+
+  private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
   #instance!: GoogleGenerativeAIProvider;
 
@@ -203,25 +222,83 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
       metrics.ai.counter('chat_text_stream_calls').add(1, { model: model.id });
       const [system, msgs] = await chatToGPTMessage(messages);
 
-      const { textStream } = streamText({
-        model: this.#instance(model.id),
+      const { fullStream } = streamText({
+        model: this.#instance(model.id, {
+          useSearchGrounding: this.useSearchGrounding(options),
+        }),
         system,
         messages: msgs,
         abortSignal: options.signal,
+        maxSteps: this.MAX_STEPS,
+        providerOptions: {
+          google: this.getGeminiOptions(options, model.id),
+        },
       });
 
-      for await (const message of textStream) {
-        if (message) {
-          yield message;
+      let lastType;
+      // reasoning, tool-call, tool-result need to mark as callout
+      let prefix: string | null = this.CALLOUT_PREFIX;
+      for await (const chunk of fullStream) {
+        if (chunk) {
+          switch (chunk.type) {
+            case 'text-delta': {
+              let result = chunk.textDelta;
+              if (lastType !== chunk.type) {
+                result = '\n\n' + result;
+              }
+              yield result;
+              break;
+            }
+            case 'reasoning': {
+              if (prefix) {
+                yield prefix;
+                prefix = null;
+              }
+              let result = chunk.textDelta;
+              if (lastType !== chunk.type) {
+                result = '\n\n' + result;
+              }
+              yield this.markAsCallout(result);
+              break;
+            }
+            case 'error': {
+              const error = chunk.error as { type: string; message: string };
+              throw new Error(error.message);
+            }
+          }
           if (options.signal?.aborted) {
-            await textStream.cancel();
+            await fullStream.cancel();
             break;
           }
+          lastType = chunk.type;
         }
       }
     } catch (e: any) {
       metrics.ai.counter('chat_text_stream_errors').add(1, { model: model.id });
       throw this.handleError(e);
     }
+  }
+
+  private getGeminiOptions(options: CopilotChatOptions, model: string) {
+    const result: GoogleGenerativeAIProviderOptions = {};
+    if (options?.reasoning && this.isReasoningModel(model)) {
+      result.thinkingConfig = {
+        thinkingBudget: 12000,
+        includeThoughts: true,
+      };
+    }
+    return result;
+  }
+
+  private markAsCallout(text: string) {
+    return text.replaceAll('\n', '\n> ');
+  }
+
+  private isReasoningModel(model: string) {
+    return model.startsWith('gemini-2.5');
+  }
+
+  private useSearchGrounding(options: CopilotChatOptions) {
+    return options?.tools?.includes('webSearch');
   }
 }
