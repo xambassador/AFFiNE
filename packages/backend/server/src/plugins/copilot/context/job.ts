@@ -108,7 +108,7 @@ export class CopilotContextDocJob {
     workspaceId,
     enableDocEmbedding,
   }: Events['workspace.embedding']) {
-    if (!this.supportEmbedding) return;
+    if (!this.supportEmbedding || !this.embeddingClient) return;
 
     if (enableDocEmbedding) {
       const toBeEmbedDocIds =
@@ -130,7 +130,7 @@ export class CopilotContextDocJob {
 
   @OnEvent('doc.indexer.updated')
   async addDocEmbeddingQueueFromEvent(doc: Events['doc.indexer.updated']) {
-    if (!this.supportEmbedding) return;
+    if (!this.supportEmbedding || !this.embeddingClient) return;
 
     await this.queue.add('copilot.embedding.docs', {
       workspaceId: doc.workspaceId,
@@ -140,8 +140,6 @@ export class CopilotContextDocJob {
 
   @OnEvent('doc.indexer.deleted')
   async deleteDocEmbeddingQueueFromEvent(doc: Events['doc.indexer.deleted']) {
-    if (!this.supportEmbedding) return;
-
     await this.models.copilotContext.deleteWorkspaceEmbedding(
       doc.workspaceId,
       doc.docId
@@ -238,7 +236,7 @@ export class CopilotContextDocJob {
     workspaceId,
     docId,
   }: Jobs['copilot.embedding.docs']) {
-    if (!this.supportEmbedding) return;
+    if (!this.supportEmbedding || !this.embeddingClient) return;
     if (workspaceId === docId || docId.includes('$')) return;
     const signal = this.getWorkspaceSignal(workspaceId);
 
