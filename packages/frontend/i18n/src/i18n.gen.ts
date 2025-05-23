@@ -8615,6 +8615,10 @@ export function useAFFiNEI18N(): {
       */
     ["error.CANNOT_DELETE_OWN_ACCOUNT"](): string;
     /**
+      * `Cannot delete account. You are the owner of one or more team workspaces. Please transfer ownership or delete them first.`
+      */
+    ["error.CANNOT_DELETE_ACCOUNT_WITH_OWNED_TEAM_WORKSPACE"](): string;
+    /**
       * `Captcha verification failed.`
       */
     ["error.CAPTCHA_VERIFICATION_FAILED"](): string;

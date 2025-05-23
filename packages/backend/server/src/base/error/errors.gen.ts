@@ -908,6 +908,12 @@ export class CannotDeleteOwnAccount extends UserFriendlyError {
   }
 }
 
+export class CannotDeleteAccountWithOwnedTeamWorkspace extends UserFriendlyError {
+  constructor(message?: string) {
+    super('action_forbidden', 'cannot_delete_account_with_owned_team_workspace', message);
+  }
+}
+
 export class CaptchaVerificationFailed extends UserFriendlyError {
   constructor(message?: string) {
     super('bad_request', 'captcha_verification_failed', message);
@@ -1145,6 +1151,7 @@ export enum ErrorNames {
   MAILER_SERVICE_IS_NOT_CONFIGURED,
   CANNOT_DELETE_ALL_ADMIN_ACCOUNT,
   CANNOT_DELETE_OWN_ACCOUNT,
+  CANNOT_DELETE_ACCOUNT_WITH_OWNED_TEAM_WORKSPACE,
   CAPTCHA_VERIFICATION_FAILED,
   INVALID_LICENSE_SESSION_ID,
   LICENSE_REVEALED,

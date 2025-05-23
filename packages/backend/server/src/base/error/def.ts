@@ -792,9 +792,16 @@ export const USER_FRIENDLY_ERRORS = {
     type: 'action_forbidden',
     message: 'Cannot delete all admin accounts.',
   },
+
+  // Account errors
   cannot_delete_own_account: {
     type: 'action_forbidden',
     message: 'Cannot delete own account.',
+  },
+  cannot_delete_account_with_owned_team_workspace: {
+    type: 'action_forbidden',
+    message:
+      'Cannot delete account. You are the owner of one or more team workspaces. Please transfer ownership or delete them first.',
   },
 
   // captcha errors
