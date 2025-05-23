@@ -1471,6 +1471,8 @@
   "com.affine.settings.workspace.experimental-features.enable-table-virtual-scroll.description": "Once enabled, switch table view to virtual scroll mode in Database Block.",
   "com.affine.settings.workspace.experimental-features.enable-code-block-html-preview.name": "Code block HTML preview",
   "com.affine.settings.workspace.experimental-features.enable-code-block-html-preview.description": "Once enabled, you can preview HTML in code block.",
+  "com.affine.settings.workspace.experimental-features.enable-adapter-panel.name": "Adapter Panel",
+  "com.affine.settings.workspace.experimental-features.enable-adapter-panel.description": "Once enabled, you can preview adapter export content in the right side bar.",
   "com.affine.settings.workspace.not-owner": "Only an owner can edit the workspace avatar and name. Changes will be shown for everyone.",
   "com.affine.settings.workspace.preferences": "Preference",
   "com.affine.settings.workspace.billing": "Team's Billing",

@@ -3067,6 +3067,27 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"@blocksuite/affine-fragment-adapter-panel@workspace:*, @blocksuite/affine-fragment-adapter-panel@workspace:blocksuite/affine/fragments/adapter-panel":
+  version: 0.0.0-use.local
+  resolution: "@blocksuite/affine-fragment-adapter-panel@workspace:blocksuite/affine/fragments/adapter-panel"
+  dependencies:
+    "@blocksuite/affine-components": "workspace:*"
+    "@blocksuite/affine-ext-loader": "workspace:*"
+    "@blocksuite/affine-model": "workspace:*"
+    "@blocksuite/affine-shared": "workspace:*"
+    "@blocksuite/global": "workspace:*"
+    "@blocksuite/icons": "npm:^2.2.12"
+    "@blocksuite/std": "workspace:*"
+    "@blocksuite/store": "workspace:*"
+    "@floating-ui/dom": "npm:^1.6.13"
+    "@lit/context": "npm:^1.1.2"
+    "@preact/signals-core": "npm:^1.8.0"
+    "@toeverything/theme": "npm:^1.1.14"
+    lit: "npm:^3.2.0"
+    rxjs: "npm:^7.8.1"
+  languageName: unknown
+  linkType: soft
+
 "@blocksuite/affine-fragment-doc-title@workspace:*, @blocksuite/affine-fragment-doc-title@workspace:blocksuite/affine/fragments/doc-title":
   version: 0.0.0-use.local
   resolution: "@blocksuite/affine-fragment-doc-title@workspace:blocksuite/affine/fragments/doc-title"
@@ -4151,6 +4172,7 @@ __metadata:
     "@blocksuite/affine-components": "workspace:*"
     "@blocksuite/affine-ext-loader": "workspace:*"
     "@blocksuite/affine-foundation": "workspace:*"
+    "@blocksuite/affine-fragment-adapter-panel": "workspace:*"
     "@blocksuite/affine-fragment-doc-title": "workspace:*"
     "@blocksuite/affine-fragment-frame-panel": "workspace:*"
     "@blocksuite/affine-fragment-outline": "workspace:*"

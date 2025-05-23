@@ -5891,6 +5891,14 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.experimental-features.enable-code-block-html-preview.description"](): string;
     /**
+      * `Adapter Panel`
+      */
+    ["com.affine.settings.workspace.experimental-features.enable-adapter-panel.name"](): string;
+    /**
+      * `Once enabled, you can preview adapter export content in the right side bar.`
+      */
+    ["com.affine.settings.workspace.experimental-features.enable-adapter-panel.description"](): string;
+    /**
       * `Only an owner can edit the workspace avatar and name. Changes will be shown for everyone.`
       */
     ["com.affine.settings.workspace.not-owner"](): string;
