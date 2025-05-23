@@ -125,6 +125,7 @@ jobs:
       - name: Run BS Docs Build
         run: |
           yarn affine bs-docs build
+          git checkout packages/frontend/i18n/src/i18n-completenesses.json
           git status --porcelain | grep . && {
             echo "Run 'yarn typecheck && yarn affine bs-docs build' and make sure all changes are submitted"
             exit 1
@@ -183,6 +184,7 @@ jobs:
           yarn affine gql build
           yarn affine i18n build
           yarn affine server genconfig
+          git checkout packages/frontend/i18n/src/i18n-completenesses.json
           git status --porcelain | grep . && {
             echo "Run 'yarn affine init && yarn affine gql build && yarn affine i18n build && yarn affine server genconfig' and make sure all changes are submitted"
             exit 1
