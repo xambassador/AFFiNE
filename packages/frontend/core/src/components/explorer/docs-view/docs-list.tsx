@@ -96,12 +96,17 @@ export const DocsExplorer = ({
   masonryItemWidthMin,
   heightBase,
   heightScale,
+  onRestore,
+  onDelete,
 }: {
   className?: string;
   disableMultiDelete?: boolean;
   masonryItemWidthMin?: number;
   heightBase?: number;
   heightScale?: number;
+  onRestore?: (ids: string[]) => void;
+  /** Override the default delete action */
+  onDelete?: (ids: string[]) => void;
 }) => {
   const t = useI18n();
   const contextValue = useContext(DocExplorerContext);
@@ -155,6 +160,11 @@ export const DocsExplorer = ({
     if (selectedDocIds.length === 0) {
       return;
     }
+    if (onDelete) {
+      onDelete(contextValue.selectedDocIds$.value);
+      handleCloseFloatingToolbar();
+      return;
+    }
 
     openConfirmModal({
       title: t['com.affine.moveToTrash.confirmModal.title.multiple']({
@@ -183,9 +193,19 @@ export const DocsExplorer = ({
     disableMultiDelete,
     docsService.list,
     handleCloseFloatingToolbar,
+    onDelete,
     openConfirmModal,
     selectedDocIds.length,
     t,
+  ]);
+  const handleMultiRestore = useCallback(() => {
+    const selectedDocIds = contextValue.selectedDocIds$.value;
+    onRestore?.(selectedDocIds);
+    handleCloseFloatingToolbar();
+  }, [
+    contextValue.selectedDocIds$.value,
+    handleCloseFloatingToolbar,
+    onRestore,
   ]);
 
   useEffect(() => {
@@ -222,10 +242,11 @@ export const DocsExplorer = ({
           []
         )}
       />
-      {!disableMultiDelete ? (
+      {!disableMultiDelete || onRestore ? (
         <ListFloatingToolbar
           open={!!selectMode}
-          onDelete={handleMultiDelete}
+          onDelete={disableMultiDelete ? undefined : handleMultiDelete}
+          onRestore={onRestore ? handleMultiRestore : undefined}
           onClose={handleCloseFloatingToolbar}
           content={
             <Trans

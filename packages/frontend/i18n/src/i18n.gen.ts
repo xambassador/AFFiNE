@@ -7085,6 +7085,14 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.all-docs.quick-action.select"](): string;
     /**
+      * `Delete permanently`
+      */
+    ["com.affine.all-docs.quick-action.delete-permanently"](): string;
+    /**
+      * `Restore`
+      */
+    ["com.affine.all-docs.quick-action.restore"](): string;
+    /**
       * `All`
       */
     ["com.affine.all-docs.pinned-collection.all"](): string;

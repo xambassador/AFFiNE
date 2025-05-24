@@ -1768,6 +1768,8 @@
   "com.affine.all-docs.quick-action.split": "Open in split view",
   "com.affine.all-docs.quick-action.tab": "Open in new tab",
   "com.affine.all-docs.quick-action.select": "Select checkbox",
+  "com.affine.all-docs.quick-action.delete-permanently": "Delete permanently",
+  "com.affine.all-docs.quick-action.restore": "Restore",
   "com.affine.all-docs.pinned-collection.all": "All",
   "com.affine.all-docs.group.is-template": "Template",
   "com.affine.all-docs.group.is-not-template": "Not Template",
