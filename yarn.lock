@@ -441,7 +441,7 @@ __metadata:
     dayjs: "npm:^1.11.13"
     eventemitter2: "npm:^6.4.9"
     fake-indexeddb: "npm:^6.0.0"
-    file-type: "npm:^20.0.0"
+    file-type: "npm:^21.0.0"
     filesize: "npm:^10.1.6"
     foxact: "npm:^0.2.43"
     fuse.js: "npm:^7.0.0"
@@ -2413,7 +2413,7 @@ __metadata:
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
     "@toeverything/theme": "npm:^1.1.14"
-    file-type: "npm:^20.0.0"
+    file-type: "npm:^21.0.0"
     lit: "npm:^3.2.0"
     minimatch: "npm:^10.0.1"
     rxjs: "npm:^7.8.1"
@@ -2733,7 +2733,7 @@ __metadata:
     "@lit/context": "npm:^1.1.2"
     "@preact/signals-core": "npm:^1.8.0"
     "@toeverything/theme": "npm:^1.1.14"
-    file-type: "npm:^20.0.0"
+    file-type: "npm:^21.0.0"
     lit: "npm:^3.2.0"
     minimatch: "npm:^10.0.1"
     rxjs: "npm:^7.8.1"
@@ -4393,7 +4393,7 @@ __metadata:
     "@types/lodash.clonedeep": "npm:^4.5.9"
     "@types/lodash.ismatch": "npm:^4.4.9"
     "@types/lodash.merge": "npm:^4.6.9"
-    file-type: "npm:^20.0.0"
+    file-type: "npm:^21.0.0"
     lib0: "npm:^0.2.97"
     lodash.clonedeep: "npm:^4.5.0"
     lodash.ismatch: "npm:^4.4.0"
@@ -14680,7 +14680,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@tokenizer/inflate@npm:^0.2.6":
+"@tokenizer/inflate@npm:^0.2.6, @tokenizer/inflate@npm:^0.2.7":
   version: 0.2.7
   resolution: "@tokenizer/inflate@npm:0.2.7"
   dependencies:
@@ -21856,7 +21856,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"file-type@npm:20.5.0, file-type@npm:^20.0.0":
+"file-type@npm:20.5.0":
   version: 20.5.0
   resolution: "file-type@npm:20.5.0"
   dependencies:
@@ -21865,6 +21865,18 @@ __metadata:
     token-types: "npm:^6.0.0"
     uint8array-extras: "npm:^1.4.0"
   checksum: 10/1cc1ccd7cf76086e10b65cba88c708e0653676fbae900107deeb91c46de011acd1492200bf47e75cddf395de27dbe8584ca042f4cfa4a1efdf933644b7143f1d
+  languageName: node
+  linkType: hard
+
+"file-type@npm:^21.0.0":
+  version: 21.0.0
+  resolution: "file-type@npm:21.0.0"
+  dependencies:
+    "@tokenizer/inflate": "npm:^0.2.7"
+    strtok3: "npm:^10.2.2"
+    token-types: "npm:^6.0.0"
+    uint8array-extras: "npm:^1.4.0"
+  checksum: 10/6980e8b0ef870a98b51ab2eac5db94a1884de8476fe49dc02d2f7e0c1d1d7d44d42b6c59e67867ae90f321ddf4edd00fcfda01821591e2fa05385d0e438a9dc1
   languageName: node
   linkType: hard
 
