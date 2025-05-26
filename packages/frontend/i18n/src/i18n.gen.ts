@@ -6248,6 +6248,18 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.switch.description"](): string;
     /**
+      * `Failed to update workspace doc embedding enabled`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.switch.error"](): string;
+    /**
+      * `Failed to remove attachment from embedding`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.remove-attachment.error"](): string;
+    /**
+      * `Failed to update ignored docs`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.update-ignored-docs.error"](): string;
+    /**
       * `Embedding progress`
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.progress.title"](): string;

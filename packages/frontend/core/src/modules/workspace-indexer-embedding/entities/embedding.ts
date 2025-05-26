@@ -11,15 +11,8 @@ import {
   onStart,
   smartRetry,
 } from '@toeverything/infra';
-import { EMPTY, interval, of, Subject } from 'rxjs';
-import {
-  concatMap,
-  exhaustMap,
-  mergeMap,
-  switchMap,
-  takeUntil,
-  tap,
-} from 'rxjs/operators';
+import { EMPTY, interval, Subject } from 'rxjs';
+import { exhaustMap, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 
 import { COUNT_PER_PAGE } from '../constants';
 import type { EmbeddingStore } from '../stores/embedding';
@@ -110,31 +103,13 @@ export class Embedding extends Entity {
     })
   );
 
-  setEnabled = effect(
-    exhaustMap((enabled: boolean) => {
-      return fromPromise(signal =>
-        this.store.updateEnabled(
-          this.workspaceService.workspace.id,
-          enabled,
-          signal
-        )
-      ).pipe(
-        smartRetry(),
-        concatMap(() => {
-          this.getEnabled();
-          return EMPTY;
-        }),
-        catchErrorInto(this.error$, error => {
-          logger.error(
-            'Failed to update workspace doc embedding enabled',
-            error
-          );
-        }),
-        onStart(() => this.isEnabledLoading$.setValue(true)),
-        onComplete(() => this.isEnabledLoading$.setValue(false))
-      );
-    })
-  );
+  setEnabled = (enabled: boolean) => {
+    return this.store
+      .updateEnabled(this.workspaceService.workspace.id, enabled)
+      .then(() => {
+        this.getEnabled();
+      });
+  };
 
   getIgnoredDocs = effect(
     exhaustMap(() => {
@@ -158,30 +133,19 @@ export class Embedding extends Entity {
     })
   );
 
-  updateIgnoredDocs = effect(
-    exhaustMap(({ add, remove }: { add: string[]; remove: string[] }) => {
-      return fromPromise(signal =>
-        this.store.updateIgnoredDocs(
-          this.workspaceService.workspace.id,
-          add,
-          remove,
-          signal
-        )
-      ).pipe(
-        smartRetry(),
-        concatMap(() => {
-          this.getIgnoredDocs();
-          return EMPTY;
-        }),
-        catchErrorInto(this.error$, error => {
-          logger.error(
-            'Failed to update workspace doc embedding ignored docs',
-            error
-          );
-        })
-      );
-    })
-  );
+  updateIgnoredDocs = ({
+    add,
+    remove,
+  }: {
+    add: string[];
+    remove: string[];
+  }) => {
+    return this.store
+      .updateIgnoredDocs(this.workspaceService.workspace.id, add, remove)
+      .then(() => {
+        this.getIgnoredDocs();
+      });
+  };
 
   getAttachments = effect(
     exhaustMap((pagination: PaginationInput) => {
@@ -219,95 +183,60 @@ export class Embedding extends Entity {
     })
   );
 
-  addAttachments = effect(
-    // Support parallel upload
-    mergeMap((files: File[]) => {
-      const generateLocalId = () =>
-        Math.random().toString(36).slice(2) + Date.now();
-      const localAttachments: LocalAttachmentFile[] = files.map(file => ({
-        localId: generateLocalId(),
-        fileName: file.name,
-        mimeType: file.type,
-        size: file.size,
-        createdAt: file.lastModified,
-        status: 'uploading',
-      }));
+  addAttachments = (files: File[]) => {
+    const generateLocalId = () =>
+      Math.random().toString(36).slice(2) + Date.now();
+    const localAttachments: LocalAttachmentFile[] = files.map(file => ({
+      localId: generateLocalId(),
+      fileName: file.name,
+      mimeType: file.type,
+      size: file.size,
+      createdAt: file.lastModified,
+      status: 'uploading',
+    }));
 
-      return of({ files, localAttachments }).pipe(
-        // Refresh uploading attachments immediately
-        tap(({ localAttachments }) => {
-          this.uploadingAttachments$.next([
-            ...localAttachments,
-            ...this.uploadingAttachments$.value,
-          ]);
-        }),
-        // Uploading embedding files
-        switchMap(({ files }) => {
-          return fromPromise(signal =>
-            this.store.addEmbeddingFiles(
-              this.workspaceService.workspace.id,
-              files,
-              signal
-            )
-          );
-        }),
-        // Refresh uploading attachments
-        tap(() => {
-          this.uploadingAttachments$.next(
-            this.uploadingAttachments$.value.filter(
-              att => !localAttachments.some(l => l.localId === att.localId)
-            )
-          );
-          this.getAttachments({ first: COUNT_PER_PAGE, after: null });
-        }),
-        catchErrorInto(this.error$, error => {
-          this.uploadingAttachments$.next(
-            this.uploadingAttachments$.value.map(att =>
-              localAttachments.some(l => l.localId === att.localId)
-                ? { ...att, status: 'error', errorMessage: String(error) }
-                : att
-            )
-          );
-          logger.error(
-            'Failed to add workspace doc embedding attachments',
-            error
-          );
-        })
-      );
-    })
-  );
+    this.uploadingAttachments$.next([
+      ...localAttachments,
+      ...this.uploadingAttachments$.value,
+    ]);
 
-  removeAttachment = effect(
-    exhaustMap((id: string) => {
-      const localIndex = this.uploadingAttachments$.value.findIndex(
-        att => att.localId === id
-      );
-      if (localIndex !== -1) {
+    this.store
+      .addEmbeddingFiles(this.workspaceService.workspace.id, files)
+      .then(() => {
         this.uploadingAttachments$.next(
-          this.uploadingAttachments$.value.filter(att => att.localId !== id)
+          this.uploadingAttachments$.value.filter(
+            att => !localAttachments.some(l => l.localId === att.localId)
+          )
         );
-        return EMPTY;
-      }
-      return fromPromise(signal =>
-        this.store.removeEmbeddingFile(
-          this.workspaceService.workspace.id,
-          id,
-          signal
-        )
-      ).pipe(
-        concatMap(() => {
-          this.getAttachments({ first: COUNT_PER_PAGE, after: null });
-          return EMPTY;
-        }),
-        catchErrorInto(this.error$, error => {
-          logger.error(
-            'Failed to remove workspace doc embedding attachment',
-            error
-          );
-        })
+        this.getAttachments({ first: COUNT_PER_PAGE, after: null });
+      })
+      .catch(error => {
+        this.uploadingAttachments$.next(
+          this.uploadingAttachments$.value.map(att =>
+            localAttachments.some(l => l.localId === att.localId)
+              ? { ...att, status: 'error', errorMessage: String(error) }
+              : att
+          )
+        );
+      });
+  };
+
+  removeAttachment = (id: string) => {
+    const localIndex = this.uploadingAttachments$.value.findIndex(
+      att => att.localId === id
+    );
+    if (localIndex !== -1) {
+      this.uploadingAttachments$.next(
+        this.uploadingAttachments$.value.filter(att => att.localId !== id)
       );
-    })
-  );
+      return Promise.resolve();
+    }
+    return this.store
+      .removeEmbeddingFile(this.workspaceService.workspace.id, id)
+      .then(() => {
+        this.getAttachments({ first: COUNT_PER_PAGE, after: null });
+      });
+  };
 
   startEmbeddingProgressPolling() {
     this.stopEmbeddingProgressPolling();
@@ -355,10 +284,6 @@ export class Embedding extends Entity {
     this.getEnabled.unsubscribe();
     this.getAttachments.unsubscribe();
     this.getIgnoredDocs.unsubscribe();
-    this.updateIgnoredDocs.unsubscribe();
-    this.addAttachments.unsubscribe();
-    this.removeAttachment.unsubscribe();
-    this.setEnabled.unsubscribe();
     this.stopEmbeddingProgress$.next();
     this.getEmbeddingProgress.unsubscribe();
   }

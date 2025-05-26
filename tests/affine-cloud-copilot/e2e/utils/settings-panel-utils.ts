@@ -46,20 +46,30 @@ export class SettingsPanelUtils {
     await input.click();
   }
 
-  public static async enableWorkspaceEmbedding(page: Page) {
+  public static async enableWorkspaceEmbedding(
+    page: Page,
+    waitForEnabled = true
+  ) {
     const enabled = await this.isWorkspaceEmbeddingEnabled(page);
     if (!enabled) {
       await this.toggleWorkspaceEmbedding(page);
     }
-    await this.waitForWorkspaceEmbeddingSwitchToBe(page, true);
+    if (waitForEnabled) {
+      await this.waitForWorkspaceEmbeddingSwitchToBe(page, true);
+    }
   }
 
-  public static async disableWorkspaceEmbedding(page: Page) {
+  public static async disableWorkspaceEmbedding(
+    page: Page,
+    waitForDisabled = true
+  ) {
     const enabled = await this.isWorkspaceEmbeddingEnabled(page);
     if (enabled) {
       await this.toggleWorkspaceEmbedding(page);
     }
-    await this.waitForWorkspaceEmbeddingSwitchToBe(page, false);
+    if (waitForDisabled) {
+      await this.waitForWorkspaceEmbeddingSwitchToBe(page, false);
+    }
   }
 
   public static async uploadWorkspaceEmbedding(
@@ -102,7 +112,7 @@ export class SettingsPanelUtils {
     }
   }
 
-  public static async removeAttachment(
+  public static async clickRemoveAttachment(
     page: Page,
     attachment: string,
     shouldConfirm = true
@@ -116,6 +126,14 @@ export class SettingsPanelUtils {
     if (shouldConfirm) {
       await page.getByTestId('confirm-modal-confirm').click();
     }
+  }
+
+  public static async removeAttachment(
+    page: Page,
+    attachment: string,
+    shouldConfirm = true
+  ) {
+    await this.clickRemoveAttachment(page, attachment, shouldConfirm);
     await page
       .getByTestId('workspace-embedding-setting-attachment-item')
       .filter({ hasText: attachment })
@@ -124,7 +142,11 @@ export class SettingsPanelUtils {
       });
   }
 
-  public static async ignoreDocForEmbedding(page: Page, doc: string) {
+  public static async ignoreDocForEmbedding(
+    page: Page,
+    doc: string,
+    shouldWaitForRefresh = true
+  ) {
     // Open Dos Searcher
     const ignoreDocsButton = await page.getByTestId(
       'workspace-embedding-setting-ignore-docs-button'
@@ -137,25 +159,24 @@ export class SettingsPanelUtils {
     await searchInput.focus();
     await page.keyboard.insertText(doc);
 
-    const pageListItem = searcher.getByTestId('page-list-item');
+    const pageListItem = searcher.getByTestId('doc-list-item');
     await expect(pageListItem).toHaveCount(1);
-    const pageListItemTitle = pageListItem.getByTestId(
-      'page-list-item-title-text'
-    );
+    const pageListItemTitle = pageListItem.getByTestId('doc-list-item-title');
     await expect(pageListItemTitle).toHaveText(doc);
-
-    await pageListItem.getByTestId('affine-checkbox').check();
+    await pageListItem.click();
 
     await searcher.getByTestId('doc-selector-confirm-button').click();
 
-    const ignoredDocs = await page.getByTestId(
-      'workspace-embedding-setting-ignore-docs-list'
-    );
-    await expect(
-      ignoredDocs
-        .getByTestId('workspace-embedding-setting-ignore-docs-list-item')
-        .filter({ hasText: doc })
-    ).toBeVisible();
+    if (shouldWaitForRefresh) {
+      const ignoredDocs = await page.getByTestId(
+        'workspace-embedding-setting-ignore-docs-list'
+      );
+      await expect(
+        ignoredDocs
+          .getByTestId('workspace-embedding-setting-ignore-docs-list-item')
+          .filter({ hasText: doc })
+      ).toBeVisible();
+    }
   }
 
   public static async clearAllIgnoredDocs(page: Page) {

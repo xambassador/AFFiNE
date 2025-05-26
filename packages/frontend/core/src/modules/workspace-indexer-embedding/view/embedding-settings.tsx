@@ -1,4 +1,4 @@
-import { Button, Switch } from '@affine/component';
+import { Button, notify, Switch } from '@affine/component';
 import {
   SettingHeader,
   SettingRow,
@@ -6,6 +6,7 @@ import {
 } from '@affine/component/setting-components';
 import { Upload } from '@affine/core/components/pure/file-upload';
 import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
+import { UserFriendlyError } from '@affine/error';
 import { useI18n } from '@affine/i18n';
 import track from '@affine/track';
 import { useLiveData, useService } from '@toeverything/infra';
@@ -48,9 +49,19 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         control: 'Workspace embedding',
         option: checked ? 'on' : 'off',
       });
-      embeddingService.embedding.setEnabled(checked);
+
+      embeddingService.embedding.setEnabled(checked).catch(error => {
+        const err = UserFriendlyError.fromAny(error);
+        notify.error({
+          title:
+            t[
+              'com.affine.settings.workspace.indexer-embedding.embedding.switch.error'
+            ](),
+          message: t[`error.${err.name}`](err.data),
+        });
+      });
     },
-    [embeddingService.embedding]
+    [embeddingService.embedding, t]
   );
 
   const handleAttachmentUpload = useCallback(
@@ -67,9 +78,18 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
 
   const handleAttachmentsDelete = useCallback(
     (fileId: string) => {
-      embeddingService.embedding.removeAttachment(fileId);
+      embeddingService.embedding.removeAttachment(fileId).catch(error => {
+        const err = UserFriendlyError.fromAny(error);
+        notify.error({
+          title:
+            t[
+              'com.affine.settings.workspace.indexer-embedding.embedding.remove-attachment.error'
+            ](),
+          message: t[`error.${err.name}`](err.data),
+        });
+      });
     },
-    [embeddingService.embedding]
+    [embeddingService.embedding, t]
   );
 
   const handleAttachmentsPageChange = useCallback(
@@ -102,7 +122,18 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         });
         const add = selectedIds.filter(id => !initialIds?.includes(id));
         const remove = initialIds?.filter(id => !selectedIds.includes(id));
-        embeddingService.embedding.updateIgnoredDocs({ add, remove });
+        embeddingService.embedding
+          .updateIgnoredDocs({ add, remove })
+          .catch(error => {
+            const err = UserFriendlyError.fromAny(error);
+            notify.error({
+              title:
+                t[
+                  'com.affine.settings.workspace.indexer-embedding.embedding.update-ignored-docs.error'
+                ](),
+              message: t[`error.${err.name}`](err.data),
+            });
+          });
       }
     );
   }, [
@@ -110,6 +141,7 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
     isIgnoredDocsLoading,
     workspaceDialogService,
     embeddingService.embedding,
+    t,
   ]);
 
   useEffect(() => {

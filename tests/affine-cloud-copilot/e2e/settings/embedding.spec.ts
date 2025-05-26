@@ -43,6 +43,23 @@ test.describe('AISettings/Embedding', () => {
     await utils.settings.waitForWorkspaceEmbeddingSwitchToBe(page, true);
   });
 
+  test('should show error message if enable workspace embedding failed', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
+    await utils.settings.enableWorkspaceEmbedding(page);
+    await utils.settings.disableWorkspaceEmbedding(page);
+    await utils.settings.waitForWorkspaceEmbeddingSwitchToBe(page, false);
+
+    await page.context().setOffline(true);
+    await utils.settings.enableWorkspaceEmbedding(page, false);
+
+    await expect(
+      page.getByText(/Failed to update workspace doc embedding enabled/i)
+    ).toBeVisible();
+    await page.context().setOffline(false);
+  });
+
   test('should show embedding progress', async ({
     loggedInPage: page,
     utils,
@@ -297,6 +314,36 @@ test.describe('AISettings/Embedding', () => {
     await utils.settings.removeAttachment(page, 'document1.txt');
   });
 
+  test('should show error message if remove attachment failed', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
+    await utils.settings.enableWorkspaceEmbedding(page);
+    const textContent = 'WorkspaceEBEEE is a cute cat';
+    const attachments = [
+      {
+        name: 'document1.txt',
+        mimeType: 'text/plain',
+        buffer: Buffer.from(textContent),
+      },
+    ];
+    await utils.settings.uploadWorkspaceEmbedding(page, attachments);
+
+    const attachmentList = await page.getByTestId(
+      'workspace-embedding-setting-attachment-list'
+    );
+    await expect(
+      attachmentList.getByTestId('workspace-embedding-setting-attachment-item')
+    ).toHaveCount(1);
+
+    await page.context().setOffline(true);
+    await utils.settings.clickRemoveAttachment(page, 'document1.txt');
+    await expect(
+      page.getByText(/Failed to remove attachment from embedding/i)
+    ).toBeVisible();
+    await page.context().setOffline(false);
+  });
+
   test('should support remove error attachment directly', async ({
     loggedInPage: page,
     utils,
@@ -392,5 +439,24 @@ test.describe('AISettings/Embedding', () => {
       const { content } = await utils.chatPanel.getLatestAssistantMessage(page);
       expect(content).toMatch(/I dont know/i);
     }).toPass({ timeout: 20000 });
+  });
+
+  test('should show error message if update ignored docs failed', async ({
+    loggedInPage: page,
+    utils,
+  }) => {
+    await utils.settings.enableWorkspaceEmbedding(page);
+    await utils.settings.closeSettingsPanel(page);
+
+    await utils.editor.createDoc(page, 'Test Doc', 'HelloWorld');
+
+    // Ignore docs
+    await utils.settings.openSettingsPanel(page);
+    await page.context().setOffline(true);
+    await utils.settings.ignoreDocForEmbedding(page, 'Test Doc', false);
+    await expect(
+      page.getByText(/Failed to update ignored docs/i)
+    ).toBeVisible();
+    await page.context().setOffline(false);
   });
 });
