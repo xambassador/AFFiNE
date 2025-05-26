@@ -1844,6 +1844,7 @@
   "com.affine.editor.at-menu.create-edgeless": "New \"{{name}}\" edgeless",
   "com.affine.editor.at-menu.import": "Import",
   "com.affine.editor.at-menu.more-docs-hint": "{{count}} more docs",
+  "com.affine.editor.at-menu.more-members-hint": "{{count}} more members",
   "com.affine.editor.at-menu.journal": "Journal",
   "com.affine.editor.at-menu.date-picker": "Select a specific date",
   "com.affine.editor.at-menu.mention-members": "Mention Members",

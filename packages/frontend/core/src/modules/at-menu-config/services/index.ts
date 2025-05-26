@@ -594,6 +594,14 @@ export class AtMenuConfigService extends Service {
       items,
       loading: this.memberSearchService.isLoading$.signal,
       hidden,
+      maxDisplay: 3,
+      overflowText: computed(() => {
+        const totalCount = this.memberSearchService.result$.signal.value.length;
+        const remainingCount = totalCount - 3;
+        return I18n.t('com.affine.editor.at-menu.more-members-hint', {
+          count: remainingCount,
+        });
+      }),
     };
   }
 

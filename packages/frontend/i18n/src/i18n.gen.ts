@@ -7419,6 +7419,12 @@ export function useAFFiNEI18N(): {
         readonly count: string;
     }): string;
     /**
+      * `{{count}} more members`
+      */
+    ["com.affine.editor.at-menu.more-members-hint"](options: {
+        readonly count: string;
+    }): string;
+    /**
       * `Journal`
       */
     ["com.affine.editor.at-menu.journal"](): string;
