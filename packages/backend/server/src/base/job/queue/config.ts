@@ -29,6 +29,8 @@ defineModuleConfig('job', {
     desc: 'The config for job queues',
     default: {
       attempts: 5,
+      // retry after 2 ^ (attempts - 1) * delay milliseconds
+      backoff: { type: 'exponential', delay: 1000 },
       // should remove job after it's completed, because we will add a new job with the same job id
       removeOnComplete: true,
       removeOnFail: {
