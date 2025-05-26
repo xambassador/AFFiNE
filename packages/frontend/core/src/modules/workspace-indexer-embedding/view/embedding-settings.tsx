@@ -24,22 +24,26 @@ interface EmbeddingSettingsProps {}
 export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
   const t = useI18n();
   const embeddingService = useService(EmbeddingService);
-  const embeddingEnabled = useLiveData(embeddingService.embedding.enabled$);
-  const { totalCount } = useLiveData(embeddingService.embedding.attachments$);
-  const attachments = useLiveData(
-    embeddingService.embedding.mergedAttachments$
-  );
-  const ignoredDocs = useLiveData(embeddingService.embedding.ignoredDocs$);
-  const embeddingProgress = useLiveData(
-    embeddingService.embedding.embeddingProgress$
-  );
-
-  const isIgnoredDocsLoading = useLiveData(
-    embeddingService.embedding.isIgnoredDocsLoading$
-  );
   const workspaceDialogService = useService(WorkspaceDialogService);
+
+  const embeddingEnabled = useLiveData(
+    embeddingService.embeddingEnabled.enabled$
+  );
+  const attachments = useLiveData(
+    embeddingService.additionalAttachments.mergedAttachments$
+  );
+  const ignoredDocs = useLiveData(embeddingService.ignoredDocs.docs$);
+  const embeddingProgress = useLiveData(
+    embeddingService.embeddingProgress.progress$
+  );
+  const { totalCount } = useLiveData(
+    embeddingService.additionalAttachments.attachments$
+  );
+  const isIgnoredDocsLoading = useLiveData(
+    embeddingService.ignoredDocs.loading$
+  );
   const isEnabledLoading = useLiveData(
-    embeddingService.embedding.isEnabledLoading$
+    embeddingService.embeddingEnabled.loading$
   );
 
   const handleEmbeddingToggle = useCallback(
@@ -50,7 +54,7 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         option: checked ? 'on' : 'off',
       });
 
-      embeddingService.embedding.setEnabled(checked).catch(error => {
+      embeddingService.embeddingEnabled.setEnabled(checked).catch(error => {
         const err = UserFriendlyError.fromAny(error);
         notify.error({
           title:
@@ -61,7 +65,7 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         });
       });
     },
-    [embeddingService.embedding, t]
+    [embeddingService.embeddingEnabled, t]
   );
 
   const handleAttachmentUpload = useCallback(
@@ -71,34 +75,36 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         control: 'Select doc',
         docType: file.type,
       });
-      embeddingService.embedding.addAttachments([file]);
+      embeddingService.additionalAttachments.addAttachments([file]);
     },
-    [embeddingService.embedding]
+    [embeddingService.additionalAttachments]
   );
 
   const handleAttachmentsDelete = useCallback(
     (fileId: string) => {
-      embeddingService.embedding.removeAttachment(fileId).catch(error => {
-        const err = UserFriendlyError.fromAny(error);
-        notify.error({
-          title:
-            t[
-              'com.affine.settings.workspace.indexer-embedding.embedding.remove-attachment.error'
-            ](),
-          message: t[`error.${err.name}`](err.data),
+      embeddingService.additionalAttachments
+        .removeAttachment(fileId)
+        .catch(error => {
+          const err = UserFriendlyError.fromAny(error);
+          notify.error({
+            title:
+              t[
+                'com.affine.settings.workspace.indexer-embedding.embedding.remove-attachment.error'
+              ](),
+            message: t[`error.${err.name}`](err.data),
+          });
         });
-      });
     },
-    [embeddingService.embedding, t]
+    [embeddingService.additionalAttachments, t]
   );
 
   const handleAttachmentsPageChange = useCallback(
     (offset: number) => {
-      embeddingService.embedding.getAttachments({
+      embeddingService.additionalAttachments.getAttachments({
         offset,
       });
     },
-    [embeddingService.embedding]
+    [embeddingService.additionalAttachments]
   );
 
   const handleSelectDoc = useCallback(() => {
@@ -122,7 +128,7 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         });
         const add = selectedIds.filter(id => !initialIds?.includes(id));
         const remove = initialIds?.filter(id => !selectedIds.includes(id));
-        embeddingService.embedding
+        embeddingService.ignoredDocs
           .updateIgnoredDocs({ add, remove })
           .catch(error => {
             const err = UserFriendlyError.fromAny(error);
@@ -140,24 +146,29 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
     ignoredDocs,
     isIgnoredDocsLoading,
     workspaceDialogService,
-    embeddingService.embedding,
+    embeddingService.ignoredDocs,
     t,
   ]);
 
   useEffect(() => {
-    embeddingService.embedding.startEmbeddingProgressPolling();
-    embeddingService.embedding.getEnabled();
-    embeddingService.embedding.getAttachments({
+    embeddingService.embeddingProgress.startEmbeddingProgressPolling();
+    embeddingService.embeddingEnabled.getEnabled();
+    embeddingService.additionalAttachments.getAttachments({
       first: COUNT_PER_PAGE,
       after: null,
     });
-    embeddingService.embedding.getIgnoredDocs();
-    embeddingService.embedding.getEmbeddingProgress();
+    embeddingService.ignoredDocs.getIgnoredDocs();
+    embeddingService.embeddingProgress.getEmbeddingProgress();
 
     return () => {
-      embeddingService.embedding.stopEmbeddingProgressPolling();
+      embeddingService.embeddingProgress.stopEmbeddingProgressPolling();
     };
-  }, [embeddingService.embedding]);
+  }, [
+    embeddingService.embeddingProgress,
+    embeddingService.embeddingEnabled,
+    embeddingService.additionalAttachments,
+    embeddingService.ignoredDocs,
+  ]);
 
   return (
     <>

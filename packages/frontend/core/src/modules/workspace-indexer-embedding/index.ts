@@ -5,7 +5,10 @@ import {
 } from '@affine/core/modules/workspace';
 import { type Framework } from '@toeverything/infra';
 
-import { Embedding } from './entities/embedding';
+import { AdditionalAttachments } from './entities/additional-attachments';
+import { EmbeddingEnabled } from './entities/embedding-enabled';
+import { EmbeddingProgress } from './entities/embedding-progress';
+import { IgnoredDocs } from './entities/ignored-docs';
 import { EmbeddingService } from './services/embedding';
 import { EmbeddingStore } from './stores/embedding';
 
@@ -14,7 +17,10 @@ export function configureIndexerEmbeddingModule(framework: Framework) {
     .scope(WorkspaceScope)
     .service(EmbeddingService)
     .store(EmbeddingStore, [WorkspaceServerService])
-    .entity(Embedding, [WorkspaceService, EmbeddingStore]);
+    .entity(EmbeddingEnabled, [WorkspaceService, EmbeddingStore])
+    .entity(AdditionalAttachments, [WorkspaceService, EmbeddingStore])
+    .entity(IgnoredDocs, [WorkspaceService, EmbeddingStore])
+    .entity(EmbeddingProgress, [WorkspaceService, EmbeddingStore]);
 }
 
 export { EmbeddingSettings } from './view';

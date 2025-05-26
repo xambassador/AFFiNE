@@ -1,3 +1,5 @@
+import { DebugLogger } from '@affine/debug';
+
 import type {
   AttachmentFile,
   ErrorAttachmentFile,
@@ -36,3 +38,5 @@ export function getAttachmentId(attachment: AttachmentFile): string {
   }
   return attachment.localId;
 }
+
+export const logger = new DebugLogger('WorkspaceEmbedding');
