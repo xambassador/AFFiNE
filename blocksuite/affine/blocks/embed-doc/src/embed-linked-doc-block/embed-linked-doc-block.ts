@@ -384,10 +384,6 @@ export class EmbedLinkedDocBlockComponent extends EmbedBlockComponent<EmbedLinke
       () => html`
         <div
           class="affine-embed-linked-doc-block ${cardClassMap}"
-          style=${styleMap({
-            transform: `scale(${this._scale})`,
-            transformOrigin: '0 0',
-          })}
           @click=${this._handleClick}
           @dblclick=${this._handleDoubleClick}
         >

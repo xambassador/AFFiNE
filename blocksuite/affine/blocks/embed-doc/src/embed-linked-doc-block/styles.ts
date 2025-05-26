@@ -305,7 +305,6 @@ export const styles = css`
 
     .affine-embed-linked-doc-content-note {
       -webkit-line-clamp: 16;
-      max-height: 320px;
     }
 
     .affine-embed-linked-doc-content-date {
