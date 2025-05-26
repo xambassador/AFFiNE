@@ -12,6 +12,7 @@ import { useLiveData, useService } from '@toeverything/infra';
 import type React from 'react';
 import { useCallback, useEffect } from 'react';
 
+import { COUNT_PER_PAGE } from '../constants';
 import { EmbeddingService } from '../services/embedding';
 import { Attachments } from './attachments';
 import EmbeddingProgress from './embedding-progress';
@@ -23,9 +24,7 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
   const t = useI18n();
   const embeddingService = useService(EmbeddingService);
   const embeddingEnabled = useLiveData(embeddingService.embedding.enabled$);
-  const { pageInfo, totalCount } = useLiveData(
-    embeddingService.embedding.attachments$
-  );
+  const { totalCount } = useLiveData(embeddingService.embedding.attachments$);
   const attachments = useLiveData(
     embeddingService.embedding.mergedAttachments$
   );
@@ -38,6 +37,9 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
     embeddingService.embedding.isIgnoredDocsLoading$
   );
   const workspaceDialogService = useService(WorkspaceDialogService);
+  const isEnabledLoading = useLiveData(
+    embeddingService.embedding.isEnabledLoading$
+  );
 
   const handleEmbeddingToggle = useCallback(
     (checked: boolean) => {
@@ -74,10 +76,9 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
     (offset: number) => {
       embeddingService.embedding.getAttachments({
         offset,
-        after: pageInfo.endCursor,
       });
     },
-    [embeddingService.embedding, pageInfo.endCursor]
+    [embeddingService.embedding]
   );
 
   const handleSelectDoc = useCallback(() => {
@@ -113,6 +114,14 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
 
   useEffect(() => {
     embeddingService.embedding.startEmbeddingProgressPolling();
+    embeddingService.embedding.getEnabled();
+    embeddingService.embedding.getAttachments({
+      first: COUNT_PER_PAGE,
+      after: null,
+    });
+    embeddingService.embedding.getIgnoredDocs();
+    embeddingService.embedding.getEmbeddingProgress();
+
     return () => {
       embeddingService.embedding.stopEmbeddingProgressPolling();
     };
@@ -139,8 +148,9 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
         >
           <Switch
             data-testid="workspace-embedding-setting-switch"
-            checked={embeddingEnabled}
+            checked={embeddingEnabled ?? false}
             onChange={handleEmbeddingToggle}
+            disabled={isEnabledLoading}
           />
         </SettingRow>
 

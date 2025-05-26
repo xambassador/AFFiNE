@@ -24,7 +24,6 @@ import {
 import { COUNT_PER_PAGE } from '../constants';
 import type { EmbeddingStore } from '../stores/embedding';
 import type {
-  AttachmentFile,
   IgnoredDoc,
   LocalAttachmentFile,
   PersistedAttachmentFile,
@@ -55,7 +54,7 @@ interface EmbeddingProgress {
 }
 
 export class Embedding extends Entity {
-  enabled$ = new LiveData<boolean>(false);
+  enabled$ = new LiveData<boolean | null>(null);
   error$ = new LiveData<any>(null);
   attachments$ = new LiveData<Attachments>({
     edges: [],
@@ -66,36 +65,28 @@ export class Embedding extends Entity {
     totalCount: 0,
   });
   ignoredDocs$ = new LiveData<IgnoredDocs>([]);
-  isEnabledLoading$ = new LiveData(false);
-  isAttachmentsLoading$ = new LiveData(false);
-  isIgnoredDocsLoading$ = new LiveData(false);
+  isEnabledLoading$ = new LiveData(true);
+  isAttachmentsLoading$ = new LiveData(true);
+  isIgnoredDocsLoading$ = new LiveData(true);
   embeddingProgress$ = new LiveData<EmbeddingProgress | null>(null);
-  isEmbeddingProgressLoading$ = new LiveData(false);
+  isEmbeddingProgressLoading$ = new LiveData(true);
 
   private readonly EMBEDDING_PROGRESS_POLL_INTERVAL = 3000;
   private readonly stopEmbeddingProgress$ = new Subject<void>();
   uploadingAttachments$ = new LiveData<LocalAttachmentFile[]>([]);
-  mergedAttachments$ = new LiveData<AttachmentFile[]>([]);
 
   constructor(
     private readonly workspaceService: WorkspaceService,
     private readonly store: EmbeddingStore
   ) {
     super();
-    this.getEnabled();
-    this.getAttachments({ first: COUNT_PER_PAGE, after: null });
-    this.getIgnoredDocs();
-    this.getEmbeddingProgress();
-    this.uploadingAttachments$.subscribe(() => this.updateMergedAttachments());
-    this.attachments$.subscribe(() => this.updateMergedAttachments());
-    this.updateMergedAttachments();
   }
 
-  private updateMergedAttachments() {
-    const uploading = this.uploadingAttachments$.value;
-    const uploaded = this.attachments$.value.edges.map(edge => edge.node);
-    this.mergedAttachments$.next([...uploading, ...uploaded].slice(0, 10));
-  }
+  mergedAttachments$ = LiveData.computed(get => {
+    const uploading = get(this.uploadingAttachments$);
+    const uploaded = get(this.attachments$).edges.map(edge => edge.node);
+    return [...uploading, ...uploaded].slice(0, 10);
+  });
 
   getEnabled = effect(
     exhaustMap(() => {
