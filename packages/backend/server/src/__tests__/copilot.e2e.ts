@@ -19,7 +19,7 @@ import { MockEmbeddingClient } from '../plugins/copilot/context/embedding';
 import { prompts, PromptService } from '../plugins/copilot/prompt';
 import {
   CopilotProviderFactory,
-  GeminiProvider,
+  GeminiGenerativeProvider,
   OpenAIProvider,
 } from '../plugins/copilot/providers';
 import { CopilotStorage } from '../plugins/copilot/storage';
@@ -100,7 +100,9 @@ test.before(async t => {
         },
       });
       m.overrideProvider(OpenAIProvider).useClass(MockCopilotProvider);
-      m.overrideProvider(GeminiProvider).useClass(MockCopilotProvider);
+      m.overrideProvider(GeminiGenerativeProvider).useClass(
+        MockCopilotProvider
+      );
     },
   });
 
@@ -935,8 +937,8 @@ test('should be able to transcript', async t => {
   const { id: workspaceId } = await createWorkspace(app);
 
   for (const [provider, func] of [
-    [GeminiProvider, 'text'],
-    [GeminiProvider, 'structure'],
+    [GeminiGenerativeProvider, 'text'],
+    [GeminiGenerativeProvider, 'structure'],
   ] as const) {
     Sinon.stub(app.get(provider), func).resolves(
       JSON.stringify([

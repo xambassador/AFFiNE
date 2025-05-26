@@ -350,7 +350,7 @@ const actions: Prompt[] = [
   {
     name: 'Transcript audio',
     action: 'Transcript audio',
-    model: 'gemini-2.5-pro-preview-05-06',
+    model: 'gemini-2.5-flash-preview-05-20',
     messages: [
       {
         role: 'system',
@@ -1096,8 +1096,12 @@ const chat: Prompt[] = [
       'o4-mini',
       'claude-3-7-sonnet-20250219',
       'claude-3-5-sonnet-20241022',
-      'gemini-2.5-flash-preview-04-17',
+      'gemini-2.5-flash-preview-05-20',
       'gemini-2.5-pro-preview-05-06',
+      'claude-opus-4@20250514',
+      'claude-sonnet-4@20250514',
+      'claude-3-7-sonnet@20250219',
+      'claude-3-5-sonnet@20240620',
     ],
     messages: [
       {

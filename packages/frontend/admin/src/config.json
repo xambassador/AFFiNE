@@ -233,6 +233,10 @@
       "type": "Object",
       "desc": "The config for the gemini provider."
     },
+    "providers.geminiVertex": {
+      "type": "Object",
+      "desc": "The config for the gemini provider in Google Vertex AI."
+    },
     "providers.perplexity": {
       "type": "Object",
       "desc": "The config for the perplexity provider."
@@ -240,6 +244,10 @@
     "providers.anthropic": {
       "type": "Object",
       "desc": "The config for the anthropic provider."
+    },
+    "providers.anthropicVertex": {
+      "type": "Object",
+      "desc": "The config for the anthropic provider in Google Vertex AI."
     },
     "unsplash": {
       "type": "Object",

@@ -1,71 +1,33 @@
 import {
-  AnthropicProvider as AnthropicSDKProvider,
-  AnthropicProviderOptions,
-  createAnthropic,
+  type AnthropicProvider as AnthropicSDKProvider,
+  type AnthropicProviderOptions,
 } from '@ai-sdk/anthropic';
+import { type GoogleVertexAnthropicProvider } from '@ai-sdk/google-vertex/anthropic';
 import { AISDKError, generateText, streamText } from 'ai';
 
 import {
   CopilotProviderSideError,
   metrics,
   UserFriendlyError,
-} from '../../../base';
-import { createExaCrawlTool, createExaSearchTool } from '../tools';
-import { CopilotProvider } from './provider';
+} from '../../../../base';
+import { createExaCrawlTool, createExaSearchTool } from '../../tools';
+import { CopilotProvider } from '../provider';
 import type {
   CopilotChatOptions,
   ModelConditions,
   PromptMessage,
-} from './types';
-import { CopilotProviderType, ModelInputType, ModelOutputType } from './types';
-import { chatToGPTMessage } from './utils';
+} from '../types';
+import { ModelOutputType } from '../types';
+import { chatToGPTMessage } from '../utils';
 
-export type AnthropicConfig = {
-  apiKey: string;
-  baseUrl?: string;
-};
-
-export class AnthropicProvider extends CopilotProvider<AnthropicConfig> {
-  override readonly type = CopilotProviderType.Anthropic;
-  override readonly models = [
-    {
-      id: 'claude-3-7-sonnet-20250219',
-      capabilities: [
-        {
-          input: [ModelInputType.Text, ModelInputType.Image],
-          output: [ModelOutputType.Text],
-          defaultForOutputType: true,
-        },
-      ],
-    },
-    {
-      id: 'claude-3-5-sonnet-20241022',
-      capabilities: [
-        {
-          input: [ModelInputType.Text, ModelInputType.Image],
-          output: [ModelOutputType.Text],
-        },
-      ],
-    },
-  ];
-
+export abstract class AnthropicProvider<T> extends CopilotProvider<T> {
   private readonly MAX_STEPS = 20;
 
   private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
-  #instance!: AnthropicSDKProvider;
-
-  override configured(): boolean {
-    return !!this.config.apiKey;
-  }
-
-  protected override setup() {
-    super.setup();
-    this.#instance = createAnthropic({
-      apiKey: this.config.apiKey,
-      baseURL: this.config.baseUrl,
-    });
-  }
+  protected abstract instance:
+    | AnthropicSDKProvider
+    | GoogleVertexAnthropicProvider;
 
   private handleError(e: any) {
     if (e instanceof UserFriendlyError) {
@@ -100,7 +62,7 @@ export class AnthropicProvider extends CopilotProvider<AnthropicConfig> {
 
       const [system, msgs] = await chatToGPTMessage(messages);
 
-      const modelInstance = this.#instance(model.id);
+      const modelInstance = this.instance(model.id);
       const { text, reasoning } = await generateText({
         model: modelInstance,
         system,
@@ -136,7 +98,7 @@ export class AnthropicProvider extends CopilotProvider<AnthropicConfig> {
       metrics.ai.counter('chat_text_stream_calls').add(1, { model: model.id });
       const [system, msgs] = await chatToGPTMessage(messages);
       const { fullStream } = streamText({
-        model: this.#instance(model.id),
+        model: this.instance(model.id),
         system,
         messages: msgs,
         abortSignal: options.signal,

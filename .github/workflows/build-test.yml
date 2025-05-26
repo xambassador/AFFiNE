@@ -1001,12 +1001,7 @@ jobs:
       - name: Prepare Server Test Environment
         if: ${{ steps.check-blocksuite-update.outputs.skip != 'true' || steps.apifilter.outputs.changed == 'true' }}
         env:
-          COPILOT_OPENAI_API_KEY: ${{ secrets.COPILOT_OPENAI_API_KEY }}
-          COPILOT_GOOGLE_API_KEY: ${{ secrets.COPILOT_GOOGLE_API_KEY }}
-          COPILOT_FAL_API_KEY: ${{ secrets.COPILOT_FAL_API_KEY }}
-          COPILOT_PERPLEXITY_API_KEY: ${{ secrets.COPILOT_PERPLEXITY_API_KEY }}
-          COPILOT_ANTHROPIC_API_KEY: ${{ secrets.COPILOT_ANTHROPIC_API_KEY }}
-          COPILOT_EXA_API_KEY: ${{ secrets.COPILOT_EXA_API_KEY }}
+          SERVER_CONFIG: ${{ secrets.TEST_SERVER_CONFIG }}
         uses: ./.github/actions/server-test-env
 
       - name: Run server tests
@@ -1105,12 +1100,7 @@ jobs:
       - name: Prepare Server Test Environment
         if: ${{ steps.check-blocksuite-update.outputs.skip != 'true' || steps.e2efilter.outputs.changed == 'true' }}
         env:
-          COPILOT_OPENAI_API_KEY: ${{ secrets.COPILOT_OPENAI_API_KEY }}
-          COPILOT_GOOGLE_API_KEY: ${{ secrets.COPILOT_GOOGLE_API_KEY }}
-          COPILOT_FAL_API_KEY: ${{ secrets.COPILOT_FAL_API_KEY }}
-          COPILOT_PERPLEXITY_API_KEY: ${{ secrets.COPILOT_PERPLEXITY_API_KEY }}
-          COPILOT_ANTHROPIC_API_KEY: ${{ secrets.COPILOT_ANTHROPIC_API_KEY }}
-          COPILOT_EXA_API_KEY: ${{ secrets.COPILOT_EXA_API_KEY }}
+          SERVER_CONFIG: ${{ secrets.TEST_SERVER_CONFIG }}
         uses: ./.github/actions/server-test-env
 
       - name: Run Copilot E2E Test ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}

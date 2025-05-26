@@ -1,8 +1,8 @@
-import {
-  createGoogleGenerativeAI,
-  type GoogleGenerativeAIProvider,
-  type GoogleGenerativeAIProviderOptions,
+import type {
+  GoogleGenerativeAIProvider,
+  GoogleGenerativeAIProviderOptions,
 } from '@ai-sdk/google';
+import type { GoogleVertexProvider } from '@ai-sdk/google-vertex';
 import {
   AISDKError,
   generateObject,
@@ -16,16 +16,16 @@ import {
   CopilotProviderSideError,
   metrics,
   UserFriendlyError,
-} from '../../../base';
-import { CopilotProvider } from './provider';
+} from '../../../../base';
+import { CopilotProvider } from '../provider';
 import type {
   CopilotChatOptions,
   CopilotImageOptions,
   ModelConditions,
   PromptMessage,
-} from './types';
-import { CopilotProviderType, ModelInputType, ModelOutputType } from './types';
-import { chatToGPTMessage } from './utils';
+} from '../types';
+import { ModelOutputType } from '../types';
+import { chatToGPTMessage } from '../utils';
 
 export const DEFAULT_DIMENSIONS = 256;
 
@@ -34,82 +34,14 @@ export type GeminiConfig = {
   baseUrl?: string;
 };
 
-export class GeminiProvider extends CopilotProvider<GeminiConfig> {
-  override readonly type = CopilotProviderType.Gemini;
-
-  readonly models = [
-    {
-      name: 'Gemini 2.0 Flash',
-      id: 'gemini-2.0-flash-001',
-      capabilities: [
-        {
-          input: [
-            ModelInputType.Text,
-            ModelInputType.Image,
-            ModelInputType.Audio,
-          ],
-          output: [ModelOutputType.Text, ModelOutputType.Structured],
-          defaultForOutputType: true,
-        },
-      ],
-    },
-    {
-      name: 'Gemini 2.5 Flash',
-      id: 'gemini-2.5-flash-preview-04-17',
-      capabilities: [
-        {
-          input: [
-            ModelInputType.Text,
-            ModelInputType.Image,
-            ModelInputType.Audio,
-          ],
-          output: [ModelOutputType.Text, ModelOutputType.Structured],
-        },
-      ],
-    },
-    {
-      name: 'Gemini 2.5 Pro',
-      id: 'gemini-2.5-pro-preview-05-06',
-      capabilities: [
-        {
-          input: [
-            ModelInputType.Text,
-            ModelInputType.Image,
-            ModelInputType.Audio,
-          ],
-          output: [ModelOutputType.Text, ModelOutputType.Structured],
-        },
-      ],
-    },
-    {
-      name: 'Text Embedding 004',
-      id: 'text-embedding-004',
-      capabilities: [
-        {
-          input: [ModelInputType.Text],
-          output: [ModelOutputType.Embedding],
-        },
-      ],
-    },
-  ];
-
+export abstract class GeminiProvider<T> extends CopilotProvider<T> {
   private readonly MAX_STEPS = 20;
 
   private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
-  #instance!: GoogleGenerativeAIProvider;
-
-  override configured(): boolean {
-    return !!this.config.apiKey;
-  }
-
-  protected override setup() {
-    super.setup();
-    this.#instance = createGoogleGenerativeAI({
-      apiKey: this.config.apiKey,
-      baseURL: this.config.baseUrl,
-    });
-  }
+  protected abstract instance:
+    | GoogleGenerativeAIProvider
+    | GoogleVertexProvider;
 
   private handleError(e: any) {
     if (e instanceof UserFriendlyError) {
@@ -130,7 +62,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
     }
   }
 
-  override async text(
+  async text(
     cond: ModelConditions,
     messages: PromptMessage[],
     options: CopilotChatOptions = {}
@@ -144,7 +76,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
 
       const [system, msgs] = await chatToGPTMessage(messages);
 
-      const modelInstance = this.#instance(model.id);
+      const modelInstance = this.instance(model.id);
       const { text } = await generateText({
         model: modelInstance,
         system,
@@ -177,7 +109,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
         throw new CopilotPromptInvalid('Schema is required');
       }
 
-      const modelInstance = this.#instance(model.id, {
+      const modelInstance = this.instance(model.id, {
         structuredOutputs: true,
       });
       const { object } = await generateObject({
@@ -209,7 +141,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
     }
   }
 
-  override async *streamText(
+  async *streamText(
     cond: ModelConditions,
     messages: PromptMessage[],
     options: CopilotChatOptions | CopilotImageOptions = {}
@@ -223,7 +155,7 @@ export class GeminiProvider extends CopilotProvider<GeminiConfig> {
       const [system, msgs] = await chatToGPTMessage(messages);
 
       const { fullStream } = streamText({
-        model: this.#instance(model.id, {
+        model: this.instance(model.id, {
           useSearchGrounding: this.useSearchGrounding(options),
         }),
         system,
