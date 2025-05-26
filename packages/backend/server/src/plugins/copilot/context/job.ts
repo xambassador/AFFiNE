@@ -52,9 +52,11 @@ export class CopilotContextDocJob {
   private async setup() {
     this.supportEmbedding =
       await this.models.copilotContext.checkEmbeddingAvailable();
-    this.client = new OpenAIEmbeddingClient(
-      this.config.copilot.providers.openai
-    );
+    if (this.supportEmbedding && this.config.copilot.providers.openai.apiKey) {
+      this.client = new OpenAIEmbeddingClient(
+        this.config.copilot.providers.openai
+      );
+    }
   }
 
   // public this client to allow overriding in tests
