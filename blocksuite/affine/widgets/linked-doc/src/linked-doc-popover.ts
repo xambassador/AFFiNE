@@ -386,7 +386,7 @@ export class LinkedDocPopover extends SignalWatcher(
     }
 
     const ele = shadowRoot.querySelector(
-      `icon-button[data-id="${this._activatedItemKey}"]`
+      `icon-button[data-id=${CSS.escape(this._activatedItemKey)}]`
     );
 
     // If the element doesn't exist, don't log a warning
