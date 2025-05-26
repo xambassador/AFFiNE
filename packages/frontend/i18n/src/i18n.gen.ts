@@ -5835,14 +5835,6 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.experimental-features.enable-snapshot-import-export.description"](): string;
     /**
-      * `Multiple Cloud Servers`
-      */
-    ["com.affine.settings.workspace.experimental-features.enable-multiple-cloud-servers.name"](): string;
-    /**
-      * `Once enabled, users can connect to selfhosted cloud servers.`
-      */
-    ["com.affine.settings.workspace.experimental-features.enable-multiple-cloud-servers.description"](): string;
-    /**
       * `Enable Edgeless Editing`
       */
     ["com.affine.settings.workspace.experimental-features.enable-mobile-edgeless-editing.name"](): string;

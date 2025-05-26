@@ -1456,8 +1456,6 @@
   "com.affine.settings.workspace.experimental-features.enable-mobile-linked-doc-menu.description": "Enables the mobile linked doc menu.",
   "com.affine.settings.workspace.experimental-features.enable-snapshot-import-export.name": "Enable Snapshot Import Export",
   "com.affine.settings.workspace.experimental-features.enable-snapshot-import-export.description": "Once enabled, users can import and export blocksuite snapshots.",
-  "com.affine.settings.workspace.experimental-features.enable-multiple-cloud-servers.name": "Multiple Cloud Servers",
-  "com.affine.settings.workspace.experimental-features.enable-multiple-cloud-servers.description": "Once enabled, users can connect to selfhosted cloud servers.",
   "com.affine.settings.workspace.experimental-features.enable-mobile-edgeless-editing.name": "Enable Edgeless Editing",
   "com.affine.settings.workspace.experimental-features.enable-mobile-edgeless-editing.description": "Once enabled, users can edit edgeless canvas.",
   "com.affine.settings.workspace.experimental-features.enable-pdf-embed-preview.name": "PDF embed preview",

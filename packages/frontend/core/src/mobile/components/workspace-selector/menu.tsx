@@ -10,7 +10,6 @@ import {
   ServersService,
 } from '@affine/core/modules/cloud';
 import { GlobalDialogService } from '@affine/core/modules/dialogs';
-import { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import { GlobalContextService } from '@affine/core/modules/global-context';
 import {
   type WorkspaceMetadata,
@@ -262,18 +261,15 @@ const CloudWorkSpaceList = ({
 
 const AddServer = () => {
   const globalDialogService = useService(GlobalDialogService);
-  const featureFlagService = useService(FeatureFlagService);
-  const enableMultipleServer = useLiveData(
-    featureFlagService.flags.enable_multiple_cloud_servers.$
-  );
 
   const onAddServer = useCallback(() => {
     globalDialogService.open('sign-in', { step: 'addSelfhosted' });
   }, [globalDialogService]);
 
-  if (!enableMultipleServer) {
+  if (!BUILD_CONFIG.isNative) {
     return null;
   }
+
   return <IconButton onClick={onAddServer} size="24" icon={<SelfhostIcon />} />;
 };
 
