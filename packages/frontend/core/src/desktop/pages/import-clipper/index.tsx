@@ -108,6 +108,8 @@ export const Component = () => {
 
   const handleImportToSelectedWorkspace = useAsyncCallback(async () => {
     if (clipperInputSnapshot && selectedWorkspace) {
+      // save the last opened workspace id
+      localStorage.setItem('last_workspace_id', selectedWorkspace.id);
       setImporting(true);
       try {
         await importClipperService.importToWorkspace(
