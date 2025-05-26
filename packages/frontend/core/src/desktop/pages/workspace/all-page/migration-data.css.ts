@@ -4,7 +4,7 @@ import { style } from '@vanilla-extract/css';
 
 export const migrationDataNotificationContainer = style({
   border: `1px solid ${cssVarV2('layer/insideBorder/border')}`,
-  padding: '12px 240px 12px 12px',
+  padding: '12px 12px 12px 12px',
   borderRadius: '8px',
   margin: '0 24px',
   marginTop: '24px',
@@ -38,4 +38,14 @@ export const migrationDataNotificationError = style({
   color: cssVarV2('status/error'),
   lineHeight: '22px',
   paddingBottom: '16px',
+});
+
+export const migrationBackgroundCover = style({
+  width: '250px',
+  height: '150px',
+  padding: '16px',
+  marginTop: '-48px',
+  objectFit: 'cover',
+  float: 'right',
+  userSelect: 'none',
 });
