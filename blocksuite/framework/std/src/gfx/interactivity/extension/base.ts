@@ -13,6 +13,7 @@ import type {
   ExtensionDragMoveContext,
   ExtensionDragStartContext,
 } from '../types/drag.js';
+import type { ExtensionElementSelectContext } from '../types/select.js';
 
 export const InteractivityExtensionIdentifier =
   createIdentifier<InteractivityExtension>('interactivity-extension');
@@ -118,6 +119,10 @@ type ActionContextMap = {
       | undefined
     >;
   };
+  elementSelect: {
+    context: ExtensionElementSelectContext;
+    returnType: void;
+  };
 };
 
 export class InteractivityActionAPI {
@@ -148,6 +153,18 @@ export class InteractivityActionAPI {
 
     return () => {
       return delete this._handlers['elementsClone'];
+    };
+  }
+
+  onElementSelect(
+    handler: (
+      ctx: ActionContextMap['elementSelect']['context']
+    ) => ActionContextMap['elementSelect']['returnType']
+  ) {
+    this._handlers['elementSelect'] = handler;
+
+    return () => {
+      return delete this._handlers['elementSelect'];
     };
   }
 
