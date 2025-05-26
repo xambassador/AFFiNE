@@ -49,6 +49,9 @@ export const createDocExplorerContext = (
     selectedDocIds$: new LiveData<string[]>([]),
     prevCheckAnchorId$: new LiveData<string | null>(null),
     displayPreference$: displayPreference$,
+    showDragHandle$: displayPreference$.selector(
+      displayPreference => displayPreference.showDragHandle
+    ),
     view$: displayPreference$.selector(
       displayPreference => displayPreference.view
     ),
@@ -84,9 +87,6 @@ export const createDocExplorerContext = (
     ),
     showMoreOperation$: displayPreference$.selector(
       displayPreference => displayPreference.showMoreOperation
-    ),
-    showDragHandle$: displayPreference$.selector(
-      displayPreference => displayPreference.showDragHandle
     ),
     quickDeletePermanently$: displayPreference$.selector(
       displayPreference => displayPreference.quickDeletePermanently
