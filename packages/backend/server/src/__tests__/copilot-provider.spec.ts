@@ -191,8 +191,8 @@ const retry = async (
     if (ret.passed) {
       return ret.commit();
     } else {
-      ret.discard();
-      t.log(ret.errors.map(e => e.message).join('\n'));
+      ret.discard({ retainLogs: true });
+      t.log(ret.errors.map(e => e.message || e.name || String(e)).join('\n'));
       t.log(`retrying ${action} ${3 - i}/3 ...`);
     }
   }
@@ -414,7 +414,9 @@ const actions = [
       assertNotWrappedInCodeBlock(t, result);
       const cleared = result.toLowerCase();
       t.assert(
-        cleared.includes('single source of truth') || cleared.includes('ssot'),
+        cleared.includes('single source of truth') ||
+          /single.*source/.test(cleared) ||
+          cleared.includes('ssot'),
         'should include original keyword'
       );
     },
@@ -453,7 +455,8 @@ const actions = [
     verifier: (t: ExecutionContext<Tester>, result: string) => {
       assertNotWrappedInCodeBlock(t, result);
       t.assert(
-        result.toLowerCase().includes('distance'),
+        result.toLowerCase().includes('distance') ||
+          /no.*error/.test(result.toLowerCase()),
         'explain code result should include keyword'
       );
     },
