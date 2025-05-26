@@ -16,6 +16,7 @@ import type {
   ElementCreationEvent,
   ElementLockEvent,
   ElementUpdatedEvent,
+  LatexEvent,
   LinkedDocCreatedEvent,
   LinkEvent,
   MindMapCollapseEvent,
@@ -42,6 +43,7 @@ export type TelemetryEventMap = OutDatabaseAllEvents &
     BlockCreated: BlockCreationEvent;
     EdgelessToolPicked: EdgelessToolPickedEvent;
     CreateEmbedBlock: LinkEvent;
+    Latex: LatexEvent;
   };
 
 export interface TelemetryService {

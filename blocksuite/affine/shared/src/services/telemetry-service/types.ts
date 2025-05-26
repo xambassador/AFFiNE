@@ -117,3 +117,11 @@ export interface ElementUpdatedEvent extends TelemetryEvent {
 export interface LinkEvent extends TelemetryEvent {
   result?: 'success' | 'failure';
 }
+
+export interface LatexEvent extends TelemetryEvent {
+  from: 'doc' | 'edgeless text' | 'edgeless note';
+  page: 'doc' | 'edgeless';
+  segment: 'doc' | 'whiteboard';
+  module: 'equation' | 'inline equation';
+  control: 'create equation' | 'create inline equation';
+}
