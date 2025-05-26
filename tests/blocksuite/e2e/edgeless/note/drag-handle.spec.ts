@@ -149,12 +149,20 @@ test('drag handle should work across multiple notes', async ({ page }) => {
   await waitNextFrame(page);
   await assertRichTexts(page, ['456', '789', '000', '123']);
 
-  await page
+  const rect = await page
     .locator('affine-edgeless-note')
     .nth(1)
     .locator('affine-paragraph')
     .nth(1)
-    .click({ clickCount: 3 });
+    .boundingBox();
+
+  if (!rect) {
+    throw new Error('Missing bounding box for the paragraph');
+  }
+
+  await page.mouse.click(rect.x + 10, rect.y + 10, {
+    clickCount: 2,
+  });
   await dragHandleFromBlockToBlockBottomById(page, '3', '4');
   await waitNextFrame(page);
   await expect(page.locator('.affine-drag-handle-container')).toBeHidden();

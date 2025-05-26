@@ -1569,6 +1569,11 @@ export class DragEventWatcher {
             view.hideMask = false;
           }
         },
+        onDrop: () => {
+          if (isNote && 'hideMask' in view) {
+            view.hideMask = false;
+          }
+        },
         setDropData: () => {
           return {
             modelId: view.model.id,
