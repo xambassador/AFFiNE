@@ -124,6 +124,7 @@ export abstract class PackageSelectorCommand extends Command {
             name,
             value: name,
           })),
+          pageSize: 10,
           default: '@affine/web',
         },
       ]);
