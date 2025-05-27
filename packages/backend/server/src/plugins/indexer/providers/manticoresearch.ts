@@ -99,6 +99,7 @@ export class ManticoresearchProvider extends ElasticsearchProvider {
         ),
       }));
     }
+
     await super.write(table, documents, options);
   }
 

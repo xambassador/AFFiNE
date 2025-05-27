@@ -112,11 +112,11 @@ export class ElasticsearchProvider extends SearchProvider {
       );
       records.push(JSON.stringify(document));
     }
-    const query: Record<string, string> = {};
+    const url = new URL(`${this.config.provider.endpoint}/_bulk`);
     if (options?.refresh) {
-      query.refresh = 'true';
+      url.searchParams.set('refresh', 'true');
     }
-    await this.requestBulk(table, records, query);
+    await this.requestBulk(url.toString(), records);
     this.logger.debug(
       `wrote ${documents.length} documents to ${table} in ${Date.now() - start}ms`
     );
@@ -220,17 +220,7 @@ export class ElasticsearchProvider extends SearchProvider {
   /**
    * @see https://www.elastic.co/docs/api/doc/elasticsearch-serverless/operation/operation-bulk-2
    */
-  protected async requestBulk(
-    table: SearchTable,
-    records: string[],
-    query?: Record<string, string>
-  ) {
-    const url = new URL(`${this.config.provider.endpoint}/${table}/_bulk`);
-    if (query) {
-      Object.entries(query).forEach(([key, value]) => {
-        url.searchParams.set(key, value);
-      });
-    }
+  protected async requestBulk(url: string, records: string[]) {
     return await this.request(
       'POST',
       url.toString(),

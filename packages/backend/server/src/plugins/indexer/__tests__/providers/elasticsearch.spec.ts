@@ -154,22 +154,24 @@ _test.before(async () => {
     path.join(import.meta.dirname, '../__fixtures__/test-blocks.json'),
     'utf-8'
   );
-  // @ts-expect-error access protected method
-  await searchProvider.requestBulk(
-    SearchTable.block,
-    blocks.trim().split('\n'),
-    {
-      // make sure the data is visible to search
-      refresh: 'true',
-    }
-  );
+  const blockDocuments = blocks
+    .trim()
+    .split('\n')
+    .map(line => JSON.parse(line));
+  await searchProvider.write(SearchTable.block, blockDocuments, {
+    refresh: true,
+  });
+
   const docs = await readFile(
     path.join(import.meta.dirname, '../__fixtures__/test-docs.json'),
     'utf-8'
   );
-  // @ts-expect-error access protected method
-  await searchProvider.requestBulk(SearchTable.doc, docs.trim().split('\n'), {
-    refresh: 'true',
+  const docDocuments = docs
+    .trim()
+    .split('\n')
+    .map(line => JSON.parse(line));
+  await searchProvider.write(SearchTable.doc, docDocuments, {
+    refresh: true,
   });
 });
 
@@ -614,6 +616,70 @@ test('should handle blob as string[]', async t => {
     workspace_id: workspace.id,
     blob: ['blob3'],
   });
+});
+
+test('should batch write bugfix', async t => {
+  const workspaceId = 'workspaceId-batch-write-bugfix-for-elasticsearch';
+
+  await searchProvider.write(
+    SearchTable.block,
+    [
+      {
+        workspace_id: workspaceId,
+        doc_id: 'a',
+        block_id: 'b1',
+        content: '2025-05-26',
+        flavour: 'affine:page',
+        additional: '{"displayMode":"edgeless"}',
+        created_by_user_id: '46ce597c-098a-4c61-a106-ce79827ec1de',
+        updated_by_user_id: '46ce597c-098a-4c61-a106-ce79827ec1de',
+        created_at: '2025-05-26T05:16:23.128Z',
+        updated_at: '2025-05-26T05:15:53.091Z',
+        flavour_indexed: 'affine:page',
+      },
+      {
+        workspace_id: workspaceId,
+        doc_id: 'a',
+        block_id: 'b2',
+        content: '',
+        flavour: 'affine:surface',
+        parent_flavour: 'affine:page',
+        parent_block_id: 'TcOGF6HSa7',
+        additional: '',
+        created_by_user_id: '46ce597c-098a-4c61-a106-ce79827ec1de',
+        updated_by_user_id: '46ce597c-098a-4c61-a106-ce79827ec1de',
+        created_at: '2025-05-26T05:16:23.128Z',
+        updated_at: '2025-05-26T05:15:53.091Z',
+        flavour_indexed: 'affine:surface',
+        parent_flavour_indexed: 'affine:page',
+        parent_block_id_indexed: 'TcOGF6HSa7',
+      },
+    ],
+    {
+      refresh: true,
+    }
+  );
+
+  const result = await searchProvider.search(SearchTable.block, {
+    _source: ['workspace_id', 'doc_id'],
+    query: {
+      bool: {
+        must: [
+          {
+            term: {
+              workspace_id: {
+                value: workspaceId,
+              },
+            },
+          },
+        ],
+      },
+    },
+    fields: ['workspace_id', 'doc_id', 'block_id'],
+    sort: ['_score'],
+  });
+
+  t.snapshot(result.nodes.map(node => omit(node, ['_score'])));
 });
 
 // #endregion
