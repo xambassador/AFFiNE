@@ -2,6 +2,7 @@ import { MenuItem } from '@affine/component';
 import type { OrderByParams } from '@affine/core/modules/collection-rules/types';
 import { WorkspacePropertyService } from '@affine/core/modules/workspace-property';
 import { useI18n } from '@affine/i18n';
+import track from '@affine/track';
 import { SortDownIcon, SortUpIcon } from '@blocksuite/icons/rc';
 import { useLiveData, useService } from '@toeverything/infra';
 import { cssVarV2 } from '@toeverything/theme/v2';
@@ -125,6 +126,10 @@ const OrderByListItem = ({
     <MenuItem
       onClick={e => {
         e.preventDefault();
+        track.allDocs.header.displayMenu.editDisplayMenu({
+          control: 'orderBy',
+          type: property.systemProperty?.type ?? 'custom-property',
+        });
         if (value) {
           onChange?.(value);
         }

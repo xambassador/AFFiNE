@@ -14,6 +14,7 @@ import {
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
 import { useI18n } from '@affine/i18n';
+import track from '@affine/track';
 import {
   CloseIcon,
   CollectionsIcon,
@@ -102,10 +103,15 @@ export const PinnedCollections = ({
       <div
         className={styles.item}
         data-active={activeCollectionId === null ? 'true' : undefined}
-        onClick={() =>
+        onClick={() => {
           // only fire onActiveAll if the collection is not already active
-          activeCollectionId !== null ? onActiveAll() : undefined
-        }
+          if (activeCollectionId !== null) {
+            track.allDocs.header.navigation.navigatePinedCollectionRouter({
+              control: 'all',
+            });
+            onActiveAll();
+          }
+        }}
         role="button"
       >
         {t['com.affine.all-docs.pinned-collection.all']()}
@@ -115,12 +121,15 @@ export const PinnedCollections = ({
           key={record.collectionId}
           record={record}
           isActive={activeCollectionId === record.collectionId}
-          onClick={() =>
+          onClick={() => {
             // only fire onActiveCollection if the collection is not already active
-            activeCollectionId !== record.collectionId
-              ? onActiveCollection(record.collectionId)
-              : undefined
-          }
+            if (activeCollectionId !== record.collectionId) {
+              track.allDocs.header.navigation.navigatePinedCollectionRouter({
+                control: 'user-custom-collection',
+              });
+              onActiveCollection(record.collectionId);
+            }
+          }}
           onClickRemove={() => {
             const nextCollectionId = pinnedCollections[index - 1]?.collectionId;
             if (nextCollectionId) {
@@ -144,11 +153,12 @@ export const PinnedCollections = ({
           <IconButton
             size="16"
             className={styles.editIconButton}
-            onClick={() =>
+            onClick={() => {
+              track.allDocs.header.collection.editCollection();
               workspaceDialogService.open('collection-editor', {
                 collectionId: activeCollectionId,
-              })
-            }
+              });
+            }}
           >
             <EditIcon />
           </IconButton>
@@ -228,6 +238,7 @@ export const AddPinnedCollectionMenuContent = ({
           prefixIcon={<CollectionsIcon />}
           suffixIcon={<PlusIcon />}
           onClick={() => {
+            track.allDocs.header.collection.addPinnedCollection();
             onPinCollection(meta.id);
           }}
         >

@@ -42,6 +42,7 @@ const ToggleFavorite = ({ docId }: DocOperationProps) => {
 
   const toggleFavorite = useCallback(() => {
     favAdapter.toggle(docId, 'doc');
+    track.allDocs.list.docMenu.toggleFavorite();
   }, [docId, favAdapter]);
 
   return (
@@ -66,7 +67,7 @@ const DocInfo = ({ docId }: DocOperationProps) => {
 
   const onOpenInfoModal = useCallback(() => {
     if (docId) {
-      track.$.docInfoPanel.$.open();
+      track.allDocs.list.docMenu.openDocInfo();
       workspaceDialogService.open('doc-info', { docId });
     }
   }, [docId, workspaceDialogService]);
@@ -85,6 +86,8 @@ const NewTab = ({ docId }: DocOperationProps) => {
   const t = useI18n();
   const workbench = useService(WorkbenchService).workbench;
   const onOpenInNewTab = useCallback(() => {
+    track.allDocs.list.doc.openDoc();
+    track.allDocs.list.docMenu.openInNewTab();
     workbench.openDoc(docId, { at: 'new-tab' });
   }, [docId, workbench]);
 
@@ -103,6 +106,7 @@ const SplitView = ({ docId }: DocOperationProps) => {
   const workbench = useService(WorkbenchService).workbench;
 
   const onOpenInSplitView = useCallback(() => {
+    track.allDocs.list.doc.openDoc();
     track.allDocs.list.docMenu.openInSplitView();
     workbench.openDoc(docId, { at: 'tail' });
   }, [docId, workbench]);

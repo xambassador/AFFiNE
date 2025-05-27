@@ -4,6 +4,7 @@ import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
 import { CompatibleFavoriteItemsAdapter } from '@affine/core/modules/favorite';
 import { WorkbenchService } from '@affine/core/modules/workbench';
 import { useI18n } from '@affine/i18n';
+import track from '@affine/track';
 import {
   DeleteIcon,
   EditIcon,
@@ -71,6 +72,7 @@ export const CollectionOperations = ({
   }, [openRenameModal, openPromptModal, t, service, collection]);
 
   const showEdit = useCallback(() => {
+    track.collection.collection.$.editCollection();
     workspaceDialogService.open('collection-editor', {
       collectionId: collection.id,
     });

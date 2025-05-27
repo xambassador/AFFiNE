@@ -1,5 +1,6 @@
 import { Checkbox, MenuItem, MenuSub } from '@affine/component';
 import { useI18n } from '@affine/i18n';
+import track from '@affine/track';
 import { useCallback } from 'react';
 
 import { type QuickAction, quickActions } from '../quick-actions.constants';
@@ -27,6 +28,10 @@ export const QuickActionsConfig = ({
             action={action}
             active={displayPreference[`${action.key}`] ?? false}
             onClick={() => {
+              track.allDocs.header.displayMenu.editDisplayMenu({
+                control: 'quickActions',
+                type: action.key,
+              });
               onDisplayPreferenceChange({
                 ...displayPreference,
                 [action.key]: !displayPreference[action.key],

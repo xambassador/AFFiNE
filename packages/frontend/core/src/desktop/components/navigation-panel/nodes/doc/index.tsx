@@ -251,6 +251,9 @@ export const NavigationPanelDocNode = ({
       setCollapsed={setCollapsed}
       canDrop={handleCanDrop}
       to={`/${docId}`}
+      onClick={() => {
+        track.$.navigationPanel.docs.openDoc();
+      }}
       active={active}
       postfix={
         referencesLoading &&

@@ -106,6 +106,7 @@ export const useNavigationPanelCollectionNodeOperations = (
 
   const handleShowEdit = useCallback(() => {
     onOpenEdit();
+    track.$.navigationPanel.collections.editCollection();
   }, [onOpenEdit]);
 
   return useMemo(

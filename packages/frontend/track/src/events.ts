@@ -39,6 +39,7 @@ type WorkspaceEvents =
   | 'export'
   | 'openWorkspaceList';
 type DocEvents =
+  | 'openDoc'
   | 'createDoc'
   | 'quickStart'
   | 'renameDoc'
@@ -53,7 +54,10 @@ type DocEvents =
   | 'bookmark'
   | 'editProperty'
   | 'editPropertyMeta'
-  | 'addProperty';
+  | 'addProperty'
+  | 'editDisplayMenu'
+  | 'navigateAllDocsRouter'
+  | 'navigatePinedCollectionRouter';
 type EditorEvents =
   | 'bold'
   | 'italic'
@@ -77,7 +81,9 @@ type CollectionEvents =
   | 'createCollection'
   | 'deleteCollection'
   | 'renameCollection'
-  | 'addDocToCollection';
+  | 'addDocToCollection'
+  | 'editCollection'
+  | 'addPinnedCollection';
 type FolderEvents =
   | 'createFolder'
   | 'renameFolder'
@@ -340,12 +346,13 @@ interface PageEvents extends PageDivision {
         'toggleFavorite',
         'drop',
       ];
-      docs: ['createDoc', 'deleteDoc', 'linkDoc', 'drop'];
+      docs: ['createDoc', 'deleteDoc', 'linkDoc', 'drop', 'openDoc'];
       collections: [
         'createDoc',
         'addDocToCollection',
         'removeOrganizeItem',
         'drop',
+        'editCollection',
       ];
       folders: ['createDoc', 'drop'];
       tags: ['createDoc', 'tagDoc', 'drop'];
@@ -489,21 +496,30 @@ interface PageEvents extends PageDivision {
   };
   allDocs: {
     header: {
+      navigation: ['navigateAllDocsRouter', 'navigatePinedCollectionRouter'];
       actions: ['createDoc', 'createWorkspace'];
+      displayMenu: ['editDisplayMenu'];
+      viewMode: ['editDisplayMenu'];
+      collection: ['editCollection', 'addPinnedCollection'];
     };
     list: {
+      doc: ['openDoc'];
       docMenu: [
         'createDoc',
         'deleteDoc',
         'openInSplitView',
         'toggleFavorite',
         'openInNewTab',
+        'openDocInfo',
       ];
     };
   };
   collection: {
     docList: {
       docMenu: ['removeOrganizeItem'];
+    };
+    collection: {
+      $: ['editCollection'];
     };
   };
   tag: {};
@@ -765,6 +781,21 @@ export type EventArgs = {
     type: 'Embedding';
     control: 'Additional docs';
     result: 'success' | 'failure';
+  };
+  editDisplayMenu: {
+    control:
+      | 'groupBy'
+      | 'orderBy'
+      | 'displayProperties'
+      | 'listViewOptions'
+      | 'quickActions';
+    type: string;
+  };
+  navigateAllDocsRouter: {
+    control: string;
+  };
+  navigatePinedCollectionRouter: {
+    control: 'all' | 'user-custom-collection';
   };
 };
 

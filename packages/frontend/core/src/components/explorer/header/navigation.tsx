@@ -1,5 +1,6 @@
 import { WorkbenchLink } from '@affine/core/modules/workbench';
 import { useI18n } from '@affine/i18n';
+import track from '@affine/track';
 
 import * as styles from './navigation.css';
 
@@ -37,6 +38,11 @@ export const ExplorerNavigation = ({ active }: { active: NavigationKey }) => {
           data-testid={item.testId}
           data-active={active === item.value}
           to={item.to}
+          onClick={() => {
+            track.allDocs.header.navigation.navigateAllDocsRouter({
+              control: item.value,
+            });
+          }}
           className={styles.item}
         >
           {t[item.label]()}

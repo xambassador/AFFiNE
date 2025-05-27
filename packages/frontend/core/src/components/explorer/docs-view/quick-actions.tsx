@@ -45,6 +45,7 @@ export const QuickFavorite = memo(function QuickFavorite({
       onClick?.(e);
       e.stopPropagation();
       e.preventDefault();
+      track.allDocs.list.docMenu.toggleFavorite();
       favAdapter.toggle(doc.id, 'doc');
     },
     [doc.id, favAdapter, onClick]
@@ -77,6 +78,8 @@ export const QuickTab = memo(function QuickTab({
       onClick?.(e);
       e.stopPropagation();
       e.preventDefault();
+      track.allDocs.list.doc.openDoc();
+      track.allDocs.list.docMenu.openInNewTab();
       workbench.openDoc(doc.id, { at: 'new-tab' });
     },
     [doc.id, onClick, workbench]
@@ -109,6 +112,7 @@ export const QuickSplit = memo(function QuickSplit({
       onClick?.(e);
       e.stopPropagation();
       e.preventDefault();
+      track.allDocs.list.doc.openDoc();
       track.allDocs.list.docMenu.openInSplitView();
       workbench.openDoc(doc.id, { at: 'tail' });
     },
