@@ -264,7 +264,7 @@ export class DataViewHeaderViews extends WidgetBase {
         <div
           class="${classList}"
           style="margin-right: 4px;"
-          @click="${(event: MouseEvent) => this._clickView(event, id)}"
+          @click="${(event: MouseEvent) => this.clickView(event, id)}"
         >
           <uni-lit class="icon" .uni="${this.getRenderer(id)?.icon}"></uni-lit>
           <div class="name">${view?.name}</div>
@@ -281,7 +281,7 @@ export class DataViewHeaderViews extends WidgetBase {
     return this.dataSource.viewMetaGetById(viewId)?.renderer;
   }
 
-  _clickView(event: MouseEvent, id: string) {
+  private clickView(event: MouseEvent, id: string) {
     if (this.viewManager.currentViewId$.value !== id) {
       this.viewManager.setCurrentView(id);
       this.onChangeView?.(id);

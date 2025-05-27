@@ -993,18 +993,6 @@ export const getCenterPositionByLocator: (
   };
 };
 
-/**
- * @deprecated Use `page.locator(selector).boundingBox()` instead
- */
-export const getBoundingClientRect: (
-  page: Page,
-  selector: string
-) => Promise<DOMRect> = async (page: Page, selector: string) => {
-  return page.evaluate((selector: string) => {
-    return document.querySelector(selector)?.getBoundingClientRect() as DOMRect;
-  }, selector);
-};
-
 export async function getBoundingBox(locator: Locator) {
   const box = await locator.boundingBox();
   if (!box) throw new Error('Missing column box');

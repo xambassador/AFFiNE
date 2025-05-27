@@ -553,7 +553,7 @@ test.describe('readonly mode', () => {
     const database = page.locator('affine-database');
     await expect(database).toBeVisible();
 
-    const databaseMenu = database.locator('.database-ops');
+    const databaseMenu = database.getByTestId('database-ops');
     await expect(databaseMenu).toBeVisible();
 
     const addViewButton = database.getByTestId('database-add-view-button');

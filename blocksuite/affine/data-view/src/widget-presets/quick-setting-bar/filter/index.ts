@@ -5,7 +5,7 @@ import { filterTraitKey } from '../../../core/filter/trait.js';
 import type { DataViewWidgetProps } from '../../../core/widget/types.js';
 
 export const renderFilterBar = (props: DataViewWidgetProps) => {
-  const filterTrait = props.dataViewInstance.view.traitGet(filterTraitKey);
+  const filterTrait = props.dataViewLogic.view.traitGet(filterTraitKey);
   if (!filterTrait) {
     return;
   }

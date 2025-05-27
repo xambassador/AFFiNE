@@ -251,10 +251,8 @@ export const addCodeBlock = async (page: Page) => {
   await page.getByTestId('Code Block').click();
 };
 
-export const addDatabaseRow = async (page: Page, databaseTitle: string) => {
-  const db = page.locator(`affine-database-table`, {
-    has: page.locator(`affine-database-title:has-text("${databaseTitle}")`),
-  });
+export const addDatabaseRow = async (page: Page, nth: number = 0) => {
+  const db = page.getByTestId('dv-table-view').nth(nth);
   await db.locator('.data-view-table-group-add-row-button').click();
 };
 

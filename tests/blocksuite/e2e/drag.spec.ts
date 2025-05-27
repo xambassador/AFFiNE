@@ -15,7 +15,6 @@ import {
   type,
 } from './utils/actions/index.js';
 import {
-  getBoundingClientRect,
   getEditorHostLocator,
   getPageSnapshot,
   initParagraphsByCount,
@@ -239,7 +238,7 @@ test('should sync selected-blocks to session-manager when clicking drag handle',
   await assertRichTexts(page, ['123', '456', '789']);
 
   await focusRichText(page, 1);
-  const rect = await getBoundingClientRect(page, '[data-block-id="1"]');
+  const rect = await page.locator('[data-block-id="1"]').boundingBox();
   if (!rect) {
     throw new Error();
   }
@@ -363,10 +362,10 @@ test('hide drag handle when mouse is hovering over the title', async ({
   await initEmptyParagraphState(page);
   await initThreeParagraphs(page);
 
-  const rect = await getBoundingClientRect(
-    page,
-    '.affine-note-block-container'
-  );
+  const rect = await page.locator('.affine-note-block-container').boundingBox();
+  if (!rect) {
+    throw new Error();
+  }
   const dragHandle = page.locator('.affine-drag-handle-container');
   // When there is a gap between paragraph blocks, it is the correct behavior for the drag handle to appear
   // when the mouse is over the gap. Therefore, we use rect.y - 20 to make the Y offset greater than the gap between the

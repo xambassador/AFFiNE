@@ -48,7 +48,7 @@ export async function pasteString(page: Page, data: string) {
 }
 
 export async function selectCell(page: Page, nth: number, editing = true) {
-  const firstCell = page.locator('affine-database-cell-container').nth(nth);
+  const firstCell = page.locator('dv-table-view-cell-container').nth(nth);
   // First click for focus
   await firstCell.click({ delay: 100 });
   // Second click for edit mode
@@ -62,7 +62,7 @@ export async function verifyCellContents(
   page: Page,
   expectedContents: string[]
 ) {
-  const cells = page.locator('affine-database-cell-container');
+  const cells = page.locator('dv-table-view-cell-container');
   for (let i = 0; i < expectedContents.length; i++) {
     const cell = cells.nth(i);
     await expect(cell.locator('uni-lit > *:first-child')).toHaveText(
