@@ -6,7 +6,10 @@ import { AuthService } from '../core/auth';
 import { QuotaModule } from '../core/quota';
 import { CopilotModule } from '../plugins/copilot';
 import { prompts, PromptService } from '../plugins/copilot/prompt';
-import { CopilotProviderFactory } from '../plugins/copilot/providers';
+import {
+  CopilotProviderFactory,
+  CopilotProviderType,
+} from '../plugins/copilot/providers';
 import { TranscriptionResponseSchema } from '../plugins/copilot/transcript/types';
 import {
   CopilotChatTextExecutor,
@@ -183,11 +186,18 @@ const checkUrl = (url: string) => {
 const retry = async (
   action: string,
   t: ExecutionContext<Tester>,
-  callback: (t: ExecutionContext<Tester>) => void
+  callback: (t: ExecutionContext<Tester>) => Promise<void>
 ) => {
   let i = 3;
   while (i--) {
-    const ret = await t.try(callback);
+    const ret = await t.try(async t => {
+      try {
+        await callback(t);
+      } catch (e) {
+        t.log(`Error during ${action}:`, e);
+        throw e;
+      }
+    });
     if (ret.passed) {
       return ret.commit();
     } else {
@@ -343,6 +353,7 @@ const actions = [
       });
     },
     type: 'structured' as const,
+    prefer: CopilotProviderType.Gemini,
   },
   {
     name: 'Should transcribe middle audio',
@@ -365,6 +376,7 @@ const actions = [
       });
     },
     type: 'structured' as const,
+    prefer: CopilotProviderType.Gemini,
   },
   {
     name: 'Should transcribe long audio',
@@ -387,6 +399,7 @@ const actions = [
       });
     },
     type: 'structured' as const,
+    prefer: CopilotProviderType.Gemini,
   },
   {
     promptName: [
@@ -554,7 +567,15 @@ const actions = [
   },
 ];
 
-for (const { name, promptName, messages, verifier, type, config } of actions) {
+for (const {
+  name,
+  promptName,
+  messages,
+  verifier,
+  type,
+  config,
+  prefer,
+} of actions) {
   const prompts = Array.isArray(promptName) ? promptName : [promptName];
   for (const promptName of prompts) {
     test(
@@ -564,7 +585,9 @@ for (const { name, promptName, messages, verifier, type, config } of actions) {
         const { factory, prompt: promptService } = t.context;
         const prompt = (await promptService.get(promptName))!;
         t.truthy(prompt, 'should have prompt');
-        const provider = (await factory.getProviderByModel(prompt.model))!;
+        const provider = (await factory.getProviderByModel(prompt.model, {
+          prefer,
+        }))!;
         t.truthy(provider, 'should have provider');
         await retry(`action: ${promptName}`, t, async t => {
           switch (type) {

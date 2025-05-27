@@ -19,6 +19,7 @@ import { MockEmbeddingClient } from '../plugins/copilot/context/embedding';
 import { prompts, PromptService } from '../plugins/copilot/prompt';
 import {
   CopilotProviderFactory,
+  CopilotProviderType,
   GeminiGenerativeProvider,
   OpenAIProvider,
 } from '../plugins/copilot/providers';
@@ -79,7 +80,7 @@ test.before(async t => {
           providers: {
             openai: { apiKey: '1' },
             fal: {},
-            perplexity: {},
+            gemini: { apiKey: '1' },
           },
           unsplash: {
             key: process.env.UNSPLASH_ACCESS_KEY || '1',
@@ -101,7 +102,10 @@ test.before(async t => {
       });
       m.overrideProvider(OpenAIProvider).useClass(MockCopilotProvider);
       m.overrideProvider(GeminiGenerativeProvider).useClass(
-        MockCopilotProvider
+        class MockGenerativeProvider extends MockCopilotProvider {
+          // @ts-expect-error
+          override type: CopilotProviderType = CopilotProviderType.Gemini;
+        }
       );
     },
   });

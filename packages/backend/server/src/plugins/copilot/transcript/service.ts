@@ -18,6 +18,7 @@ import { PromptService } from '../prompt';
 import {
   CopilotProvider,
   CopilotProviderFactory,
+  CopilotProviderType,
   ModelOutputType,
   PromptMessage,
 } from '../providers';
@@ -156,14 +157,18 @@ export class CopilotTranscriptionService {
 
   private async getProvider(
     modelId: string,
-    structured: boolean
+    structured: boolean,
+    prefer?: CopilotProviderType
   ): Promise<CopilotProvider> {
-    let provider = await this.providerFactory.getProvider({
-      outputType: structured
-        ? ModelOutputType.Structured
-        : ModelOutputType.Text,
-      modelId,
-    });
+    let provider = await this.providerFactory.getProvider(
+      {
+        outputType: structured
+          ? ModelOutputType.Structured
+          : ModelOutputType.Text,
+        modelId,
+      },
+      { prefer }
+    );
 
     if (!provider) {
       throw new NoCopilotProviderAvailable();
@@ -175,7 +180,8 @@ export class CopilotTranscriptionService {
   private async chatWithPrompt(
     promptName: string,
     message: Partial<PromptMessage>,
-    schema?: ZodType<any>
+    schema?: ZodType<any>,
+    prefer?: CopilotProviderType
   ): Promise<string> {
     const prompt = await this.prompt.get(promptName);
     if (!prompt) {
@@ -186,7 +192,7 @@ export class CopilotTranscriptionService {
     const msg = { role: 'user' as const, content: '', ...message };
     const config = Object.assign({}, prompt.config);
     if (schema) {
-      const provider = await this.getProvider(prompt.model, true);
+      const provider = await this.getProvider(prompt.model, true, prefer);
       return provider.structure(
         cond,
         [...prompt.finish({ schema }), msg],
@@ -226,13 +232,12 @@ export class CopilotTranscriptionService {
   }
 
   private async callTranscript(url: string, mimeType: string, offset: number) {
+    // NOTE: Vertex provider not support transcription yet, we always use Gemini here
     const result = await this.chatWithPrompt(
       'Transcript audio',
-      {
-        attachments: [url],
-        params: { mimetype: mimeType },
-      },
-      TranscriptionResponseSchema
+      { attachments: [url], params: { mimetype: mimeType } },
+      TranscriptionResponseSchema,
+      CopilotProviderType.Gemini
     );
 
     const transcription = TranscriptionResponseSchema.parse(
