@@ -218,6 +218,12 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
       user-select: none;
     }
 
+    .chat-panel-send {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
     .chat-panel-send svg rect {
       fill: var(--affine-primary-color);
     }
