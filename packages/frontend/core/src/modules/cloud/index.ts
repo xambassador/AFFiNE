@@ -101,6 +101,7 @@ import { DocCreatedByUpdatedBySyncService } from './services/doc-created-by-upda
 import { WorkspacePermissionService } from '../permissions';
 import { DocScope, DocService, DocsService } from '../doc';
 import { DocCreatedByUpdatedBySyncStore } from './stores/doc-created-by-updated-by-sync';
+import { GlobalDialogService } from '../dialogs';
 
 export function configureCloudModule(framework: Framework) {
   configureDefaultAuthProvider(framework);
@@ -123,7 +124,12 @@ export function configureCloudModule(framework: Framework) {
         f.getOptional(ValidatorProvider)
       );
     })
-    .service(AuthService, [FetchService, AuthStore, UrlService])
+    .service(AuthService, [
+      FetchService,
+      AuthStore,
+      UrlService,
+      GlobalDialogService,
+    ])
     .store(AuthStore, [
       FetchService,
       GraphQLService,

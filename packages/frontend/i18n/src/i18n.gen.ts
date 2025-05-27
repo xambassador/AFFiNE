@@ -4830,13 +4830,49 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.setting.account"](): string;
     /**
-      * `Delete account`
+      * `Delete your account`
       */
     ["com.affine.setting.account.delete"](): string;
     /**
-      * `Permanently delete this account and the Workspace data backup in AFFiNE Cloud. This action can not be undone.`
+      * `Once deleted, your account will no longer be accessible, and all data in your personal cloud space will be permanently deleted.`
       */
     ["com.affine.setting.account.delete.message"](): string;
+    /**
+      * `Cannot delete account`
+      */
+    ["com.affine.setting.account.delete.team-warning-title"](): string;
+    /**
+      * `You’re the owner of a team workspace. To delete your account, please delete the workspace or transfer ownership first.`
+      */
+    ["com.affine.setting.account.delete.team-warning-description"](): string;
+    /**
+      * `Delete your account?`
+      */
+    ["com.affine.setting.account.delete.confirm-title"](): string;
+    /**
+      * `Are you sure you want to delete your account?`
+      */
+    ["com.affine.setting.account.delete.confirm-description-1"](): string;
+    /**
+      * `Please type your email to confirm`
+      */
+    ["com.affine.setting.account.delete.input-placeholder"](): string;
+    /**
+      * `Delete`
+      */
+    ["com.affine.setting.account.delete.confirm-button"](): string;
+    /**
+      * `Account deleted`
+      */
+    ["com.affine.setting.account.delete.success-title"](): string;
+    /**
+      * `Your account and cloud data have been deleted.`
+      */
+    ["com.affine.setting.account.delete.success-description-1"](): string;
+    /**
+      * `Local data can be deleted by uninstalling app and clearing browser data.`
+      */
+    ["com.affine.setting.account.delete.success-description-2"](): string;
     /**
       * `Your personal information`
       */
@@ -9150,6 +9186,12 @@ export const TypedTrans: {
     ["com.affine.selectPage.empty.tips"]: ComponentType<TypedTransProps<{
         readonly search: string;
     }, {
+        ["1"]: JSX.Element;
+    }>>;
+    /**
+      * `Your account will be inaccessible, and your personal cloud space will be permanently deleted. You can remove local data by uninstalling the app or clearing your browser storage. <1>This action is irreversible.</1>`
+      */
+    ["com.affine.setting.account.delete.confirm-description-2"]: ComponentType<TypedTransProps<Readonly<{}>, {
         ["1"]: JSX.Element;
     }>>;
     /**

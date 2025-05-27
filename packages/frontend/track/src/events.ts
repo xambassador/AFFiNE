@@ -118,7 +118,8 @@ type AuthEvents =
   | 'signIn'
   | 'signInFail'
   | 'signedIn'
-  | 'signOut';
+  | 'signOut'
+  | 'deleteAccount';
 type AccountEvents = 'uploadAvatar' | 'removeAvatar' | 'updateUserName';
 type PaymentEvents =
   | 'viewPlans'
@@ -235,7 +236,14 @@ interface PageEvents extends PageDivision {
   $: {
     $: {
       $: ['createWorkspace', 'checkout'];
-      auth: ['requestSignIn', 'signIn', 'signedIn', 'signInFail', 'signOut'];
+      auth: [
+        'requestSignIn',
+        'signIn',
+        'signedIn',
+        'signInFail',
+        'signOut',
+        'deleteAccount',
+      ];
     };
     sharePanel: {
       $: [

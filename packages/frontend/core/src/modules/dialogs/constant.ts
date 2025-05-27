@@ -37,6 +37,7 @@ export type GLOBAL_DIALOG_SCHEMA = {
     openPageId?: string;
     serverId?: string;
   }) => boolean;
+  'deleted-account': () => void;
 };
 
 export type WORKSPACE_DIALOG_SCHEMA = {
