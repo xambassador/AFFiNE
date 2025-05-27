@@ -109,6 +109,15 @@ export interface AlreadyInSpaceDataType {
   spaceId: Scalars['String']['output'];
 }
 
+export interface AppConfigValidateResult {
+  __typename?: 'AppConfigValidateResult';
+  error: Maybe<Scalars['String']['output']>;
+  key: Scalars['String']['output'];
+  module: Scalars['String']['output'];
+  valid: Scalars['Boolean']['output'];
+  value: Scalars['JSON']['output'];
+}
+
 export interface BlobNotFoundDataType {
   __typename?: 'BlobNotFoundDataType';
   blobId: Scalars['String']['output'];
@@ -665,6 +674,8 @@ export type ErrorDataUnion =
   | ExpectToUpdateDocUserRoleDataType
   | GraphqlBadRequestDataType
   | HttpRequestErrorDataType
+  | InvalidAppConfigDataType
+  | InvalidAppConfigInputDataType
   | InvalidEmailDataType
   | InvalidHistoryTimestampDataType
   | InvalidIndexerInputDataType
@@ -762,6 +773,7 @@ export enum ErrorNames {
   HTTP_REQUEST_ERROR = 'HTTP_REQUEST_ERROR',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   INVALID_APP_CONFIG = 'INVALID_APP_CONFIG',
+  INVALID_APP_CONFIG_INPUT = 'INVALID_APP_CONFIG_INPUT',
   INVALID_AUTH_STATE = 'INVALID_AUTH_STATE',
   INVALID_CHECKOUT_PARAMETERS = 'INVALID_CHECKOUT_PARAMETERS',
   INVALID_EMAIL = 'INVALID_EMAIL',
@@ -904,6 +916,18 @@ export interface HttpRequestErrorDataType {
 
 export interface ImportUsersInput {
   users: Array<CreateUserInput>;
+}
+
+export interface InvalidAppConfigDataType {
+  __typename?: 'InvalidAppConfigDataType';
+  hint: Scalars['String']['output'];
+  key: Scalars['String']['output'];
+  module: Scalars['String']['output'];
+}
+
+export interface InvalidAppConfigInputDataType {
+  __typename?: 'InvalidAppConfigInputDataType';
+  message: Scalars['String']['output'];
 }
 
 export interface InvalidEmailDataType {
@@ -1334,6 +1358,8 @@ export interface Mutation {
   updateWorkspaceEmbeddingIgnoredDocs: Scalars['Int']['output'];
   /** Upload user avatar */
   uploadAvatar: UserType;
+  /** validate app configuration */
+  validateAppConfig: Array<AppConfigValidateResult>;
   verifyEmail: Scalars['Boolean']['output'];
 }
 
@@ -1710,6 +1736,10 @@ export interface MutationUpdateWorkspaceEmbeddingIgnoredDocsArgs {
 
 export interface MutationUploadAvatarArgs {
   avatar: Scalars['Upload']['input'];
+}
+
+export interface MutationValidateAppConfigArgs {
+  updates: Array<UpdateAppConfigInput>;
 }
 
 export interface MutationVerifyEmailArgs {
@@ -2898,6 +2928,22 @@ export type UpdateAppConfigMutationVariables = Exact<{
 export type UpdateAppConfigMutation = {
   __typename?: 'Mutation';
   updateAppConfig: any;
+};
+
+export type ValidateConfigMutationVariables = Exact<{
+  updates: Array<UpdateAppConfigInput> | UpdateAppConfigInput;
+}>;
+
+export type ValidateConfigMutation = {
+  __typename?: 'Mutation';
+  validateAppConfig: Array<{
+    __typename?: 'AppConfigValidateResult';
+    module: string;
+    key: string;
+    value: Record<string, string>;
+    valid: boolean;
+    error: string | null;
+  }>;
 };
 
 export type DeleteBlobMutationVariables = Exact<{
@@ -5311,6 +5357,11 @@ export type Mutations =
       name: 'updateAppConfigMutation';
       variables: UpdateAppConfigMutationVariables;
       response: UpdateAppConfigMutation;
+    }
+  | {
+      name: 'validateConfigMutation';
+      variables: ValidateConfigMutationVariables;
+      response: ValidateConfigMutation;
     }
   | {
       name: 'deleteBlobMutation';

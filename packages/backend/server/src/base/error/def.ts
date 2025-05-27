@@ -877,7 +877,14 @@ export const USER_FRIENDLY_ERRORS = {
   // app config
   invalid_app_config: {
     type: 'invalid_input',
-    message: 'Invalid app config.',
+    args: { module: 'string', key: 'string', hint: 'string' },
+    message: ({ module, key, hint }) =>
+      `Invalid app config for module \`${module}\` with key \`${key}\`. ${hint}.`,
+  },
+  invalid_app_config_input: {
+    type: 'invalid_input',
+    args: { message: 'string' },
+    message: ({ message }) => `Invalid app config input: ${message}`,
   },
 
   // indexer errors

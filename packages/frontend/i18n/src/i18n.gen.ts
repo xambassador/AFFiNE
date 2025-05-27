@@ -8812,9 +8812,19 @@ export function useAFFiNEI18N(): {
       */
     ["error.MENTION_USER_ONESELF_DENIED"](): string;
     /**
-      * `Invalid app config.`
+      * `Invalid app config for module `{{module}}` with key `{{key}}`. {{hint}}.`
       */
-    ["error.INVALID_APP_CONFIG"](): string;
+    ["error.INVALID_APP_CONFIG"](options: Readonly<{
+        module: string;
+        key: string;
+        hint: string;
+    }>): string;
+    /**
+      * `Invalid app config input: {{message}}`
+      */
+    ["error.INVALID_APP_CONFIG_INPUT"](options: {
+        readonly message: string;
+    }): string;
     /**
       * `Search provider not found.`
       */

@@ -246,6 +246,20 @@ export const updateAppConfigMutation = {
 }`,
 };
 
+export const validateConfigMutation = {
+  id: 'validateConfigMutation' as const,
+  op: 'validateConfig',
+  query: `mutation validateConfig($updates: [UpdateAppConfigInput!]!) {
+  validateAppConfig(updates: $updates) {
+    module
+    key
+    value
+    valid
+    error
+  }
+}`,
+};
+
 export const deleteBlobMutation = {
   id: 'deleteBlobMutation' as const,
   op: 'deleteBlob',
