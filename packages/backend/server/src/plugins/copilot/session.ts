@@ -141,16 +141,13 @@ export class ChatSession implements AsyncDisposable {
     return ret;
   }
 
-  finish(params: PromptParams): PromptMessage[] {
-    const messages = this.takeMessages();
+  private mergeUserContent(params: PromptParams) {
+    const messages = this.stashMessages;
     const firstMessage = messages.at(0);
-    // TODO: refactor this {{content}} keyword agreement
-    // if the message in prompt config contains {{content}},
-    // we should combine it with the user message in the prompt
     if (
-      messages.length === 1 &&
-      firstMessage &&
-      this.state.prompt.paramKeys.includes('content')
+      this.state.prompt.paramKeys.includes('content') &&
+      !messages.some(m => m.role === AiPromptRole.assistant) &&
+      firstMessage
     ) {
       const normalizedParams = {
         ...params,
@@ -178,7 +175,18 @@ export class ChatSession implements AsyncDisposable {
 
       return finished;
     }
+    return;
+  }
 
+  finish(params: PromptParams): PromptMessage[] {
+    // if the message in prompt config contains {{content}},
+    // we should combine it with the user message in the prompt
+    const mergedMessage = this.mergeUserContent(params);
+    if (mergedMessage) {
+      return mergedMessage;
+    }
+
+    const messages = this.takeMessages();
     const lastMessage = messages.at(-1);
     return [
       ...this.state.prompt.finish(

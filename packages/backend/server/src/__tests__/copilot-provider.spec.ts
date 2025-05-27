@@ -518,12 +518,7 @@ const actions = [
     type: 'text' as const,
   },
   {
-    promptName: [
-      'debug:action:fal-face-to-sticker',
-      'debug:action:fal-remove-bg',
-      'debug:action:fal-sd15',
-      'debug:action:fal-upscaler',
-    ],
+    promptName: ['Convert to sticker', 'Remove background', 'Upscale image'],
     messages: [
       {
         role: 'user' as const,
@@ -590,6 +585,8 @@ for (const {
         }))!;
         t.truthy(provider, 'should have provider');
         await retry(`action: ${promptName}`, t, async t => {
+          const finalConfig = Object.assign({}, prompt.config, config);
+
           switch (type) {
             case 'text': {
               const result = await provider.text(
@@ -604,7 +601,7 @@ for (const {
                   ),
                   ...messages,
                 ],
-                Object.assign({}, prompt.config, config)
+                finalConfig
               );
               t.truthy(result, 'should return result');
               verifier?.(t, result);
@@ -622,23 +619,39 @@ for (const {
                   ),
                   ...messages,
                 ],
-                Object.assign({}, prompt.config, config)
+                finalConfig
               );
               t.truthy(result, 'should return result');
               verifier?.(t, result);
               break;
             }
             case 'image': {
-              const stream = provider.streamImages({ modelId: prompt.model }, [
-                ...prompt.finish(
-                  messages.reduce(
-                    // @ts-expect-error
-                    (acc, m) => Object.assign(acc, m.params),
-                    {}
-                  )
-                ),
-                ...messages,
-              ]);
+              const finalMessage = [...messages];
+              const params = {};
+              if (finalMessage.length === 1) {
+                const latestMessage = finalMessage.pop()!;
+                Object.assign(params, {
+                  content: latestMessage.content,
+                  attachments:
+                    'attachments' in latestMessage
+                      ? latestMessage.attachments
+                      : undefined,
+                });
+              }
+              const stream = provider.streamImages(
+                { modelId: prompt.model },
+                [
+                  ...prompt.finish(
+                    finalMessage.reduce(
+                      // @ts-expect-error
+                      (acc, m) => Object.assign(acc, m.params),
+                      params
+                    )
+                  ),
+                  ...finalMessage,
+                ],
+                finalConfig
+              );
 
               const result = [];
               for await (const attachment of stream) {
