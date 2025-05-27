@@ -1,4 +1,10 @@
-import { Divider, IconButton, Menu, MenuItem } from '@affine/component';
+import {
+  Divider,
+  IconButton,
+  Menu,
+  MenuItem,
+  Tooltip,
+} from '@affine/component';
 import { AddFilterMenu } from '@affine/core/components/filter/add-filter';
 import {
   CollectionService,
@@ -6,6 +12,7 @@ import {
   PinnedCollectionService,
 } from '@affine/core/modules/collection';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
+import { WorkspaceDialogService } from '@affine/core/modules/dialogs';
 import { useI18n } from '@affine/i18n';
 import {
   CloseIcon,
@@ -24,13 +31,11 @@ export const PinnedCollectionItem = ({
   isActive,
   onClick,
   onClickRemove,
-  onClickEdit,
 }: {
   record: PinnedCollectionRecord;
   onClickRemove: () => void;
   isActive: boolean;
   onClick: () => void;
-  onClickEdit: () => void;
 }) => {
   const t = useI18n();
   const collectionService = useService(CollectionService);
@@ -49,16 +54,6 @@ export const PinnedCollectionItem = ({
       onClick={onClick}
     >
       <span className={styles.itemContent}>{name ?? t['Untitled']()}</span>
-      <IconButton
-        size="16"
-        className={styles.editIconButton}
-        onClick={e => {
-          e.stopPropagation();
-          onClickEdit();
-        }}
-      >
-        <EditIcon />
-      </IconButton>
       {isActive && (
         <IconButton
           className={styles.closeButton}
@@ -80,17 +75,16 @@ export const PinnedCollections = ({
   onActiveAll,
   onActiveCollection,
   onAddFilter,
-  onEditCollection,
   hiddenAdd,
 }: {
   activeCollectionId: string | null;
   onActiveAll: () => void;
   onActiveCollection: (collectionId: string) => void;
   onAddFilter: (params: FilterParams) => void;
-  onEditCollection: (collectionId: string) => void;
   hiddenAdd?: boolean;
 }) => {
   const t = useI18n();
+  const workspaceDialogService = useService(WorkspaceDialogService);
   const pinnedCollectionService = useService(PinnedCollectionService);
   const pinnedCollections = useLiveData(
     pinnedCollectionService.sortedPinnedCollections$
@@ -127,7 +121,6 @@ export const PinnedCollections = ({
               ? onActiveCollection(record.collectionId)
               : undefined
           }
-          onClickEdit={() => onEditCollection(record.collectionId)}
           onClickRemove={() => {
             const nextCollectionId = pinnedCollections[index - 1]?.collectionId;
             if (nextCollectionId) {
@@ -144,6 +137,22 @@ export const PinnedCollections = ({
           onPinCollection={handleAddPinnedCollection}
           onAddFilter={onAddFilter}
         />
+      )}
+      <div style={{ flex: 1 }}></div>
+      {activeCollectionId && (
+        <Tooltip content={t['com.affine.all-docs.pinned-collection.edit']()}>
+          <IconButton
+            size="16"
+            className={styles.editIconButton}
+            onClick={() =>
+              workspaceDialogService.open('collection-editor', {
+                collectionId: activeCollectionId,
+              })
+            }
+          >
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
       )}
     </div>
   );

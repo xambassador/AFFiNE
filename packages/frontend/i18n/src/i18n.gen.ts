@@ -7173,6 +7173,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.all-docs.pinned-collection.all"](): string;
     /**
+      * `Edit collection rules`
+      */
+    ["com.affine.all-docs.pinned-collection.edit"](): string;
+    /**
       * `Template`
       */
     ["com.affine.all-docs.group.is-template"](): string;

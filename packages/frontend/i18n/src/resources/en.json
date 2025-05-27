@@ -1792,6 +1792,7 @@
   "com.affine.all-docs.quick-action.delete-permanently": "Delete permanently",
   "com.affine.all-docs.quick-action.restore": "Restore",
   "com.affine.all-docs.pinned-collection.all": "All",
+  "com.affine.all-docs.pinned-collection.edit": "Edit collection rules",
   "com.affine.all-docs.group.is-template": "Template",
   "com.affine.all-docs.group.is-not-template": "Not Template",
   "com.affine.all-docs.group.is-journal": "Journal",

@@ -122,7 +122,7 @@ export const AllPage = () => {
       .watch(
         selectedCollectionInfo
           ? {
-              filters: tempFilters ?? selectedCollectionInfo.rules.filters,
+              filters: selectedCollectionInfo.rules.filters,
               groupBy,
               orderBy,
               extraAllowList: selectedCollectionInfo.allowList,
@@ -221,19 +221,6 @@ export const AllPage = () => {
     setTempFilters(null);
   }, []);
 
-  const handleEditCollection = useCallback(
-    (collectionId: string) => {
-      const collection = collectionService.collection$(collectionId).value;
-      if (!collection) {
-        return;
-      }
-      setSelectedCollectionId(collectionId);
-      setTempFilters(collection.info$.value.rules.filters);
-      setTempFiltersInitial(null);
-    },
-    [collectionService]
-  );
-
   const handleSaveFilters = useCallback(() => {
     if (selectedCollectionId) {
       collectionService.updateCollection(selectedCollectionId, {
@@ -312,7 +299,6 @@ export const AllPage = () => {
               onActiveAll={handleSelectAll}
               onActiveCollection={handleSelectCollection}
               onAddFilter={handleNewTempFilter}
-              onEditCollection={handleEditCollection}
               hiddenAdd={tempFilters !== null}
             />
           </div>
