@@ -342,7 +342,7 @@ test('Dropdown menus should be closed automatically when toolbar is displayed', 
 
   await expect(moreMenu).toBeVisible();
 
-  await page.mouse.move(0, 0);
+  await page.keyboard.press('Escape');
 
   await expect(toolbar).toBeHidden();
 

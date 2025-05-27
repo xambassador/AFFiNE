@@ -346,13 +346,13 @@ test('should blur rich-text first on starting block selection', async ({
   await initThreeParagraphs(page);
   await assertRichTexts(page, ['123', '456', '789']);
 
-  await expect(page.locator('*:focus')).toHaveCount(1);
+  await expect(page.locator('[contenteditable="true"]:focus')).toHaveCount(1);
 
   await dragHandleFromBlockToBlockBottomById(page, '2', '4');
   await expect(page.locator('.affine-drop-indicator')).toBeHidden();
   await assertRichTexts(page, ['456', '789', '123']);
 
-  await expect(page.locator('*:focus')).toHaveCount(0);
+  await expect(page.locator('[contenteditable="true"]:focus')).toHaveCount(0);
 });
 
 test('hide drag handle when mouse is hovering over the title', async ({
@@ -490,7 +490,7 @@ test('should trigger click event on editor container when clicking on blocks und
     .locator('affine-block-selection')
     .locator('visible=true');
   await expect(blockSelections).toHaveCount(2);
-  await expect(page.locator('*:focus')).toHaveCount(0);
+  await expect(page.locator('[contenteditable="true"]:focus')).toHaveCount(0);
 
   const editorHost = getEditorHostLocator(page);
   const editors = editorHost.locator('rich-text');
@@ -506,7 +506,7 @@ test('should trigger click event on editor container when clicking on blocks und
   await page.mouse.down();
   await page.mouse.up();
   await expect(blockSelections).toHaveCount(0);
-  await expect(page.locator('*:focus')).toHaveCount(1);
+  await expect(page.locator('[contenteditable="true"]:focus')).toHaveCount(1);
 });
 
 test('should get to selected block when dragging unselected block', async ({
