@@ -7145,6 +7145,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.all-docs.group.is-not-checked"](): string;
     /**
+      * `Never updated`
+      */
+    ["com.affine.all-docs.group.updated-at.never-updated"](): string;
+    /**
       * `core`
       */
     core(): string;

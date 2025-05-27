@@ -1782,6 +1782,7 @@
   "com.affine.all-docs.group.is-not-journal": "Not Journal",
   "com.affine.all-docs.group.is-checked": "Checked",
   "com.affine.all-docs.group.is-not-checked": "Unchecked",
+  "com.affine.all-docs.group.updated-at.never-updated": "Never updated",
   "core": "core",
   "dark": "Dark",
   "invited you to join": "invited you to join",

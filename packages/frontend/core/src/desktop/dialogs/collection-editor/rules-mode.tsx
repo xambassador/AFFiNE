@@ -55,6 +55,8 @@ export const RulesMode = ({
       showDragHandle: false,
       showMoreOperation: false,
       quickFavorite: true,
+      groupBy: undefined,
+      orderBy: undefined,
     })
   );
 
@@ -76,6 +78,11 @@ export const RulesMode = ({
             value: 'false',
           },
         ],
+        orderBy: {
+          type: 'system',
+          key: 'updatedAt',
+          desc: true,
+        },
       })
       .subscribe(rules => {
         setRulesPageIds(rules.groups.flatMap(group => group.items));

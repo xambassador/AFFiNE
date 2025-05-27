@@ -49,6 +49,8 @@ export const SelectPage = memo(function SelectPage({
       quickFavorite: true,
       showMoreOperation: false,
       showDragHandle: false,
+      groupBy: undefined,
+      orderBy: undefined,
     });
   });
 
@@ -132,6 +134,11 @@ export const SelectPage = memo(function SelectPage({
             value: 'false',
           },
         ],
+        orderBy: {
+          type: 'system',
+          key: 'updatedAt',
+          desc: true,
+        },
       })
       .subscribe(result => {
         docExplorerContextValue.groups$.next(result.groups);

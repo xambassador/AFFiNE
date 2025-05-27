@@ -19,6 +19,8 @@ const AllDocs = () => {
       displayProperties: ['createdAt', 'updatedAt', 'tags'],
       view: 'masonry',
       showDragHandle: false,
+      groupBy: undefined,
+      orderBy: undefined,
     })
   );
   const collectionRulesService = useService(CollectionRulesService);
@@ -43,8 +45,8 @@ const AllDocs = () => {
           },
         ],
         orderBy: {
-          type: 'property',
-          key: 'createdAt',
+          type: 'system',
+          key: 'updatedAt',
           desc: true,
         },
       })

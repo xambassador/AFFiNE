@@ -11,6 +11,15 @@ const DefaultDisplayPreference: ExplorerDisplayPreference = {
     'system:createdBy',
     'system:tags',
   ],
+  orderBy: {
+    type: 'system',
+    key: 'updatedAt',
+    desc: true,
+  },
+  groupBy: {
+    type: 'system',
+    key: 'updatedAt',
+  },
   showDocIcon: true,
   showDocPreview: true,
   quickFavorite: true,

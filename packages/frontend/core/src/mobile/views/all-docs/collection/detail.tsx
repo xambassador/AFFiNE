@@ -36,6 +36,8 @@ const CollectionDocs = ({ collection }: { collection: Collection }) => {
       displayProperties: ['createdAt', 'updatedAt', 'tags'],
       view: 'masonry',
       showDragHandle: false,
+      groupBy: undefined,
+      orderBy: undefined,
     })
   );
   const groups = useLiveData(explorerContextValue.groups$);

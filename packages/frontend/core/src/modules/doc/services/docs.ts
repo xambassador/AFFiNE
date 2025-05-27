@@ -164,6 +164,7 @@ export class DocsService extends Service {
       middleware.afterCreate?.(docRecord, options);
     }
     docRecord.setCreatedAt(Date.now());
+    docRecord.setUpdatedAt(Date.now());
     this.eventBus.emit(DocCreated, {
       doc: docRecord,
       docCreateOptions: options,

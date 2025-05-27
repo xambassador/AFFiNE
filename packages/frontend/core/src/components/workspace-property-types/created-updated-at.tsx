@@ -11,6 +11,7 @@ const toRelativeDate = (time: string | number) => {
   return i18nTime(time, {
     relative: {
       max: [1, 'day'],
+      accuracy: 'day',
     },
     absolute: {
       accuracy: 'day',
@@ -54,12 +55,39 @@ export const UpdatedAtValue = MetaDateValueFactory({
   type: 'updatedDate',
 });
 
-export const CreatedAtGroupHeader = (props: GroupHeaderProps) => {
-  return <PlainTextDocGroupHeader {...props} />;
+export const CreatedAtGroupHeader = ({
+  groupId,
+  docCount,
+}: GroupHeaderProps) => {
+  const date = groupId ? toRelativeDate(groupId) : 'No Date';
+  return (
+    <PlainTextDocGroupHeader
+      style={{ textTransform: 'capitalize' }}
+      groupId={groupId}
+      docCount={docCount}
+    >
+      {date}
+    </PlainTextDocGroupHeader>
+  );
 };
 
-export const UpdatedAtGroupHeader = (props: GroupHeaderProps) => {
-  return <PlainTextDocGroupHeader {...props} />;
+export const UpdatedAtGroupHeader = ({
+  groupId,
+  docCount,
+}: GroupHeaderProps) => {
+  const t = useI18n();
+  const date = groupId
+    ? toRelativeDate(groupId)
+    : t['com.affine.all-docs.group.updated-at.never-updated']();
+  return (
+    <PlainTextDocGroupHeader
+      style={{ textTransform: 'capitalize' }}
+      groupId={groupId}
+      docCount={docCount}
+    >
+      {date}
+    </PlainTextDocGroupHeader>
+  );
 };
 
 export const CreateAtDocListProperty = ({ doc }: { doc: DocRecord }) => {

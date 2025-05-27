@@ -20,6 +20,8 @@ const TagDocs = ({ tag }: { tag: Tag }) => {
       displayProperties: ['createdAt', 'updatedAt', 'tags'],
       view: 'masonry',
       showDragHandle: false,
+      groupBy: undefined,
+      orderBy: undefined,
     })
   );
   const collectionRulesService = useService(CollectionRulesService);
@@ -50,8 +52,8 @@ const TagDocs = ({ tag }: { tag: Tag }) => {
           },
         ],
         orderBy: {
-          type: 'property',
-          key: 'createdAt',
+          type: 'system',
+          key: 'updatedAt',
           desc: true,
         },
       })
