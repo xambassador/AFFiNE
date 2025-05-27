@@ -181,8 +181,10 @@ export const DocListItem = ({ ...props }: DocListItemProps) => {
         )}
       </WorkbenchLink>
       <CustomDragPreview>
-        <RawDocIcon id={props.docId} />
-        <RawDocTitle id={props.docId} />
+        <div className={styles.dragPreview}>
+          <RawDocIcon id={props.docId} className={styles.dragPreviewIcon} />
+          <RawDocTitle id={props.docId} />
+        </div>
       </CustomDragPreview>
     </>
   );

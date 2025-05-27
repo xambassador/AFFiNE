@@ -6,6 +6,20 @@ export const root = style({
   height: '100%',
 });
 
+export const dragPreview = style({
+  display: 'flex',
+  alignItems: 'center',
+  gap: 8,
+  padding: '8px 16px 8px 12px',
+  background: cssVarV2.layer.background.primary,
+  borderRadius: 4,
+  border: `1px solid ${cssVarV2.layer.insideBorder.border}`,
+  fontSize: 14,
+});
+export const dragPreviewIcon = style({
+  fontSize: 24,
+});
+
 export const listViewRoot = style({
   padding: '0px 4px',
   width: '100%',
