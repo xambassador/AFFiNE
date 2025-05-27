@@ -148,7 +148,7 @@ test('undo/redo should work when change note custom background', async ({
   await selectNoteInEdgeless(page, noteId);
 
   const getNoteBackground = async () => {
-    return page.locator('edgeless-note-background > div').evaluate(el => {
+    return page.locator('edgeless-note-background').evaluate(el => {
       return getComputedStyle(el).backgroundColor;
     });
   };

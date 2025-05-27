@@ -216,3 +216,33 @@ test('should keep relative order of new note when a block is dragged from note t
   await waitNextFrame(page);
   await assertRichTexts(page, ['3', '5', '6', '7', '9']);
 });
+
+test('drag handle should work when hover on the background of a selected edgeless note', async ({
+  page,
+}) => {
+  await enterPlaygroundRoom(page);
+  await initEmptyEdgelessState(page);
+  await focusRichText(page);
+  await type(page, 'hello');
+  await switchEditorMode(page);
+  await page.mouse.dblclick(CENTER_X, CENTER_Y);
+  // wait for the note animation
+  await waitNextFrame(page, 400);
+
+  const noteRect = await page.locator('affine-edgeless-note').boundingBox();
+  assertRectExist(noteRect);
+
+  const noteBackgroundRect = await page
+    .locator('edgeless-note-background')
+    .boundingBox();
+  assertRectExist(noteBackgroundRect);
+
+  const paragraphRect = await page.locator('affine-paragraph').boundingBox();
+  assertRectExist(paragraphRect);
+
+  // move to the area between note background and note block and before the paragraph
+  const x = (noteRect.x + noteBackgroundRect.x) / 2;
+  const y = paragraphRect.y + paragraphRect.height / 2;
+  await page.mouse.move(x, y, { steps: 2 });
+  await expect(page.locator('.affine-drag-handle-container')).toBeVisible();
+});
