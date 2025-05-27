@@ -1,7 +1,6 @@
 import { SignalWatcher } from '@blocksuite/affine/global/lit';
 import { unsafeCSSVar } from '@blocksuite/affine/shared/theme';
 import type { EditorHost } from '@blocksuite/affine/std';
-import { InformationIcon } from '@blocksuite/icons/lit';
 import { css, html, LitElement } from 'lit';
 import { property, state } from 'lit/decorators.js';
 import { debounce, noop } from 'lodash-es';
@@ -15,6 +14,13 @@ export class AIChatEmbeddingStatusTooltip extends SignalWatcher(LitElement) {
       align-items: center;
       gap: 4px;
       user-select: none;
+    }
+    .embedding-status-text {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 500px;
     }
     .check-status {
       padding: 4px;
@@ -74,7 +80,9 @@ export class AIChatEmbeddingStatusTooltip extends SignalWatcher(LitElement) {
         class="embedding-status"
         data-testid="ai-chat-embedding-status-tooltip"
       >
-        ${InformationIcon()} Better results after embedding finished.
+        <span class="embedding-status-text">
+          Better results after embedding finished.
+        </span>
         <span
           class="check-status"
           data-testid="ai-chat-embedding-status-tooltip-check"

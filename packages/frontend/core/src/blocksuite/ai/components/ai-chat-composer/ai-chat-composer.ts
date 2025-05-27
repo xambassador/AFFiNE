@@ -1,3 +1,5 @@
+import './ai-chat-composer-tip';
+
 import type {
   ContextEmbedStatus,
   CopilotContextDoc,
@@ -9,7 +11,6 @@ import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
 import type { EditorHost } from '@blocksuite/affine/std';
 import { ShadowlessElement } from '@blocksuite/affine/std';
 import type { Store } from '@blocksuite/affine/store';
-import { InformationIcon } from '@blocksuite/icons/lit';
 import { type Signal, signal } from '@preact/signals-core';
 import { css, html, type PropertyValues } from 'lit';
 import { property, state } from 'lit/decorators.js';
@@ -45,12 +46,6 @@ export class AIChatComposer extends SignalWatcher(
       color: var(--affine-text-secondary-color);
       font-size: 12px;
       user-select: none;
-    }
-
-    .ai-misleading-info {
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
   `;
 
@@ -153,8 +148,12 @@ export class AIChatComposer extends SignalWatcher(
         .addImages=${this.addImages}
       ></ai-chat-input>
       <div class="chat-panel-footer">
-        <div class="ai-misleading-info">${InformationIcon()} AI outputs can be misleading or wrong</div>
-        <ai-chat-embedding-status-tooltip .host=${this.host} />
+        <ai-chat-composer-tip
+          .tips=${[
+            html`<span>AI outputs can be misleading or wrong</span>`,
+            html`<ai-chat-embedding-status-tooltip .host=${this.host} />`,
+          ]}
+        ></ai-chat-composer-tip>
       </div>
     </div>`;
   }
