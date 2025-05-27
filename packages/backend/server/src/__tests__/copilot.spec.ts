@@ -26,7 +26,10 @@ import {
   ModelOutputType,
   OpenAIProvider,
 } from '../plugins/copilot/providers';
-import { CitationParser } from '../plugins/copilot/providers/utils';
+import {
+  CitationParser,
+  TextStreamParser,
+} from '../plugins/copilot/providers/utils';
 import { ChatSessionService } from '../plugins/copilot/session';
 import { CopilotStorage } from '../plugins/copilot/storage';
 import { CopilotTranscriptionService } from '../plugins/copilot/transcript';
@@ -1255,6 +1258,213 @@ test('CitationParser should replace openai style reference chunks', t => {
     `[^1]: {"type":"url","url":"${encodeURIComponent('https://example1.com')}"}`,
   ].join('\n');
   t.is(result, expected);
+});
+
+test('TextStreamParser should format different types of chunks correctly', t => {
+  // Define interfaces for fixtures
+  interface BaseFixture {
+    chunk: any;
+    description: string;
+  }
+
+  interface ContentFixture extends BaseFixture {
+    expected: string;
+  }
+
+  interface ErrorFixture extends BaseFixture {
+    errorMessage: string;
+  }
+
+  type ChunkFixture = ContentFixture | ErrorFixture;
+
+  // Define test fixtures for different chunk types
+  const fixtures: Record<string, ChunkFixture> = {
+    textDelta: {
+      chunk: {
+        type: 'text-delta' as const,
+        textDelta: 'Hello world',
+      } as any,
+      expected: 'Hello world',
+      description: 'should format text-delta correctly',
+    },
+    reasoning: {
+      chunk: {
+        type: 'reasoning' as const,
+        textDelta: 'I need to think about this',
+      } as any,
+      expected: '\n> [!]\n> I need to think about this',
+      description: 'should format reasoning as callout',
+    },
+    webSearch: {
+      chunk: {
+        type: 'tool-call' as const,
+        toolName: 'web_search_exa' as const,
+        toolCallId: 'test-id-1',
+        args: { query: 'test query', mode: 'AUTO' as const },
+      } as any,
+      expected: '\n> [!]\n> \n> Searching the web "test query"\n> ',
+      description: 'should format web search tool call correctly',
+    },
+    webCrawl: {
+      chunk: {
+        type: 'tool-call' as const,
+        toolName: 'web_crawl_exa' as const,
+        toolCallId: 'test-id-2',
+        args: { url: 'https://example.com' },
+      } as any,
+      expected: '\n> [!]\n> \n> Crawling the web "https://example.com"\n> ',
+      description: 'should format web crawl tool call correctly',
+    },
+    toolResult: {
+      chunk: {
+        type: 'tool-result' as const,
+        toolName: 'web_search_exa' as const,
+        toolCallId: 'test-id-1',
+        args: { query: 'test query', mode: 'AUTO' as const },
+        result: [
+          {
+            title: 'Test Title',
+            url: 'https://test.com',
+            content: 'Test content',
+            favicon: undefined,
+            publishedDate: undefined,
+            author: undefined,
+          },
+          {
+            title: null,
+            url: 'https://example.com',
+            content: 'Example content',
+            favicon: undefined,
+            publishedDate: undefined,
+            author: undefined,
+          },
+        ],
+      } as any,
+      expected:
+        '\n> [!]\n> \n> \n> \n> [Test Title](https://test.com)\n> \n> \n> \n> [https://example.com](https://example.com)\n> \n> \n> ',
+      description: 'should format tool result correctly',
+    },
+    error: {
+      chunk: {
+        type: 'error' as const,
+        error: { type: 'testError', message: 'Test error message' },
+      } as any,
+      errorMessage: 'Test error message',
+      description: 'should throw error for error chunks',
+    },
+  };
+
+  // Test each chunk type individually
+  Object.entries(fixtures).forEach(([_name, fixture]) => {
+    const parser = new TextStreamParser();
+    if ('errorMessage' in fixture) {
+      t.throws(
+        () => parser.parse(fixture.chunk),
+        { message: fixture.errorMessage },
+        fixture.description
+      );
+    } else {
+      const result = parser.parse(fixture.chunk);
+      t.is(result, fixture.expected, fixture.description);
+    }
+  });
+});
+
+test('TextStreamParser should process a sequence of message chunks', t => {
+  const parser = new TextStreamParser();
+
+  // Define test fixtures for mixed chunks sequence
+  const mixedChunksFixture = {
+    chunks: [
+      // Reasoning chunks
+      {
+        type: 'reasoning' as const,
+        textDelta: 'The user is asking about',
+      } as any,
+      {
+        type: 'reasoning' as const,
+        textDelta: ' recent advances in quantum computing',
+      } as any,
+      {
+        type: 'reasoning' as const,
+        textDelta: ' and how it might impact',
+      } as any,
+      {
+        type: 'reasoning' as const,
+        textDelta: ' cryptography and data security.',
+      } as any,
+      {
+        type: 'reasoning' as const,
+        textDelta:
+          ' I should provide information on quantum supremacy achievements',
+      } as any,
+
+      // Text delta
+      {
+        type: 'text-delta' as const,
+        textDelta:
+          'Let me search for the latest breakthroughs in quantum computing and their ',
+      } as any,
+
+      // Tool call
+      {
+        type: 'tool-call' as const,
+        toolCallId: 'toolu_01ABCxyz123456789',
+        toolName: 'web_search_exa' as const,
+        args: {
+          query: 'latest quantum computing breakthroughs cryptography impact',
+        },
+      } as any,
+
+      // Tool result
+      {
+        type: 'tool-result' as const,
+        toolCallId: 'toolu_01ABCxyz123456789',
+        toolName: 'web_search_exa' as const,
+        args: {
+          query: 'latest quantum computing breakthroughs cryptography impact',
+        },
+        result: [
+          {
+            title: 'IBM Unveils 1000-Qubit Quantum Processor',
+            url: 'https://example.com/tech/quantum-computing-milestone',
+          },
+        ],
+      } as any,
+
+      // More text deltas
+      {
+        type: 'text-delta' as const,
+        textDelta: 'implications for security.',
+      } as any,
+      {
+        type: 'text-delta' as const,
+        textDelta: '\n\nQuantum computing has made ',
+      } as any,
+      {
+        type: 'text-delta' as const,
+        textDelta: 'remarkable progress in the past year. ',
+      } as any,
+      {
+        type: 'text-delta' as const,
+        textDelta:
+          'The development of more stable qubits has accelerated research significantly.',
+      } as any,
+    ],
+    expected:
+      '\n> [!]\n> The user is asking about recent advances in quantum computing and how it might impact cryptography and data security. I should provide information on quantum supremacy achievements\n\nLet me search for the latest breakthroughs in quantum computing and their \n> [!]\n> \n> Searching the web "latest quantum computing breakthroughs cryptography impact"\n> \n> \n> \n> [IBM Unveils 1000-Qubit Quantum Processor](https://example.com/tech/quantum-computing-milestone)\n> \n> \n> \n\nimplications for security.\n\nQuantum computing has made remarkable progress in the past year. The development of more stable qubits has accelerated research significantly.',
+    description:
+      'should format the entire stream correctly with proper sequence',
+  };
+
+  // Process all chunks sequentially
+  let result = '';
+  for (const chunk of mixedChunksFixture.chunks) {
+    result += parser.parse(chunk);
+  }
+
+  // Check final processed output
+  t.is(result, mixedChunksFixture.expected, mixedChunksFixture.description);
 });
 
 // ==================== context ====================

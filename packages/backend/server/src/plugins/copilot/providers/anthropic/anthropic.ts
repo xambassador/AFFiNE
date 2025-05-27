@@ -18,12 +18,10 @@ import type {
   PromptMessage,
 } from '../types';
 import { ModelOutputType } from '../types';
-import { chatToGPTMessage } from '../utils';
+import { chatToGPTMessage, TextStreamParser } from '../utils';
 
 export abstract class AnthropicProvider<T> extends CopilotProvider<T> {
   private readonly MAX_STEPS = 20;
-
-  private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
   protected abstract instance:
     | AnthropicSDKProvider
@@ -110,74 +108,14 @@ export abstract class AnthropicProvider<T> extends CopilotProvider<T> {
         experimental_continueSteps: true,
       });
 
-      let lastType;
-      // reasoning, tool-call, tool-result need to mark as callout
-      let prefix: string | null = this.CALLOUT_PREFIX;
+      const parser = new TextStreamParser();
       for await (const chunk of fullStream) {
-        switch (chunk.type) {
-          case 'text-delta': {
-            if (!prefix) {
-              prefix = this.CALLOUT_PREFIX;
-            }
-            let result = chunk.textDelta;
-            if (lastType !== chunk.type) {
-              result = '\n\n' + result;
-            }
-            yield result;
-            break;
-          }
-          case 'reasoning': {
-            if (prefix) {
-              yield prefix;
-              prefix = null;
-            }
-            let result = chunk.textDelta;
-            if (lastType !== chunk.type) {
-              result = '\n\n' + result;
-            }
-            yield this.markAsCallout(result);
-            break;
-          }
-          case 'tool-call': {
-            if (prefix) {
-              yield prefix;
-              prefix = null;
-            }
-            if (chunk.toolName === 'web_search_exa') {
-              yield this.markAsCallout(
-                `\nSearching the web "${chunk.args.query}"\n`
-              );
-            }
-            if (chunk.toolName === 'web_crawl_exa') {
-              yield this.markAsCallout(
-                `\nCrawling the web "${chunk.args.url}"\n`
-              );
-            }
-            break;
-          }
-          case 'tool-result': {
-            if (
-              chunk.toolName === 'web_search_exa' &&
-              Array.isArray(chunk.result)
-            ) {
-              if (prefix) {
-                yield prefix;
-                prefix = null;
-              }
-              yield this.markAsCallout(this.getWebSearchLinks(chunk.result));
-            }
-            break;
-          }
-          case 'error': {
-            const error = chunk.error as { type: string; message: string };
-            throw new Error(error.message);
-          }
-        }
+        const result = parser.parse(chunk);
+        yield result;
         if (options.signal?.aborted) {
           await fullStream.cancel();
           break;
         }
-        lastType = chunk.type;
       }
     } catch (e: any) {
       metrics.ai.counter('chat_text_stream_errors').add(1, { model: model.id });
@@ -201,22 +139,6 @@ export abstract class AnthropicProvider<T> extends CopilotProvider<T> {
       };
     }
     return result;
-  }
-
-  private getWebSearchLinks(
-    list: {
-      title: string | null;
-      url: string;
-    }[]
-  ): string {
-    const links = list.reduce((acc, result) => {
-      return acc + `\n[${result.title ?? result.url}](${result.url})\n\n`;
-    }, '');
-    return links;
-  }
-
-  private markAsCallout(text: string) {
-    return text.replaceAll('\n', '\n> ');
   }
 
   private isReasoningModel(model: string) {

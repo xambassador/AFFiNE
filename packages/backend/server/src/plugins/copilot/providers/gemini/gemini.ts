@@ -25,7 +25,7 @@ import type {
   PromptMessage,
 } from '../types';
 import { ModelOutputType } from '../types';
-import { chatToGPTMessage } from '../utils';
+import { chatToGPTMessage, TextStreamParser } from '../utils';
 
 export const DEFAULT_DIMENSIONS = 256;
 
@@ -36,8 +36,6 @@ export type GeminiConfig = {
 
 export abstract class GeminiProvider<T> extends CopilotProvider<T> {
   private readonly MAX_STEPS = 20;
-
-  private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
 
   protected abstract instance:
     | GoogleGenerativeAIProvider
@@ -167,42 +165,13 @@ export abstract class GeminiProvider<T> extends CopilotProvider<T> {
         },
       });
 
-      let lastType;
-      // reasoning, tool-call, tool-result need to mark as callout
-      let prefix: string | null = this.CALLOUT_PREFIX;
+      const parser = new TextStreamParser();
       for await (const chunk of fullStream) {
-        if (chunk) {
-          switch (chunk.type) {
-            case 'text-delta': {
-              let result = chunk.textDelta;
-              if (lastType !== chunk.type) {
-                result = '\n\n' + result;
-              }
-              yield result;
-              break;
-            }
-            case 'reasoning': {
-              if (prefix) {
-                yield prefix;
-                prefix = null;
-              }
-              let result = chunk.textDelta;
-              if (lastType !== chunk.type) {
-                result = '\n\n' + result;
-              }
-              yield this.markAsCallout(result);
-              break;
-            }
-            case 'error': {
-              const error = chunk.error as { type: string; message: string };
-              throw new Error(error.message);
-            }
-          }
-          if (options.signal?.aborted) {
-            await fullStream.cancel();
-            break;
-          }
-          lastType = chunk.type;
+        const result = parser.parse(chunk);
+        yield result;
+        if (options.signal?.aborted) {
+          await fullStream.cancel();
+          break;
         }
       }
     } catch (e: any) {
@@ -220,10 +189,6 @@ export abstract class GeminiProvider<T> extends CopilotProvider<T> {
       };
     }
     return result;
-  }
-
-  private markAsCallout(text: string) {
-    return text.replaceAll('\n', '\n> ');
   }
 
   private isReasoningModel(model: string) {

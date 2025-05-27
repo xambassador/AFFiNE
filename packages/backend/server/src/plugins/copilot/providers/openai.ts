@@ -11,6 +11,7 @@ import {
   generateObject,
   generateText,
   streamText,
+  ToolSet,
 } from 'ai';
 
 import {
@@ -30,19 +31,13 @@ import type {
   PromptMessage,
 } from './types';
 import { CopilotProviderType, ModelInputType, ModelOutputType } from './types';
-import { chatToGPTMessage, CitationParser } from './utils';
+import { chatToGPTMessage, CitationParser, TextStreamParser } from './utils';
 
 export const DEFAULT_DIMENSIONS = 256;
 
 export type OpenAIConfig = {
   apiKey: string;
   baseUrl?: string;
-};
-
-type OpenAITools = {
-  web_search_preview: ReturnType<typeof openai.tools.webSearchPreview>;
-  web_search_exa: ReturnType<typeof createExaSearchTool>;
-  web_crawl_exa: ReturnType<typeof createExaCrawlTool>;
 };
 
 export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
@@ -187,8 +182,6 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
 
   private readonly MAX_STEPS = 20;
 
-  private readonly CALLOUT_PREFIX = '\n> [!]\n> ';
-
   #instance!: VercelOpenAIProvider;
 
   override configured(): boolean {
@@ -231,11 +224,8 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     }
   }
 
-  private getTools(
-    options: CopilotChatOptions,
-    model: string
-  ): Partial<OpenAITools> {
-    const tools: Partial<OpenAITools> = {};
+  private getTools(options: CopilotChatOptions, model: string): ToolSet {
+    const tools: ToolSet = {};
     if (options?.tools?.length) {
       for (const tool of options.tools) {
         switch (tool) {
@@ -324,82 +314,34 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
         providerOptions: {
           openai: this.getOpenAIOptions(options, model.id),
         },
-        tools: this.getTools(options, model.id) as OpenAITools,
+        tools: this.getTools(options, model.id),
         maxSteps: this.MAX_STEPS,
         abortSignal: options.signal,
       });
 
-      const parser = new CitationParser();
-      let lastType;
-      // reasoning, tool-call, tool-result need to mark as callout
-      let prefix: string | null = this.CALLOUT_PREFIX;
+      const citationParser = new CitationParser();
+      const textParser = new TextStreamParser();
       for await (const chunk of fullStream) {
-        if (chunk) {
-          switch (chunk.type) {
-            case 'text-delta': {
-              let result = parser.parse(chunk.textDelta);
-              if (lastType !== chunk.type) {
-                result = '\n\n' + result;
-              }
-              yield result;
-              break;
-            }
-            case 'reasoning': {
-              if (prefix) {
-                yield prefix;
-                prefix = null;
-              }
-              let result = chunk.textDelta;
-              if (lastType !== chunk.type) {
-                result = '\n\n' + result;
-              }
-              yield this.markAsCallout(result);
-              break;
-            }
-            case 'tool-call': {
-              if (prefix) {
-                yield prefix;
-                prefix = null;
-              }
-              if (chunk.toolName === 'web_search_exa') {
-                yield this.markAsCallout(
-                  `\nSearching the web "${chunk.args.query}"\n`
-                );
-              }
-              if (chunk.toolName === 'web_crawl_exa') {
-                yield this.markAsCallout(
-                  `\nCrawling the web "${chunk.args.url}"\n`
-                );
-              }
-              break;
-            }
-            case 'tool-result': {
-              if (
-                chunk.toolName === 'web_search_exa' &&
-                Array.isArray(chunk.result)
-              ) {
-                yield this.markAsCallout(
-                  `\n${this.getWebSearchLinks(chunk.result)}\n`
-                );
-              }
-              break;
-            }
-            case 'finish': {
-              const result = parser.end();
-              yield result;
-              break;
-            }
-            case 'error': {
-              const error = chunk.error as { type: string; message: string };
-              throw new Error(error.message);
-            }
-          }
-
-          if (options.signal?.aborted) {
-            await fullStream.cancel();
+        switch (chunk.type) {
+          case 'text-delta': {
+            let result = textParser.parse(chunk);
+            result = citationParser.parse(result);
+            yield result;
             break;
           }
-          lastType = chunk.type;
+          case 'finish': {
+            const result = citationParser.end();
+            yield result;
+            break;
+          }
+          default: {
+            yield textParser.parse(chunk);
+            break;
+          }
+        }
+        if (options.signal?.aborted) {
+          await fullStream.cancel();
+          break;
         }
       }
     } catch (e: any) {
@@ -537,22 +479,6 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
       result.user = options.user;
     }
     return result;
-  }
-
-  private getWebSearchLinks(
-    list: {
-      title: string | null;
-      url: string;
-    }[]
-  ): string {
-    const links = list.reduce((acc, result) => {
-      return acc + `\n[${result.title ?? result.url}](${result.url})\n\n`;
-    }, '');
-    return links;
-  }
-
-  private markAsCallout(text: string) {
-    return text.replaceAll('\n', '\n> ');
   }
 
   private isReasoningModel(model: string) {

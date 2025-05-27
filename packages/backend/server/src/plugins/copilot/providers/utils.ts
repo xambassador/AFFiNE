@@ -4,9 +4,12 @@ import {
   FilePart,
   ImagePart,
   TextPart,
+  TextStreamPart,
+  ToolSet,
 } from 'ai';
 import { ZodType } from 'zod';
 
+import { createExaCrawlTool, createExaSearchTool } from '../tools';
 import { PromptMessage } from './types';
 
 type ChatMessage = CoreUserMessage | CoreAssistantMessage;
@@ -365,5 +368,110 @@ export class CitationParser {
       )}"}`;
     });
     return footnotes.join('\n');
+  }
+}
+
+export interface CustomAITools extends ToolSet {
+  web_search_exa: ReturnType<typeof createExaSearchTool>;
+  web_crawl_exa: ReturnType<typeof createExaCrawlTool>;
+}
+
+type ChunkType = TextStreamPart<CustomAITools>['type'];
+
+export class TextStreamParser {
+  private readonly CALLOUT_PREFIX = '\n[!]\n';
+
+  private lastType: ChunkType | undefined;
+
+  private prefix: string | null = this.CALLOUT_PREFIX;
+
+  public parse(chunk: TextStreamPart<CustomAITools>) {
+    let result = '';
+    switch (chunk.type) {
+      case 'text-delta': {
+        if (!this.prefix) {
+          this.resetPrefix();
+        }
+        result = chunk.textDelta;
+        result = this.addNewline(chunk.type, result);
+        break;
+      }
+      case 'reasoning': {
+        result = chunk.textDelta;
+        result = this.addPrefix(result);
+        result = this.markAsCallout(result);
+        break;
+      }
+      case 'tool-call': {
+        result = this.addPrefix(result);
+        switch (chunk.toolName) {
+          case 'web_search_exa': {
+            result += `\nSearching the web "${chunk.args.query}"\n`;
+            break;
+          }
+          case 'web_crawl_exa': {
+            result += `\nCrawling the web "${chunk.args.url}"\n`;
+            break;
+          }
+        }
+        result = this.markAsCallout(result);
+        break;
+      }
+      case 'tool-result': {
+        result = this.addPrefix(result);
+        switch (chunk.toolName) {
+          case 'web_search_exa': {
+            if (Array.isArray(chunk.result)) {
+              result += `\n${this.getWebSearchLinks(chunk.result)}\n`;
+            }
+            break;
+          }
+        }
+        result = this.markAsCallout(result);
+        break;
+      }
+      case 'error': {
+        const error = chunk.error as { type: string; message: string };
+        throw new Error(error.message);
+      }
+    }
+    this.lastType = chunk.type;
+    return result;
+  }
+
+  private addPrefix(text: string) {
+    if (this.prefix) {
+      const result = this.prefix + text;
+      this.prefix = null;
+      return result;
+    }
+    return text;
+  }
+
+  private resetPrefix() {
+    this.prefix = this.CALLOUT_PREFIX;
+  }
+
+  private addNewline(chunkType: ChunkType, result: string) {
+    if (this.lastType && this.lastType !== chunkType) {
+      return '\n\n' + result;
+    }
+    return result;
+  }
+
+  private markAsCallout(text: string) {
+    return text.replaceAll('\n', '\n> ');
+  }
+
+  private getWebSearchLinks(
+    list: {
+      title: string | null;
+      url: string;
+    }[]
+  ): string {
+    const links = list.reduce((acc, result) => {
+      return acc + `\n\n[${result.title ?? result.url}](${result.url})\n\n`;
+    }, '');
+    return links;
   }
 }
