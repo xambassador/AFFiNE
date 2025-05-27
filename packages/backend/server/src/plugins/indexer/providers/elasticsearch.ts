@@ -299,9 +299,6 @@ export class ElasticsearchProvider extends SearchProvider {
         type,
       });
     }
-    this.logger.verbose(
-      `request ${method} ${url}, body: ${body}, response status: ${response.status}, response body: ${JSON.stringify(data)}`
-    );
     return data;
   }
 
