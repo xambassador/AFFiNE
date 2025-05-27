@@ -219,7 +219,9 @@ export const EmbeddingSettings: React.FC<EmbeddingSettingsProps> = () => {
               data-testid="workspace-embedding-setting-upload-button"
               variant="primary"
             >
-              {t['Upload']()}
+              {t[
+                'com.affine.settings.workspace.indexer-embedding.embedding.upload-file'
+              ]()}
             </Button>
           </Upload>
         </SettingRow>

@@ -6232,6 +6232,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.select-doc"](): string;
     /**
+      * `Upload file`
+      */
+    ["com.affine.settings.workspace.indexer-embedding.embedding.upload-file"](): string;
+    /**
       * `Workspace Embedding`
       */
     ["com.affine.settings.workspace.indexer-embedding.embedding.switch.title"](): string;

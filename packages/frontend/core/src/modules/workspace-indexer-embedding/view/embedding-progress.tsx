@@ -1,5 +1,6 @@
 import { Progress } from '@affine/component';
 import { useI18n } from '@affine/i18n';
+import { cssVarV2 } from '@toeverything/theme/v2';
 
 import { embeddingProgress, embeddingProgressTitle } from './styles-css';
 
@@ -51,7 +52,10 @@ const EmbeddingProgress: React.FC<EmbeddingProgressProps> = ({ status }) => {
         testId="embedding-progress"
         value={progress}
         readonly
-        style={{ visibility: loading ? 'hidden' : 'visible' }}
+        style={{
+          visibility: loading ? 'hidden' : 'visible',
+          color: cssVarV2('text/primary'),
+        }}
       />
     </div>
   );

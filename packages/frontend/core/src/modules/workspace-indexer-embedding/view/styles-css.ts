@@ -8,6 +8,7 @@ export const attachmentsWrapper = css({
   width: '100%',
   alignItems: 'center',
   padding: '8px',
+  marginTop: '-13px',
   gap: '4px',
   isolation: 'isolate',
   border: `1px solid ${cssVar('borderColor')}`,
@@ -37,6 +38,15 @@ export const attachmentTitle = css({
   display: 'flex',
   alignItems: 'center',
   gap: '4px',
+  width: '95%',
+
+  '.attachment-title-text': {
+    flex: 1,
+    minWidth: 0,
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+  },
 });
 
 export const attachmentError = css({
@@ -55,6 +65,7 @@ export const excludeDocsWrapper = css({
   width: '100%',
   alignItems: 'center',
   padding: '8px',
+  marginTop: '-13px',
   gap: '4px',
   isolation: 'isolate',
   border: `1px solid ${cssVar('borderColor')}`,
@@ -83,9 +94,20 @@ export const docItem = css({
 export const docItemTitle = css({
   fontSize: '14px',
   fontWeight: 500,
+  paddingRight: '12px',
   color: cssVar('textPrimaryColor'),
   display: 'flex',
   alignItems: 'center',
+  gap: '4px',
+  flex: 1,
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+
+  '.ignore-doc-title': {
+    textOverflow: 'ellipsis',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+  },
 });
 
 export const docItemIcon = css({
@@ -97,11 +119,13 @@ export const docItemIcon = css({
 
 export const docItemInfo = css({
   display: 'flex',
+  flex: '0 0 auto',
   fontSize: '12px',
   fontWeight: 400,
   color: cssVar('textSecondaryColor'),
   gap: '12px',
   alignItems: 'center',
+  justifyContent: 'flex-end',
 });
 
 export const embeddingProgress = css({
@@ -109,7 +133,7 @@ export const embeddingProgress = css({
   flexDirection: 'column',
   alignItems: 'center',
   width: '100%',
-  paddingBottom: '16px',
+  paddingBottom: '24px',
   fontSize: '14px',
   fontWeight: 400,
   color: cssVar('textSecondaryColor'),
@@ -121,4 +145,5 @@ export const embeddingProgressTitle = css({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
+  fontSize: '12px',
 });

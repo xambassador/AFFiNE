@@ -79,7 +79,8 @@ const PersistedItem: React.FC<{ attachment: PersistedAttachmentFile }> = ({
       className={attachmentTitle}
       data-testid="workspace-embedding-setting-attachment-persisted-item"
     >
-      <Icon style={{ marginRight: 4 }} /> {attachment.fileName}
+      <Icon style={{ marginRight: 4 }} />
+      <span className="attachment-title-text">{attachment.fileName}</span>
     </div>
   );
 };

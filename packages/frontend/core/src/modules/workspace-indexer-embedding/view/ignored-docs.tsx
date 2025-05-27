@@ -56,7 +56,9 @@ const DocItem: React.FC<DocItemProps> = ({ doc }) => {
     >
       <div className={docItemTitle}>
         <DocIcon className={docItemIcon} />
-        <span data-testid="ignore-doc-title">{docTitle}</span>
+        <span className="ignore-doc-title" data-testid="ignore-doc-title">
+          {docTitle}
+        </span>
       </div>
 
       <div className={docItemInfo}>
