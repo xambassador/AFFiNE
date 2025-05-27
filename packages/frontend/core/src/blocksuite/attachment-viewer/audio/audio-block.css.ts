@@ -1,6 +1,6 @@
 import { cssVar } from '@toeverything/theme';
 import { cssVarV2 } from '@toeverything/theme/v2';
-import { style } from '@vanilla-extract/css';
+import { globalStyle, style } from '@vanilla-extract/css';
 
 export const root = style({
   display: 'flex',
@@ -48,4 +48,10 @@ export const reloadButton = style({
 
 export const reloadButtonIcon = style({
   fontSize: 16,
+});
+
+/** Render our own border for audio block  */
+globalStyle(`.affine-attachment-container:has(${root})`, {
+  border: 'none',
+  overflow: 'visible',
 });
