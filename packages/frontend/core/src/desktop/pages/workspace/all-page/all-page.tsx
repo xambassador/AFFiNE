@@ -302,27 +302,29 @@ export const AllPage = () => {
               hiddenAdd={tempFilters !== null}
             />
           </div>
-          {tempFilters !== null && (
-            <div className={styles.filterArea}>
-              <Filters
-                // When the selected collection changes, the filters internal state should be reset
-                key={selectedCollectionId ?? 'all'}
-                className={styles.filters}
-                filters={tempFilters}
-                onChange={handleFilterChange}
-                defaultDraftFilter={tempFiltersInitial}
-              />
-              <Button
-                variant="plain"
-                onClick={() => {
-                  setTempFilters(null);
-                }}
-              >
-                {t['Cancel']()}
-              </Button>
-              <Button onClick={handleSaveFilters}>{t['save']()}</Button>
-            </div>
-          )}
+          <div className={styles.filterArea}>
+            {tempFilters !== null && (
+              <div className={styles.filterInnerArea}>
+                <Filters
+                  // When the selected collection changes, the filters internal state should be reset
+                  key={selectedCollectionId ?? 'all'}
+                  className={styles.filters}
+                  filters={tempFilters}
+                  onChange={handleFilterChange}
+                  defaultDraftFilter={tempFiltersInitial}
+                />
+                <Button
+                  variant="plain"
+                  onClick={() => {
+                    setTempFilters(null);
+                  }}
+                >
+                  {t['Cancel']()}
+                </Button>
+                <Button onClick={handleSaveFilters}>{t['save']()}</Button>
+              </div>
+            )}
+          </div>
           <div className={styles.scrollArea}>
             <DocsExplorer />
           </div>

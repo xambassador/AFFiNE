@@ -68,3 +68,7 @@ export const filterTypeItemName = style({
 export const addFilterMenuContent = style({
   width: '230px',
 });
+
+export const addFilterButton = style({
+  height: '32px',
+});

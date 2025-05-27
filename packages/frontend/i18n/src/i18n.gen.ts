@@ -2074,6 +2074,10 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.filter"](): string;
     /**
+      * `Add Filter Rule`
+      */
+    ["com.affine.filter.add-filter"](): string;
+    /**
       * `after`
       */
     ["com.affine.filter.after"](): string;

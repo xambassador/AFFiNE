@@ -87,7 +87,7 @@ export const Condition = ({
                   styles.filterValueStyle,
                   styles.ellipsisTextStyle
                 )}
-                data-testid="filter-method"
+                data-testid="filter-value"
               >
                 <Value
                   filter={filter}

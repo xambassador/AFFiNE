@@ -82,7 +82,14 @@ export const Filters = ({
         />
       )}
 
-      <AddFilter onAdd={handleAdd} />
+      <AddFilter
+        variant={
+          filters.length === 0 && draftFilter === null
+            ? 'button'
+            : 'icon-button'
+        }
+        onAdd={handleAdd}
+      />
     </div>
   );
 };

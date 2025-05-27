@@ -1,4 +1,10 @@
-import { IconButton, Menu, MenuItem, MenuSeparator } from '@affine/component';
+import {
+  Button,
+  IconButton,
+  Menu,
+  MenuItem,
+  MenuSeparator,
+} from '@affine/component';
 import type { FilterParams } from '@affine/core/modules/collection-rules';
 import { WorkspacePropertyService } from '@affine/core/modules/workspace-property';
 import { useI18n } from '@affine/i18n';
@@ -142,9 +148,12 @@ export const AddFilterMenu = ({
 
 export const AddFilter = ({
   onAdd,
+  variant = 'icon-button',
 }: {
   onAdd: (params: FilterParams) => void;
+  variant?: 'icon-button' | 'button';
 }) => {
+  const t = useI18n();
   return (
     <Menu
       items={<AddFilterMenu onAdd={onAdd} />}
@@ -152,9 +161,15 @@ export const AddFilter = ({
         className: styles.addFilterMenuContent,
       }}
     >
-      <IconButton size="16">
-        <PlusIcon />
-      </IconButton>
+      {variant === 'icon-button' ? (
+        <IconButton size="16">
+          <PlusIcon />
+        </IconButton>
+      ) : (
+        <Button prefix={<PlusIcon />} className={styles.addFilterButton}>
+          {t['com.affine.filter.add-filter']()}
+        </Button>
+      )}
     </Menu>
   );
 };
