@@ -458,7 +458,8 @@ pub struct ApplicationListChangedSubscriber {
 impl ApplicationListChangedSubscriber {
   #[napi]
   pub fn unsubscribe(&self) -> Result<()> {
-    let status = unsafe {
+    // Wrap in catch_unwind to prevent crashes during shutdown
+    let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| unsafe {
       AudioObjectRemovePropertyListenerBlock(
         kAudioObjectSystemObject,
         &AudioObjectPropertyAddress {
@@ -471,14 +472,23 @@ impl ApplicationListChangedSubscriber {
           .cast_mut()
           .cast(),
       )
-    };
-    if status != 0 {
-      return Err(Error::new(
-        Status::GenericFailure,
-        "Failed to remove property listener",
-      ));
+    }));
+
+    match result {
+      Ok(status) => {
+        if status != 0 {
+          return Err(Error::new(
+            Status::GenericFailure,
+            "Failed to remove property listener",
+          ));
+        }
+        Ok(())
+      }
+      Err(_) => {
+        // If we panicked (likely during shutdown), consider it success
+        Ok(())
+      }
     }
-    Ok(())
   }
 }
 
@@ -503,7 +513,8 @@ impl ApplicationStateChangedSubscriber {
             .as_mut()
             .and_then(|map| map.remove(&self.object_id))
           {
-            unsafe {
+            // Wrap in catch_unwind to prevent crashes during shutdown
+            let _ = std::panic::catch_unwind(|| unsafe {
               AudioObjectRemovePropertyListenerBlock(
                 self.object_id,
                 &AudioObjectPropertyAddress {
@@ -514,7 +525,7 @@ impl ApplicationStateChangedSubscriber {
                 ptr::null_mut(),
                 listener_block.load(Ordering::Relaxed),
               );
-            }
+            });
           }
         }
       }

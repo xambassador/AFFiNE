@@ -865,6 +865,7 @@ export class WebContentViewsManager {
     // shell process do not need to connect to helper process
     if (type !== 'shell') {
       view.webContents.on('did-finish-load', () => {
+        unsub();
         unsub = helperProcessManager.connectRenderer(view.webContents);
       });
     } else {
@@ -879,7 +880,6 @@ export class WebContentViewsManager {
     }
 
     view.webContents.on('destroyed', () => {
-      unsub();
       this.webViewsMap$.next(
         new Map(
           [...this.tabViewsMap.entries()].filter(([key]) => key !== viewId)

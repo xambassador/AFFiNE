@@ -833,6 +833,29 @@ impl AggregateDeviceManager {
   fn cleanup_device_listeners(&mut self) {
     if let Some(listener) = self.default_devices_listener.take() {
       unsafe {
+        // Add a runtime check to ensure we're not in shutdown
+        let is_system_shutting_down = std::panic::catch_unwind(|| {
+          // Try a simple CoreAudio API call to see if the system is still responsive
+          let mut size: u32 = 0;
+          AudioObjectGetPropertyDataSize(
+            kAudioObjectSystemObject,
+            &AudioObjectPropertyAddress {
+              mSelector: kAudioHardwarePropertyDefaultInputDevice,
+              mScope: kAudioObjectPropertyScopeGlobal,
+              mElement: kAudioObjectPropertyElementMain,
+            },
+            0,
+            ptr::null(),
+            &mut size,
+          )
+        })
+        .is_err();
+
+        if is_system_shutting_down {
+          // Don't try to remove listeners if the system is shutting down
+          return;
+        }
+
         // Remove input device change listener
         let status = AudioObjectRemovePropertyListenerBlock(
           kAudioObjectSystemObject,
@@ -845,10 +868,7 @@ impl AggregateDeviceManager {
           listener,
         );
         if status != 0 {
-          println!(
-            "DEBUG: Failed to remove input device listener, status: {}",
-            status
-          );
+          // Don't log errors during shutdown to avoid additional issues
         }
 
         let status = AudioObjectRemovePropertyListenerBlock(
@@ -862,10 +882,7 @@ impl AggregateDeviceManager {
           listener,
         );
         if status != 0 {
-          println!(
-            "DEBUG: Failed to remove output device listener, status: {}",
-            status
-          );
+          // Don't log errors during shutdown to avoid additional issues
         }
       }
     }
