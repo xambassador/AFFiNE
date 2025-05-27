@@ -46,12 +46,16 @@ export class ImageBlockPageComponent extends SignalWatcher(
       justify-content: center;
       position: absolute;
       top: 4px;
-      right: 4px;
-      width: 20px;
-      height: 20px;
-      padding: 4px;
-      border-radius: 4px;
+      left: 4px;
+      width: 36px;
+      height: 36px;
+      padding: 5px;
+      border-radius: 8px;
       background: ${unsafeCSSVarV2('loading/backgroundLayer')};
+
+      & > svg {
+        font-size: 25.71px;
+      }
     }
 
     affine-page-image .affine-image-status {

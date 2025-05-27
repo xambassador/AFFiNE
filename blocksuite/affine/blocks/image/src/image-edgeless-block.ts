@@ -1,13 +1,12 @@
 import type { BlockCaptionEditor } from '@blocksuite/affine-components/caption';
-import { getLoadingIconWith } from '@blocksuite/affine-components/icons';
+import { LoadingIcon } from '@blocksuite/affine-components/icons';
 import { Peekable } from '@blocksuite/affine-components/peek';
 import { ResourceController } from '@blocksuite/affine-components/resource';
 import {
   type ImageBlockModel,
   ImageBlockSchema,
 } from '@blocksuite/affine-model';
-import { ThemeProvider } from '@blocksuite/affine-shared/services';
-import { unsafeCSSVarV2 } from '@blocksuite/affine-shared/theme';
+import { cssVarV2, unsafeCSSVarV2 } from '@blocksuite/affine-shared/theme';
 import { formatSize } from '@blocksuite/affine-shared/utils';
 import { BrokenImageIcon, ImageIcon } from '@blocksuite/icons/lit';
 import { GfxBlockComponent } from '@blocksuite/std';
@@ -39,11 +38,15 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
       position: absolute;
       top: 4px;
       right: 4px;
-      width: 20px;
-      height: 20px;
-      padding: 4px;
-      border-radius: 4px;
+      width: 36px;
+      height: 36px;
+      padding: 5px;
+      border-radius: 8px;
       background: ${unsafeCSSVarV2('loading/backgroundLayer')};
+
+      & > svg {
+        font-size: 25.71px;
+      }
     }
 
     affine-edgeless-image .affine-image-status {
@@ -108,9 +111,6 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
   }
 
   override renderGfxBlock() {
-    const theme = this.std.get(ThemeProvider).theme$.value;
-    const loadingIcon = getLoadingIconWith(theme);
-
     const blobUrl = this.blobUrl;
     const { rotate = 0, size = 0, caption = 'Image' } = this.model.props;
 
@@ -124,7 +124,9 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
     });
 
     const resovledState = this.resourceController.resolveStateWith({
-      loadingIcon,
+      loadingIcon: LoadingIcon({
+        strokeColor: cssVarV2('button/pureWhiteText'),
+      }),
       errorIcon: BrokenImageIcon(),
       icon: ImageIcon(),
       title: 'Image',
@@ -148,7 +150,7 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
             </div>
             ${when(
               resovledState.loading,
-              () => html`<div class="loading">${loadingIcon}</div>`
+              () => html`<div class="loading">${resovledState.icon}</div>`
             )}
             ${when(
               resovledState.error && resovledState.description,

@@ -1,10 +1,9 @@
 import type { IconButton } from '@blocksuite/affine-components/icon-button';
-import { getLoadingIconWith } from '@blocksuite/affine-components/icons';
+import { LoadingIcon } from '@blocksuite/affine-components/icons';
 import {
   cleanSpecifiedTail,
   getTextContentFromInlineRange,
 } from '@blocksuite/affine-rich-text';
-import { ThemeProvider } from '@blocksuite/affine-shared/services';
 import { unsafeCSSVar } from '@blocksuite/affine-shared/theme';
 import {
   createKeydownObserver,
@@ -126,10 +125,6 @@ export class LinkedDocPopover extends SignalWatcher(
       this.context.inlineEditor,
       this.context.startRange
     );
-  }
-
-  private get _loadingIcon() {
-    return getLoadingIconWith(this.context.std.get(ThemeProvider).theme$.value);
   }
 
   private _getActionItems(group: LinkedMenuGroup) {
@@ -291,7 +286,7 @@ export class LinkedDocPopover extends SignalWatcher(
             <div class="group-title">
               <div class="group-title-text">${group.name}</div>
               ${group.isLoading
-                ? html`<span class="loading-icon">${this._loadingIcon}</span>`
+                ? html`<span class="loading-icon">${LoadingIcon()}</span>`
                 : nothing}
             </div>
             <div class="group" style=${group.styles ?? ''}>

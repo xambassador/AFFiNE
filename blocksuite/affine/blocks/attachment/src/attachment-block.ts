@@ -4,7 +4,7 @@ import {
 } from '@blocksuite/affine-components/caption';
 import {
   getAttachmentFileIcon,
-  getLoadingIconWith,
+  LoadingIcon,
 } from '@blocksuite/affine-components/icons';
 import { Peekable } from '@blocksuite/affine-components/peek';
 import {
@@ -20,7 +20,6 @@ import {
   DocModeProvider,
   FileSizeLimitProvider,
   TelemetryProvider,
-  ThemeProvider,
 } from '@blocksuite/affine-shared/services';
 import { formatSize } from '@blocksuite/affine-shared/utils';
 import {
@@ -304,15 +303,12 @@ export class AttachmentBlockComponent extends CaptionedBlockComponent<Attachment
   }
 
   protected resolvedState$ = computed<AttachmentResolvedStateInfo>(() => {
-    const theme = this.std.get(ThemeProvider).theme$.value;
-    const loadingIcon = getLoadingIconWith(theme);
-
     const size = this.model.props.size;
     const name = this.model.props.name$.value;
     const kind = getAttachmentFileIcon(name.split('.').pop() ?? '');
 
     const resolvedState = this.resourceController.resolveStateWith({
-      loadingIcon,
+      loadingIcon: LoadingIcon(),
       errorIcon: WarningIcon(),
       icon: AttachmentIcon(),
       title: name,

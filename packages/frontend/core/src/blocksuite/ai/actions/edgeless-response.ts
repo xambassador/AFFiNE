@@ -1,7 +1,7 @@
 import { CodeBlockPreviewIdentifier } from '@blocksuite/affine/blocks/code';
 import { addImages } from '@blocksuite/affine/blocks/image';
 import { getSurfaceBlock } from '@blocksuite/affine/blocks/surface';
-import { LightLoadingIcon } from '@blocksuite/affine/components/icons';
+import { LoadingIcon } from '@blocksuite/affine/components/icons';
 import { addTree } from '@blocksuite/affine/gfx/mindmap';
 import { fitContent } from '@blocksuite/affine/gfx/shape';
 import { createTemplateJob } from '@blocksuite/affine/gfx/template';
@@ -123,7 +123,7 @@ export function createInsertItems<T extends keyof BlockSuitePresets.AIActions>(
     {
       name: `${buttonText} - Loading...`,
       icon: html`<div style=${styleMap({ height: '20px', width: '20px' })}>
-        ${LightLoadingIcon}
+        ${LoadingIcon()}
       </div>`,
       testId: 'answer-insert-below-loading',
       showWhen: () => {

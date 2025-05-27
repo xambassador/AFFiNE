@@ -47,11 +47,10 @@ export const styles = css`
 
   .affine-attachment-content-title-icon {
     display: flex;
-    width: 16px;
-    height: 16px;
     align-items: center;
     justify-content: center;
     color: var(--affine-text-primary-color);
+    font-size: 16px;
   }
 
   .affine-attachment-content-title-text {
@@ -107,7 +106,7 @@ export const styles = css`
 
   .affine-attachment-card.loading {
     .affine-attachment-content-title-text {
-      color: var(--affine-placeholder-color);
+      color: ${unsafeCSSVarV2('text/placeholder')};
     }
   }
 
