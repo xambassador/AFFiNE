@@ -44,6 +44,7 @@ import {
   workspaceAndUserWrapper,
   workspaceWrapper,
 } from './index.css';
+import { InviteMembersButton } from './invite-members-button';
 import { AppSidebarJournalButton } from './journal-button';
 import { NotificationButton } from './notification-button';
 import { SidebarAudioPlayer } from './sidebar-audio-player';
@@ -211,6 +212,7 @@ export const RootAppSidebar = memo((): ReactElement => {
           >
             <span data-testid="import-modal-trigger">{t['Import']()}</span>
           </MenuItem>
+          <InviteMembersButton />
           <TemplateDocEntrance />
           <ExternalMenuLinkItem
             href="https://affine.pro/blog?tag=Release+Note"
