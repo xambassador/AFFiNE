@@ -28,7 +28,7 @@ const appSettingBaseAtom = atomWithStorage<AppSetting>(
   {
     clientBorder: BUILD_CONFIG.isElectron && !environment.isWindows,
     windowFrameStyle: 'frameless',
-    enableBlurBackground: true,
+    enableBlurBackground: false,
     enableNoisyBackground: true,
     autoCheckUpdate: true,
     autoDownloadUpdate: true,
