@@ -818,6 +818,7 @@ export class WebContentViewsManager {
         preload: join(__dirname, './preload.js'), // this points to the bundled preload module
         // serialize exposed meta that to be used in preload
         additionalArguments: additionalArguments,
+        backgroundThrottling: false,
       },
     });
 
