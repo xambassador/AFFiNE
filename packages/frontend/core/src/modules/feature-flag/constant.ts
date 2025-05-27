@@ -106,16 +106,6 @@ export const AFFINE_FLAGS = {
     configurable: isCanaryBuild,
     defaultState: isCanaryBuild,
   },
-  enable_citation: {
-    category: 'blocksuite',
-    bsFlag: 'enable_citation',
-    displayName:
-      'com.affine.settings.workspace.experimental-features.enable-citation.name',
-    description:
-      'com.affine.settings.workspace.experimental-features.enable-citation.description',
-    configurable: isCanaryBuild,
-    defaultState: isCanaryBuild,
-  },
   enable_link_preview_cache: {
     category: 'blocksuite',
     bsFlag: 'enable_link_preview_cache',
