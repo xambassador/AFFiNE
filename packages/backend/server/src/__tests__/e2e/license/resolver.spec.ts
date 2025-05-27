@@ -15,9 +15,10 @@ import {
 
 const testWorkspaceId = 'd6f52bc7-d62a-4822-804a-335fa7dfe5a6';
 const testPublicKey = `-----BEGIN PUBLIC KEY-----
-MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkXqe9HR32rSgaNxaePXbwHxoanUq
-1DcQTV1twn+G47/HiY+rj7oOw3cLNzOVe7+4Uxn8SMZ/XLImtqFQ6I4WVg==
+MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEqrxlczPknUuj4q4xx1VGr063Cgu7
+Hc3w7v4FGmoA5MNzzhrkho1ckDYw2wrX6zBnehFzcivURv80HherE2GQjg==
 -----END PUBLIC KEY-----`;
+const testTestLicenseAESKey = 'TEST_LICENSE_AES_KEY';
 
 const fixturesDir = join(import.meta.dirname, '__fixtures__');
 function getLicense(file: string) {
@@ -39,6 +40,7 @@ let owner: MockedUser;
 e2e.before(async () => {
   process.env.DEPLOYMENT_TYPE = 'selfhosted';
   process.env.AFFiNE_PRO_PUBLIC_KEY = testPublicKey;
+  process.env.AFFiNE_PRO_LICENSE_AES_KEY = testTestLicenseAESKey;
   refreshEnv();
 
   app = await createApp();
@@ -123,7 +125,8 @@ e2e('should not install expired license', async t => {
       },
     }),
     {
-      message: 'License has expired.',
+      message:
+        'Invalid license to activate. License file has expired. Please contact with Affine support to fetch a latest one.',
     }
   );
 });

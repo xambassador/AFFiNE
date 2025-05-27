@@ -485,11 +485,7 @@ export class LicenseService {
 
     // we use workspace id as aes key hash plain text content
     // verify signature to make sure the payload or signature is not forged
-    const {
-      payload: payloadStr,
-      signature,
-      iv,
-    } = this.decryptLicense(workspaceId, buf);
+    const { payload: payloadStr, signature, iv } = this.decryptLicense(buf);
 
     const verifier = createVerify('rsa-sha256');
     verifier.update(iv);
@@ -515,6 +511,13 @@ export class LicenseService {
       });
     }
 
+    if (new Date(parseResult.data.expiresAt) < new Date()) {
+      throw new InvalidLicenseToActivate({
+        reason:
+          'License file has expired. Please contact with Affine support to fetch a latest one.',
+      });
+    }
+
     if (parseResult.data.data.workspaceId !== workspaceId) {
       throw new InvalidLicenseToActivate({
         reason: 'Workspace mismatched with license.',
@@ -524,7 +527,13 @@ export class LicenseService {
     return parseResult.data;
   }
 
-  private decryptLicense(workspaceId: string, buf: Buffer) {
+  private decryptLicense(buf: Buffer) {
+    if (!this.crypto.AFFiNEProLicenseAESKey) {
+      throw new InternalServerError(
+        'License AES key is not loaded. Please contact with Affine support.'
+      );
+    }
+
     if (buf.length < 2) {
       throw new InvalidLicenseToActivate({
         reason: 'Invalid license file.',
@@ -539,12 +548,14 @@ export class LicenseService {
       const tag = buf.subarray(2 + ivLength, 2 + ivLength + authTagLength);
       const payload = buf.subarray(2 + ivLength + authTagLength);
 
-      const aesKey = this.crypto.sha256(
-        `WORKSPACE_PAYLOAD_AES_KEY:${workspaceId}`
+      const decipher = createDecipheriv(
+        'aes-256-gcm',
+        this.crypto.AFFiNEProLicenseAESKey,
+        iv,
+        {
+          authTagLength,
+        }
       );
-      const decipher = createDecipheriv('aes-256-gcm', aesKey, iv, {
-        authTagLength,
-      });
       decipher.setAuthTag(tag);
 
       const decrypted = Buffer.concat([
@@ -564,7 +575,7 @@ export class LicenseService {
     } catch {
       // we use workspace id as aes key hash plain text content
       throw new InvalidLicenseToActivate({
-        reason: 'Workspace mismatched with license.',
+        reason: 'Failed to verify the license.',
       });
     }
   }

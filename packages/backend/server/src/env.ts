@@ -76,7 +76,7 @@ globalThis.readEnv = function readEnv<T>(
 };
 
 export class Env implements AppEnv {
-  NODE_ENV = readEnv('NODE_ENV', NodeEnv.Production, Object.values(NodeEnv));
+  NODE_ENV = (process.env.NODE_ENV ?? NodeEnv.Production) as NodeEnv;
   NAMESPACE = readEnv(
     'AFFINE_ENV',
     Namespace.Production,
@@ -133,6 +133,14 @@ export class Env implements AppEnv {
 
   get gcp() {
     return this.platform === Platform.GCP;
+  }
+
+  constructor() {
+    if (!Object.values(NodeEnv).includes(this.NODE_ENV)) {
+      throw new Error(
+        `Invalid NODE_ENV environment. \`${this.NODE_ENV}\` is not a valid NODE_ENV value.`
+      );
+    }
   }
 }
 

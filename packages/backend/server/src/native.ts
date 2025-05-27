@@ -22,3 +22,5 @@ export const Tokenizer = serverNativeModule.Tokenizer;
 export const fromModelName = serverNativeModule.fromModelName;
 export const htmlSanitize = serverNativeModule.htmlSanitize;
 export const AFFINE_PRO_PUBLIC_KEY = serverNativeModule.AFFINE_PRO_PUBLIC_KEY;
+export const AFFINE_PRO_LICENSE_AES_KEY =
+  serverNativeModule.AFFINE_PRO_LICENSE_AES_KEY;

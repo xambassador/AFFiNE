@@ -17,7 +17,10 @@ import {
   verify as verifyPassword,
 } from '@node-rs/argon2';
 
-import { AFFINE_PRO_PUBLIC_KEY } from '../../native';
+import {
+  AFFINE_PRO_LICENSE_AES_KEY,
+  AFFINE_PRO_PUBLIC_KEY,
+} from '../../native';
 import { Config } from '../config';
 import { OnEvent } from '../event';
 
@@ -59,10 +62,12 @@ export class CryptoHelper implements OnModuleInit {
   };
 
   AFFiNEProPublicKey: Buffer | null = null;
+  AFFiNEProLicenseAESKey: Buffer | null = null;
 
   onModuleInit() {
     if (env.selfhosted) {
       this.AFFiNEProPublicKey = this.loadAFFiNEProPublicKey();
+      this.AFFiNEProLicenseAESKey = this.loadAFFiNEProLicenseAESKey();
     }
   }
 
@@ -193,6 +198,22 @@ export class CryptoHelper implements OnModuleInit {
 
     if (!env.prod && process.env.AFFiNE_PRO_PUBLIC_KEY) {
       return Buffer.from(process.env.AFFiNE_PRO_PUBLIC_KEY);
+    }
+
+    return null;
+  }
+
+  private loadAFFiNEProLicenseAESKey() {
+    if (AFFINE_PRO_LICENSE_AES_KEY) {
+      return this.sha256(AFFINE_PRO_LICENSE_AES_KEY);
+    } else {
+      this.logger.warn(
+        'AFFINE_PRO_LICENSE_AES_KEY is not set at compile time.'
+      );
+    }
+
+    if (!env.prod && process.env.AFFiNE_PRO_LICENSE_AES_KEY) {
+      return this.sha256(process.env.AFFiNE_PRO_LICENSE_AES_KEY);
     }
 
     return null;
