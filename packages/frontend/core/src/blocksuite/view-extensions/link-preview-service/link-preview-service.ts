@@ -5,7 +5,6 @@ import {
   LinkPreviewService,
   LinkPreviewServiceIdentifier,
 } from '@blocksuite/affine/shared/services';
-import { type BlockStdScope, StdIdentifier } from '@blocksuite/affine/std';
 import { type ExtensionType } from '@blocksuite/affine/store';
 import type { Container } from '@blocksuite/global/di';
 import type { FrameworkProvider } from '@toeverything/infra';
@@ -13,12 +12,8 @@ import type { FrameworkProvider } from '@toeverything/infra';
 import { ServerService } from '../../../modules/cloud/services/server';
 
 class AffineLinkPreviewService extends LinkPreviewService {
-  constructor(
-    endpoint: string,
-    std: BlockStdScope,
-    cache: LinkPreviewCacheProvider
-  ) {
-    super(std, cache);
+  constructor(endpoint: string, cache: LinkPreviewCacheProvider) {
+    super(cache);
     this.setEndpoint(endpoint);
   }
 }
@@ -52,7 +47,6 @@ export function patchLinkPreviewService(
       di.override(LinkPreviewServiceIdentifier, provider => {
         return new AffineLinkPreviewService(
           linkPreviewUrl,
-          provider.get(StdIdentifier),
           provider.get(LinkPreviewCacheIdentifier)
         );
       });
