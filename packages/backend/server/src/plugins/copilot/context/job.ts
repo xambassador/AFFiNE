@@ -4,6 +4,7 @@ import {
   AFFiNELogger,
   BlobNotFound,
   Config,
+  CopilotContextFileNotSupported,
   DocNotFound,
   EventBus,
   JobQueue,
@@ -300,6 +301,19 @@ export class CopilotContextDocJob {
     return controller.signal;
   }
 
+  private async fulfillEmptyEmbedding(workspaceId: string, docId: string) {
+    const emptyEmbedding = {
+      index: 0,
+      content: '',
+      embedding: Array.from({ length: EMBEDDING_DIMENSIONS }, () => 0),
+    };
+    await this.models.copilotContext.insertWorkspaceEmbedding(
+      workspaceId,
+      docId,
+      [emptyEmbedding]
+    );
+  }
+
   @OnJob('copilot.embedding.docs')
   async embedPendingDocs({
     contextId,
@@ -321,7 +335,7 @@ export class CopilotContextDocJob {
         const fragment = await this.getDocFragment(workspaceId, docId);
         if (fragment) {
           // fast fall for empty doc, journal is easily to create a empty doc
-          if (fragment.summary) {
+          if (fragment.summary.trim()) {
             const embeddings = await this.embeddingClient.getFileEmbeddings(
               new File(
                 [fragment.summary],
@@ -340,16 +354,7 @@ export class CopilotContextDocJob {
             }
           } else {
             // for empty doc, insert empty embedding
-            const emptyEmbedding = {
-              index: 0,
-              content: '',
-              embedding: Array.from({ length: EMBEDDING_DIMENSIONS }, () => 0),
-            };
-            await this.models.copilotContext.insertWorkspaceEmbedding(
-              workspaceId,
-              docId,
-              [emptyEmbedding]
-            );
+            await this.fulfillEmptyEmbedding(workspaceId, docId);
           }
         } else if (contextId) {
           throw new DocNotFound({ spaceId: workspaceId, docId });
@@ -361,6 +366,14 @@ export class CopilotContextDocJob {
           contextId,
           docId,
         });
+      }
+      if (
+        error instanceof CopilotContextFileNotSupported &&
+        error.message.includes('no content found')
+      ) {
+        // if the doc is empty, we still need to fulfill the embedding
+        await this.fulfillEmptyEmbedding(workspaceId, docId);
+        return;
       }
 
       // passthrough error to job queue

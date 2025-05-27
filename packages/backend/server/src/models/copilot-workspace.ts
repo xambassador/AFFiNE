@@ -42,23 +42,26 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
    */
   @Transactional()
   async findDocsToEmbed(workspaceId: string): Promise<string[]> {
+    const ignoredDocIds = (await this.listIgnoredDocIds(workspaceId)).map(
+      d => d.docId
+    );
+
     const docIds = await this.db.snapshot
       .findMany({
         where: {
           workspaceId,
-          embedding: {
-            none: {},
-          },
+          AND: [
+            { id: { notIn: ignoredDocIds } },
+            { id: { not: workspaceId } },
+            { id: { not: { contains: '$' } } },
+          ],
+          embedding: { none: {} },
         },
         select: { id: true },
       })
       .then(r => r.map(doc => doc.id));
 
-    const skipDocIds = await this.listIgnoredDocIds(workspaceId).then(
-      r => new Set(r.map(r => r.docId))
-    );
-
-    return docIds.filter(id => !skipDocIds.has(id));
+    return docIds;
   }
 
   @Transactional()

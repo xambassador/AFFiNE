@@ -199,6 +199,21 @@ test('should insert and search embedding', async t => {
     );
     t.snapshot(afterAddIgnoreDocs.length, 'should not find docs to embed');
   }
+
+  {
+    const docId = `foo$bar`;
+    await t.context.doc.upsert({
+      spaceId: workspace.id,
+      docId: docId,
+      blob: Uint8Array.from([1, 2, 3]),
+      timestamp: Date.now(),
+      editorId: user.id,
+    });
+    const results = await t.context.copilotWorkspace.findDocsToEmbed(
+      workspace.id
+    );
+    t.false(results.includes(docId), 'docs containing `$` should be excluded');
+  }
 });
 
 test('should check need to be embedded', async t => {

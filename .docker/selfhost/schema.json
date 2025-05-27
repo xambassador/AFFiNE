@@ -52,14 +52,14 @@
         },
         "queues.copilot": {
           "type": "object",
-          "description": "The config for copilot job queue\n@default {\"concurrency\":5}",
+          "description": "The config for copilot job queue\n@default {\"concurrency\":10}",
           "properties": {
             "concurrency": {
               "type": "number"
             }
           },
           "default": {
-            "concurrency": 5
+            "concurrency": 10
           }
         },
         "queues.doc": {
