@@ -3,24 +3,30 @@ import { gqlFetcherFactory } from '@affine/graphql';
 
 import { DummyConnection } from '../../connection';
 
-const TIMEOUT = 15000;
-
 export class HttpConnection extends DummyConnection {
-  readonly fetch = async (input: string, init?: RequestInit) => {
+  readonly fetch = async (
+    input: string,
+    init?: RequestInit & { timeout?: number }
+  ) => {
     const externalSignal = init?.signal;
     if (externalSignal?.aborted) {
       throw externalSignal.reason;
     }
 
-    const signals = [AbortSignal.timeout(TIMEOUT)];
-    if (externalSignal) signals.push(externalSignal);
+    const abortController = new AbortController();
+    externalSignal?.addEventListener('abort', reason => {
+      abortController.abort(reason);
+    });
 
-    const combinedSignal = AbortSignal.any(signals);
+    const timeout = init?.timeout ?? 15000;
+    const timeoutId = setTimeout(() => {
+      abortController.abort(new Error('request timeout'));
+    }, timeout);
 
     const res = await globalThis
       .fetch(new URL(input, this.serverBaseUrl), {
         ...init,
-        signal: combinedSignal,
+        signal: abortController.signal,
         headers: {
           ...this.requestHeaders,
           ...init?.headers,
@@ -28,18 +34,16 @@ export class HttpConnection extends DummyConnection {
         },
       })
       .catch(err => {
-        const message =
-          err.name === 'TimeoutError' ? 'request timeout' : err.message;
-
         throw new UserFriendlyError({
           status: 504,
           code: 'NETWORK_ERROR',
           type: 'NETWORK_ERROR',
           name: 'NETWORK_ERROR',
-          message: `Network error: ${message}`,
+          message: `Network error: ${err.message}`,
           stacktrace: err.stack,
         });
       });
+    clearTimeout(timeoutId);
     if (!res.ok && res.status !== 404) {
       if (res.status === 413) {
         throw new UserFriendlyError({
