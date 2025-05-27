@@ -5599,6 +5599,18 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.settings.meetings.privacy.microphone.permission-setting"](): string;
     /**
+      * `Permission issues`
+      */
+    ["com.affine.settings.meetings.privacy.issues"](): string;
+    /**
+      * `Permissions are granted but the status isn't updated? Restart the app to refresh permissions.`
+      */
+    ["com.affine.settings.meetings.privacy.issues.description"](): string;
+    /**
+      * `Restart App`
+      */
+    ["com.affine.settings.meetings.privacy.issues.restart"](): string;
+    /**
       * `Do nothing`
       */
     ["com.affine.settings.meetings.record.recording-mode.none"](): string;

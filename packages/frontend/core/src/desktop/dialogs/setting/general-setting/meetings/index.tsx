@@ -1,4 +1,5 @@
 import {
+  Button,
   IconButton,
   Menu,
   MenuItem,
@@ -11,6 +12,7 @@ import {
   SettingWrapper,
 } from '@affine/component/setting-components';
 import { useAsyncCallback } from '@affine/core/components/hooks/affine-async-hooks';
+import { DesktopApiService } from '@affine/core/modules/desktop-api';
 import { MeetingSettingsService } from '@affine/core/modules/media/services/meeting-settings';
 import type { MeetingSettingsSchema } from '@affine/electron/main/shared-state-schema';
 import { Trans, useI18n } from '@affine/i18n';
@@ -133,6 +135,7 @@ const PermissionSettingRow = ({
 const MeetingsSettingsMain = () => {
   const t = useI18n();
   const meetingSettingsService = useService(MeetingSettingsService);
+  const desktopApiService = useService(DesktopApiService);
   const settings = useLiveData(meetingSettingsService.settings$);
   const [recordingFeatureAvailable, setRecordingFeatureAvailable] =
     useState(false);
@@ -175,25 +178,21 @@ const MeetingsSettingsMain = () => {
     [meetingSettingsService]
   );
 
-  const handleOpenScreenRecordingPermissionSetting =
-    useAsyncCallback(async () => {
-      await meetingSettingsService.showRecordingPermissionSetting('screen');
-    }, [meetingSettingsService]);
-
-  const handleOpenMicrophoneRecordingPermissionSetting =
-    useAsyncCallback(async () => {
-      const result =
-        await meetingSettingsService.askForMeetingPermission('microphone');
-      if (!result) {
-        await meetingSettingsService.showRecordingPermissionSetting(
-          'microphone'
-        );
-      }
-    }, [meetingSettingsService]);
+  const handleOpenPermissionSetting = useAsyncCallback(
+    async (type: 'screen' | 'microphone') => {
+      await meetingSettingsService.askForMeetingPermission(type);
+      await meetingSettingsService.showRecordingPermissionSetting(type);
+    },
+    [meetingSettingsService]
+  );
 
   const handleOpenSavedRecordings = useAsyncCallback(async () => {
     await meetingSettingsService.openSavedRecordings();
   }, [meetingSettingsService]);
+
+  const handleRestartApp = useAsyncCallback(async () => {
+    await desktopApiService.handler.ui.restartApp();
+  }, [desktopApiService]);
 
   return (
     <div className={styles.meetingWrapper}>
@@ -304,8 +303,8 @@ const MeetingsSettingsMain = () => {
               descriptionKey="com.affine.settings.meetings.privacy.screen-system-audio-recording.description"
               permissionSettingKey="com.affine.settings.meetings.privacy.screen-system-audio-recording.permission-setting"
               hasPermission={permissions?.screen || false}
-              onOpenPermissionSetting={
-                handleOpenScreenRecordingPermissionSetting
+              onOpenPermissionSetting={() =>
+                handleOpenPermissionSetting('screen')
               }
             />
             <PermissionSettingRow
@@ -313,10 +312,22 @@ const MeetingsSettingsMain = () => {
               descriptionKey="com.affine.settings.meetings.privacy.microphone.description"
               permissionSettingKey="com.affine.settings.meetings.privacy.microphone.permission-setting"
               hasPermission={permissions?.microphone || false}
-              onOpenPermissionSetting={
-                handleOpenMicrophoneRecordingPermissionSetting
+              onOpenPermissionSetting={() =>
+                handleOpenPermissionSetting('microphone')
               }
             />
+          </SettingWrapper>
+          <SettingWrapper>
+            <SettingRow
+              name={t['com.affine.settings.meetings.privacy.issues']()}
+              desc={t[
+                'com.affine.settings.meetings.privacy.issues.description'
+              ]()}
+            >
+              <Button onClick={handleRestartApp}>
+                {t['com.affine.settings.meetings.privacy.issues.restart']()}
+              </Button>
+            </SettingRow>
           </SettingWrapper>
         </>
       )}

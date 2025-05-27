@@ -471,6 +471,21 @@ function setupMediaListeners() {
   );
 }
 
+function askForScreenRecordingPermission() {
+  if (!isMacOS()) {
+    return false;
+  }
+  try {
+    const ShareableContent = require('@affine/native').ShareableContent;
+    // this will trigger the permission prompt
+    new ShareableContent();
+    return true;
+  } catch (error) {
+    logger.error('failed to ask for screen recording permission', error);
+  }
+  return false;
+}
+
 // will be called when the app is ready or when the user has enabled the recording feature in settings
 export function setupRecordingFeature() {
   if (!MeetingsSettingsState.value.enabled || !checkCanRecordMeeting()) {
@@ -788,9 +803,14 @@ export const checkMeetingPermissions = () => {
   ) as Record<(typeof mediaTypes)[number], boolean>;
 };
 
-export const askForMeetingPermission = async (type: 'microphone') => {
+export const askForMeetingPermission = async (
+  type: 'microphone' | 'screen'
+) => {
   if (!isMacOS()) {
     return false;
+  }
+  if (type === 'screen') {
+    return askForScreenRecordingPermission();
   }
   return systemPreferences.askForMediaAccess(type);
 };
