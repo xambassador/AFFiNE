@@ -38,6 +38,15 @@ const SupportIndexedAttributes = [
   'parent_block_id',
 ];
 
+const ConvertEmptyStringToNullValueFields = new Set([
+  'ref_doc_id',
+  'ref',
+  'blob',
+  'additional',
+  'parent_block_id',
+  'parent_flavour',
+]);
+
 @Injectable()
 export class ManticoresearchProvider extends ElasticsearchProvider {
   override type = SearchProviderType.Manticoresearch;
@@ -344,7 +353,10 @@ export class ManticoresearchProvider extends ElasticsearchProvider {
     return fields.reduce(
       (acc, field) => {
         let value = source[field];
-        if (value !== null && value !== undefined && value !== '') {
+        if (ConvertEmptyStringToNullValueFields.has(field) && value === '') {
+          value = null;
+        }
+        if (value !== null && value !== undefined) {
           // special handle `ref_doc_id`, `ref`, `blob` as string[]
           if (
             (field === 'ref_doc_id' || field === 'ref' || field === 'blob') &&

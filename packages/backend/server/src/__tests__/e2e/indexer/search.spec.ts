@@ -276,3 +276,87 @@ e2e('should return empty results when search not match any docs', async t => {
 
   t.snapshot(result);
 });
+
+e2e('should return empty nodes when docId not exists', async t => {
+  const owner = await app.signup();
+  const workspace = await app.create(Mockers.Workspace, {
+    owner,
+  });
+
+  const result = await app.gql({
+    query: indexerSearchQuery,
+    variables: {
+      id: workspace.id,
+      input: {
+        table: SearchTable.doc,
+        query: {
+          type: SearchQueryType.match,
+          field: 'docId',
+          match: 'not-exists-doc-id',
+        },
+        options: {
+          fields: ['summary'],
+          pagination: {
+            limit: 1,
+          },
+        },
+      },
+    },
+  });
+
+  t.snapshot(result);
+});
+
+e2e(
+  'should empty doc summary string when doc exists but no summary',
+  async t => {
+    const owner = await app.signup();
+    const workspace = await app.create(Mockers.Workspace, {
+      owner,
+    });
+
+    const indexerService = app.get(IndexerService);
+
+    await indexerService.write(
+      SearchTable.doc,
+      [
+        {
+          docId: 'doc-1-without-summary',
+          workspaceId: workspace.id,
+          title: 'test1',
+          summary: '',
+          createdByUserId: owner.id,
+          updatedByUserId: owner.id,
+          createdAt: new Date('2025-04-22T00:00:00.000Z'),
+          updatedAt: new Date('2025-04-22T00:00:00.000Z'),
+        },
+      ],
+      {
+        refresh: true,
+      }
+    );
+
+    const result = await app.gql({
+      query: indexerSearchQuery,
+      variables: {
+        id: workspace.id,
+        input: {
+          table: SearchTable.doc,
+          query: {
+            type: SearchQueryType.match,
+            field: 'docId',
+            match: 'doc-1-without-summary',
+          },
+          options: {
+            fields: ['summary'],
+            pagination: {
+              limit: 1,
+            },
+          },
+        },
+      },
+    });
+
+    t.snapshot(result.workspace.search.nodes);
+  }
+);

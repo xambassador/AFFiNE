@@ -1303,6 +1303,113 @@ test('should search doc title support stemmer filter', async t => {
   t.snapshot(omit(result.nodes[0], ['_score']));
 });
 
+test('should return empty string field:summary value', async t => {
+  const workspaceId =
+    'workspaceId-search-query-return-empty-string-field-summary-value-for-elasticsearch';
+  const docId = 'doc0';
+
+  await searchProvider.write(
+    SearchTable.doc,
+    [
+      {
+        workspace_id: workspaceId,
+        doc_id: docId,
+        title: '',
+        summary: '',
+        created_by_user_id: user.id,
+        updated_by_user_id: user.id,
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ],
+    {
+      refresh: true,
+    }
+  );
+
+  let result = await searchProvider.search(SearchTable.doc, {
+    _source: ['workspace_id', 'doc_id'],
+    query: {
+      bool: {
+        must: [
+          {
+            term: { workspace_id: { value: workspaceId } },
+          },
+          {
+            term: {
+              doc_id: {
+                value: docId,
+              },
+            },
+          },
+        ],
+      },
+    },
+    fields: ['doc_id', 'title', 'summary'],
+    sort: ['_score'],
+  });
+
+  t.snapshot(result.nodes.map(node => omit(node, ['_score'])));
+});
+
+test('should not return not exists field:ref_doc_id', async t => {
+  const workspaceId =
+    'workspaceId-search-query-not-return-not-exists-field-ref_doc_id-for-elasticsearch';
+  const docId = 'doc0';
+  const blockId = 'block0';
+
+  await searchProvider.write(
+    SearchTable.block,
+    [
+      {
+        workspace_id: workspaceId,
+        doc_id: docId,
+        block_id: blockId,
+        content: 'hello world on search title blockId1-text',
+        flavour: 'affine:text',
+        created_by_user_id: user.id,
+        updated_by_user_id: user.id,
+        created_at: new Date(),
+        updated_at: new Date(),
+      },
+    ],
+    {
+      refresh: true,
+    }
+  );
+
+  let result = await searchProvider.search(SearchTable.block, {
+    _source: ['workspace_id', 'doc_id'],
+    query: {
+      bool: {
+        must: [
+          {
+            term: { workspace_id: { value: workspaceId } },
+          },
+          {
+            term: {
+              doc_id: {
+                value: docId,
+              },
+            },
+          },
+        ],
+      },
+    },
+    fields: [
+      'doc_id',
+      'block_id',
+      'ref_doc_id',
+      'parent_block_id',
+      'additional',
+      'parent_flavour',
+    ],
+    sort: ['_score'],
+  });
+
+  t.snapshot(result.nodes.map(node => omit(node, ['_score'])));
+});
+
 // #endregion
 
 // #region aggregate
