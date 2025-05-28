@@ -3,7 +3,7 @@ import { stopPropagation } from '@affine/core/utils';
 import type { CopilotSessionType } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
 import { unsafeCSSVar, unsafeCSSVarV2 } from '@blocksuite/affine/shared/theme';
-import { openFileOrFiles } from '@blocksuite/affine/shared/utils';
+import { openFilesWith } from '@blocksuite/affine/shared/utils';
 import type { EditorHost } from '@blocksuite/affine/std';
 import {
   CloseIcon,
@@ -533,10 +533,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
   private readonly _uploadImageFiles = async (_e: MouseEvent) => {
     if (this._isImageUploadDisabled) return;
 
-    const images = await openFileOrFiles({
-      acceptType: 'Images',
-      multiple: true,
-    });
+    const images = await openFilesWith('Images');
     if (!images) return;
     if (this.chatContextValue.images.length + images.length > MAX_IMAGE_COUNT) {
       toast(`You can only upload up to ${MAX_IMAGE_COUNT} images`);
