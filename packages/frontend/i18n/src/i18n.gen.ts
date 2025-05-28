@@ -8163,13 +8163,13 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.recording.stop"](): string;
     /**
-      * `All docs data needs to be migrated in order to fully utilize its features.`
+      * `Migrate Data to Enhance User Experience`
       */
-    ["com.affine.migration-all-docs-notification.title"](): string;
+    ["com.affine.migration-all-docs-notification.header"](): string;
     /**
-      * `We upgraded the data format, requiring local data migration to utilize features. Created by and Updated by info is now stored locally. Without the update, you will see the actual status. Perform the upgrade under better network conditions.`
+      * `We are updating the local data to facilitate the recording and filtering of created by and Last edited by information. Please click the “Migrate Data” button and ensure a stable network connection during the process.`
       */
-    ["com.affine.migration-all-docs-notification.content"](): string;
+    ["com.affine.migration-all-docs-notification.desc"](): string;
     /**
       * `Migration failed: {{errorMessage}}`
       */
