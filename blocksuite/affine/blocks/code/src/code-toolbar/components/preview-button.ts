@@ -13,6 +13,10 @@ import { CodeBlockPreviewIdentifier } from '../../code-preview-extension';
 
 export class PreviewButton extends WithDisposable(SignalWatcher(LitElement)) {
   static override styles = css`
+    :host {
+      margin-right: auto;
+    }
+
     .preview-toggle-container {
       display: flex;
       padding: 2px;
