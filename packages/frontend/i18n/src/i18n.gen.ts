@@ -3623,36 +3623,6 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.payment.billing-type-form.title"](): string;
     /**
-      * `The maximum file upload size for local workspaces is {{quota}}.`
-      */
-    ["com.affine.payment.blob-limit.description.local"](options: {
-        readonly quota: string;
-    }): string;
-    /**
-      * `The maximum file upload size for this joined workspace is {{quota}}. You can contact the owner of this workspace.`
-      */
-    ["com.affine.payment.blob-limit.description.member"](options: {
-        readonly quota: string;
-    }): string;
-    /**
-      * `The maximum file upload size for this workspace is {{quota}}. To proceed, you can:`
-      */
-    ["com.affine.payment.blob-limit.description.owner"](options: {
-        readonly quota: string;
-    }): string;
-    /**
-      * `Upgrade your account for larger file upload limits`
-      */
-    ["com.affine.payment.blob-limit.description.owner.tips-1"](): string;
-    /**
-      * `Upgrade the workspace plan to increase storage for all member`
-      */
-    ["com.affine.payment.blob-limit.description.owner.tips-2"](): string;
-    /**
-      * `Compress your file and upload again`
-      */
-    ["com.affine.payment.blob-limit.description.owner.tips-3"](): string;
-    /**
       * `You have reached the limit`
       */
     ["com.affine.payment.blob-limit.title"](): string;
