@@ -93,7 +93,7 @@ declare global {
       docId: string;
       workspaceId: string;
       sessionId: string;
-      latestMessageId: string;
+      latestMessageId?: string;
     }
 
     interface AIImageActionOptions extends AITextActionOptions {
