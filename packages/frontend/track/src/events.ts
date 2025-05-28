@@ -544,6 +544,11 @@ interface PageEvents extends PageDivision {
       ];
     };
   };
+  clipper: {
+    $: {
+      $: ['createDoc'];
+    };
+  };
 }
 
 type OrganizeItemType = 'doc' | 'folder' | 'collection' | 'tag' | 'favorite';
