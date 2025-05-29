@@ -293,13 +293,13 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
   accessor onChatSuccess: (() => void) | undefined;
 
   @property({ attribute: false })
-  accessor trackOptions!: BlockSuitePresets.TrackerOptions;
+  accessor trackOptions: BlockSuitePresets.TrackerOptions | undefined;
 
   @property({ attribute: 'data-testid', reflect: true })
   accessor testId = 'chat-panel-input-container';
 
   @property({ attribute: false })
-  accessor sideBarWidth: Signal<number | undefined> = signal(undefined);
+  accessor panelWidth: Signal<number | undefined> = signal(undefined);
 
   @property({ attribute: false })
   accessor addImages!: (images: File[]) => void;
@@ -339,7 +339,7 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
     const { images, status } = this.chatContextValue;
     const hasImages = images.length > 0;
     const maxHeight = hasImages ? 272 + 2 : 200 + 2;
-    const showLabel = this.sideBarWidth.value && this.sideBarWidth.value > 400;
+    const showLabel = this.panelWidth.value && this.panelWidth.value > 400;
 
     return html` <div
       class="chat-panel-input"
@@ -601,8 +601,8 @@ export class AIChatInput extends SignalWatcher(WithDisposable(LitElement)) {
         stream: true,
         signal: abortController.signal,
         isRootSession: this.isRootSession,
-        where: this.trackOptions.where,
-        control: this.trackOptions.control,
+        where: this.trackOptions?.where,
+        control: this.trackOptions?.control,
         webSearch: this._isNetworkActive,
         reasoning: this._isReasoningActive,
         modelId: this.modelId,
