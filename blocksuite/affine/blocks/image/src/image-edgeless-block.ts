@@ -42,7 +42,10 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
       height: 36px;
       padding: 5px;
       border-radius: 8px;
-      background: ${unsafeCSSVarV2('loading/backgroundLayer')};
+      background: ${unsafeCSSVarV2(
+        'loading/imageLoadingBackground',
+        '#92929238'
+      )};
 
       & > svg {
         font-size: 25.71px;
@@ -126,6 +129,7 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
     const resovledState = this.resourceController.resolveStateWith({
       loadingIcon: LoadingIcon({
         strokeColor: cssVarV2('button/pureWhiteText'),
+        ringColor: cssVarV2('loading/imageLoadingLayer', '#ffffff8f'),
       }),
       errorIcon: BrokenImageIcon(),
       icon: ImageIcon(),

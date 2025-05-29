@@ -51,7 +51,10 @@ export class ImageBlockPageComponent extends SignalWatcher(
       height: 36px;
       padding: 5px;
       border-radius: 8px;
-      background: ${unsafeCSSVarV2('loading/backgroundLayer')};
+      background: ${unsafeCSSVarV2(
+        'loading/imageLoadingBackground',
+        '#92929238'
+      )};
 
       & > svg {
         font-size: 25.71px;
