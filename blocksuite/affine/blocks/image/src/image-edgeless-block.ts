@@ -137,6 +137,8 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
       description: formatSize(size),
     });
 
+    const { loading, icon, description, error, needUpload } = resovledState;
+
     return html`
       <div class="affine-image-container" style=${containerStyleMap}>
         ${when(
@@ -152,17 +154,18 @@ export class ImageEdgelessBlockComponent extends GfxBlockComponent<ImageBlockMod
                 @error=${this._handleError}
               />
             </div>
+            ${when(loading, () => html`<div class="loading">${icon}</div>`)}
             ${when(
-              resovledState.loading,
-              () => html`<div class="loading">${resovledState.icon}</div>`
-            )}
-            ${when(
-              resovledState.error && resovledState.description,
+              Boolean(error && description),
               () =>
                 html`<affine-resource-status
                   class="affine-image-status"
-                  .message=${resovledState.description}
-                  .reload=${() => this.refreshData()}
+                  .message=${description}
+                  .needUpload=${needUpload}
+                  .action=${() =>
+                    needUpload
+                      ? this.resourceController.upload()
+                      : this.refreshData()}
                 ></affine-resource-status>`
             )}
           `,
