@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import {
   AFFiNELogger,
   BlobNotFound,
+  CallMetric,
   Config,
   CopilotContextFileNotSupported,
   DocNotFound,
@@ -65,6 +66,7 @@ export class CopilotContextDocJob {
     return this.client as EmbeddingClient;
   }
 
+  @CallMetric('ai', 'addFileEmbeddingQueue')
   async addFileEmbeddingQueue(file: Jobs['copilot.embedding.files']) {
     if (!this.supportEmbedding) return;
 
@@ -184,7 +186,7 @@ export class CopilotContextDocJob {
     );
   }
 
-  async readCopilotBlob(
+  private async readCopilotBlob(
     userId: string,
     workspaceId: string,
     blobId: string,
@@ -375,6 +377,9 @@ export class CopilotContextDocJob {
         error instanceof CopilotContextFileNotSupported &&
         error.message.includes('no content found')
       ) {
+        this.logger.warn(
+          `Doc ${docId} in workspace ${workspaceId} has no content, fulfilling empty embedding.`
+        );
         // if the doc is empty, we still need to fulfill the embedding
         await this.fulfillEmptyEmbedding(workspaceId, docId);
         return;
