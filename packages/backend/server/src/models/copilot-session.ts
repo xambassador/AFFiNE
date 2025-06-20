@@ -47,6 +47,7 @@ type ChatSession = {
   // connect ids
   userId: string;
   promptName: string;
+  promptAction: string | null;
   parentSessionId?: string | null;
 };
 
@@ -95,9 +96,9 @@ export class CopilotSessionModel extends BaseModel {
   }
 
   // NOTE: just for test, remove it after copilot prompt model is ready
-  async createPrompt(name: string, model: string) {
+  async createPrompt(name: string, model: string, action?: string) {
     await this.db.aiPrompt.create({
-      data: { name, model },
+      data: { name, model, action: action ?? null },
     });
   }
 
@@ -116,6 +117,7 @@ export class CopilotSessionModel extends BaseModel {
         // connect
         userId: state.userId,
         promptName: state.promptName,
+        promptAction: state.promptAction,
         parentSessionId: state.parentSessionId,
       },
     });
@@ -134,7 +136,9 @@ export class CopilotSessionModel extends BaseModel {
   }
 
   @Transactional()
-  async getChatSessionId(state: Omit<ChatSession, 'promptName'>) {
+  async getChatSessionId(
+    state: Omit<ChatSession, 'promptName' | 'promptAction'>
+  ) {
     const extraCondition: Record<string, any> = {};
     if (state.parentSessionId) {
       // also check session id if provided session is forked session
@@ -284,10 +288,21 @@ export class CopilotSessionModel extends BaseModel {
     if (!session) {
       throw new CopilotSessionNotFound();
     }
-    if (data.promptName && session.prompt.action) {
-      throw new CopilotSessionInvalidInput(
-        `Cannot update prompt for action: ${session.id}`
-      );
+    if (data.promptName) {
+      if (session.prompt.action) {
+        throw new CopilotSessionInvalidInput(
+          `Cannot update prompt for action: ${session.id}`
+        );
+      }
+      const prompt = await this.db.aiPrompt.findFirst({
+        where: { name: data.promptName },
+      });
+      // always not allow to update to action prompt
+      if (!prompt || prompt.action) {
+        throw new CopilotSessionInvalidInput(
+          `Prompt ${data.promptName} not found or not available for session ${sessionId}`
+        );
+      }
     }
     if (data.pinned && data.pinned !== session.pinned) {
       // if pin the session, unpin exists session in the workspace
