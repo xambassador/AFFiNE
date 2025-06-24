@@ -95,8 +95,7 @@ jobs:
         uses: docker/setup-buildx-action@v3
       - name: Tag Image
         run: |
-          docker tag ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}}-${{needs.prepare.outputs.GIT_SHORT_HASH}} ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}}
-          docker push ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}}
+          docker buildx imagetools create --tag ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}} ghcr.io/toeverything/affine:${{needs.prepare.outputs.BUILD_TYPE}}-${{needs.prepare.outputs.GIT_SHORT_HASH}}
 
   desktop:
     name: Release Desktop
