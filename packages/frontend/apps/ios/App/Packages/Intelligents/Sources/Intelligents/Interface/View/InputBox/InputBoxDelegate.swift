@@ -5,6 +5,7 @@
 //  Created by 秋星桥 on 6/18/25.
 //
 
+import SwifterSwift
 import UIKit
 
 protocol InputBoxDelegate: AnyObject {
@@ -16,12 +17,73 @@ protocol InputBoxDelegate: AnyObject {
   func inputBoxTextDidChange(_ text: String)
 }
 
-extension InputBox: InputBoxImageBarDelegate {
-  func inputBoxImageBar(_: InputBoxImageBar, didRemoveImageWithId id: InputAttachment.ID) {
+extension InputBox: ImageAttachmentBarDelegate {
+  func inputBoxImageBar(_: ImageAttachmentBar, didRemoveImageWithId id: ImageAttachment.ID) {
     performWithAnimation { [self] in
-      viewModel.removeAttachment(withId: id)
+      viewModel.removeImageAttachment(withId: id)
       layoutIfNeeded()
     }
+  }
+}
+
+extension InputBox: FileAttachmentHeaderViewDelegate {
+  func headerViewDidPickMore(_: FileAttachmentHeaderView) {
+    delegate?.inputBoxDidSelectAttachFiles(self)
+  }
+
+  func headerViewDidTapManagement(_: FileAttachmentHeaderView) {
+    let controller = AttachmentManagementController(delegate: self)
+    controller.set(fileAttachments: viewModel.fileAttachments)
+    controller.set(documentAttachments: viewModel.documentAttachments)
+    parentViewController?.present(controller, animated: true)
+  }
+}
+
+extension InputBox: AttachmentManagementControllerDelegate {
+  func deleteFileAttachment(controller: AttachmentManagementController, _ attachment: FileAttachment) {
+    viewModel.removeFileAttachment(withId: attachment.id)
+    controller.set(fileAttachments: viewModel.fileAttachments)
+    layoutIfNeeded()
+  }
+
+  func deleteDocumentAttachment(controller: AttachmentManagementController, _ attachment: DocumentAttachment) {
+    viewModel.removeDocumentAttachment(withId: attachment.id)
+    controller.set(documentAttachments: viewModel.documentAttachments)
+    layoutIfNeeded()
+  }
+}
+
+extension InputBox: InputBoxFunctionBarDelegate {
+  func functionBarDidTapTakePhoto(_: InputBoxFunctionBar) {
+    delegate?.inputBoxDidSelectTakePhoto(self)
+  }
+
+  func functionBarDidTapPhotoLibrary(_: InputBoxFunctionBar) {
+    delegate?.inputBoxDidSelectPhotoLibrary(self)
+  }
+
+  func functionBarDidTapAttachFiles(_: InputBoxFunctionBar) {
+    delegate?.inputBoxDidSelectAttachFiles(self)
+  }
+
+  func functionBarDidTapEmbedDocs(_: InputBoxFunctionBar) {
+    delegate?.inputBoxDidSelectEmbedDocs(self)
+  }
+
+  func functionBarDidTapTool(_: InputBoxFunctionBar) {
+    viewModel.toggleTool()
+  }
+
+  func functionBarDidTapNetwork(_: InputBoxFunctionBar) {
+    viewModel.toggleNetwork()
+  }
+
+  func functionBarDidTapDeepThinking(_: InputBoxFunctionBar) {
+    viewModel.toggleDeepThinking()
+  }
+
+  func functionBarDidTapSend(_: InputBoxFunctionBar) {
+    delegate?.inputBoxDidSend(self)
   }
 }
 
