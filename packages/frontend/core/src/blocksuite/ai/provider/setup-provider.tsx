@@ -11,7 +11,7 @@ import {
 import { z } from 'zod';
 
 import { AIProvider } from './ai-provider';
-import type { CopilotClient } from './copilot-client';
+import { type CopilotClient, Endpoint } from './copilot-client';
 import type { PromptKey } from './prompt';
 import { textToText, toImage } from './request';
 import { setupTracker } from './tracker';
@@ -101,6 +101,7 @@ export function setupAIProvider(
         files: contexts?.files,
         searchMode: webSearch ? 'MUST' : 'AUTO',
       },
+      endpoint: Endpoint.StreamObject,
     });
   });
 
@@ -356,7 +357,7 @@ export function setupAIProvider(
       content: options.input,
       // 3 minutes
       timeout: 180000,
-      workflow: true,
+      endpoint: Endpoint.Workflow,
     });
   });
 
@@ -482,7 +483,7 @@ Could you make a new website based on these notes and send back just the html fi
       content: options.input,
       // 3 minutes
       timeout: 180000,
-      workflow: true,
+      endpoint: Endpoint.Workflow,
       postfix,
     });
   });
@@ -517,13 +518,14 @@ Could you make a new website based on these notes and send back just the html fi
       promptName,
       ...options,
     });
+    const isWorkflow = !!promptName?.startsWith('workflow:');
     return toImage({
       ...options,
       client,
       sessionId,
       content: options.input,
       timeout: 180000,
-      workflow: !!promptName?.startsWith('workflow:'),
+      endpoint: isWorkflow ? Endpoint.Workflow : Endpoint.Images,
     });
   });
 
