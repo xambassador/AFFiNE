@@ -1585,6 +1585,9 @@ enum SearchTable {
 }
 
 type ServerConfigType {
+  """Whether allow guest users to create demo workspaces."""
+  allowGuestDemoWorkspace: Boolean!
+
   """fetch latest available upgradable release of server"""
   availableUpgrade: ReleaseVersionType
 

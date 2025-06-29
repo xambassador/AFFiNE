@@ -2149,6 +2149,8 @@ export enum SearchTable {
 
 export interface ServerConfigType {
   __typename?: 'ServerConfigType';
+  /** Whether allow guest users to create demo workspaces. */
+  allowGuestDemoWorkspace: Scalars['Boolean']['output'];
   /** fetch latest available upgradable release of server */
   availableUpgrade: Maybe<ReleaseVersionType>;
   /** Features for user that can be configured */
@@ -2743,6 +2745,7 @@ export type AdminServerConfigQuery = {
     baseUrl: string;
     name: string;
     features: Array<ServerFeature>;
+    allowGuestDemoWorkspace: boolean;
     type: ServerDeploymentType;
     initialized: boolean;
     availableUserFeatures: Array<FeatureType>;
@@ -4828,6 +4831,7 @@ export type ServerConfigQuery = {
     baseUrl: string;
     name: string;
     features: Array<ServerFeature>;
+    allowGuestDemoWorkspace: boolean;
     type: ServerDeploymentType;
     initialized: boolean;
     credentialsRequirement: {
