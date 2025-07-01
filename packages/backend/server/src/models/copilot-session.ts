@@ -50,6 +50,7 @@ type PureChatSession = {
   workspaceId: string;
   docId?: string | null;
   pinned?: boolean;
+  title: string | null;
   messages?: ChatMessage[];
   // connect ids
   userId: string;
@@ -82,7 +83,7 @@ type UpdateChatSessionMessage = ChatSessionBaseState & {
 };
 
 export type UpdateChatSessionOptions = ChatSessionBaseState &
-  Pick<Partial<ChatSession>, 'docId' | 'pinned' | 'promptName'>;
+  Pick<Partial<ChatSession>, 'docId' | 'pinned' | 'promptName' | 'title'>;
 
 export type UpdateChatSession = ChatSessionBaseState & UpdateChatSessionOptions;
 
@@ -254,7 +255,7 @@ export class CopilotSessionModel extends BaseModel {
     return (await this.db.aiSession.findUnique({
       where: { ...where, id: sessionId, deletedAt: null },
       select,
-    })) as Prisma.AiSessionGetPayload<{ select: Select }>;
+    })) as Prisma.AiSessionGetPayload<{ select: Select }> | null;
   }
 
   @Transactional()
@@ -266,6 +267,7 @@ export class CopilotSessionModel extends BaseModel {
       docId: true,
       pinned: true,
       parentSessionId: true,
+      title: true,
       messages: {
         select: {
           id: true,
@@ -331,6 +333,7 @@ export class CopilotSessionModel extends BaseModel {
         docId: true,
         parentSessionId: true,
         pinned: true,
+        title: true,
         promptName: true,
         tokenCost: true,
         createdAt: true,
@@ -373,7 +376,7 @@ export class CopilotSessionModel extends BaseModel {
 
   @Transactional()
   async update(options: UpdateChatSessionOptions): Promise<string> {
-    const { userId, sessionId, docId, promptName, pinned } = options;
+    const { userId, sessionId, docId, promptName, pinned, title } = options;
     const session = await this.getExists(
       sessionId,
       {
@@ -419,7 +422,7 @@ export class CopilotSessionModel extends BaseModel {
 
     await this.db.aiSession.update({
       where: { id: sessionId },
-      data: { docId, promptName, pinned },
+      data: { docId, promptName, pinned, title },
     });
 
     return sessionId;
@@ -522,17 +525,29 @@ export class CopilotSessionModel extends BaseModel {
     if (!id) {
       throw new CopilotSessionNotFound();
     }
-    const ids = await this.getMessages(id, { id: true, role: true }).then(
-      roles =>
-        roles
-          .slice(
-            roles.findLastIndex(({ role }) => role === AiPromptRole.user) +
-              (removeLatestUserMessage ? 0 : 1)
-          )
-          .map(({ id }) => id)
-    );
+    const messages = await this.getMessages(id, { id: true, role: true });
+    const ids = messages
+      .slice(
+        messages.findLastIndex(({ role }) => role === AiPromptRole.user) +
+          (removeLatestUserMessage ? 0 : 1)
+      )
+      .map(({ id }) => id);
+
     if (ids.length) {
       await this.db.aiSessionMessage.deleteMany({ where: { id: { in: ids } } });
+
+      // clear the title if there only one round of conversation left
+      const remainingMessages = await this.getMessages(id, { role: true });
+      const userMessageCount = remainingMessages.filter(
+        m => m.role === AiPromptRole.user
+      ).length;
+
+      if (userMessageCount <= 1) {
+        await this.db.aiSession.update({
+          where: { id },
+          data: { title: null },
+        });
+      }
     }
   }
 
