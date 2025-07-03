@@ -61,7 +61,7 @@ export class ArtifactPreviewPanel extends WithDisposable(ShadowlessElement) {
       border-radius: 16px;
       background-color: ${unsafeCSSVarV2('layer/background/overlayPanel')};
       box-shadow: ${unsafeCSSVar('overlayPanelShadow')};
-      max-height: 100%;
+      height: 100%;
       overflow-y: auto;
     }
 
@@ -87,6 +87,7 @@ export class ArtifactPreviewPanel extends WithDisposable(ShadowlessElement) {
       display: flex;
       align-items: center;
       gap: 4px;
+      flex: 1;
     }
 
     .artifact-panel-close {
@@ -100,6 +101,10 @@ export class ArtifactPreviewPanel extends WithDisposable(ShadowlessElement) {
       cursor: pointer;
       transition: background-color 0.2s ease-in-out;
       color: ${unsafeCSSVarV2('icon/secondary')};
+    }
+
+    .artifact-panel-content {
+      height: calc(100% - 52px);
     }
 
     .artifact-panel-close:hover {

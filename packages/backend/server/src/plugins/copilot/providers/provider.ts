@@ -19,6 +19,7 @@ import {
   buildDocContentGetter,
   buildDocKeywordSearchGetter,
   buildDocSearchGetter,
+  createCodeArtifactTool,
   createDocComposeTool,
   createDocEditTool,
   createDocKeywordSearchTool,
@@ -201,6 +202,10 @@ export abstract class CopilotProvider<C = any> {
           }
           case 'docCompose': {
             tools.doc_compose = createDocComposeTool();
+            break;
+          }
+          case 'codeArtifact': {
+            tools.code_artifact = createCodeArtifactTool();
             break;
           }
         }

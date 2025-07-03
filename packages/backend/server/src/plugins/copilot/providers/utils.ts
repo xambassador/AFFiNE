@@ -11,6 +11,7 @@ import {
 import { ZodType } from 'zod';
 
 import {
+  createCodeArtifactTool,
   createDocComposeTool,
   createDocEditTool,
   createDocKeywordSearchTool,
@@ -392,6 +393,7 @@ export interface CustomAITools extends ToolSet {
   doc_compose: ReturnType<typeof createDocComposeTool>;
   web_search_exa: ReturnType<typeof createExaSearchTool>;
   web_crawl_exa: ReturnType<typeof createExaCrawlTool>;
+  code_artifact: ReturnType<typeof createCodeArtifactTool>;
 }
 
 type ChunkType = TextStreamPart<CustomAITools>['type'];

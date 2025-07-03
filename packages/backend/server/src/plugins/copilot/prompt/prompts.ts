@@ -1753,6 +1753,7 @@ Below is the user's query. Please respond in the user's preferred language witho
       'docSemanticSearch',
       'webSearch',
       'docCompose',
+      'codeArtifact',
     ],
   },
 };

@@ -14,7 +14,7 @@ import { unsafeCSSVarV2 } from '@blocksuite/affine/shared/theme';
 import { type BlockStdScope, ShadowlessElement } from '@blocksuite/affine/std';
 import { MarkdownTransformer } from '@blocksuite/affine/widgets/linked-doc';
 import { CopyIcon, PageIcon, ToolIcon } from '@blocksuite/icons/lit';
-import type { Signal } from '@preact/signals-core';
+import { type Signal } from '@preact/signals-core';
 import { css, html, nothing } from 'lit';
 import { property } from 'lit/decorators.js';
 
@@ -23,7 +23,7 @@ import {
   closePreviewPanel,
   isPreviewPanelOpen,
   renderPreviewPanel,
-} from './artifacts';
+} from './artifacts-preview-panel';
 import type { ToolError } from './type';
 
 interface DocComposeToolCall {
