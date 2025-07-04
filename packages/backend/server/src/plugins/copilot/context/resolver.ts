@@ -51,7 +51,7 @@ import { COPILOT_LOCKER, CopilotType } from '../resolver';
 import { ChatSessionService } from '../session';
 import { CopilotStorage } from '../storage';
 import { MAX_EMBEDDABLE_SIZE } from '../types';
-import { readStream } from '../utils';
+import { getSignal, readStream } from '../utils';
 import { CopilotContextService } from './service';
 
 @InputType()
@@ -394,16 +394,6 @@ export class CopilotContextResolver {
     private readonly storage: CopilotStorage
   ) {}
 
-  private getSignal(req: Request) {
-    const controller = new AbortController();
-    req.socket.on('close', hasError => {
-      if (hasError) {
-        controller.abort();
-      }
-    });
-    return controller.signal;
-  }
-
   @ResolveField(() => [CopilotContextCategory], {
     description: 'list collections in context',
   })
@@ -710,7 +700,7 @@ export class CopilotContextResolver {
           context.workspaceId,
           content,
           limit,
-          this.getSignal(ctx.req),
+          getSignal(ctx.req).signal,
           threshold
         );
       }
@@ -719,7 +709,7 @@ export class CopilotContextResolver {
       return await session.matchFiles(
         content,
         limit,
-        this.getSignal(ctx.req),
+        getSignal(ctx.req).signal,
         scopedThreshold,
         threshold
       );
@@ -785,7 +775,7 @@ export class CopilotContextResolver {
           context.workspaceId,
           content,
           limit,
-          this.getSignal(ctx.req),
+          getSignal(ctx.req).signal,
           threshold
         );
       }
@@ -802,7 +792,7 @@ export class CopilotContextResolver {
       const chunks = await session.matchWorkspaceDocs(
         content,
         limit,
-        this.getSignal(ctx.req),
+        getSignal(ctx.req).signal,
         scopedThreshold,
         threshold
       );
