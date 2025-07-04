@@ -42,8 +42,8 @@ public class IntelligentContext {
     case currentI18nLocale
   }
 
-  public private(set) var currentSession: ChatSessionObject?
-  public private(set) var currentWorkspaceId: String?
+  @Published public private(set) var currentSession: ChatSessionObject?
+  @Published public private(set) var currentWorkspaceId: String?
 
   public lazy var temporaryDirectory: URL = {
     let tempDir = FileManager.default.temporaryDirectory
@@ -70,6 +70,7 @@ public class IntelligentContext {
     assert(webView != nil)
     DispatchQueue.global(qos: .userInitiated).async { [self] in
       prepareTemporaryDirectory()
+      prepareMarkdownViewThemes()
 
       let webViewGroup = DispatchGroup()
       var webViewMetadataResult: [WebViewMetadataKey: Any] = [:]

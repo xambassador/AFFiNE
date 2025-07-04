@@ -10,6 +10,19 @@ import Apollo
 import ApolloAPI
 import EventSource
 import Foundation
+import MarkdownParser
+import MarkdownView
+
+private let loadingIndicator = " ●"
+
+private extension InputBoxData {
+  var hasAttachment: Bool {
+    if !imageAttachments.isEmpty { return false }
+    if !fileAttachments.isEmpty { return false }
+    if !documentAttachments.isEmpty { return false }
+    return true
+  }
+}
 
 extension ChatManager {
   public func startUserRequest(
@@ -21,7 +34,13 @@ extension ChatManager {
       id: .init(),
       content: inputBoxData.text,
       timestamp: .init(),
-      attachments: []
+    ))
+    append(sessionId: sessionId, UserHintCellViewModel(
+      id: .init(),
+      timestamp: .init(),
+      imageAttachments: inputBoxData.imageAttachments,
+      fileAttachments: inputBoxData.fileAttachments,
+      docAttachments: inputBoxData.documentAttachments
     ))
 
     let messageParameters: [String: AnyHashable] = [
@@ -102,37 +121,67 @@ extension ChatManager {
       report(sessionId, ChatError.invalidStreamURL)
       return
     }
-    let eventSource = EventSource(
-      request: .init(
-        url: finalUrl,
-        cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
-        timeoutInterval: 10
-      ),
-      configuration: .default
+    var request = URLRequest(
+      url: finalUrl,
+      cachePolicy: .reloadIgnoringLocalAndRemoteCacheData,
+      timeoutInterval: 10
     )
-    eventSource.onOpen = {
-      print("[*] \(messageId): connection established")
-    }
-    eventSource.onError = {
-      self.report(sessionId, $0 ?? ChatError.unknownError)
-    }
+    request.setValue("close", forHTTPHeaderField: "Connection")
 
-    var document = ""
-    let queue = DispatchQueue(label: "com.affine.chat.stream.\(sessionId)")
-    eventSource.onMessage = { event in
-      queue.async {
-        print("[*] \(messageId): \(event.event ?? "?") received message: \(event.data)")
-        switch event.event {
-        case "message":
-          document += event.data
-          self.with(sessionId: sessionId, vmId: vmId) { (viewModel: inout AssistantMessageCellViewModel) in
-            viewModel.content = document
-          }
-        default:
-          break
+    let closable = ClosableTask(detachedTask: .detached(operation: {
+      let eventSource = EventSource()
+      let dataTask = await eventSource.dataTask(for: request)
+      var document = ""
+      self.writeMarkdownContent(document + loadingIndicator, sessionId: sessionId, vmId: vmId)
+      for await event in await dataTask.events() {
+        switch event {
+        case .open:
+          print("[*] connection opened")
+        case let .error(error):
+          print("[!] error occurred", error)
+        case let .event(event):
+          guard let data = event.data else { continue }
+          document += data
+          self.writeMarkdownContent(
+            document + loadingIndicator,
+            sessionId: sessionId,
+            vmId: vmId
+          )
+          self.scrollToBottomPublisher.send(sessionId)
+        case .closed:
+          print("[*] connection closed")
         }
       }
+      self.writeMarkdownContent(document, sessionId: sessionId, vmId: vmId)
+      self.closeAll()
+    }))
+    self.closable.append(closable)
+  }
+
+  private func writeMarkdownContent(
+    _ document: String,
+    sessionId: SessionID,
+    vmId: UUID
+  ) {
+    let result = MarkdownParser().parse(document)
+    var renderedContexts: [String: RenderedItem] = [:]
+    for (key, value) in result.mathContext {
+      let image = MathRenderer.renderToImage(
+        latex: value,
+        fontSize: MarkdownTheme.default.fonts.body.pointSize,
+        textColor: MarkdownTheme.default.colors.body
+      )?.withRenderingMode(.alwaysTemplate)
+      let renderedContext = RenderedItem(
+        image: image,
+        text: value
+      )
+      renderedContexts["math://\(key)"] = renderedContext
     }
-    closable.append(eventSource)
+
+    with(sessionId: sessionId, vmId: vmId) { (viewModel: inout AssistantMessageCellViewModel) in
+      viewModel.content = document
+      viewModel.documentBlocks = result.document
+      viewModel.documentRenderedContent = renderedContexts
+    }
   }
 }
