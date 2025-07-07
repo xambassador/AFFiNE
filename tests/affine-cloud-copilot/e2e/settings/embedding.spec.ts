@@ -1,15 +1,13 @@
 import { createLocalWorkspace } from '@affine-test/kit/utils/workspace';
+import { faker } from '@faker-js/faker';
 import { expect } from '@playwright/test';
 
 import { test } from '../base/base-test';
-
-test.describe.configure({ mode: 'serial' });
 
 test.describe('AISettings/Embedding', () => {
   test.beforeEach(async ({ loggedInPage: page, utils }) => {
     await utils.testUtils.setupTestEnvironment(page);
     await utils.chatPanel.openChatPanel(page);
-    await utils.settings.openSettingsPanel(page);
   });
 
   test.afterEach(async ({ loggedInPage: page, utils }) => {
@@ -23,6 +21,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.waitForWorkspaceEmbeddingSwitchToBe(page, true);
   });
 
@@ -30,6 +29,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     await utils.settings.disableWorkspaceEmbedding(page);
     await utils.settings.waitForWorkspaceEmbeddingSwitchToBe(page, false);
@@ -39,6 +39,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.disableWorkspaceEmbedding(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     await utils.settings.waitForWorkspaceEmbeddingSwitchToBe(page, true);
@@ -99,6 +100,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     await utils.settings.disableWorkspaceEmbedding(page);
     await utils.settings.waitForWorkspaceEmbeddingSwitchToBe(page, false);
@@ -116,6 +118,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     await page.getByTestId('embedding-progress-wrapper');
 
@@ -134,9 +137,13 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
-    const textContent1 = 'WorkspaceEBEEE is a cute cat';
-    const textContent2 = 'WorkspaceEBFFF is a cute dog';
+    const randomStr1 = Math.random().toString(36).substring(2, 6);
+    const randomStr2 = Math.random().toString(36).substring(2, 6);
+    const textContent1 = `Workspace${randomStr1} is a cute cat`;
+    const textContent2 = `Workspace${randomStr2} is a cute dog`;
     const buffer1 = Buffer.from(textContent1);
     const buffer2 = Buffer.from(textContent2);
     const attachments = [
@@ -164,15 +171,6 @@ test.describe('AISettings/Embedding', () => {
 
     await utils.settings.uploadWorkspaceEmbedding(page, attachments);
 
-    const attachmentList = await page.getByTestId(
-      'workspace-embedding-setting-attachment-list'
-    );
-
-    // Persisted
-    await expect(
-      attachmentList.getByTestId('workspace-embedding-setting-attachment-item')
-    ).toHaveCount(2);
-
     await client.send('Network.emulateNetworkConditions', {
       offline: false,
       latency: 0,
@@ -180,19 +178,19 @@ test.describe('AISettings/Embedding', () => {
       uploadThroughput: -1,
     });
 
-    await utils.settings.closeSettingsPanel(page);
+    await utils.settings.waitForFileEmbeddingReadiness(page, 2);
 
-    await page.waitForTimeout(5000); // wait for the embedding to be ready
+    await utils.settings.closeSettingsPanel(page);
 
     await utils.chatPanel.makeChat(
       page,
-      'What is WorkspaceEBEEE? What is WorkspaceEBFFF?'
+      `What is Workspace${randomStr1}? What is Workspace${randomStr2}?`
     );
 
     await utils.chatPanel.waitForHistory(page, [
       {
         role: 'user',
-        content: 'What is WorkspaceEBEEE? What is WorkspaceEBFFF?',
+        content: `What is Workspace${randomStr1}? What is Workspace${randomStr2}?`,
       },
       {
         role: 'assistant',
@@ -203,8 +201,8 @@ test.describe('AISettings/Embedding', () => {
     await expect(async () => {
       const { content, message } =
         await utils.chatPanel.getLatestAssistantMessage(page);
-      expect(content).toMatch(/WorkspaceEBEEE.*cat/);
-      expect(content).toMatch(/WorkspaceEBFFF.*dog/);
+      expect(content).toMatch(new RegExp(`Workspace${randomStr1}.*cat`));
+      expect(content).toMatch(new RegExp(`Workspace${randomStr2}.*dog`));
       expect(await message.locator('affine-footnote-node').count()).toBe(2);
     }).toPass({ timeout: 20000 });
   });
@@ -213,6 +211,8 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     const attachments = [
       {
@@ -226,7 +226,7 @@ test.describe('AISettings/Embedding', () => {
 
     await utils.settings.uploadWorkspaceEmbedding(page, attachments);
 
-    const attachmentList = await page.getByTestId(
+    const attachmentList = page.getByTestId(
       'workspace-embedding-setting-attachment-list'
     );
 
@@ -243,45 +243,42 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
-    const hobby1 = Buffer.from('Jerry-Affine love climbing');
-    const hobby2 = Buffer.from('Jerry-Affine love skating');
+    const person = faker.person.fullName();
+
+    const hobby1 = Buffer.from(`${person} love climbing`);
+    const hobby2 = Buffer.from(`${person} love skating`);
     const attachments = [
       {
-        name: 'jerry-affine-hobby.txt',
+        name: 'hobby.txt',
         mimeType: 'text/plain',
         buffer: hobby1,
       },
     ];
     await utils.settings.uploadWorkspaceEmbedding(page, attachments);
 
-    const attachmentList = await page.getByTestId(
-      'workspace-embedding-setting-attachment-list'
-    );
-    await expect(
-      attachmentList.getByTestId('workspace-embedding-setting-attachment-item')
-    ).toHaveCount(1);
+    await utils.settings.waitForFileEmbeddingReadiness(page, 1);
 
     await utils.settings.closeSettingsPanel(page);
-
-    await page.waitForTimeout(5000); // wait for the embedding to be ready
 
     await utils.chatPanel.chatWithAttachments(
       page,
       [
         {
-          name: 'jerry-affine-hobby2.txt',
+          name: 'hobby2.txt',
           mimeType: 'text/plain',
           buffer: hobby2,
         },
       ],
-      'What is Jerry-Affine hobby?'
+      `What is ${person}'s hobby?`
     );
 
     await utils.chatPanel.waitForHistory(page, [
       {
         role: 'user',
-        content: 'What is Jerry-Affine hobby?',
+        content: `What is ${person}'s hobby?`,
       },
       {
         role: 'assistant',
@@ -302,6 +299,8 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     const attachments = Array.from({ length: 11 }, (_, i) => ({
       name: `document${i + 1}.txt`,
@@ -318,11 +317,11 @@ test.describe('AISettings/Embedding', () => {
     await expect(
       attachmentList.getByTestId('workspace-embedding-setting-attachment-item')
     ).toHaveCount(10);
-    const pagination = await attachmentList.getByRole('navigation');
-    const currentPage = await pagination.locator('li.active');
+    const pagination = attachmentList.getByRole('navigation');
+    const currentPage = pagination.locator('li.active');
     await expect(currentPage).toHaveText('1');
 
-    const page2 = await pagination.locator('li').nth(2);
+    const page2 = pagination.locator('li').nth(2);
     await page2.click();
 
     await expect(
@@ -339,8 +338,11 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
-    const textContent = 'WorkspaceEBEEE is a cute cat';
+    const randomStr1 = Math.random().toString(36).substring(2, 6);
+    const textContent = `Workspace${randomStr1} is a cute cat`;
     const attachments = [
       {
         name: 'document1.txt',
@@ -350,7 +352,7 @@ test.describe('AISettings/Embedding', () => {
     ];
     await utils.settings.uploadWorkspaceEmbedding(page, attachments);
 
-    const attachmentList = await page.getByTestId(
+    const attachmentList = page.getByTestId(
       'workspace-embedding-setting-attachment-list'
     );
     await expect(
@@ -363,8 +365,11 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
-    const textContent = 'WorkspaceEBEEE is a cute cat';
+    const randomStr1 = Math.random().toString(36).substring(2, 6);
+    const textContent = `Workspace${randomStr1} is a cute cat`;
     const attachments = [
       {
         name: 'document1.txt',
@@ -374,7 +379,7 @@ test.describe('AISettings/Embedding', () => {
     ];
     await utils.settings.uploadWorkspaceEmbedding(page, attachments);
 
-    const attachmentList = await page.getByTestId(
+    const attachmentList = page.getByTestId(
       'workspace-embedding-setting-attachment-list'
     );
     await expect(
@@ -393,8 +398,11 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await createLocalWorkspace({ name: 'test' }, page, false, 'affine-cloud');
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
-    const textContent = 'WorkspaceEBEEE is a cute cat';
+    const randomStr1 = Math.random().toString(36).substring(2, 6);
+    const textContent = `Workspace${randomStr1} is a cute cat`;
     const attachments = [
       {
         name: 'document1.txt',
@@ -413,6 +421,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     await utils.settings.closeSettingsPanel(page);
     await utils.editor.createDoc(
@@ -426,7 +435,9 @@ test.describe('AISettings/Embedding', () => {
       'WBIgnoreFFF is a cute dog'
     );
 
-    await page.waitForTimeout(5000); // wait for the embedding to be ready
+    await utils.settings.openSettingsPanel(page);
+    await utils.settings.waitForEmbeddingComplete(page);
+    await utils.settings.closeSettingsPanel(page);
 
     await utils.chatPanel.makeChat(
       page,
@@ -487,6 +498,7 @@ test.describe('AISettings/Embedding', () => {
     loggedInPage: page,
     utils,
   }) => {
+    await utils.settings.openSettingsPanel(page);
     await utils.settings.enableWorkspaceEmbedding(page);
     await utils.settings.closeSettingsPanel(page);
 
