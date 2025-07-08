@@ -53,6 +53,7 @@ import {
   CodeHighlighter,
 } from './components/ai-tools/code-artifact';
 import { DocComposeTool } from './components/ai-tools/doc-compose';
+import { DocEditTool } from './components/ai-tools/doc-edit';
 import { ToolCallCard } from './components/ai-tools/tool-call-card';
 import { ToolFailedCard } from './components/ai-tools/tool-failed-card';
 import { ToolResultCard } from './components/ai-tools/tool-result-card';
@@ -86,6 +87,21 @@ import {
 } from './widgets/ai-panel/components';
 import { AIFinishTip } from './widgets/ai-panel/components/finish-tip';
 import { GeneratingPlaceholder } from './widgets/ai-panel/components/generating-placeholder';
+import {
+  AFFINE_BLOCK_DIFF_WIDGET_FOR_BLOCK,
+  AffineBlockDiffWidgetForBlock,
+} from './widgets/block-diff/block';
+import { BlockDiffOptions } from './widgets/block-diff/options';
+import {
+  AFFINE_BLOCK_DIFF_WIDGET_FOR_PAGE,
+  AffineBlockDiffWidgetForPage,
+} from './widgets/block-diff/page';
+import {
+  AFFINE_BLOCK_DIFF_PLAYGROUND,
+  AFFINE_BLOCK_DIFF_PLAYGROUND_MODAL,
+  BlockDiffPlayground,
+  BlockDiffPlaygroundModal,
+} from './widgets/block-diff/playground';
 import {
   AFFINE_EDGELESS_COPILOT_WIDGET,
   EdgelessCopilotWidget,
@@ -177,6 +193,12 @@ export function registerAIEffects() {
   customElements.define('chat-message-action', ChatMessageAction);
   customElements.define('chat-message-assistant', ChatMessageAssistant);
   customElements.define('chat-message-user', ChatMessageUser);
+  customElements.define('ai-block-diff-options', BlockDiffOptions);
+  customElements.define(AFFINE_BLOCK_DIFF_PLAYGROUND, BlockDiffPlayground);
+  customElements.define(
+    AFFINE_BLOCK_DIFF_PLAYGROUND_MODAL,
+    BlockDiffPlaygroundModal
+  );
 
   customElements.define('tool-call-card', ToolCallCard);
   customElements.define('tool-result-card', ToolResultCard);
@@ -187,9 +209,18 @@ export function registerAIEffects() {
   customElements.define('code-artifact-tool', CodeArtifactTool);
   customElements.define('code-highlighter', CodeHighlighter);
   customElements.define('artifact-preview-panel', ArtifactPreviewPanel);
+  customElements.define('doc-edit-tool', DocEditTool);
 
   customElements.define(AFFINE_AI_PANEL_WIDGET, AffineAIPanelWidget);
   customElements.define(AFFINE_EDGELESS_COPILOT_WIDGET, EdgelessCopilotWidget);
+  customElements.define(
+    AFFINE_BLOCK_DIFF_WIDGET_FOR_BLOCK,
+    AffineBlockDiffWidgetForBlock
+  );
+  customElements.define(
+    AFFINE_BLOCK_DIFF_WIDGET_FOR_PAGE,
+    AffineBlockDiffWidgetForPage
+  );
 
   customElements.define('edgeless-copilot-panel', EdgelessCopilotPanel);
   customElements.define(
