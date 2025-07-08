@@ -3,7 +3,7 @@ import type { FeatureFlagService } from '@affine/core/modules/feature-flag';
 import type { WorkbenchService } from '@affine/core/modules/workbench';
 import type {
   ContextEmbedStatus,
-  CopilotSessionType,
+  CopilotChatHistoryFragment,
   UpdateChatSessionInput,
 } from '@affine/graphql';
 import { SignalWatcher, WithDisposable } from '@blocksuite/affine/global/lit';
@@ -103,7 +103,7 @@ export class ChatPanel extends SignalWatcher(
   accessor affineWorkbenchService!: WorkbenchService;
 
   @state()
-  accessor session: CopilotSessionType | null | undefined;
+  accessor session: CopilotChatHistoryFragment | null | undefined;
 
   @state()
   accessor embeddingProgress: [number, number] = [0, 0];
@@ -170,7 +170,7 @@ export class ChatPanel extends SignalWatcher(
   };
 
   private readonly setSession = (
-    session: CopilotSessionType | null | undefined
+    session: CopilotChatHistoryFragment | null | undefined
   ) => {
     this.session = session ?? null;
   };
@@ -250,7 +250,7 @@ export class ChatPanel extends SignalWatcher(
   };
 
   private readonly openSession = async (sessionId: string) => {
-    if (this.session?.id === sessionId) {
+    if (this.session?.sessionId === sessionId) {
       return;
     }
     this.resetPanel();
@@ -263,7 +263,7 @@ export class ChatPanel extends SignalWatcher(
 
   private readonly openDoc = async (docId: string, sessionId: string) => {
     if (this.doc.id === docId) {
-      if (this.session?.id === sessionId || this.session?.pinned) {
+      if (this.session?.sessionId === sessionId || this.session?.pinned) {
         return;
       }
       await this.openSession(sessionId);
@@ -284,7 +284,7 @@ export class ChatPanel extends SignalWatcher(
       await this.createSession({ pinned });
     } else {
       await this.updateSession({
-        sessionId: this.session.id,
+        sessionId: this.session.sessionId,
         pinned,
       });
     }
@@ -296,7 +296,7 @@ export class ChatPanel extends SignalWatcher(
     }
     if (this.session.docId !== this.doc.id) {
       await this.updateSession({
-        sessionId: this.session.id,
+        sessionId: this.session.sessionId,
         docId: this.doc.id,
       });
     }
@@ -399,7 +399,7 @@ export class ChatPanel extends SignalWatcher(
 
     return html`<div class="chat-panel-container">
       ${keyed(
-        this.hasPinned ? this.session?.id : this.doc.id,
+        this.hasPinned ? this.session?.sessionId : this.doc.id,
         html`<ai-chat-content
           .chatTitle=${this.chatTitle}
           .host=${this.host}
