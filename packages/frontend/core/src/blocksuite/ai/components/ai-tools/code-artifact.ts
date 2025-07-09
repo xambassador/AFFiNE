@@ -103,6 +103,8 @@ export class CodeHighlighter extends SignalWatcher(WithDisposable(LitElement)) {
   override connectedCallback() {
     super.connectedCallback();
 
+    this.highlighter.mounted();
+
     // recompute highlight when code / language changes
     this.disposables.add(
       effect(() => {
@@ -111,17 +113,25 @@ export class CodeHighlighter extends SignalWatcher(WithDisposable(LitElement)) {
     );
   }
 
+  override disconnectedCallback() {
+    super.disconnectedCallback();
+    this.highlighter.unmounted();
+  }
+
   private _updateHighlightTokens() {
     let cancelled = false;
     const language = this.language;
     const highlighter = this.highlighter.highlighter$.value;
+
     if (!highlighter) return;
 
     const updateTokens = () => {
       if (cancelled) return;
-      this.highlightTokens.value = highlighter.codeToTokensBase(this.code, {
-        lang: language,
-        theme: this.highlighter.themeKey,
+      requestIdleCallback(() => {
+        this.highlightTokens.value = highlighter.codeToTokensBase(this.code, {
+          lang: language,
+          theme: this.highlighter.themeKey,
+        });
       });
     };
 
