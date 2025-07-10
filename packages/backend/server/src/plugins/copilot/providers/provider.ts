@@ -21,6 +21,7 @@ import {
   buildDocKeywordSearchGetter,
   buildDocSearchGetter,
   createCodeArtifactTool,
+  createConversationSummaryTool,
   createDocComposeTool,
   createDocEditTool,
   createDocKeywordSearchTool,
@@ -139,6 +140,10 @@ export abstract class CopilotProvider<C = any> {
     if (options?.tools?.length) {
       this.logger.debug(`getTools: ${JSON.stringify(options.tools)}`);
       const ac = this.moduleRef.get(AccessController, { strict: false });
+      const docReader = this.moduleRef.get(DocReader, { strict: false });
+      const prompt = this.moduleRef.get(PromptService, {
+        strict: false,
+      });
 
       for (const tool of options.tools) {
         const toolDef = this.getProviderSpecificTools(tool, model);
@@ -150,9 +155,20 @@ export abstract class CopilotProvider<C = any> {
           continue;
         }
         switch (tool) {
+          case 'codeArtifact': {
+            tools.code_artifact = createCodeArtifactTool(prompt, this.factory);
+            break;
+          }
+          case 'conversationSummary': {
+            tools.conversation_summary = createConversationSummaryTool(
+              options.session,
+              prompt,
+              this.factory
+            );
+            break;
+          }
           case 'docEdit': {
-            const doc = this.moduleRef.get(DocReader, { strict: false });
-            const getDocContent = buildContentGetter(ac, doc);
+            const getDocContent = buildContentGetter(ac, docReader);
             tools.doc_edit = createDocEditTool(
               this.factory,
               getDocContent.bind(null, options)
@@ -163,7 +179,6 @@ export abstract class CopilotProvider<C = any> {
             const context = this.moduleRef.get(CopilotContextService, {
               strict: false,
             });
-
             const docContext = options.session
               ? await context.getBySessionId(options.session)
               : null;
@@ -175,9 +190,6 @@ export abstract class CopilotProvider<C = any> {
           }
           case 'docKeywordSearch': {
             if (this.AFFiNEConfig.indexer.enabled) {
-              const ac = this.moduleRef.get(AccessController, {
-                strict: false,
-              });
               const indexerService = this.moduleRef.get(IndexerService, {
                 strict: false,
               });
@@ -192,9 +204,7 @@ export abstract class CopilotProvider<C = any> {
             break;
           }
           case 'docRead': {
-            const ac = this.moduleRef.get(AccessController, { strict: false });
             const models = this.moduleRef.get(Models, { strict: false });
-            const docReader = this.moduleRef.get(DocReader, { strict: false });
             const getDoc = buildDocContentGetter(ac, docReader, models);
             tools.doc_read = createDocReadTool(getDoc.bind(null, options));
             break;
@@ -205,23 +215,7 @@ export abstract class CopilotProvider<C = any> {
             break;
           }
           case 'docCompose': {
-            const promptService = this.moduleRef.get(PromptService, {
-              strict: false,
-            });
-            tools.doc_compose = createDocComposeTool(
-              promptService,
-              this.factory
-            );
-            break;
-          }
-          case 'codeArtifact': {
-            const promptService = this.moduleRef.get(PromptService, {
-              strict: false,
-            });
-            tools.code_artifact = createCodeArtifactTool(
-              promptService,
-              this.factory
-            );
+            tools.doc_compose = createDocComposeTool(prompt, this.factory);
             break;
           }
         }

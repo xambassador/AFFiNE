@@ -207,6 +207,7 @@ const retry = async (
       try {
         await callback(t);
       } catch (e) {
+        console.error(`Error during ${action}:`, e);
         t.log(`Error during ${action}:`, e);
         throw e;
       }
@@ -482,6 +483,34 @@ The term **“CRDT”** was first introduced by Marc Shapiro, Nuno Preguiça, Ca
     },
     type: 'structured' as const,
     prefer: CopilotProviderType.Gemini,
+  },
+  {
+    promptName: ['Conversation Summary'],
+    messages: [
+      {
+        role: 'user' as const,
+        content: '',
+        params: {
+          messages: [
+            { role: 'user', content: 'what is single source of truth?' },
+            { role: 'assistant', content: TestAssets.SSOT },
+          ],
+          focus: 'technical decisions',
+          length: 'comprehensive',
+        },
+      },
+    ],
+    verifier: (t: ExecutionContext<Tester>, result: string) => {
+      assertNotWrappedInCodeBlock(t, result);
+      const cleared = result.toLowerCase();
+      t.assert(
+        cleared.includes('single source of truth') ||
+          /single.*source/.test(cleared) ||
+          cleared.includes('ssot'),
+        'should include original keyword'
+      );
+    },
+    type: 'text' as const,
   },
   {
     promptName: [
