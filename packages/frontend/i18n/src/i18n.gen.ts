@@ -8706,13 +8706,22 @@ export function useAFFiNEI18N(): {
       */
     ["error.COPILOT_SESSION_DELETED"](): string;
     /**
-      * `No copilot provider available.`
+      * `No copilot provider available: {{modelId}}`
       */
-    ["error.NO_COPILOT_PROVIDER_AVAILABLE"](): string;
+    ["error.NO_COPILOT_PROVIDER_AVAILABLE"](options: {
+        readonly modelId: string;
+    }): string;
     /**
       * `Failed to generate text.`
       */
     ["error.COPILOT_FAILED_TO_GENERATE_TEXT"](): string;
+    /**
+      * `Failed to generate embedding with {{provider}}: {{message}}`
+      */
+    ["error.COPILOT_FAILED_TO_GENERATE_EMBEDDING"](options: Readonly<{
+        provider: string;
+        message: string;
+    }>): string;
     /**
       * `Failed to create chat message.`
       */

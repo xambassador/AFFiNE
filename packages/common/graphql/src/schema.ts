@@ -375,6 +375,12 @@ export interface CopilotFailedToAddWorkspaceFileEmbeddingDataType {
   message: Scalars['String']['output'];
 }
 
+export interface CopilotFailedToGenerateEmbeddingDataType {
+  __typename?: 'CopilotFailedToGenerateEmbeddingDataType';
+  message: Scalars['String']['output'];
+  provider: Scalars['String']['output'];
+}
+
 export interface CopilotFailedToMatchContextDataType {
   __typename?: 'CopilotFailedToMatchContextDataType';
   content: Scalars['String']['output'];
@@ -737,6 +743,7 @@ export type ErrorDataUnion =
   | CopilotContextFileNotSupportedDataType
   | CopilotDocNotFoundDataType
   | CopilotFailedToAddWorkspaceFileEmbeddingDataType
+  | CopilotFailedToGenerateEmbeddingDataType
   | CopilotFailedToMatchContextDataType
   | CopilotFailedToMatchGlobalContextDataType
   | CopilotFailedToModifyContextDataType
@@ -769,6 +776,7 @@ export type ErrorDataUnion =
   | MemberNotFoundInSpaceDataType
   | MentionUserDocAccessDeniedDataType
   | MissingOauthQueryParameterDataType
+  | NoCopilotProviderAvailableDataType
   | NoMoreSeatDataType
   | NotInSpaceDataType
   | QueryTooLongDataType
@@ -816,6 +824,7 @@ export enum ErrorNames {
   COPILOT_EMBEDDING_UNAVAILABLE = 'COPILOT_EMBEDDING_UNAVAILABLE',
   COPILOT_FAILED_TO_ADD_WORKSPACE_FILE_EMBEDDING = 'COPILOT_FAILED_TO_ADD_WORKSPACE_FILE_EMBEDDING',
   COPILOT_FAILED_TO_CREATE_MESSAGE = 'COPILOT_FAILED_TO_CREATE_MESSAGE',
+  COPILOT_FAILED_TO_GENERATE_EMBEDDING = 'COPILOT_FAILED_TO_GENERATE_EMBEDDING',
   COPILOT_FAILED_TO_GENERATE_TEXT = 'COPILOT_FAILED_TO_GENERATE_TEXT',
   COPILOT_FAILED_TO_MATCH_CONTEXT = 'COPILOT_FAILED_TO_MATCH_CONTEXT',
   COPILOT_FAILED_TO_MATCH_GLOBAL_CONTEXT = 'COPILOT_FAILED_TO_MATCH_GLOBAL_CONTEXT',
@@ -1879,6 +1888,11 @@ export interface MutationValidateAppConfigArgs {
 
 export interface MutationVerifyEmailArgs {
   token: Scalars['String']['input'];
+}
+
+export interface NoCopilotProviderAvailableDataType {
+  __typename?: 'NoCopilotProviderAvailableDataType';
+  modelId: Scalars['String']['output'];
 }
 
 export interface NoMoreSeatDataType {

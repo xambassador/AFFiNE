@@ -653,11 +653,18 @@ export const USER_FRIENDLY_ERRORS = {
   },
   no_copilot_provider_available: {
     type: 'internal_server_error',
-    message: `No copilot provider available.`,
+    args: { modelId: 'string' },
+    message: ({ modelId }) => `No copilot provider available: ${modelId}`,
   },
   copilot_failed_to_generate_text: {
     type: 'internal_server_error',
     message: `Failed to generate text.`,
+  },
+  copilot_failed_to_generate_embedding: {
+    type: 'internal_server_error',
+    args: { provider: 'string', message: 'string' },
+    message: ({ provider, message }) =>
+      `Failed to generate embedding with ${provider}: ${message}`,
   },
   copilot_failed_to_create_message: {
     type: 'internal_server_error',
