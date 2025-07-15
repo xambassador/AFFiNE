@@ -852,6 +852,14 @@ export class PromptsManagementResolver {
     return true;
   }
 
+  @Mutation(() => Boolean, {
+    description: 'Trigger cleanup of trashed doc embeddings',
+  })
+  async triggerCleanupTrashedDocEmbeddings() {
+    await this.cron.triggerCleanupTrashedDocEmbeddings();
+    return true;
+  }
+
   @Query(() => [CopilotPromptType], {
     description: 'List all copilot prompts',
   })

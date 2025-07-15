@@ -8,6 +8,7 @@ declare global {
   interface Jobs {
     'copilot.session.cleanupEmptySessions': {};
     'copilot.session.generateMissingTitles': {};
+    'copilot.workspace.cleanupTrashedDocEmbeddings': {};
   }
 }
 
@@ -19,6 +20,14 @@ export class CopilotCronJobs {
     private readonly models: Models,
     private readonly jobs: JobQueue
   ) {}
+
+  async triggerCleanupTrashedDocEmbeddings() {
+    await this.jobs.add(
+      'copilot.workspace.cleanupTrashedDocEmbeddings',
+      {},
+      { jobId: 'daily-copilot-cleanup-trashed-doc-embeddings' }
+    );
+  }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async dailyCleanupJob() {
@@ -32,6 +41,12 @@ export class CopilotCronJobs {
       'copilot.session.generateMissingTitles',
       {},
       { jobId: 'daily-copilot-generate-missing-titles' }
+    );
+
+    await this.jobs.add(
+      'copilot.workspace.cleanupTrashedDocEmbeddings',
+      {},
+      { jobId: 'daily-copilot-cleanup-trashed-doc-embeddings' }
     );
   }
 
@@ -67,5 +82,19 @@ export class CopilotCronJobs {
     this.logger.log(
       `Scheduled title generation for ${sessions.length} sessions`
     );
+  }
+
+  @OnJob('copilot.workspace.cleanupTrashedDocEmbeddings')
+  async cleanupTrashedDocEmbeddings() {
+    const workspaces = await this.models.workspace.list(undefined, {
+      id: true,
+    });
+    for (const { id: workspaceId } of workspaces) {
+      await this.jobs.add(
+        'copilot.embedding.cleanupTrashedDocEmbeddings',
+        { workspaceId },
+        { jobId: `cleanup-trashed-doc-embeddings-${workspaceId}` }
+      );
+    }
   }
 }
