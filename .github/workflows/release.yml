@@ -75,6 +75,7 @@ jobs:
         with:
           secret: ${{ secrets.GITHUB_TOKEN }}
           approvers: forehalo,fengmk2
+          minimum-approvals: 1
           fail-on-denial: true
           issue-title: Please confirm to release docker image
           issue-body: |
