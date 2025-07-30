@@ -7,6 +7,7 @@ import { Prisma, PrismaClient } from '@prisma/client';
 import { PaginationInput } from '../base';
 import { BaseModel } from './base';
 import type {
+  BlobChunkSimilarity,
   CopilotWorkspaceFile,
   CopilotWorkspaceFileMetadata,
   Embedding,
@@ -256,19 +257,19 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
   async checkEmbeddingAvailable(): Promise<boolean> {
     const [{ count }] = await this.db.$queryRaw<
       { count: number }[]
-    >`SELECT count(1) FROM pg_tables WHERE tablename in ('ai_workspace_embeddings', 'ai_workspace_file_embeddings')`;
-    return Number(count) === 2;
+    >`SELECT count(1) FROM pg_tables WHERE tablename in ('ai_workspace_embeddings', 'ai_workspace_file_embeddings', 'ai_workspace_blob_embeddings')`;
+    return Number(count) === 3;
   }
 
   private processEmbeddings(
     workspaceId: string,
-    fileId: string,
+    fileOrBlobId: string,
     embeddings: Embedding[]
   ) {
     const groups = embeddings.map(e =>
       [
         workspaceId,
-        fileId,
+        fileOrBlobId,
         e.index,
         e.content,
         Prisma.raw(`'[${e.embedding.join(',')}]'`),
@@ -376,6 +377,61 @@ export class CopilotWorkspaceConfigModel extends BaseModel {
       LIMIT ${topK};
     `;
     return similarityChunks.filter(c => Number(c.distance) <= threshold);
+  }
+
+  @Transactional()
+  async insertBlobEmbeddings(
+    workspaceId: string,
+    blobId: string,
+    embeddings: Embedding[]
+  ) {
+    if (embeddings.length === 0) {
+      this.logger.warn(
+        `No embeddings provided for workspaceId: ${workspaceId}, blobId: ${blobId}. Skipping insertion.`
+      );
+      return;
+    }
+
+    const values = this.processEmbeddings(workspaceId, blobId, embeddings);
+    await this.db.$executeRaw`
+          INSERT INTO "ai_workspace_blob_embeddings"
+          ("workspace_id", "blob_id", "chunk", "content", "embedding") VALUES ${values}
+          ON CONFLICT (workspace_id, blob_id, chunk) DO NOTHING;
+      `;
+  }
+
+  async matchBlobEmbedding(
+    workspaceId: string,
+    embedding: number[],
+    topK: number,
+    threshold: number
+  ): Promise<BlobChunkSimilarity[]> {
+    if (!(await this.allowEmbedding(workspaceId))) {
+      return [];
+    }
+
+    const similarityChunks = await this.db.$queryRaw<
+      Array<BlobChunkSimilarity>
+    >`
+      SELECT
+        e."blob_id" as "blobId",
+        e."chunk",
+        e."content",
+        e."embedding" <=> ${embedding}::vector as "distance" 
+      FROM "ai_workspace_blob_embeddings" e
+      WHERE e.workspace_id = ${workspaceId}
+      ORDER BY "distance" ASC
+      LIMIT ${topK};
+    `;
+    return similarityChunks.filter(c => Number(c.distance) <= threshold);
+  }
+
+  async removeBlob(workspaceId: string, blobId: string) {
+    await this.db.$executeRaw`
+      DELETE FROM "ai_workspace_blob_embeddings"
+      WHERE workspace_id = ${workspaceId} AND blob_id = ${blobId};
+    `;
+    return true;
   }
 
   async removeFile(workspaceId: string, fileId: string) {
