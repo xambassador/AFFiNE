@@ -53,6 +53,7 @@ import {
 @Injectable()
 export abstract class CopilotProvider<C = any> {
   protected readonly logger = new Logger(this.constructor.name);
+  protected onlineModelList: string[] = [];
   abstract readonly type: CopilotProviderType;
   abstract readonly models: CopilotProviderModel[];
   abstract configured(): boolean;
@@ -80,10 +81,17 @@ export abstract class CopilotProvider<C = any> {
   protected setup() {
     if (this.configured()) {
       this.factory.register(this);
+      if (env.selfhosted) {
+        this.refreshOnlineModels().catch(e =>
+          this.logger.error('Failed to refresh online models', e)
+        );
+      }
     } else {
       this.factory.unregister(this);
     }
   }
+
+  async refreshOnlineModels() {}
 
   private findValidModel(
     cond: ModelFullConditions
@@ -95,9 +103,26 @@ export abstract class CopilotProvider<C = any> {
         inputTypes.every(type => cap.input.includes(type)));
 
     if (modelId) {
-      return this.models.find(
+      const hasOnlineModel = this.onlineModelList.includes(modelId);
+      const hasFallbackModel = cond.fallbackModel
+        ? this.onlineModelList.includes(cond.fallbackModel)
+        : undefined;
+
+      const model = this.models.find(
         m => m.id === modelId && m.capabilities.some(matcher)
       );
+
+      if (model) {
+        // return fallback model if current model is not alive
+        if (!hasOnlineModel && hasFallbackModel) {
+          // oxlint-disable-next-line typescript-eslint(no-non-null-assertion)
+          return { id: cond.fallbackModel!, capabilities: [] };
+        }
+        return model;
+      }
+      // allow online model without capabilities check
+      if (hasOnlineModel) return { id: modelId, capabilities: [] };
+      return undefined;
     }
     if (!outputType) return undefined;
 

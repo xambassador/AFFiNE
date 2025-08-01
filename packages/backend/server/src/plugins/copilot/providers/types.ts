@@ -237,6 +237,7 @@ export interface ModelCapability {
 
 export interface CopilotProviderModel {
   id: string;
+  name?: string;
   capabilities: ModelCapability[];
 }
 
@@ -247,4 +248,5 @@ export type ModelConditions = {
 
 export type ModelFullConditions = ModelConditions & {
   outputType?: ModelOutputType;
+  fallbackModel?: string;
 };

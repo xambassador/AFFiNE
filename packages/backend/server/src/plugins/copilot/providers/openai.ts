@@ -46,7 +46,17 @@ export const DEFAULT_DIMENSIONS = 256;
 export type OpenAIConfig = {
   apiKey: string;
   baseUrl?: string;
+  fallback?: {
+    text?: string;
+    structured?: string;
+    image?: string;
+    embedding?: string;
+  };
 };
+
+const ModelListSchema = z.object({
+  data: z.array(z.object({ id: z.string() })),
+});
 
 const ImageResponseSchema = z.union([
   z.object({
@@ -271,6 +281,25 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     }
   }
 
+  override async refreshOnlineModels() {
+    try {
+      const baseUrl = this.config.baseUrl || 'https://api.openai.com/v1';
+      if (baseUrl && !this.onlineModelList.length) {
+        const { data } = await fetch(`${baseUrl}/models`, {
+          headers: {
+            Authorization: `Bearer ${this.config.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+        })
+          .then(r => r.json())
+          .then(r => ModelListSchema.parse(r));
+        this.onlineModelList = data.map(model => model.id);
+      }
+    } catch (e) {
+      this.logger.error('Failed to fetch available models', e);
+    }
+  }
+
   override getProviderSpecificTools(
     toolName: CopilotChatTools,
     model: string
@@ -291,6 +320,7 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     const fullCond = {
       ...cond,
       outputType: ModelOutputType.Text,
+      fallbackModel: this.config.fallback?.text,
     };
     await this.checkParams({ messages, cond: fullCond, options });
     const model = this.selectModel(fullCond);
@@ -331,6 +361,7 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     const fullCond = {
       ...cond,
       outputType: ModelOutputType.Text,
+      fallbackModel: this.config.fallback?.text,
     };
     await this.checkParams({ messages, cond: fullCond, options });
     const model = this.selectModel(fullCond);
@@ -376,7 +407,11 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     messages: PromptMessage[],
     options: CopilotChatOptions = {}
   ): AsyncIterable<StreamObject> {
-    const fullCond = { ...cond, outputType: ModelOutputType.Object };
+    const fullCond = {
+      ...cond,
+      outputType: ModelOutputType.Object,
+      fallbackModel: this.config.fallback?.text,
+    };
     await this.checkParams({ cond: fullCond, messages, options });
     const model = this.selectModel(fullCond);
 
@@ -409,7 +444,11 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     messages: PromptMessage[],
     options: CopilotStructuredOptions = {}
   ): Promise<string> {
-    const fullCond = { ...cond, outputType: ModelOutputType.Structured };
+    const fullCond = {
+      ...cond,
+      outputType: ModelOutputType.Structured,
+      fallbackModel: this.config.fallback?.structured,
+    };
     await this.checkParams({ messages, cond: fullCond, options });
     const model = this.selectModel(fullCond);
 
@@ -449,7 +488,11 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     chunkMessages: PromptMessage[][],
     options: CopilotChatOptions = {}
   ): Promise<number[]> {
-    const fullCond = { ...cond, outputType: ModelOutputType.Text };
+    const fullCond = {
+      ...cond,
+      outputType: ModelOutputType.Text,
+      fallbackModel: this.config.fallback?.text,
+    };
     await this.checkParams({ messages: [], cond: fullCond, options });
     const model = this.selectModel(fullCond);
     // get the log probability of "yes"/"no"
@@ -594,7 +637,11 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     messages: PromptMessage[],
     options: CopilotImageOptions = {}
   ) {
-    const fullCond = { ...cond, outputType: ModelOutputType.Image };
+    const fullCond = {
+      ...cond,
+      outputType: ModelOutputType.Image,
+      fallbackModel: this.config.fallback?.image,
+    };
     await this.checkParams({ messages, cond: fullCond, options });
     const model = this.selectModel(fullCond);
 
@@ -644,7 +691,11 @@ export class OpenAIProvider extends CopilotProvider<OpenAIConfig> {
     options: CopilotEmbeddingOptions = { dimensions: DEFAULT_DIMENSIONS }
   ): Promise<number[][]> {
     messages = Array.isArray(messages) ? messages : [messages];
-    const fullCond = { ...cond, outputType: ModelOutputType.Embedding };
+    const fullCond = {
+      ...cond,
+      outputType: ModelOutputType.Embedding,
+      fallbackModel: this.config.fallback?.embedding,
+    };
     await this.checkParams({ embeddings: messages, cond: fullCond, options });
     const model = this.selectModel(fullCond);
 
