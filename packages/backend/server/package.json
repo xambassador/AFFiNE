@@ -105,7 +105,7 @@
     "nest-winston": "^1.9.7",
     "nestjs-cls": "^6.0.0",
     "nodemailer": "^7.0.0",
-    "on-headers": "^1.0.2",
+    "on-headers": "^1.1.0",
     "piscina": "^5.0.0-alpha.0",
     "prisma": "^6.6.0",
     "react": "19.1.0",
