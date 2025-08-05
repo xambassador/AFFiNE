@@ -12,6 +12,7 @@ import EventSource
 import Foundation
 import MarkdownParser
 import MarkdownView
+import UniformTypeIdentifiers
 
 private let loadingIndicator = " ●"
 
@@ -175,16 +176,26 @@ private extension ChatManager {
     let attachmentFieldName = attachmentCount > 1 && attachmentCount != 0 ? "options.blobs" : "options.blob"
     let uploadableAttachments: [GraphQLFile] = [
       editorData.fileAttachments.map { file -> GraphQLFile in
-        .init(fieldName: attachmentFieldName, originalName: file.name, data: file.data ?? .init())
+        .init(
+          fieldName: attachmentFieldName,
+          originalName: file.name,
+          mimeType: mimeType(text: file.name),
+          data: file.data ?? .init()
+        )
       },
       editorData.imageAttachments.map { image -> GraphQLFile in
-        .init(fieldName: attachmentFieldName, originalName: "image.jpg", data: image.imageData)
+        .init(
+          fieldName: attachmentFieldName,
+          originalName: "image.jpg",
+          mimeType: mimeType(pathExtension: "jpg"),
+          data: image.imageData
+        )
       },
     ].flatMap(\.self)
     assert(uploadableAttachments.allSatisfy { !($0.data?.isEmpty ?? true) })
     guard let input = try? CreateChatMessageInput(
       attachments: [],
-      blob: .none,
+      blob: attachmentCount == 1 ? "" : .none,
       blobs: attachmentCount > 1 && attachmentCount != 0 ? .some([]) : .none,
       content: .some(contextSnippet.isEmpty ? editorData.text : "\(contextSnippet)\n\(editorData.text)"),
       params: .some(AffineGraphQL.JSON(_jsonValue: messageParameters)),
@@ -215,6 +226,20 @@ private extension ChatManager {
         }
       }
     }
+  }
+
+  private func pathExtension(for text: String) -> String {
+    (text as NSString).pathExtension
+  }
+
+  private func mimeType(pathExtension: String) -> String {
+    let type = UTType(filenameExtension: pathExtension) ?? .data
+    return type.preferredMIMEType ?? "application/octet-stream"
+  }
+
+  private func mimeType(text: String) -> String {
+    let pathExt = pathExtension(for: text)
+    return mimeType(pathExtension: pathExt)
   }
 }
 
