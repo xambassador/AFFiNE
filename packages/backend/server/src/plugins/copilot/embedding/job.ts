@@ -392,6 +392,10 @@ export class CopilotEmbeddingJob {
     return controller.signal;
   }
 
+  private normalize(s: string) {
+    return s.replaceAll(/[\p{White_Space}]+/gu, '');
+  }
+
   @OnJob('copilot.embedding.docs')
   async embedPendingDocs({
     contextId,
@@ -429,6 +433,21 @@ export class CopilotEmbeddingJob {
         if (!hasNewDoc && fragment) {
           // fast fall for empty doc, journal is easily to create a empty doc
           if (fragment.summary.trim()) {
+            const existsContent =
+              await this.models.copilotContext.getWorkspaceContent(
+                workspaceId,
+                docId
+              );
+            if (
+              existsContent &&
+              this.normalize(existsContent) === this.normalize(fragment.summary)
+            ) {
+              this.logger.log(
+                `Doc ${docId} in workspace ${workspaceId} has no content change, skipping embedding.`
+              );
+              return;
+            }
+
             const embeddings = await this.embeddingClient.getFileEmbeddings(
               new File(
                 [fragment.summary],
