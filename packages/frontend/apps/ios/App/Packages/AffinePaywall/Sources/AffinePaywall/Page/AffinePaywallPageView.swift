@@ -13,6 +13,9 @@ struct AffinePaywallPageView: View {
 
   @Environment(\.dismiss) var dismiss
 
+  @State private var presentAnimation = false
+  @State private var showCloseButton = false
+
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
       HStack {
@@ -24,10 +27,17 @@ struct AffinePaywallPageView: View {
         Button {
           viewModel.dismiss()
         } label: {
-          Image(AffineIcons.close.rawValue)
+          AffineIcons.close.image
+            .resizable()
+            .aspectRatio(contentMode: .fit)
+            .frame(width: 24, height: 24)
+            .foregroundStyle(.primary)
         }
         .buttonStyle(.plain)
         .foregroundColor(AffineColors.textSecondary.color)
+        .opacity(showCloseButton ? 1 : 0)
+        .disabled(!showCloseButton)
+        .animation(.spring, value: showCloseButton)
       }
       ZStack(alignment: .topLeading) {
         Spacer()
@@ -45,11 +55,22 @@ struct AffinePaywallPageView: View {
       .animation(.spring.speed(2), value: viewModel.category)
 
       PurchaseFooterView(viewModel: viewModel)
-        .animation(.spring.speed(2), value: viewModel.selectedPricingIdentifier)
+        .animation(.spring.speed(2), value: viewModel.selectedPackageIdentifier)
     }
     .padding()
+    .opacity(presentAnimation ? 1 : 0)
+    .scaleEffect(presentAnimation ? 1 : 0.95, anchor: .top)
+    .animation(.spring, value: presentAnimation)
+    .onAppear {
+      presentAnimation = true
+      DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+        showCloseButton = true
+      }
+    }
+    .frame(maxWidth: .infinity, maxHeight: .infinity)
     .background(
       AffineColors.layerBackgroundSecondary.color
+        .ignoresSafeArea()
     )
   }
 
@@ -60,8 +81,6 @@ struct AffinePaywallPageView: View {
       SKUnitProDetailView(viewModel: viewModel)
     case .ai:
       SKUnitIntelligentDetailView(viewModel: viewModel)
-    case .believer:
-      SKUnitBelieverDetailView(viewModel: viewModel)
     }
   }
 }

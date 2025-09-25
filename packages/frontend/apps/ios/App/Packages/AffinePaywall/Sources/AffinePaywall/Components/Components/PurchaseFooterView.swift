@@ -11,36 +11,67 @@ import SwiftUI
 struct PurchaseFooterView: View {
   @StateObject var viewModel: ViewModel
 
+  var isPurchased: Bool {
+    let package = viewModel.selectePackageOption
+    return viewModel.purchasedItems.contains(package.productIdentifier)
+  }
+
   var body: some View {
     VStack(spacing: 16) {
-      if viewModel.availablePricingOptions.count > 1 {
+      if viewModel.availablePackageOptions.count > 1 {
         HStack(spacing: 8) {
-          ForEach(viewModel.availablePricingOptions) { option in
-            PricingOptionView(
+          ForEach(viewModel.availablePackageOptions) { option in
+            PackageOptionView(
               price: option.price,
               description: option.description,
               badge: option.badge ?? "",
-              isSelected: option.id == viewModel.selectedPricingIdentifier
+              isSelected: option.id == viewModel.selectedPackageIdentifier
             ) {
-              viewModel.select(pricingOption: option)
+              viewModel.select(packageOption: option)
             }
           }
         }
+        .disabled(isPurchased)
       }
 
-      TheGiveMeMoneyButtonView(
-        primaryTitle: viewModel.selectedPricingOption.primaryTitle,
-        secondaryTitle: viewModel.selectedPricingOption.secondaryTitle,
-        callback: viewModel.purchase
-      )
+      if viewModel.updating {
+        TheGiveMeMoneyButtonView(
+          primaryTitle: "Height Placeholder",
+          secondaryTitle: "",
+          isPurchased: false
+        ) {}
+          .hidden()
+          .background(AffineColors.buttonPrimary.color)
+          .clipShape(RoundedRectangle(cornerRadius: 8))
+          .overlay {
+            ProgressView()
+              .progressViewStyle(.circular)
+          }
+          .transition(.opacity)
+      } else {
+        TheGiveMeMoneyButtonView(
+          primaryTitle: viewModel.selectePackageOption.primaryTitle,
+          secondaryTitle: viewModel.selectePackageOption.secondaryTitle,
+          isPurchased: isPurchased,
+          callback: viewModel.purchase
+        )
+        .transition(.opacity)
+      }
 
       Button(action: viewModel.restore) {
-        Text("Restore Purchase")
+        if isPurchased {
+          Text("Already Purchased")
+        } else {
+          Text("Restore Purchase")
+        }
       }
       .font(.system(size: 12))
       .buttonStyle(.plain)
       .foregroundStyle(AffineColors.textSecondary.color)
+      .opacity(viewModel.products.isEmpty ? 0 : 1)
+      .disabled(isPurchased)
     }
+    .animation(.spring, value: viewModel.updating)
   }
 }
 
