@@ -24,6 +24,7 @@ class ViewModel: ObservableObject {
   @Published var updating = false
   @Published var products: [Product] = []
   @Published var purchasedItems: Set<String> = []
+  @Published var packageOptions: [SKUnitPackageOption] = SKUnit.allUnits.flatMap(\.package)
 
   private(set) weak var associatedController: UIViewController?
 
@@ -79,6 +80,84 @@ class ViewModel: ObservableObject {
 
     _ = selectePackageOption // ensure selectePackageOption is valid
   }
+
+  func updatePackageOptions(with products: [Product]) {
+    var updatedOptions = packageOptions
+
+    for (index, option) in updatedOptions.enumerated() {
+      if let product = products.first(where: { $0.id == option.productIdentifier }) {
+        let price = product.displayPrice
+        let description = product.description
+
+        let (purchasePrimaryTitle, purchaseSecondaryTitle) = purchaseButtonText(
+          for: product,
+          option: option
+        )
+
+        updatedOptions[index] = SKUnitPackageOption(
+          id: option.id,
+          price: price,
+          description: option.description.isEmpty ? description : option.description,
+          badge: option.badge,
+          isDefaultSelected: option.isDefaultSelected,
+          primaryTitle: purchasePrimaryTitle,
+          secondaryTitle: purchaseSecondaryTitle,
+          productIdentifier: option.productIdentifier,
+          revenueCatIdentifier: option.revenueCatIdentifier
+        )
+      }
+    }
+
+    packageOptions = updatedOptions
+  }
+
+  private func purchaseButtonText(for product: Product, option: SKUnitPackageOption) -> (String, String) {
+    let monthlyPrice = calculateMonthlyPrice(for: product, option: option)
+
+    if option.productIdentifier.contains(".ai.") {
+      return ("\(monthlyPrice) per month", "billed annually")
+    } else {
+      return ("Upgrade for \(monthlyPrice) per month", "")
+    }
+  }
+
+  private func calculateMonthlyPrice(for product: Product, option _: SKUnitPackageOption) -> String {
+    guard let subscription = product.subscription else {
+      preconditionFailure("Product must have subscription information")
+    }
+
+    switch subscription.subscriptionPeriod.unit {
+    case .year:
+      let yearlyPrice = product.price
+      let monthlyPrice = yearlyPrice / 12.0
+
+      // Round up to ensure total price is slightly lower than yearly price
+      var roundedMonthlyPrice = monthlyPrice
+      var rounded = Decimal()
+      NSDecimalRound(&rounded, &roundedMonthlyPrice, 2, .up)
+
+      let formatter = NumberFormatter()
+      formatter.numberStyle = .currency
+      formatter.currencyCode = product.priceFormatStyle.currencyCode
+      formatter.minimumFractionDigits = 2
+      formatter.maximumFractionDigits = 2
+
+      if let formattedMonthlyPrice = formatter.string(from: NSDecimalNumber(decimal: rounded)) {
+        return formattedMonthlyPrice
+      }
+
+    case .month:
+      return product.displayPrice
+
+    case .week, .day:
+      preconditionFailure("Unsupported subscription period: \(subscription.subscriptionPeriod.unit)")
+
+    @unknown default:
+      preconditionFailure("Unknown subscription period")
+    }
+
+    return product.displayPrice
+  }
 }
 
 @MainActor
@@ -99,20 +178,24 @@ extension ViewModel {
   }
 
   var selectePackageOption: SKUnitPackageOption {
-    let item = selectedUnit.package
-      .first { $0.id == selectedPackageIdentifier }
+    let unitPackageIds = selectedUnit.package.map(\.id)
+    let item = packageOptions
+      .first { $0.id == selectedPackageIdentifier && unitPackageIds.contains($0.id) }
     if let item { return item }
-    let defaultItem = selectedUnit.package.first { $0.isDefaultSelected }
+    let defaultItem = packageOptions
+      .first { $0.isDefaultSelected && unitPackageIds.contains($0.id) }
     if let defaultItem {
       selectedPackageIdentifier = defaultItem.id
       return defaultItem
     }
-    let lastItem = selectedUnit.package.last!
+    let lastItem = packageOptions
+      .first { unitPackageIds.contains($0.id) }!
     selectedPackageIdentifier = lastItem.id
     return lastItem
   }
 
   var availablePackageOptions: [SKUnitPackageOption] {
-    selectedUnit.package
+    let unitPackageIds = selectedUnit.package.map(\.id)
+    return packageOptions.filter { unitPackageIds.contains($0.id) }
   }
 }
