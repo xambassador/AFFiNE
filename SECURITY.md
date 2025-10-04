@@ -6,8 +6,8 @@ We recommend users to always use the latest major version. Security updates will
 
 | Version         | Supported          |
 | --------------- | ------------------ |
-| 0.17.x (stable) | :white_check_mark: |
-| < 0.17.x        | :x:                |
+| 0.24.x (stable) | :white_check_mark: |
+| < 0.24.x        | :x:                |
 
 ## Reporting a Vulnerability
 
@@ -22,8 +22,6 @@ We welcome you to provide us with bug reports via and email at [security@toevery
 
 3. Your classification or analysis of the vulnerability (optional)
 
-Since we are an open source project, we also welcome you to provide corresponding fix PRs.
-
-We will provide bounties for vulnerabilities involving user information leakage, permission leakage, and unauthorized code execution. For other types of vulnerabilities, we will determine specific rewards based on the evaluation results.
+Since we are an open source project, we also welcome you to provide corresponding fix PRs, we will determine specific rewards based on the evaluation results.
 
 If the vulnerability is caused by a library we depend on, we encourage you to submit a security report to the corresponding dependent library at the same time to benefit more users.
