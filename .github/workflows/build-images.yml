@@ -118,7 +118,7 @@ jobs:
 
   build-server-native:
     name: Build Server native - ${{ matrix.targets.name }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     environment: ${{ inputs.build-type }}
     strategy:
       fail-fast: false
