@@ -37,6 +37,10 @@ import { PageNotFound } from '../../404';
 import { ShareFooter } from './share-footer';
 import { ShareHeader } from './share-header';
 import * as styles from './share-page.css';
+import {
+  fetchSharedPublishMode,
+  getResolvedPublishMode,
+} from './share-page.utils';
 import { useSharedModeQuerySync } from './use-shared-mode-query-sync';
 
 const useUpdateBasename = (workspace: Workspace | null) => {
@@ -127,18 +131,57 @@ const SharePageInner = ({
   const [page, setPage] = useState<Doc | null>(null);
   const [editor, setEditor] = useState<Editor | null>(null);
   const [noPermission, setNoPermission] = useState(false);
+  const [fetchedPublishMode, setFetchedPublishMode] = useState<
+    DocMode | null | undefined
+  >(() => (publishMode === undefined ? undefined : null));
   const [editorContainer, setActiveBlocksuiteEditor] =
     useActiveBlocksuiteEditor();
-  const resolvedPublishMode = publishMode ?? null;
+  const resolvedPublishMode =
+    publishMode !== undefined
+      ? publishMode
+      : fetchedPublishMode === undefined
+        ? null
+        : getResolvedPublishMode(null, fetchedPublishMode);
   const currentPublishMode = useSharedModeQuerySync({
     editor,
     resolvedPublishMode,
   });
 
   useEffect(() => {
-    if (editor || workspace || page) {
+    if (publishMode !== undefined) {
+      setFetchedPublishMode(null);
       return;
     }
+
+    const abortController = new AbortController();
+    setFetchedPublishMode(undefined);
+
+    void fetchSharedPublishMode({
+      serverBaseUrl: serverService.server.baseUrl,
+      workspaceId,
+      docId,
+      signal: abortController.signal,
+    })
+      .then(mode => {
+        if (!abortController.signal.aborted) {
+          setFetchedPublishMode(mode);
+        }
+      })
+      .catch(err => {
+        if (!abortController.signal.aborted) {
+          console.error(err);
+          setFetchedPublishMode(null);
+        }
+      });
+
+    return () => {
+      abortController.abort();
+    };
+  }, [docId, publishMode, serverService.server.baseUrl, workspaceId]);
+
+  useEffect(() => {
+    if (resolvedPublishMode === null) return;
+    if (editor || workspace || page) return;
 
     // create a workspace for share page
     const { workspace: sharedWorkspace } = workspacesService.open(
@@ -188,7 +231,7 @@ const SharePageInner = ({
         setPage(doc);
 
         const editor = doc.scope.get(EditorsService).createEditor();
-        editor.setMode(resolvedPublishMode ?? doc.getPrimaryMode() ?? 'page');
+        editor.setMode(resolvedPublishMode);
 
         if (selector) {
           editor.setSelector(selector);
