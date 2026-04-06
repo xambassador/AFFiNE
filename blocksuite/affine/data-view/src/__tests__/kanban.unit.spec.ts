@@ -9,6 +9,7 @@ import { groupByMatchers } from '../core/group-by/define.js';
 import { GroupTrait, sortByManually } from '../core/group-by/trait.js';
 import { t } from '../core/logical/type-presets.js';
 import type { DataViewCellLifeCycle } from '../core/property/index.js';
+import type { Row } from '../core/view-manager/row.js';
 import { checkboxPropertyModelConfig } from '../property-presets/checkbox/define.js';
 import { multiSelectPropertyModelConfig } from '../property-presets/multi-select/define.js';
 import { selectPropertyModelConfig } from '../property-presets/select/define.js';
@@ -26,7 +27,6 @@ import {
 import type { KanbanCard } from '../view-presets/kanban/pc/card.js';
 import { KanbanDragController } from '../view-presets/kanban/pc/controller/drag.js';
 import type { KanbanGroup } from '../view-presets/kanban/pc/group.js';
-import type { Row } from '../core/view-manager/row.js';
 
 type Column = {
   id: string;
