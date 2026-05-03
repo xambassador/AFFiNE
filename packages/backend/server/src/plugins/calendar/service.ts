@@ -571,16 +571,26 @@ export class CalendarService {
   }
 
   async assertCanLinkProvider(userId: string, provider: CalendarProviderName) {
-    if (this.canCreateNewAccounts(provider)) {
-      return;
-    }
-
-    const accounts = await this.models.calendarAccount.listByUser(userId);
-    if (accounts.some(account => account.provider === provider)) {
+    if (await this.canLinkProvider(userId, provider)) {
       return;
     }
 
     throw this.providerLinkDisabledError(provider);
+  }
+
+  async canLinkProvider(
+    userId: string | null | undefined,
+    provider: CalendarProviderName
+  ) {
+    if (this.canCreateNewAccounts(provider)) {
+      return true;
+    }
+    if (!userId) {
+      return false;
+    }
+
+    const accounts = await this.models.calendarAccount.listByUser(userId);
+    return accounts.some(account => account.provider === provider);
   }
 
   getAuthUrl(

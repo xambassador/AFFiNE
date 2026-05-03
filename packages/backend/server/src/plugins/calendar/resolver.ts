@@ -33,17 +33,20 @@ import {
 export class CalendarServerConfigResolver {
   constructor(
     private readonly providerFactory: CalendarProviderFactory,
-    private readonly config: Config
+    private readonly config: Config,
+    private readonly calendar: CalendarService
   ) {}
 
   @ResolveField(() => [CalendarProviderName])
-  calendarProviders() {
-    return this.providerFactory.providers.filter(provider => {
-      return (
-        provider !== CalendarProviderName.Google ||
-        this.config.calendar.google.allowNewAccounts !== false
-      );
-    });
+  async calendarProviders(@CurrentUser() user?: CurrentUser) {
+    const providers = [];
+    for (const provider of this.providerFactory.providers) {
+      if (!(await this.calendar.canLinkProvider(user?.id, provider))) {
+        continue;
+      }
+      providers.push(provider);
+    }
+    return providers;
   }
 
   @ResolveField(() => [CalendarCalDAVProviderPresetObjectType])
