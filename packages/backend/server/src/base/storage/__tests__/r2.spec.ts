@@ -61,25 +61,22 @@ test('R2 provider should throw when accountId is missing', t => {
   );
 });
 
-test(
-  'R2 provider should use default endpoint when jurisdiction is explicitly undefined',
-  t => {
-    const provider = new R2StorageProvider(
-      {
-        accountId: 'test-account',
-        jurisdiction: undefined,
-        region: 'auto',
-        credentials: {
-          accessKeyId: 'test',
-          secretAccessKey: 'test',
-        },
+test('R2 provider should use default endpoint when jurisdiction is explicitly undefined', t => {
+  const provider = new R2StorageProvider(
+    {
+      accountId: 'test-account',
+      jurisdiction: undefined,
+      region: 'auto',
+      credentials: {
+        accessKeyId: 'test',
+        secretAccessKey: 'test',
       },
-      'test-bucket'
-    );
+    },
+    'test-bucket'
+  );
 
-    t.is(
-      endpointOf(provider),
-      'https://test-account.r2.cloudflarestorage.com/test-bucket'
-    );
-  }
-);
+  t.is(
+    endpointOf(provider),
+    'https://test-account.r2.cloudflarestorage.com/test-bucket'
+  );
+});

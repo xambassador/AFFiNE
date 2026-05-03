@@ -3,11 +3,7 @@ import { Type } from '@nestjs/common';
 import { JSONSchema } from '../../config';
 import { FsStorageConfig, FsStorageProvider } from './fs';
 import { StorageProvider } from './provider';
-import {
-  R2_JURISDICTIONS,
-  R2StorageConfig,
-  R2StorageProvider,
-} from './r2';
+import { R2_JURISDICTIONS, R2StorageConfig, R2StorageProvider } from './r2';
 import { S3StorageConfig, S3StorageProvider } from './s3';
 
 export type StorageProviderName = 'fs' | 'aws-s3' | 'cloudflare-r2';
