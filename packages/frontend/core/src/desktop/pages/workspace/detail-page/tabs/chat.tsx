@@ -8,6 +8,7 @@ import {
 import type { ChatStatus } from '@affine/core/blocksuite/ai/components/ai-chat-messages';
 import type { AIChatToolbar } from '@affine/core/blocksuite/ai/components/ai-chat-toolbar';
 import {
+  AIChatTabs,
   configureAIChatToolbar,
   getOrCreateAIChatToolbar,
 } from '@affine/core/blocksuite/ai/components/ai-chat-toolbar';
@@ -45,7 +46,10 @@ import { useFramework, useService } from '@toeverything/infra';
 import { html } from 'lit';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { createSessionDeleteHandler } from '../../chat-panel-utils';
+import {
+  createSessionDeleteHandler,
+  useAIChatOpenTabs,
+} from '../../chat-panel-utils';
 import * as styles from './chat.css';
 import {
   getChatContentKey,
@@ -93,11 +97,12 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
 
   const [chatContent, setChatContent] = useState<AIChatContent | null>(null);
   const [chatToolbar, setChatToolbar] = useState<AIChatToolbar | null>(null);
+  const [chatTabs, setChatTabs] = useState<AIChatTabs | null>(null);
   const [isBodyProvided, setIsBodyProvided] = useState(false);
   const [isHeaderProvided, setIsHeaderProvided] = useState(false);
-
   const chatContainerRef = useRef<HTMLDivElement | null>(null);
   const chatToolbarContainerRef = useRef<HTMLDivElement | null>(null);
+  const chatTabsContainerRef = useRef<HTMLDivElement | null>(null);
   const contentKeyRef = useRef<string | null>(null);
   const prevSessionIdRef = useRef<string | null>(null);
   const prevSessionDocIdRef = useRef<string | null>(null);
@@ -107,6 +112,36 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
 
   const doc = editor?.doc;
   const host = editor?.host;
+  const workspaceId = doc?.workspace.id;
+
+  const [sessionServiceReady, setSessionServiceReady] = useState(
+    () => !!AIProvider.session
+  );
+
+  useEffect(() => {
+    if (sessionServiceReady) return;
+    if (AIProvider.session) {
+      setSessionServiceReady(true);
+      return;
+    }
+    const sub = AIProvider.slots.sessionReady.subscribe(ready => {
+      if (ready) setSessionServiceReady(true);
+    });
+    return () => sub.unsubscribe();
+  }, [sessionServiceReady]);
+
+  const loadSession = useMemo(() => {
+    if (!sessionServiceReady || !workspaceId) return null;
+    const sessionService = AIProvider.session;
+    if (!sessionService) return null;
+    return async (
+      sessionId: string
+    ): Promise<CopilotChatHistoryFragment | null | undefined> =>
+      sessionService.getSession(workspaceId, sessionId);
+  }, [sessionServiceReady, workspaceId]);
+
+  const { openTabs, setOpenTabs } =
+    useAIChatOpenTabs<CopilotChatHistoryFragment>(loadSession);
 
   const appSidebarConfig = useMemo<AppSidebarConfig>(() => {
     return {
@@ -237,13 +272,18 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
           sessionId
         );
         if (requestSeq !== sessionLoadSeqRef.current) return;
-        setSession(nextSession ?? null);
-        setHasPinned(!!nextSession?.pinned);
+        if (!nextSession) {
+          // Drop stale tab if session no longer exists.
+          setOpenTabs(prev => prev.filter(tab => tab.sessionId !== sessionId));
+          return;
+        }
+        setSession(nextSession);
+        setHasPinned(!!nextSession.pinned);
       } catch (error) {
         console.error(error);
       }
     },
-    [doc, session?.sessionId]
+    [doc, session?.sessionId, setOpenTabs]
   );
 
   const openDoc = useCallback(
@@ -289,6 +329,26 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
         },
       }),
     [newSession, notificationService, session?.sessionId, t]
+  );
+
+  const closeTab = useCallback(
+    (sessionId: string) => {
+      let fallback: CopilotChatHistoryFragment | undefined;
+      setOpenTabs(prev => {
+        const idx = prev.findIndex(tab => tab.sessionId === sessionId);
+        if (idx === -1) return prev;
+        const next = prev.filter(tab => tab.sessionId !== sessionId);
+        fallback = next[idx] ?? next[idx - 1] ?? next[0];
+        return next;
+      });
+      if (session?.sessionId !== sessionId) return;
+      if (fallback) {
+        openSession(fallback.sessionId).catch(console.error);
+      } else {
+        newSession().catch(console.error);
+      }
+    },
+    [newSession, openSession, session?.sessionId, setOpenTabs]
   );
 
   const togglePin = useCallback(async () => {
@@ -347,7 +407,27 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
       chatToolbar.remove();
       setChatToolbar(null);
     }
-  }, [chatContent, chatToolbar, session]);
+    if (chatTabs) {
+      chatTabs.remove();
+      setChatTabs(null);
+    }
+  }, [chatContent, chatTabs, chatToolbar, session]);
+
+  useEffect(() => {
+    if (!session?.sessionId) return;
+    setOpenTabs(prev => {
+      const existing = prev.findIndex(
+        tab => tab.sessionId === session.sessionId
+      );
+      if (existing !== -1) {
+        if (prev[existing] === session) return prev;
+        const next = prev.slice();
+        next[existing] = session;
+        return next;
+      }
+      return [...prev, session];
+    });
+  }, [session, setOpenTabs]);
 
   useEffect(() => {
     let disposed = false;
@@ -554,6 +634,30 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
   ]);
 
   useEffect(() => {
+    if (!chatTabsContainerRef.current || !doc) {
+      return;
+    }
+    if (session === undefined) {
+      return;
+    }
+
+    let tabs = chatTabs;
+    if (!tabs) {
+      tabs = new AIChatTabs();
+      chatTabsContainerRef.current.append(tabs);
+      setChatTabs(tabs);
+    }
+    tabs.sessions = openTabs;
+    tabs.activeSessionId = session?.sessionId;
+    tabs.onSelectTab = (sessionId: string) => {
+      openSession(sessionId).catch(console.error);
+    };
+    tabs.onCloseTab = (sessionId: string) => {
+      closeTab(sessionId);
+    };
+  }, [chatTabs, closeTab, doc, openSession, openTabs, session]);
+
+  useEffect(() => {
     if (!editor?.host || !chatContent) {
       return;
     }
@@ -654,6 +758,10 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
     chatToolbarContainerRef.current = node;
   }, []);
 
+  const onChatTabsContainerRef = useCallback((node: HTMLDivElement | null) => {
+    chatTabsContainerRef.current = node;
+  }, []);
+
   const isEmbedding =
     embeddingProgress[1] > 0 && embeddingProgress[0] < embeddingProgress[1];
   const [done, total] = embeddingProgress;
@@ -690,6 +798,10 @@ export const EditorChatPanel = ({ editor, onLoad }: SidebarTabProps) => {
                 <CenterPeekIcon />
               </div>
             ) : null}
+            <div
+              className={styles.tabsContainer}
+              ref={onChatTabsContainerRef}
+            />
             <div ref={onChatToolContainerRef} />
           </div>
           <div className={styles.content} ref={onChatContainerRef} />
