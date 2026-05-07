@@ -2463,7 +2463,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.affine-workspace-data"](): string;
     /**
-      * `Bear (.bear2bk)`
+      * `Bear (.bear2bk) (Experimental)`
       */
     ["com.affine.import.bear"](): string;
     /**
@@ -2503,7 +2503,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.modal.tip"](): string;
     /**
-      * `Notion`
+      * `Notion (Experimental)`
       */
     ["com.affine.import.notion"](): string;
     /**
@@ -2511,7 +2511,7 @@ export function useAFFiNEI18N(): {
       */
     ["com.affine.import.notion.tooltip"](): string;
     /**
-      * `Obsidian Vault`
+      * `Obsidian Vault (Experimental)`
       */
     ["com.affine.import.obsidian"](): string;
     /**
