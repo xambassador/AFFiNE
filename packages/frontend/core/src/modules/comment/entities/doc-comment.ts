@@ -16,17 +16,9 @@ import {
   onStart,
 } from '@toeverything/infra';
 import { nanoid } from 'nanoid';
-import {
-  catchError,
-  filter,
-  first,
-  of,
-  Subject,
-  type Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { catchError, filter, first, of, Subject, switchMap, tap } from 'rxjs';
 
+import { RealtimeLiveQuery } from '../../cloud/realtime/live-query';
 import { type DocDisplayMetaService } from '../../doc-display-meta';
 import { GlobalContextService } from '../../global-context';
 import type { SnapshotHelper } from '../services/snapshot-helper';
@@ -93,11 +85,19 @@ export class DocCommentEntity extends Entity<{
   private readonly commentDeleted$ = new Subject<CommentId>();
   readonly commentHighlighted$ = new LiveData<CommentId | null>(null);
 
-  private realtimeDisposable?: DisposeCallback;
-  private realtimeSubscription?: Subscription;
+  private readonly liveQuery = new RealtimeLiveQuery({
+    request: () => this.store.listCommentChanges({ after: this.startCursor }),
+    subscribe: () => this.store.subscribeCommentChanged(),
+    applySnapshot: result => {
+      this.handleCommentChanges(result);
+      this.startCursor = result.endCursor;
+    },
+    onError: error => {
+      console.error('Failed to sync comment changes:', error);
+    },
+  });
   private startCursor?: string;
-  private fetchingCommentChanges = false;
-  private pendingCommentChangeFetch = false;
+  private startVersion = 0;
 
   async addComment(
     selections?: BaseSelection[],
@@ -490,52 +490,34 @@ export class DocCommentEntity extends Entity<{
   }
 
   start(): void {
-    if (this.realtimeDisposable) {
-      this.realtimeDisposable();
-    }
-    this.realtimeSubscription?.unsubscribe();
-
-    this.revalidate();
     this.revalidateCommentsInEditor();
-
-    this.realtimeSubscription = this.store.subscribeCommentChanged().subscribe({
-      next: () => {
-        this.fetchCommentChanges().catch(() => {});
-      },
-      error: error => {
-        console.error('Failed to subscribe comment changes:', error);
-      },
+    this.startLiveQueryAfterInitialLoad().catch(error => {
+      console.error('Failed to start comment realtime:', error);
     });
-    this.realtimeDisposable = () => this.realtimeSubscription?.unsubscribe();
   }
 
   stop(): void {
-    if (this.realtimeDisposable) {
-      this.realtimeDisposable();
-    }
-    this.realtimeSubscription?.unsubscribe();
+    this.startVersion++;
+    this.liveQuery.stop();
+    this.loading$.setValue(false);
   }
 
-  private async fetchCommentChanges() {
-    if (this.fetchingCommentChanges) {
-      this.pendingCommentChangeFetch = true;
-      return;
-    }
-
-    this.fetchingCommentChanges = true;
+  private async startLiveQueryAfterInitialLoad() {
+    const version = ++this.startVersion;
+    this.liveQuery.stop();
+    this.loading$.setValue(true);
     try {
-      do {
-        this.pendingCommentChangeFetch = false;
-        const result = await this.store.listCommentChanges({
-          after: this.startCursor,
-        });
-        this.handleCommentChanges(result);
-        this.startCursor = result.endCursor;
-      } while (this.pendingCommentChangeFetch);
-    } catch (error) {
-      console.error('Failed to fetch comment changes:', error);
+      const allComments = await this.loadAllComments();
+      if (version !== this.startVersion) {
+        return;
+      }
+      this.revalidateCommentsInEditor();
+      this.comments$.setValue(allComments);
+      this.liveQuery.start();
     } finally {
-      this.fetchingCommentChanges = false;
+      if (version === this.startVersion) {
+        this.loading$.setValue(false);
+      }
     }
   }
 
@@ -650,31 +632,9 @@ export class DocCommentEntity extends Entity<{
 
   revalidate = effect(
     switchMap(() => {
-      return fromPromise(async () => {
-        const allComments: DocComment[] = [];
-        let cursor = '';
-        let firstResult: DocCommentListResult | null = null;
-        this.revalidateCommentsInEditor();
-        // Fetch all pages of comments
-        while (true) {
-          const result = await this.store.listComments({ after: cursor });
-          if (!firstResult) {
-            firstResult = result;
-            // Store the startCursor from the first page for incremental changes
-            this.startCursor = result.startCursor;
-          }
-          allComments.push(...result.comments);
-          cursor = result.endCursor;
-          if (!result.hasNextPage) {
-            break;
-          }
-        }
-
-        return allComments;
-      }).pipe(
+      return fromPromise(() => this.loadAllComments()).pipe(
         tap(allComments => {
           this.revalidateCommentsInEditor();
-          // Update state with all comments
           this.comments$.setValue(allComments);
         }),
         onStart(() => this.loading$.setValue(true)),
@@ -687,6 +647,27 @@ export class DocCommentEntity extends Entity<{
       );
     })
   );
+
+  private async loadAllComments() {
+    const allComments: DocComment[] = [];
+    let cursor = '';
+    let firstResult: DocCommentListResult | null = null;
+    this.revalidateCommentsInEditor();
+    while (true) {
+      const result = await this.store.listComments({ after: cursor });
+      if (!firstResult) {
+        firstResult = result;
+        this.startCursor = result.startCursor;
+      }
+      allComments.push(...result.comments);
+      cursor = result.endCursor;
+      if (!result.hasNextPage) {
+        break;
+      }
+    }
+
+    return allComments;
+  }
 
   private readonly revalidateCommentsInEditor = () => {
     this.commentsInEditor$.setValue(this.getCommentsInEditor());
