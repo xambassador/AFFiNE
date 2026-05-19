@@ -22,6 +22,7 @@ import {
   CanNotRevokeYourself,
   EventBus,
   InvalidInvitation,
+  isValidCacheTtl,
   mapAnyError,
   MemberNotFoundInSpace,
   NoMoreSeat,
@@ -258,7 +259,7 @@ export class WorkspaceMemberResolver {
     const id = await this.cache.get<{ inviteId: string }>(cacheId);
     if (id) {
       const expireTime = await this.cache.ttl(cacheId);
-      if (Number.isSafeInteger(expireTime)) {
+      if (isValidCacheTtl(expireTime)) {
         return {
           link: this.url.link(`/invite/${id.inviteId}`),
           expireTime: new Date(Date.now() + expireTime * 1000), // Convert seconds to milliseconds
@@ -284,7 +285,7 @@ export class WorkspaceMemberResolver {
     const invite = await this.cache.get<{ inviteId: string }>(cacheWorkspaceId);
     if (typeof invite?.inviteId === 'string') {
       const expireTime = await this.cache.ttl(cacheWorkspaceId);
-      if (Number.isSafeInteger(expireTime)) {
+      if (isValidCacheTtl(expireTime)) {
         return {
           link: this.url.link(`/invite/${invite.inviteId}`),
           expireTime: new Date(Date.now() + expireTime * 1000), // Convert seconds to milliseconds
@@ -300,6 +301,7 @@ export class WorkspaceMemberResolver {
       { workspaceId, inviterUserId: user.id },
       { ttl: expireTime }
     );
+    this.event.emit('workspace.invite_link.created', { workspaceId });
     return {
       link: this.url.link(`/invite/${inviteId}`),
       expireTime: new Date(Date.now() + expireTime),
@@ -317,7 +319,13 @@ export class WorkspaceMemberResolver {
       .assert('Workspace.Users.Manage');
 
     const cacheId = `workspace:inviteLink:${workspaceId}`;
-    return await this.cache.delete(cacheId);
+    const invite = await this.cache.get<{ inviteId: string }>(cacheId);
+    const deleted = await this.cache.delete(cacheId);
+    if (invite?.inviteId) {
+      await this.cache.delete(`workspace:inviteLinkId:${invite.inviteId}`);
+    }
+    this.event.emit('workspace.invite_link.revoked', { workspaceId });
+    return deleted;
   }
 
   @Mutation(() => Boolean)
@@ -406,6 +414,11 @@ export class WorkspaceMemberResolver {
       }
 
       await this.models.workspaceUser.set(workspaceId, userId, newRole);
+      if (role.status !== WorkspaceMemberStatus.Accepted) {
+        this.event.emit('workspace.members.updated', {
+          workspaceId,
+        });
+      }
     }
 
     return true;
@@ -608,6 +621,10 @@ export class WorkspaceMemberResolver {
       WorkspaceMemberStatus.Accepted
     );
 
+    this.event.emit('workspace.members.updated', {
+      workspaceId: role.workspaceId,
+    });
+
     await this.workspaceService.sendInvitationAcceptedNotification(
       role.inviterId ??
         (await this.models.workspaceUser.getOwner(role.workspaceId)).id,
@@ -640,6 +657,7 @@ export class WorkspaceMemberResolver {
     );
 
     await this.workspaceService.sendReviewRequestNotification(role.id);
+    this.event.emit('workspace.members.updated', { workspaceId });
     return;
   }
 
