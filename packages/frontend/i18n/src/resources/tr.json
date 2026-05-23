@@ -1584,7 +1584,7 @@
   "com.affine.settings.workspace.experimental-features.enable-mind-map-import.name": "Zihin Haritası İçe Aktarımı",
   "com.affine.settings.workspace.experimental-features.enable-mind-map-import.description": "Zihin haritasının içe aktarılmasını etkinleştirir.",
   "com.affine.settings.workspace.experimental-features.enable-block-meta.name": "Blok Metaverisi",
-  "com.affine.settings.workspace.experimental-features.enable-block-meta.description":  "Etkinleştirildiğinde, tüm bloklar için oluşturulma zamanı, güncellenme zamanı ile oluşturan ve güncelleyen bilgileri gösterilir.",
+  "com.affine.settings.workspace.experimental-features.enable-block-meta.description": "Etkinleştirildiğinde, tüm bloklar için oluşturulma zamanı, güncellenme zamanı ile oluşturan ve güncelleyen bilgileri gösterilir.",
   "com.affine.settings.workspace.experimental-features.enable-callout.name": "Belirtme çizgisi",
   "com.affine.settings.workspace.experimental-features.enable-callout.description": "Sözleriniz öne çıksın. Bu aynı zamanda transkripsiyon bloğundaki belirtme çizgisini de içerir.",
   "com.affine.settings.workspace.experimental-features.enable-embed-iframe-block.name": "Iframe Bloğunu Göm",

@@ -192,5 +192,5 @@ export const SUPPORTED_LANGUAGES: Record<
     originalName: 'Türkçe',
     flagEmoji: '🇹🇷',
     resource: () => import('./tr.json'),
-  }
+  },
 };
