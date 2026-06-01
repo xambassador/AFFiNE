@@ -191,10 +191,10 @@ export class WorkspaceMcpProvider {
         if (abortedAfterDocs) return abortedAfterDocs;
 
         return {
-          content: docs.map(doc => ({
+          content: (docs?.map(doc => ({
             type: 'text',
             text: clearEmbeddingChunk(doc).content,
-          })),
+          })) ?? []),
         };
       },
     });
@@ -230,11 +230,15 @@ export class WorkspaceMcpProvider {
         const abortedAfterDocs = abortIfNeeded(options.signal);
         if (abortedAfterDocs) return abortedAfterDocs;
 
+        if (!docs || docs.length === 0) {
+          return toolText('No matching documents found.');
+        }
+
         return {
-          content: docs.map(doc => ({
+          content: (docs?.map(doc => ({
             type: 'text',
             text: JSON.stringify(pick(doc, 'docId', 'title', 'createdAt')),
-          })),
+          })) ?? []),
         };
       },
     });
